@@ -1,0 +1,27 @@
+framework module MIRACLTrust {
+    umbrella header "MIRACLTrust_iOS.h"
+    
+    explicit module Crypto {
+        private header "amcl.h"
+        private header "arch.h"
+        private header "big_256_56.h"
+        private header "config_big_256_56.h"
+        private header "config_curve_BN254CX.h"
+        private header "config_field_BN254CX.h"
+        private header "ecp_BN254CX.h"
+        private header "ecp2_BN254CX.h"
+        private header "fp_BN254CX.h"
+        private header "fp2_BN254CX.h"
+        private header "fp4_BN254CX.h"
+        private header "fp12_BN254CX.h"
+        private header "mpin_BN254CX.h"
+        private header "pair_BN254CX.h"
+        private header "pbc_support.h"
+    }
+    
+    explicit module SQLChiper {
+        private header "sqlite3.h"
+    }
+    
+    export *
+}

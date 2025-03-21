@@ -1,0 +1,88 @@
+name: "Build MIRACL Trust iOS SDK"
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  lint:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install swiftlint and swiftformat
+        run: |
+            brew update
+            brew install swiftlint
+            brew install swiftformat
+      - name: Run swiftlint check
+        run: |
+            cd MIRACLTrust
+            swiftlint
+      - name: Run swiftformat check
+        run: |
+            cd MIRACLTrust
+            swiftformat . --lint --swiftversion 5.7 --commas inline --disable wrapMultilineStatementBraces --disable redundantOptionalBinding
+      - name: Lint README.md
+        run: |
+            npm install -g markdownlint-cli
+            markdownlint README.md 
+ 
+  test:
+    runs-on: macos-latest
+    needs: lint
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Run unit tests
+          run: | 
+              cd MIRACLTrust
+              xcrun simctl erase "iPhone 16"
+              xcodebuild clean test -scheme "MIRACLTrust-iOS" -destination "platform=iOS Simulator,name=iPhone 16,OS=18.1" -quiet
+
+  integration-test:
+    runs-on: macos-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run integration tests
+        env: 
+          TEST_ENVIRONMENT_URL: ${{ vars.TEST_ENVIRONMENT_URL }}
+          TEST_CUV_CLIENT_SECRET: ${{ secrets.TEST_CUV_CLIENT_SECRET }}
+          TEST_CUV_CLIENT_ID: ${{ vars.TEST_CUV_CLIENT_ID }}
+          TEST_CUV_PROJECT_ID: ${{ vars.TEST_CUV_PROJECT_ID }}
+          TEST_DV_CLIENT_SECRET: ${{ secrets.TEST_DV_CLIENT_SECRET }}
+          TEST_DV_CLIENT_ID: ${{ vars.TEST_DV_CLIENT_ID }}
+          TEST_DV_PROJECT_ID: ${{ vars.TEST_DV_PROJECT_ID }}
+          TEST_ECV_PROJECT_ID: ${{ vars.TEST_ECV_PROJECT_ID }}
+          GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
+          GMAIL_CREDENTIALS: ${{ secrets.GMAIL_CREDENTIALS }}
+        run: |
+            cd MIRACLTrust
+            xcrun simctl erase "iPhone 16"
+            xcodebuild clean test -scheme MIRACLTrust-IntegrationTests -destination "platform=iOS Simulator,name=iPhone 16,OS=18.1" -resultBundlePath reports/MIRACLTrust-IntegrationTests -quiet 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: IntegrationTests-report
+          path: MIRACLTrust/reports/
+
+  build:
+    runs-on: macos-latest
+    needs: integration-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build SPM package
+        run: xcodebuild -scheme MIRACLTrust -destination "generic/platform=iOS Simulator" -quiet
+      - name: Build iOS Simulator framework version
+        run: |
+          cd MIRACLTrust
+          xcodebuild clean build archive -scheme "MIRACLTrust-iOS" -destination "generic/platform=iOS Simulator" -archivePath xcframework-output/iOS_sim -quiet SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+      - name: Build iOS device framework version
+        run: |
+          cd MIRACLTrust
+          xcodebuild clean build archive -scheme "MIRACLTrust-iOS" -destination generic/platform=iOS  -archivePath xcframework-output/iOS -quiet SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES

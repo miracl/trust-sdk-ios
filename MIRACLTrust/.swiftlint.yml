@@ -1,0 +1,19 @@
+disabled_rules: 
+  - function_parameter_count
+  - line_length
+  - type_body_length
+  - file_length
+  - large_tuple
+  - identifier_name
+
+strict: true
+
+cyclomatic_complexity:
+  ignores_case_statements: true
+
+function_body_length:
+  warning: 80
+  error: 100
+
+type_name:
+  max_length: 80

@@ -1,0 +1,9 @@
+{
+  "default": true,
+  "line-length": {
+     "code_block_line_length": 120
+  },
+  "ol-prefix": {
+      "style": "ordered"
+  }
+}
