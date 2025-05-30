@@ -184,7 +184,6 @@ class MIRACLTrustTests: XCTestCase {
         let randomString = randomString
 
         MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { activationTokenResponse, error in
-
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(error)
 
@@ -232,7 +231,6 @@ class MIRACLTrustTests: XCTestCase {
         let randomString = randomString
 
         MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code) { activationTokenResponse, error in
-
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(error)
 

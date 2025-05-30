@@ -24,7 +24,6 @@ struct APIRequestExecutor: Sendable {
         let task = urlSession.dataTask(
             with: urlRequest
         ) { data, response, error in
-
             if let error = error {
                 completion(.failed, nil, error)
                 return

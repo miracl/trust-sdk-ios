@@ -105,7 +105,6 @@ struct QuickCodeGenerator: Sendable {
             jwt: jwt,
             deviceName: deviceName
         ) { _, response, error in
-
             if let response {
                 let quickCode = QuickCode(
                     code: response.code,

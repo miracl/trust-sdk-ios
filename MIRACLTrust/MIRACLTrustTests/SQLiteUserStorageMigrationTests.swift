@@ -173,7 +173,6 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
         _ = try (0 ..< usersCount).map { element in
             let authenticationIdentityId = UUID().uuidString
             try sqliteHelper.insert(statement: statement) { insertStatement in
-
                 let uuid = authenticationIdentityId as NSString
                 sqlite3_bind_text(insertStatement, 1, uuid.utf8String, -1, nil)
 
@@ -268,7 +267,6 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
         _ = try (0 ..< usersCount).map { element in
             let authenticationIdentityId = UUID().uuidString
             try sqliteHelper.insert(statement: statement) { insertStatement in
-
                 let uuid = authenticationIdentityId as NSString
                 sqlite3_bind_text(insertStatement, 1, uuid.utf8String, -1, nil)
 

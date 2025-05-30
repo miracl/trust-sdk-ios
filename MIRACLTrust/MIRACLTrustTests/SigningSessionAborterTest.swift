@@ -70,7 +70,6 @@ final class SigningSessionAborterTest: XCTestCase {
     ) throws {
         let testExpectation = XCTestExpectation(description: "Wait for session abort")
         let sessionAborter = try SigningSessionAborter(sessionId: sessionId, miraclAPI: mockAPI) { aborted, error in
-
             completionHandler(aborted, error)
             testExpectation.fulfill()
         }

@@ -73,7 +73,6 @@ struct VerificationConfirmationHandler: Sendable {
             userId: userId,
             code: activationCode
         ) { apiCallResult, response, error in
-
             if apiCallResult == .failed, let error {
                 if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_VERIFICATION_CODE || clientErrorData.code == UNSUCCESSFUL_VERIFICATION {
                     if let context = clientErrorData.context, let projectId = context["projectId"] {

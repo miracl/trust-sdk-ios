@@ -12,7 +12,6 @@ class HTTPRequestExecutor {
         finish: @escaping @Sendable (Result<T?, HelperAPIError>) -> Void
     ) {
         let task = URLSession.shared.dataTask(with: request) { responseData, response, error in
-
             if let response = response as? HTTPURLResponse {
                 if response.statusCode != 200 {
                     DispatchQueue.main.async {
