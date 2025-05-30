@@ -194,7 +194,6 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
             accessId: accessId,
             vValue: vBytes.hex
         ) { apiCallResult, response, error in
-
             if apiCallResult == .failed, let error = error {
                 logOperation(operation: "Server Pass2 Error = \(error)")
 

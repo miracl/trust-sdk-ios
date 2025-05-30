@@ -114,7 +114,6 @@ class SQLiteMigration0to1: SQLiteMigration {
             statement: "SELECT identity_id, publicKey FROM SigningUser",
             bindingsBlock: nil,
             bindResultBlock: { statement_tmp in
-
                 let currentId = Int(sqlite3_column_int(statement_tmp, 0))
                 var publicKey = Data()
                 if let pointer = sqlite3_column_blob(statement_tmp, 1) {

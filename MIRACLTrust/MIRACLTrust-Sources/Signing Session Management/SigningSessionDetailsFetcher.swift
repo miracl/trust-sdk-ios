@@ -42,7 +42,6 @@ struct SigningSessionDetailsFetcher: Sendable {
         miraclAPI.getSigningSessionDetails(
             accessId: accessId,
             completionHandler: { _, response, error in
-
                 DispatchQueue.main.async {
                     if let error = error {
                         if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_REQUEST_PARAMETERS, let context = clientErrorData.context, context["params"] == "id" {

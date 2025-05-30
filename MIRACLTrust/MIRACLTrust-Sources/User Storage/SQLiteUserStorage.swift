@@ -79,7 +79,6 @@ final class SQLiteUserStorage: NSObject, UserStorage {
         try sqliteHelper.insert(
             statement: insertUser
         ) { insertStatement in
-
             let userId = user.userId as NSString
             sqlite3_bind_text(insertStatement, 1, userId.utf8String, -1, nil)
 

@@ -150,7 +150,6 @@ final class Registrator: Sendable {
         }
 
         miraclAPI.signature(for: mpinIdString, regOTT: regOTT, publicKey: keyPairResult.publicKey.hex) { apiCallResult, signatureResponse, error in
-
             if apiCallResult == .failed, let error = error {
                 self.logOperation(operation: "signature error = \(error)")
 
@@ -271,7 +270,6 @@ final class Registrator: Sendable {
         logOperation(operation: LoggingConstants.cs2Request)
 
         miraclAPI.getClientSecret2(for: cs2URL) { apiCallResult, clientSecretResponse, error in
-
             if apiCallResult == .failed, let error = error {
                 self.logOperation(operation: "getClientSecret2 error = \(error)")
                 self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(error))

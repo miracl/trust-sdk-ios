@@ -24,7 +24,6 @@ class GetActivationTokenTestCase: XCTest {
         )
 
         MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL!) { activationTokenResponse, error in
-
             returnedActivationTokenResponse = activationTokenResponse
             returnedError = error
 
@@ -41,7 +40,6 @@ class GetActivationTokenTestCase: XCTest {
         nonisolated(unsafe) var returnedError: Error?
 
         MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { activationTokenResponse, error in
-
             returnedActivationTokenResponse = activationTokenResponse
             returnedError = error
 
@@ -58,7 +56,6 @@ class GetActivationTokenTestCase: XCTest {
         nonisolated(unsafe) var returnedError: Error?
 
         MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code) { activationTokenResponse, error in
-
             returnedActivationTokenResponse = activationTokenResponse
             returnedError = error
 

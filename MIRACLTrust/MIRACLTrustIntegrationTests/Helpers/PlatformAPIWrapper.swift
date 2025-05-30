@@ -25,7 +25,6 @@ import MIRACLTrust
             accessId: accessId,
             expiration: expiration
         ) { url, error in
-
             if let url = url {
                 verificationUrl = url
             } else if let error = error {
@@ -42,7 +41,6 @@ import MIRACLTrust
         nonisolated(unsafe) var jwkSet: String?
 
         platformAPI.getJWKS { jwks, error in
-
             if let jwks = jwks {
                 jwkSet = jwks
             } else if let error = error {
