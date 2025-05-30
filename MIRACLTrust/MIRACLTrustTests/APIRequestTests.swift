@@ -3,7 +3,7 @@ import XCTest
 
 class APIRequestTests: XCTestCase {
     let exampleURL = URL(string: "https://example.com")!
-    let miraclLogger = MIRACLLogger(logger: DefaultLogger(level: .none))
+    let logger = DefaultLogger(level: .none)
 
     func testGetRequestCreation() {
         let randomString = NSUUID().uuidString
@@ -15,7 +15,7 @@ class APIRequestTests: XCTestCase {
                 path: "\(randomString)",
                 queryParameters: queryParams,
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             if let urlRequest = miraclApiRequest.urlRequest() {
@@ -40,7 +40,7 @@ class APIRequestTests: XCTestCase {
                 path: "/\(randomString)",
                 method: .post,
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             if let urlRequest = miraclApiRequest.urlRequest() {
@@ -64,7 +64,7 @@ class APIRequestTests: XCTestCase {
                 path: "/\(randomString)",
                 method: .put,
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             if let urlRequest = miraclApiRequest.urlRequest() {
@@ -88,7 +88,7 @@ class APIRequestTests: XCTestCase {
                 path: "/\(randomString)",
                 method: .delete,
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             if let urlRequest = miraclApiRequest.urlRequest() {
@@ -111,7 +111,7 @@ class APIRequestTests: XCTestCase {
             url: notURL,
             path: "\(randomString)",
             requestBody: EmptyRequestBody(),
-            miraclLogger: miraclLogger
+            logger: logger
         )) { error in
             XCTAssertNotNil(error)
         }
@@ -125,7 +125,7 @@ class APIRequestTests: XCTestCase {
             url: notURL,
             path: "/\(randomString)",
             requestBody: EmptyRequestBody(),
-            miraclLogger: miraclLogger
+            logger: logger
         )) { error in
             XCTAssertTrue(error is APIRequestError)
             XCTAssertEqual(error as? APIRequestError, APIRequestError.fail("Invalid URL Scheme"))
@@ -140,7 +140,7 @@ class APIRequestTests: XCTestCase {
             url: notURL,
             path: "\(randomString)",
             requestBody: EmptyRequestBody(),
-            miraclLogger: miraclLogger
+            logger: logger
         )) { error in
             XCTAssertTrue(error is APIRequestError)
             XCTAssertEqual(error as? APIRequestError, APIRequestError.fail("Invalid URL Scheme"))
@@ -151,7 +151,7 @@ class APIRequestTests: XCTestCase {
             url: notURL,
             path: "\(randomString)",
             requestBody: EmptyRequestBody(),
-            miraclLogger: miraclLogger
+            logger: logger
         )) { error in
             XCTAssertTrue(error is APIRequestError)
             XCTAssertEqual(error as? APIRequestError, APIRequestError.fail("Invalid URL Host"))

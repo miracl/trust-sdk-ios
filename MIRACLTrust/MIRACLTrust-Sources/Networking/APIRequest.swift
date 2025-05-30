@@ -11,7 +11,7 @@ class APIRequest<T: Codable> {
     var urlComponents: URLComponents
     var method: HTTPMethod
     var requestBody: T?
-    var miraclLogger: MIRACLLogger
+    var logger: Logger
 
     init(
         url: URL?,
@@ -19,7 +19,7 @@ class APIRequest<T: Codable> {
         method: HTTPMethod = .get,
         queryParameters: [String: String]? = nil,
         requestBody: T?,
-        miraclLogger: MIRACLLogger
+        logger: Logger
     ) throws {
         guard let baseURL = url, let components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
             throw APIRequestError.fail("Cannot create URL")
@@ -65,9 +65,9 @@ class APIRequest<T: Codable> {
             }
             urlComponents.queryItems = queryItems
         }
-        self.miraclLogger = miraclLogger
+        self.logger = logger
 
-        miraclLogger.debug(
+        logger.debug(
             message: "\(self.method.rawValue) \(urlComponents.url!.absoluteString)",
             category: .networking
         )

@@ -11,7 +11,7 @@ struct Verificator: Sendable {
     let completionHandler: VerificationCompletionHandler
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     init(userId: String,
          projectId: String,
@@ -19,7 +19,7 @@ struct Verificator: Sendable {
          accessId: String? = nil,
          miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
          userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-         miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+         logger: Logger = MIRACLTrust.getInstance().logger,
          completionHandler: @escaping VerificationCompletionHandler) throws {
         self.userId = userId
         self.projectId = projectId
@@ -28,7 +28,7 @@ struct Verificator: Sendable {
             deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
         self.miraclAPI = miraclAPI
         self.userStorage = userStorage
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.completionHandler = completionHandler
 
         try validateInput()
@@ -93,7 +93,7 @@ struct Verificator: Sendable {
     }
 
     private func logOperation(operation: String) {
-        miraclLogger.info(
+        logger.info(
             message: "\(operation)",
             category: .verification
         )

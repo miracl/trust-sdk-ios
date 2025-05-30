@@ -19,18 +19,16 @@ import Foundation
     var crypto: CryptoBlueprint
     var urlSessionConfiguration: URLSessionConfiguration
     var sdkConfigured: Bool = false
-    var miraclLogger: MIRACLLogger
+    var logger: Logger
 
     private nonisolated(unsafe) static var shared: MIRACLTrust!
     private static let sharedQueue = DispatchQueue(label: "com.miracl.trust.init.queue")
 
     private init(configuration: Configuration) {
         if let logger = configuration.logger {
-            miraclLogger = MIRACLLogger(
-                logger: logger
-            )
+            self.logger = logger
         } else {
-            miraclLogger = MIRACLLogger(logger: DefaultLogger(level: configuration.loggingLevel))
+            logger = DefaultLogger(level: configuration.loggingLevel)
         }
 
         projectId = configuration.projectId
@@ -45,10 +43,10 @@ import Foundation
         miraclAPI = API(
             baseURL: configuration.platformURL,
             urlSessionConfiguration: configuration.urlSessionConfiguration,
-            miraclLogger: miraclLogger
+            logger: logger
         )
 
-        crypto = Crypto(miraclLogger: miraclLogger)
+        crypto = Crypto(logger: logger)
     }
 
     // MARK: SDK Configuration
@@ -87,7 +85,7 @@ import Foundation
             shared.miraclAPI = API(
                 baseURL: configuration.platformURL,
                 urlSessionConfiguration: configuration.urlSessionConfiguration,
-                miraclLogger: shared.miraclLogger
+                logger: shared.logger
             )
 
             try shared.userStorage.loadStorage()
@@ -641,14 +639,14 @@ import Foundation
     // MARK: Private methods
 
     private func logError(error: Error, category: LogCategory) {
-        miraclLogger.error(
+        logger.error(
             message: "\(LoggingConstants.finishedWithError)=\(error)",
             category: category
         )
     }
 
     private func logConfigurationError() {
-        miraclLogger.error(
+        logger.error(
             message: LoggingConstants.sdkNotConfigured,
             category: .configuration
         )

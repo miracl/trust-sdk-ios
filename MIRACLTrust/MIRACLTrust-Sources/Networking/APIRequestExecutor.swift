@@ -2,13 +2,13 @@ import Foundation
 
 struct APIRequestExecutor: Sendable {
     var urlSession: URLSession
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
-    init(urlSessionConfiguration: URLSessionConfiguration, miraclLogger: MIRACLLogger) {
+    init(urlSessionConfiguration: URLSessionConfiguration, logger: Logger) {
         urlSession = URLSession(
             configuration: urlSessionConfiguration
         )
-        self.miraclLogger = miraclLogger
+        self.logger = logger
     }
 
     func execute<T: Codable>(
@@ -217,7 +217,7 @@ struct APIRequestExecutor: Sendable {
             loggingMessage.append(" \(responseMessage)")
         }
 
-        miraclLogger.debug(
+        logger.debug(
             message: loggingMessage,
             category: .networking
         )

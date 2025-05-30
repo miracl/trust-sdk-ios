@@ -21,7 +21,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
     let crypto: CryptoBlueprint
     let userStorage: UserStorage
     let deviceName: String
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     var completionHandler: AuthenticateCompletionHandler
 
@@ -31,7 +31,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
          deviceName: String = MIRACLTrust.getInstance().deviceName,
          api: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
          userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-         miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+         logger: Logger = MIRACLTrust.getInstance().logger,
          scope: [String] = ["oidc"],
          didRequestPinHandler: @escaping PinRequestHandler,
          completionHandler: @escaping AuthenticateCompletionHandler) throws {
@@ -44,13 +44,13 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
         self.crypto = crypto
         self.userStorage = userStorage
         self.deviceName = deviceName
-        self.miraclLogger = miraclLogger
+        self.logger = logger
 
         try validateInput()
     }
 
     func authenticate() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .authentication
         )
@@ -67,7 +67,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
             return
         }
 
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.updatingCodeStatus,
             category: .authentication
         )
@@ -299,7 +299,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
 
     private func finishAuthentication(with response: AuthenticateResponse) {
         DispatchQueue.main.async {
-            miraclLogger.info(
+            logger.info(
                 message: LoggingConstants.finished,
                 category: .authentication
             )
@@ -359,7 +359,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
     }
 
     private func logOperation(operation: String) {
-        miraclLogger.info(
+        logger.info(
             message: "\(operation)",
             category: .authentication
         )

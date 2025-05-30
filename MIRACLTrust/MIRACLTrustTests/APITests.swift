@@ -5,7 +5,7 @@ class APITests: XCTestCase {
     var baseURL = URL(string: "https://api.mpin.io")!
     var mockURLSession = URLSessionMock()
     var api: API?
-    let miraclLogger = MIRACLLogger(logger: DefaultLogger(level: .none))
+    let logger = DefaultLogger(level: .none)
 
     override func setUpWithError() throws {
         mockURLSession = createMockSession()
@@ -13,7 +13,7 @@ class APITests: XCTestCase {
         api = API(
             baseURL: baseURL,
             urlSessionConfiguration: URLSessionConfiguration.default,
-            miraclLogger: miraclLogger
+            logger: logger
         )
         api?.executor.urlSession = mockURLSession
     }

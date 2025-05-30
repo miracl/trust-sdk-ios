@@ -18,10 +18,10 @@ struct Crypto: CryptoBlueprint, Sendable {
     private let randSeedSize = 256
     private let publicKeySize = 128
 
-    private let miraclLogger: MIRACLLogger
+    private let logger: Logger
 
-    init(miraclLogger: MIRACLLogger) {
-        self.miraclLogger = miraclLogger
+    init(logger: Logger) {
+        self.logger = logger
     }
 
     func clientPass1(
@@ -261,14 +261,14 @@ struct Crypto: CryptoBlueprint, Sendable {
     }
 
     private func logOperationStarted(operationSignature: String = #function) {
-        miraclLogger.debug(
+        logger.debug(
             message: "`\(operationSignature)` operation started.",
             category: .crypto
         )
     }
 
     private func logOperationFinished(operationSignature: String = #function) {
-        miraclLogger.debug(
+        logger.debug(
             message: "`\(operationSignature)` operation finished.",
             category: .crypto
         )

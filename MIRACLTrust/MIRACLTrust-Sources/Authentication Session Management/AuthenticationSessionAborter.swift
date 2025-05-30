@@ -4,29 +4,29 @@ struct AuthenticationSessionAborter: Sendable {
     let accessId: String
     let miraclAPI: APIBlueprint
     let completionHandler: AuthenticationSessionAborterCompletionHandler
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     init(
         accessId: String,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping AuthenticationSessionAborterCompletionHandler
     ) throws {
         self.accessId = accessId.trimmingCharacters(in: .whitespacesAndNewlines)
         self.miraclAPI = miraclAPI
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.completionHandler = completionHandler
 
         try validateInput()
     }
 
     func abort() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .sessionManagement
         )
 
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.abortingSessionRequest,
             category: .sessionManagement
         )
@@ -36,19 +36,19 @@ struct AuthenticationSessionAborter: Sendable {
         ) { result, _, error in
             DispatchQueue.main.async {
                 if result == .success {
-                    miraclLogger.info(
+                    logger.info(
                         message: LoggingConstants.finished,
                         category: .sessionManagement
                     )
                     completionHandler(true, nil)
                 } else if let error = error {
-                    miraclLogger.info(
+                    logger.info(
                         message: "\(LoggingConstants.finishedWithError) = \(error)",
                         category: .sessionManagement
                     )
                     completionHandler(false, AuthenticationSessionError.abortSessionFail(error))
                 } else {
-                    miraclLogger.info(
+                    logger.info(
                         message: "\(LoggingConstants.finishedWithError) = \(AuthenticationSessionError.abortSessionFail(nil))",
                         category: .sessionManagement
                     )

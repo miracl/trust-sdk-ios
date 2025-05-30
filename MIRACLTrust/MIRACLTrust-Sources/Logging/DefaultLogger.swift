@@ -1,6 +1,6 @@
 import os.log
 
-/// Default implementation of [LoggingMessageWriter](x-source-tag://protocols-LoggingMessageWriter) , that uses `os_log`.
+/// Default implementation of ``Logger`` , that uses `os_log`.
 final class DefaultLogger: Logger {
     let level: LoggingLevel
 

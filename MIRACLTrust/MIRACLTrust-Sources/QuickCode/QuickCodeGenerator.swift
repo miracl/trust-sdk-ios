@@ -10,7 +10,7 @@ struct QuickCodeGenerator: Sendable {
     let deviceName: String
     let storage: UserStorage
     let crypto: CryptoBlueprint
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -20,7 +20,7 @@ struct QuickCodeGenerator: Sendable {
         deviceName: String = MIRACLTrust.getInstance().deviceName,
         storage: UserStorage = MIRACLTrust.getInstance().userStorage,
         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping QuickCodeCompletionHandler
     ) {
@@ -29,13 +29,13 @@ struct QuickCodeGenerator: Sendable {
         self.deviceName = deviceName
         self.storage = storage
         self.crypto = crypto
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.didRequestPinHandler = didRequestPinHandler
         self.completionHandler = completionHandler
     }
 
     func generate() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .quickCode
         )
@@ -95,7 +95,7 @@ struct QuickCodeGenerator: Sendable {
     private func executeVerificationRequest(
         for jwt: String
     ) {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.quickCodeVerificationStarted,
             category: .quickCode
         )
@@ -113,7 +113,7 @@ struct QuickCodeGenerator: Sendable {
                     ttlSeconds: response.ttlSeconds
                 )
 
-                miraclLogger.info(
+                logger.info(
                     message: LoggingConstants.finished,
                     category: .quickCode
                 )
@@ -131,7 +131,7 @@ struct QuickCodeGenerator: Sendable {
 
     private func callCompletionHandler(with error: Error) {
         DispatchQueue.main.async {
-            miraclLogger.info(
+            logger.info(
                 message: "\(LoggingConstants.finishedWithError) = \(error)",
                 category: .quickCode
             )
@@ -141,7 +141,7 @@ struct QuickCodeGenerator: Sendable {
     }
 
     private func logOperation(operation: String) {
-        miraclLogger.info(
+        logger.info(
             message: "\(operation)",
             category: .quickCode
         )

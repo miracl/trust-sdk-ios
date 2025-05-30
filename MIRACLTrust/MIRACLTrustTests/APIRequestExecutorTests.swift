@@ -19,13 +19,13 @@ class APIRequestExecutorTests: XCTestCase {
     let example1 = "example1"
     let example2 = "example2"
     let randomNumber = 1
-    let miraclLogger = MIRACLLogger(logger: DefaultLogger(level: .none))
+    let logger = DefaultLogger(level: .none)
 
     override func setUp() {
         mockSession = createMockURLSession()
         requestExecutor = APIRequestExecutor(
             urlSessionConfiguration: URLSessionConfiguration.default,
-            miraclLogger: miraclLogger
+            logger: logger
         )
         requestExecutor?.urlSession = mockSession
     }
@@ -37,7 +37,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
         let example1 = example1
@@ -79,7 +79,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -111,7 +111,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -157,7 +157,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -218,7 +218,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -274,7 +274,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -306,7 +306,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -330,7 +330,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -352,7 +352,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
         mockSession.data = Data()
@@ -374,7 +374,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -404,7 +404,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 
@@ -543,7 +543,7 @@ class APIRequestExecutorTests: XCTestCase {
                 url: exampleURL,
                 path: "examplePath",
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
         )
 

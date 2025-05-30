@@ -132,7 +132,6 @@
 		6DC469C925B9B9A20099866C /* fp12_BN254CX.h in Headers */ = {isa = PBXBuildFile; fileRef = 6DB4E33E23E1B50A00EDF17F /* fp12_BN254CX.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6DC469F525B9B9B70099866C /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB04A33241F69550017F8C8 /* Crypto.swift */; };
 		6DC46A0625B9BAD40099866C /* LoggingConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6C6B562564F9CB000BA52B /* LoggingConstants.swift */; };
-		6DC46A0725B9BAD40099866C /* MIRACLLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D59AC256525E80021E12D /* MIRACLLogger.swift */; };
 		6DC46A0825B9BAD40099866C /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D59CE256527950021E12D /* DefaultLogger.swift */; };
 		6DC46A0A25B9BAD40099866C /* LoggingLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D08C0C325652DCE006934DA /* LoggingLevel.swift */; };
 		6DC46A0B25B9BAD40099866C /* LogCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D59B5256526160021E12D /* LogCategory.swift */; };
@@ -336,7 +335,6 @@
 		6D4A68BF282E3D790074CE18 /* SigningSessionDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetails.swift; sourceTree = "<group>"; };
 		6D4C1B172BC4120400A7C756 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6D4C74EF2A4C548C0099A574 /* VerificationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationResponse.swift; sourceTree = "<group>"; };
-		6D4D59AC256525E80021E12D /* MIRACLLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIRACLLogger.swift; sourceTree = "<group>"; };
 		6D4D59B5256526160021E12D /* LogCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogCategory.swift; sourceTree = "<group>"; };
 		6D4D59C5256526550021E12D /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		6D4D59CE256527950021E12D /* DefaultLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
@@ -654,7 +652,6 @@
 			isa = PBXGroup;
 			children = (
 				6D6C6B562564F9CB000BA52B /* LoggingConstants.swift */,
-				6D4D59AC256525E80021E12D /* MIRACLLogger.swift */,
 				6D4D59C5256526550021E12D /* Logger.swift */,
 				6D4D59CE256527950021E12D /* DefaultLogger.swift */,
 				6D4D59B5256526160021E12D /* LogCategory.swift */,
@@ -1552,7 +1549,6 @@
 				6DC46A0825B9BAD40099866C /* DefaultLogger.swift in Sources */,
 				6D6D9A0A282BE7E700316755 /* SigningSessionDetailsFetcher.swift in Sources */,
 				6DC46A7C25B9BB210099866C /* OSLog+Helper.swift in Sources */,
-				6DC46A0725B9BAD40099866C /* MIRACLLogger.swift in Sources */,
 				6D4A68C0282E3D790074CE18 /* SigningSessionDetails.swift in Sources */,
 				6DC46A5325B9BAFD0099866C /* VerificationError.swift in Sources */,
 				6DC46A4E25B9BAFD0099866C /* VerificationRequestBody.swift in Sources */,
