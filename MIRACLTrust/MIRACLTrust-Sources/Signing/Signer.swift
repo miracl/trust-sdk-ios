@@ -9,7 +9,7 @@ struct Signer: Sendable {
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
     let signingSessionDetails: SigningSessionDetails?
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -19,7 +19,7 @@ struct Signer: Sendable {
          miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
          userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
          crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-         logger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+         logger: Logger = MIRACLTrust.getInstance().logger,
          didRequestSigningPinHandler: @escaping PinRequestHandler,
          completionHandler: @escaping SigningCompletionHandler) throws {
         self.messageHash = messageHash
@@ -30,13 +30,13 @@ struct Signer: Sendable {
         self.completionHandler = completionHandler
         self.miraclAPI = miraclAPI
         self.userStorage = userStorage
-        miraclLogger = logger
+        self.logger = logger
 
         try validateInput()
     }
 
     func sign() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .signing
         )
@@ -165,7 +165,7 @@ struct Signer: Sendable {
                 timestamp: timestamp
             )
         } else {
-            miraclLogger.info(
+            logger.info(
                 message: LoggingConstants.finished,
                 category: .signing
             )
@@ -216,7 +216,7 @@ struct Signer: Sendable {
                     error: SigningError.invalidSigningSession
                 )
             case .signed:
-                miraclLogger.info(
+                logger.info(
                     message: LoggingConstants.finished,
                     category: .signing
                 )
@@ -232,7 +232,7 @@ struct Signer: Sendable {
         error: Error? = nil
     ) {
         if let error {
-            miraclLogger.error(
+            logger.error(
                 message: "\(LoggingConstants.finishedWithError)=\(error)",
                 category: .signing
             )
@@ -266,7 +266,7 @@ struct Signer: Sendable {
     }
 
     private func logOperation(operation: String) {
-        miraclLogger.info(
+        logger.info(
             message: "\(operation)",
             category: .signingRegistration
         )

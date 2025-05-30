@@ -9,7 +9,7 @@ struct QRAuthenticator: Sendable {
     let completionHandler: AuthenticationCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let crypto: CryptoBlueprint
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -20,7 +20,7 @@ struct QRAuthenticator: Sendable {
         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -31,12 +31,12 @@ struct QRAuthenticator: Sendable {
         self.userStorage = userStorage
         self.miraclAPI = miraclAPI
         self.didRequestPinHandler = didRequestPinHandler
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.completionHandler = completionHandler
     }
 
     func authenticate() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .authentication
         )
@@ -78,7 +78,7 @@ struct QRAuthenticator: Sendable {
     }
 
     @Sendable private func authenticationResult(response: AuthenticateResponse?, error: Error?) {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.finished,
             category: .registration
         )
@@ -98,7 +98,7 @@ struct QRAuthenticator: Sendable {
         error: Error? = nil
     ) {
         if let error {
-            miraclLogger.error(
+            logger.error(
                 message: "\(LoggingConstants.finishedWithError)=\(error)",
                 category: .authentication
             )

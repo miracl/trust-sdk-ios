@@ -12,19 +12,19 @@ struct API: Sendable, APIBlueprint {
     let baseURL: URL
 
     var executor: APIRequestExecutor
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     init(
         baseURL: URL,
         urlSessionConfiguration: URLSessionConfiguration,
-        miraclLogger: MIRACLLogger
+        logger: Logger
     ) {
         self.baseURL = baseURL
         executor = APIRequestExecutor(
             urlSessionConfiguration: urlSessionConfiguration,
-            miraclLogger: miraclLogger
+            logger: logger
         )
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         clientSettings = APISettings(platformURL: baseURL)
     }
 
@@ -54,7 +54,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .put,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(apiRequest: request, completion: completionHandler)
@@ -81,7 +81,7 @@ struct API: Sendable, APIBlueprint {
                 path: "/\(mpinId)",
                 queryParameters: ["regOTT": regOTT, "publicKey": publicKey],
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(apiRequest: request, completion: completionHandler)
@@ -104,7 +104,7 @@ struct API: Sendable, APIBlueprint {
                 url: cs2URL,
                 path: nil,
                 requestBody: EmptyRequestBody(),
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(apiRequest: request, completion: completionHandler)
@@ -143,7 +143,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: pass1RequestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
             executor.execute(apiRequest: request, completion: completionHandler)
         } catch {
@@ -175,7 +175,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: pass2RequestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(apiRequest: request, completion: completionHandler)
@@ -202,7 +202,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             let jsonDecoder = JSONDecoder()
@@ -240,7 +240,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(apiRequest: request, completion: completionHandler)
@@ -281,7 +281,7 @@ struct API: Sendable, APIBlueprint {
                 method: .post,
                 queryParameters: nil,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
             executor.execute(apiRequest: request, completion: completionHandler)
         } catch {
@@ -310,7 +310,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
             let jsonDecoder = JSONDecoder()
             jsonDecoder.dateDecodingStrategy = .secondsSince1970
@@ -337,7 +337,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(
@@ -363,7 +363,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(
@@ -392,7 +392,7 @@ struct API: Sendable, APIBlueprint {
                 path: nil,
                 method: .post,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(
@@ -419,7 +419,7 @@ struct API: Sendable, APIBlueprint {
                 method: .post,
                 queryParameters: nil,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(
@@ -450,7 +450,7 @@ struct API: Sendable, APIBlueprint {
                 method: .put,
                 queryParameters: nil,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(
@@ -475,7 +475,7 @@ struct API: Sendable, APIBlueprint {
                 method: .delete,
                 queryParameters: nil,
                 requestBody: abortSigningSessionRequestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(
@@ -506,7 +506,7 @@ struct API: Sendable, APIBlueprint {
                 method: .post,
                 queryParameters: nil,
                 requestBody: requestBody,
-                miraclLogger: miraclLogger
+                logger: logger
             )
 
             executor.execute(

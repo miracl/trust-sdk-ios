@@ -8,7 +8,7 @@ struct JWTGenerator: Sendable {
     let didRequestPinHandler: PinRequestHandler
     let deviceName: String
     let crypto: CryptoBlueprint
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -18,7 +18,7 @@ struct JWTGenerator: Sendable {
         deviceName: String = MIRACLTrust.getInstance().deviceName,
         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping JWTCompletionHandler
     ) {
@@ -28,7 +28,7 @@ struct JWTGenerator: Sendable {
         self.didRequestPinHandler = didRequestPinHandler
         self.userStorage = userStorage
         self.crypto = crypto
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.completionHandler = completionHandler
     }
 
@@ -89,7 +89,7 @@ struct JWTGenerator: Sendable {
     }
 
     private func logOperation(operation: String) {
-        miraclLogger.info(
+        logger.info(
             message: "\(operation)",
             category: .jwtGeneration
         )

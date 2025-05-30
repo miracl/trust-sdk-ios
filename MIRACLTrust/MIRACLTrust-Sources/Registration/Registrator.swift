@@ -13,7 +13,7 @@ final class Registrator: Sendable {
     let crypto: CryptoBlueprint
     let projectId: String
     let userStorage: UserStorage
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     private let pinLengthRange = 4 ... 6
 
@@ -26,7 +26,7 @@ final class Registrator: Sendable {
         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
         projectId: String = MIRACLTrust.getInstance().projectId,
         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping RegistrationCompletionHandler
     ) throws {
@@ -42,7 +42,7 @@ final class Registrator: Sendable {
 
         self.projectId = projectId
         self.userStorage = userStorage
-        self.miraclLogger = miraclLogger
+        self.logger = logger
 
         try validateInput()
     }
@@ -53,7 +53,7 @@ final class Registrator: Sendable {
         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
         projectId: String = MIRACLTrust.getInstance().projectId,
         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping RegistrationCompletionHandler
     ) {
@@ -68,11 +68,11 @@ final class Registrator: Sendable {
         self.completionHandler = completionHandler
         miraclAPI = api
         self.crypto = crypto
-        self.miraclLogger = miraclLogger
+        self.logger = logger
     }
 
     func register() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .registration
         )
@@ -381,7 +381,7 @@ final class Registrator: Sendable {
                 by: userId,
                 projectId: projectId
             ) != nil {
-                miraclLogger.info(
+                logger.info(
                     message: LoggingConstants.registrationOverride,
                     category: .registration
                 )
@@ -392,7 +392,7 @@ final class Registrator: Sendable {
                     self.completionHandler(user, nil)
                 }
             } else {
-                miraclLogger.info(
+                logger.info(
                     message: LoggingConstants.storageАddAuthenticationIdentity,
                     category: .registration
                 )
@@ -404,7 +404,7 @@ final class Registrator: Sendable {
                 }
             }
 
-            miraclLogger.info(
+            logger.info(
                 message: LoggingConstants.finished,
                 category: .registration
             )
@@ -432,7 +432,7 @@ final class Registrator: Sendable {
     }
 
     private func logOperation(operation: String) {
-        miraclLogger.info(
+        logger.info(
             message: "\(operation)",
             category: .registration
         )

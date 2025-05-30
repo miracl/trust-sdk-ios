@@ -8,12 +8,12 @@ struct VerificationConfirmationHandler: Sendable {
     let completionHandler: ActivationTokenCompletionHandler
     let activationCode: String?
     let userId: String?
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     init(
         verificationURL: URL,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI
@@ -26,7 +26,7 @@ struct VerificationConfirmationHandler: Sendable {
 
         activationCode = VerificationConfirmationHandler.getActivationCode(components: components)
         userId = VerificationConfirmationHandler.getUserId(components: components)
-        self.miraclLogger = miraclLogger
+        self.logger = logger
 
         try validateInput()
     }
@@ -35,14 +35,14 @@ struct VerificationConfirmationHandler: Sendable {
         userId: String,
         activationCode: String,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI
         self.completionHandler = completionHandler
         self.activationCode = activationCode
         self.userId = userId
-        self.miraclLogger = miraclLogger
+        self.logger = logger
 
         try validateInput()
     }
@@ -169,7 +169,7 @@ struct VerificationConfirmationHandler: Sendable {
     }
 
     private func logOperation(operation: String) {
-        miraclLogger.info(
+        logger.info(
             message: "\(operation)",
             category: .verificationConfirmation
         )

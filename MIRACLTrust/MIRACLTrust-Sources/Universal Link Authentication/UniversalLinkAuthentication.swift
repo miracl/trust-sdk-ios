@@ -9,7 +9,7 @@ struct UniversalLinkAuthenticator: Sendable {
     let deviceName: String
     let completionHandler: AuthenticationCompletionHandler
     let didRequestPinHandler: PinRequestHandler
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -20,7 +20,7 @@ struct UniversalLinkAuthenticator: Sendable {
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -30,13 +30,13 @@ struct UniversalLinkAuthenticator: Sendable {
         self.userStorage = userStorage
         self.crypto = crypto
         self.miraclAPI = miraclAPI
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.didRequestPinHandler = didRequestPinHandler
         self.completionHandler = completionHandler
     }
 
     func authenticate() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .authentication
         )
@@ -78,7 +78,7 @@ struct UniversalLinkAuthenticator: Sendable {
     }
 
     @Sendable private func authenticationResult(response: AuthenticateResponse?, error: Error?) {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.finished,
             category: .authentication
         )
@@ -98,7 +98,7 @@ struct UniversalLinkAuthenticator: Sendable {
         error: Error? = nil
     ) {
         if let error {
-            miraclLogger.error(
+            logger.error(
                 message: "\(LoggingConstants.finishedWithError)=\(error)",
                 category: .authentication
             )

@@ -6,16 +6,16 @@ struct SigningSessionDetailsFetcher: Sendable {
     let accessId: String
     let miraclAPI: APIBlueprint
     let completionHandler: SigningSessionDetailsCompletionHandler
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     init(
         qrCode: String,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping SigningSessionDetailsCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         accessId = try SigningSessionDetailsFetcher.getAccessId(from: qrCode)
         self.completionHandler = completionHandler
     }
@@ -23,11 +23,11 @@ struct SigningSessionDetailsFetcher: Sendable {
     init(
         universalLinkURL: URL,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping SigningSessionDetailsCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         accessId = try SigningSessionDetailsFetcher.getAccessId(from: universalLinkURL)
         self.completionHandler = completionHandler
     }

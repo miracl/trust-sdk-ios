@@ -4,16 +4,16 @@ struct AuthenticationSessionDetailsFetcher: Sendable {
     let accessId: String
     let miraclAPI: APIBlueprint
     let completionHandler: AuthenticationSessionDetailsCompletionHandler
-    let miraclLogger: MIRACLLogger
+    let logger: Logger
 
     init(
         qrCode: String,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
     ) throws {
         accessId = try AuthenticationSessionDetailsFetcher.getAccessId(from: qrCode)
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.miraclAPI = miraclAPI
         self.completionHandler = completionHandler
     }
@@ -21,11 +21,11 @@ struct AuthenticationSessionDetailsFetcher: Sendable {
     init(
         universalLinkURL: URL,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
     ) throws {
         accessId = try AuthenticationSessionDetailsFetcher.getAccessId(from: universalLinkURL)
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.miraclAPI = miraclAPI
         self.completionHandler = completionHandler
     }
@@ -33,22 +33,22 @@ struct AuthenticationSessionDetailsFetcher: Sendable {
     init(
         pushNotificationsPayload: [AnyHashable: Any],
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        miraclLogger: MIRACLLogger = MIRACLTrust.getInstance().miraclLogger,
+        logger: Logger = MIRACLTrust.getInstance().logger,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
     ) throws {
         accessId = try AuthenticationSessionDetailsFetcher.getAccessId(from: pushNotificationsPayload)
-        self.miraclLogger = miraclLogger
+        self.logger = logger
         self.miraclAPI = miraclAPI
         self.completionHandler = completionHandler
     }
 
     func fetch() {
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.started,
             category: .sessionManagement
         )
 
-        miraclLogger.info(
+        logger.info(
             message: LoggingConstants.fetchSessionDetailsRequest,
             category: .sessionManagement
         )
@@ -74,20 +74,20 @@ struct AuthenticationSessionDetailsFetcher: Sendable {
                         accessId: accessId
                     )
 
-                    miraclLogger.info(
+                    logger.info(
                         message: LoggingConstants.finished,
                         category: .sessionManagement
                     )
 
                     completionHandler(sessionDetails, nil)
                 } else if let error = error {
-                    miraclLogger.info(
+                    logger.info(
                         message: "\(LoggingConstants.finishedWithError) = \(error)",
                         category: .sessionManagement
                     )
                     completionHandler(nil, AuthenticationSessionError.getAuthenticationSessionDetailsFail(error))
                 } else {
-                    miraclLogger.info(
+                    logger.info(
                         message: "\(LoggingConstants.finishedWithError) = \(AuthenticationSessionError.getAuthenticationSessionDetailsFail(nil))",
                         category: .sessionManagement
                     )
