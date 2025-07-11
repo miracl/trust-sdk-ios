@@ -40,7 +40,7 @@ class RegistratorTests: XCTestCase {
         try MIRACLTrust.configure(with: configuration)
     }
 
-    func testRegistrationSuccessful() throws {
+    func testRegistratorSuccessful() throws {
         let userId = userId
         let dtas = dtas
         let clientToken = clientToken
@@ -62,7 +62,7 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testOverrideExistingAuthenticationUser() throws {
+    func testRegistratorOverrideExisitngUser() throws {
         let expectation = XCTestExpectation(description: "Cannot create Registrator.")
 
         let userId = userId
@@ -120,7 +120,7 @@ class RegistratorTests: XCTestCase {
         wait(for: [expectation1], timeout: 20.0)
     }
 
-    func testRegistrationFailedWithEmptyOrBlankUserId() {
+    func testRegistratorEmptyOrBlankUserId() {
         XCTAssertThrowsError(try Registrator(userId: "",
                                              activationToken: activationToken,
                                              deviceName: randomString,
@@ -146,12 +146,38 @@ class RegistratorTests: XCTestCase {
         }
     }
 
-    func testRegisterUserBadStatusCodeRequest() throws {
-        let expectedCause = APIError.apiServerError(statusCode: 400, message: nil, requestURL: nil)
+    func testEmptyActivationToken() throws {
+        XCTAssertThrowsError(try Registrator(userId: userId,
+                                             activationToken: "",
+                                             deviceName: randomString,
+                                             api: mockAPI,
+                                             userStorage: storage,
+                                             projectId: NSUUID().uuidString,
+                                             didRequestPinHandler: didRequestPinHandler,
+                                             completionHandler: { _, _ in })) { error in
+            XCTAssertTrue(error is RegistrationError)
+            XCTAssertEqual(error as? RegistrationError, RegistrationError.emptyActivationToken)
+        }
 
+        XCTAssertThrowsError(try Registrator(userId: userId,
+                                             activationToken: " ",
+                                             deviceName: randomString,
+                                             api: mockAPI,
+                                             userStorage: storage,
+                                             projectId: NSUUID().uuidString,
+                                             didRequestPinHandler: didRequestPinHandler,
+                                             completionHandler: { _, _ in })) { error in
+            XCTAssertTrue(error is RegistrationError)
+            XCTAssertEqual(error as? RegistrationError, RegistrationError.emptyActivationToken)
+        }
+    }
+
+    func testRegistratorKeyPairError() throws {
+        let expectedCause = CryptoError.generateSigningKeypairError(info: "")
         let desiredError = RegistrationError.registrationFail(expectedCause)
-        mockAPI.registerUserError = expectedCause
-        mockAPI.registrationResponse = nil
+
+        crypto = RegistratorTests.mockCrypto()
+        crypto.keyPairError = expectedCause
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -162,10 +188,10 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterUserInvalidActivationTokenError() throws {
+    func testRegistratorInvalidActivationTokenError() throws {
         let desiredError = RegistrationError.invalidActivationToken
 
-        mockAPI.registerUserError = apiClientError(with: "INVALID_ACTIVATION_TOKEN")
+        mockAPI.registrationError = apiClientError(with: "INVALID_ACTIVATION_TOKEN")
         mockAPI.registrationResponse = nil
 
         try register(completionHandler: { user, error in
@@ -177,13 +203,13 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterUserMalformedJSONRequest() throws {
+    func testRegistratorErrorInRegistrationResponse() throws {
         let testError = TestJsonMalformedError.fail
         let expectedCause = APIError.apiMalformedJSON(testError, nil)
 
         let desiredError = RegistrationError.registrationFail(expectedCause)
 
-        mockAPI.registerUserError = expectedCause
+        mockAPI.registrationError = expectedCause
         mockAPI.registrationResponse = nil
 
         try register(completionHandler: { user, error in
@@ -195,39 +221,11 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterNoRegistrationResponse() throws {
+    func testRegistratorNilRegistrationResponse() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
-        let invalidRegistrationResponse = RegistrationResponse(
-            mpinId: "",
-            regOTT: "",
-            projectId: projectId
-        )
-
-        mockAPI.registerUserError = nil
-        mockAPI.registrationResponse = invalidRegistrationResponse
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterInvalidRegistrationResponse() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        let invalidRegistrationResponse = RegistrationResponse(
-            mpinId: "  ",
-            regOTT: "  ",
-            projectId: projectId
-        )
-
-        mockAPI.registerUserError = nil
-        mockAPI.registrationResponse = invalidRegistrationResponse
+        mockAPI.registrationError = nil
+        mockAPI.registrationResponse = nil
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -238,17 +236,11 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterInvalidRegistrationResponseWithSpaces() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
+    func testRegistratorProjectMismatch() throws {
+        let desiredError = RegistrationError.projectMismatch
 
-        let invalidRegistrationResponse = RegistrationResponse(
-            mpinId: "  ",
-            regOTT: "  ",
-            projectId: projectId
-        )
-
-        mockAPI.registerUserError = nil
-        mockAPI.registrationResponse = invalidRegistrationResponse
+        mockAPI.registrationResponse?.projectId = UUID().uuidString
+        mockAPI.registrationError = nil
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -259,146 +251,11 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterFailedSignatureRequest() throws {
-        let expectedCause = APIError.apiServerError(statusCode: 500, message: nil, requestURL: nil)
-
-        let desiredError = RegistrationError.registrationFail(expectedCause)
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = expectedCause
-        mockAPI.signatureResponse = nil
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterFailedSignatureRequestWithNoData() throws {
-        let expectedCause = APIError.executionError("No data when request is succesful.", nil)
-
-        let desiredError = RegistrationError.registrationFail(expectedCause)
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = expectedCause
-        mockAPI.signatureResponse = nil
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterFailedSignatureMalformedJSON() throws {
-        let exampleError = TestJsonMalformedError.fail
-        let expectedCause = APIError.apiMalformedJSON(exampleError, nil)
-
-        let desiredError = RegistrationError.registrationFail(expectedCause)
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = expectedCause
-        mockAPI.signatureResponse = nil
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterInvalidSignatureResponse() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = nil
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterEmptySignatureResponse() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = SignatureResponse()
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterInvalidSignatureResponseEmptyClientSecret() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = "   "
-        emptySignatureResponse.curve = "BN254CX"
-        emptySignatureResponse.dtas = NSUUID().uuidString
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = emptySignatureResponse
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterInvalidSignatureResponseEmptyCurve() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = NSUUID().uuidString
-        emptySignatureResponse.curve = " "
-        emptySignatureResponse.dtas = NSUUID().uuidString
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = emptySignatureResponse
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterInvalidSignatureResponseUnsupportedCurve() throws {
+    func testRegistratorWrongElipticCurve() throws {
         let desiredError = RegistrationError.unsupportedEllipticCurve
 
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = NSUUID().uuidString
-        emptySignatureResponse.curve = "BLS48556"
-        emptySignatureResponse.dtas = NSUUID().uuidString
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = emptySignatureResponse
+        mockAPI.registrationResponse?.curve = UUID().uuidString
+        mockAPI.registrationError = nil
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -409,17 +266,11 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterInvalidSignatureResponseEmptyDtas() throws {
+    func testRegistratorEmptySecretUrls() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = NSUUID().uuidString
-        emptySignatureResponse.curve = "BN254CX"
-        emptySignatureResponse.dtas = " "
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = emptySignatureResponse
+        mockAPI.registrationResponse?.secretUrls = []
+        mockAPI.registrationError = nil
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -430,18 +281,47 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterInvalidSignatureResponseNoURL() throws {
+    func testRegistratorInvalidClientSecretURLs() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = NSUUID().uuidString
-        emptySignatureResponse.curve = "BN254CX"
-        emptySignatureResponse.dtas = NSUUID().uuidString
-        emptySignatureResponse.cs2URL = nil
+        // Invalid URL is at [0]
+        mockAPI.registrationResponse?.secretUrls = [
+            "https:// example. com/my endpoint ",
+            "https://example.com"
+        ]
+        mockAPI.registrationError = nil
 
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = emptySignatureResponse
+        try register(completionHandler: { user, error in
+            XCTAssertNil(user)
+            assertError(
+                current: error,
+                expected: desiredError
+            )
+        })
+
+        // Invalid URL is at [1]
+        mockAPI.registrationResponse?.secretUrls = [
+            "https://example.com",
+            "https:// example. com/my endpoint "
+        ]
+
+        mockAPI.registrationError = nil
+        try register(completionHandler: { user, error in
+            XCTAssertNil(user)
+            assertError(
+                current: error,
+                expected: desiredError
+            )
+        })
+    }
+
+    func testRegistratorErrorOnFirstClientSecretRequest() throws {
+        let cause = TestJsonMalformedError.fail
+        let desiredError = RegistrationError.registrationFail(cause)
+
+        mockAPI.clientSecretResponsesManager.clientSecret1Error = TestJsonMalformedError.fail
+        mockAPI.clientSecretResponsesManager.clientSecret1Response = nil
+        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .failed
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -452,22 +332,12 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterInvalidSignatureResponseWrongURL() throws {
+    func testRegistratorNilResponseOnFirstClientSecretRequest() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = NSUUID().uuidString
-        emptySignatureResponse.curve = "BN254CX"
-        emptySignatureResponse.dtas = NSUUID().uuidString
-        if #available(iOS 17.0, *) {
-            emptySignatureResponse.cs2URL = URL(string: "not url", encodingInvalidCharacters: false)
-        } else {
-            emptySignatureResponse.cs2URL = URL(string: "not url")
-        }
-
-        mockAPI = createMockAPI()
-        mockAPI.signatureError = nil
-        mockAPI.signatureResponse = emptySignatureResponse
+        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
+        mockAPI.clientSecretResponsesManager.clientSecret1Response = nil
+        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .failed
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -478,27 +348,13 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterGetClientSecret2BadStatusCode() throws {
-        let expectedCause = APIError.apiServerError(statusCode: 500, message: nil, requestURL: nil)
-        let desiredError = RegistrationError.registrationFail(expectedCause)
+    func testRegistratorErrorOnSecondClientSecretRequest() throws {
+        let cause = TestJsonMalformedError.fail
+        let desiredError = RegistrationError.registrationFail(cause)
 
-        mockAPI = createMockAPI()
-        mockAPI.clientSecretError = expectedCause
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterGetClientSecret2InvalidResponse() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        mockAPI = createMockAPI()
-        mockAPI.clientSecretResponse = nil
+        mockAPI.clientSecretResponsesManager.clientSecret2Error = TestJsonMalformedError.fail
+        mockAPI.clientSecretResponsesManager.clientSecret2Response = nil
+        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .failed
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -509,13 +365,84 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterGetClientSecret2EmptySecret() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-        mockAPI = createMockAPI()
+    func testRegistratorWithRetry() throws {
+        let cause = APIError.executionError("", nil)
 
-        var clientSecretResponse = ClientSecretResponse()
-        clientSecretResponse.dvsClientSecret = ""
-        mockAPI.clientSecretResponse = clientSecretResponse
+        mockAPI.clientSecretResponsesManager.retryInProgress = false
+        mockAPI.clientSecretResponsesManager.retryEnabled = true
+
+        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .failed
+        mockAPI.clientSecretResponsesManager.clientSecret1Response = nil
+        mockAPI.clientSecretResponsesManager.clientSecret1Error = cause
+
+        mockAPI.clientSecretResponsesManager.clientSecret1RetryResultCall = .success
+        mockAPI.clientSecretResponsesManager.clientSecret1RetryResponse = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
+        mockAPI.clientSecretResponsesManager.clientSecret1RetryError = nil
+
+        try register(completionHandler: { user, error in
+            do {
+                let user = try XCTUnwrap(user)
+
+                XCTAssertEqual(user.userId, self.userId)
+                XCTAssertEqual(user.dtas, self.dtas)
+                XCTAssertEqual(user.token, self.clientToken)
+                XCTAssertEqual(user.mpinId, Data(hexString: self.mpinId))
+                XCTAssertEqual(user.hashedMpinId, self.hashOfMpinId)
+            } catch {
+                XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
+            }
+        })
+    }
+
+    func testRegistratorWithRetryForSecondClientSecretRequest() throws {
+        let cause = APIError.executionError("", nil)
+
+        mockAPI.clientSecretResponsesManager.retryEnabledForSecondClientSecret = true
+
+        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .success
+        mockAPI.clientSecretResponsesManager.clientSecret1Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
+        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
+
+        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .failed
+        mockAPI.clientSecretResponsesManager.clientSecret2Response = nil
+        mockAPI.clientSecretResponsesManager.clientSecret2Error = cause
+
+        mockAPI.clientSecretResponsesManager.clientSecret2RetryResultCall = .success
+        mockAPI.clientSecretResponsesManager.clientSecret2RetryResponse = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
+        mockAPI.clientSecretResponsesManager.clientSecret2RetryError = nil
+
+        try register(completionHandler: { user, error in
+            do {
+                let user = try XCTUnwrap(user)
+
+                XCTAssertEqual(user.userId, self.userId)
+                XCTAssertEqual(user.dtas, self.dtas)
+                XCTAssertEqual(user.token, self.clientToken)
+                XCTAssertEqual(user.mpinId, Data(hexString: self.mpinId))
+                XCTAssertEqual(user.hashedMpinId, self.hashOfMpinId)
+            } catch {
+                XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
+            }
+        })
+    }
+
+    func testRegistratorExecutionErrorForSecondRequest() throws {
+        let cause = APIError.executionError("", nil)
+        let desiredError = RegistrationError.registrationFail(cause)
+
+        mockAPI.clientSecretResponsesManager.retryEnabledForSecondClientSecret = true
+
+        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .success
+        mockAPI.clientSecretResponsesManager.clientSecret1Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
+        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
+
+        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .failed
+        mockAPI.clientSecretResponsesManager.clientSecret2Response = nil
+        mockAPI.clientSecretResponsesManager.clientSecret2Error = cause
+
+        mockAPI.clientSecretResponsesManager.clientSecret2RetryResultCall = .failed
+        mockAPI.clientSecretResponsesManager.clientSecret2RetryResponse = nil
+        mockAPI.clientSecretResponsesManager.clientSecret2RetryError = cause
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -526,27 +453,10 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterGetClientSecret2SpacesSecret() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-        mockAPI = createMockAPI()
-
-        var clientSecretResponse = ClientSecretResponse()
-        clientSecretResponse.dvsClientSecret = "  \n  "
-        mockAPI.clientSecretResponse = clientSecretResponse
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterGetTokenShortPIN() throws {
+    func testRegistratorStringPIN() throws {
         let desiredError = RegistrationError.invalidPin
         didRequestPinHandler = { pinProcessor in
-            pinProcessor("123")
+            pinProcessor("nil")
         }
 
         try register(completionHandler: { user, error in
@@ -558,22 +468,7 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterGetTokenLongerPIN() throws {
-        let desiredError = RegistrationError.invalidPin
-        didRequestPinHandler = { pinProcessor in
-            pinProcessor("1234567890")
-        }
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegisterGetTokenNilPIN() throws {
+    func testRegistratorNilPIN() throws {
         let desiredError = RegistrationError.pinCancelled
         didRequestPinHandler = { pinProcessor in
             pinProcessor(nil)
@@ -588,7 +483,51 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterGetWrongClientToken() throws {
+    func testRegistratorShortPIN() throws {
+        let desiredError = RegistrationError.invalidPin
+        didRequestPinHandler = { pinProcessor in
+            pinProcessor("123")
+        }
+
+        try register(completionHandler: { user, error in
+            XCTAssertNil(user)
+            assertError(
+                current: error,
+                expected: desiredError
+            )
+        })
+    }
+
+    func testRegistratorLongerPIN() throws {
+        let desiredError = RegistrationError.invalidPin
+        didRequestPinHandler = { pinProcessor in
+            pinProcessor("1234567890")
+        }
+
+        try register(completionHandler: { user, error in
+            XCTAssertNil(user)
+            assertError(
+                current: error,
+                expected: desiredError
+            )
+        })
+    }
+
+    func testRegistratorErrorOneSecretURL() throws {
+        let desiredError = RegistrationError.registrationFail(nil)
+
+        mockAPI.registrationResponse?.secretUrls = ["https://example.com"]
+
+        try register(completionHandler: { user, error in
+            XCTAssertNil(user)
+            assertError(
+                current: error,
+                expected: desiredError
+            )
+        })
+    }
+
+    func testRegistratorCryptoClientTokenError() throws {
         let expectedCause = CryptoError.getClientTokenError(info: "")
 
         let desiredError = RegistrationError.registrationFail(expectedCause)
@@ -605,61 +544,11 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegisterInvalidClientToken() throws {
+    func testRegistratorEmptyDataClientToken() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
         crypto = RegistratorTests.mockCrypto()
         crypto.signingClientToken = Data()
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testEmptyActivationToken() throws {
-        XCTAssertThrowsError(try Registrator(userId: userId,
-                                             activationToken: "",
-                                             deviceName: randomString,
-                                             api: mockAPI,
-                                             userStorage: storage,
-                                             projectId: NSUUID().uuidString,
-                                             didRequestPinHandler: didRequestPinHandler,
-                                             completionHandler: { _, _ in })) { error in
-            XCTAssertTrue(error is RegistrationError)
-            XCTAssertEqual(error as? RegistrationError, RegistrationError.emptyActivationToken)
-        }
-    }
-
-    func testProjectMismatch() throws {
-        let desiredError = RegistrationError.projectMismatch
-        let randomString = UUID().uuidString
-
-        let projectMismatchRegistrationResponse = RegistrationResponse(
-            mpinId: mpinId,
-            regOTT: randomString,
-            projectId: randomString
-        )
-
-        mockAPI.registrationResponse = projectMismatchRegistrationResponse
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testNilRegistrationResponse() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        mockAPI.registrationResponse = nil
-        mockAPI.registerUserError = nil
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -700,39 +589,32 @@ class RegistratorTests: XCTestCase {
     private func createMockAPI() -> MockAPI {
         let randomString = NSUUID().uuidString
 
-        let validRegistration = RegistrationResponse(
-            mpinId: mpinId,
-            regOTT: randomString,
-            projectId: projectId
-        )
-
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = randomString
-        emptySignatureResponse.curve = "BN254CX"
-        emptySignatureResponse.dtas = dtas
-        emptySignatureResponse.cs2URL = URL(string: "https://www.example.com")
-
         var clientSecretResponse = ClientSecretResponse()
         clientSecretResponse.dvsClientSecret = randomString
 
+        let registrationResponse2 = RegistrationResponse(
+            mpinId: mpinId,
+            projectId: projectId,
+            dtas: dtas,
+            curve: "BN254CX",
+            secretUrls: [
+                "https://www.example.com",
+                "https://www.example1.com"
+            ]
+        )
+
         var mockAPI = MockAPI()
-        mockAPI.registrationResponse = validRegistration
-        mockAPI.signatureResponse = emptySignatureResponse
-        mockAPI.clientSecretResponse = clientSecretResponse
+        mockAPI.registrationResponse = registrationResponse2
+
+        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .success
+        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
+        mockAPI.clientSecretResponsesManager.clientSecret1Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
+
+        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .success
+        mockAPI.clientSecretResponsesManager.clientSecret2Error = nil
+        mockAPI.clientSecretResponsesManager.clientSecret2Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
 
         return mockAPI
-    }
-
-    private func getDBFilePath() -> String {
-        var path = ""
-        do {
-            let fileURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            path = fileURL.appendingPathComponent("miracl-test.sqlite").relativePath
-        } catch {
-            XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
-        }
-
-        return path
     }
 
     private func apiClientError(with code: String, context: [String: String]? = nil) -> APIError {

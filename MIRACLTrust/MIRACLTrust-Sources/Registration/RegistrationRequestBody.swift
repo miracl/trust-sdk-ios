@@ -1,6 +1,7 @@
-class RegistrationRequestBody: Codable {
-    var userId: String = ""
-    var deviceName: String = ""
-    var activateCode: String = ""
+struct RegistrationRequestBody: Codable {
+    var userId: String
+    var deviceName: String
+    var activationToken: String
+    var publicKey: String
     var pushToken: String?
 }

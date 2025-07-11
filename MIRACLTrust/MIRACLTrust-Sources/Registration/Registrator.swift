@@ -31,7 +31,7 @@ final class Registrator: Sendable {
         completionHandler: @escaping RegistrationCompletionHandler
     ) throws {
         self.userId = userId.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.activationToken = activationToken
+        self.activationToken = activationToken.trimmingCharacters(in: .whitespacesAndNewlines)
         self.deviceName = deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
         self.pushNotificationsToken = pushNotificationsToken
         self.didRequestPinHandler = didRequestPinHandler
@@ -45,30 +45,6 @@ final class Registrator: Sendable {
         self.logger = logger
 
         try validateInput()
-    }
-
-    init(
-        userId: String,
-        api: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        projectId: String = MIRACLTrust.getInstance().projectId,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        logger: Logger = MIRACLTrust.getInstance().logger,
-        didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping RegistrationCompletionHandler
-    ) {
-        self.userId = userId
-        activationToken = ""
-        deviceName = ""
-        pushNotificationsToken = ""
-        self.projectId = projectId
-        self.userStorage = userStorage
-
-        self.didRequestPinHandler = didRequestPinHandler
-        self.completionHandler = completionHandler
-        miraclAPI = api
-        self.crypto = crypto
-        self.logger = logger
     }
 
     func register() {
@@ -87,61 +63,7 @@ final class Registrator: Sendable {
     private func registerUser() {
         logOperation(operation: LoggingConstants.registerRequest)
 
-        miraclAPI.registerUser(
-            for: userId,
-            deviceName: deviceName,
-            activationToken: activationToken,
-            pushToken: pushNotificationsToken,
-            completionHandler: { apiCallResult, registerResponse, error in
-                if apiCallResult == .failed, let error = error {
-                    if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_ACTIVATION_TOKEN {
-                        self.callCompletionHandlerWithError(error: RegistrationError.invalidActivationToken)
-                        return
-                    }
-
-                    self.logOperation(operation: "registerUser error = \(error)")
-
-                    self.callCompletionHandlerWithError(
-                        error: RegistrationError.registrationFail(error)
-                    )
-                    return
-                }
-
-                guard let registerResponse = registerResponse else {
-                    self.logOperation(operation: "registerUser error with nil response")
-
-                    self.callCompletionHandlerWithError(
-                        error: RegistrationError.registrationFail(error)
-                    )
-                    return
-                }
-
-                if registerResponse.projectId != self.projectId {
-                    self.callCompletionHandlerWithError(error: RegistrationError.projectMismatch)
-                    return
-                }
-
-                let trimmedMpinId = registerResponse.mpinId.trimmingCharacters(in: .whitespacesAndNewlines)
-                let trimmedRegOtt = registerResponse.regOTT.trimmingCharacters(in: .whitespacesAndNewlines)
-
-                if trimmedMpinId.isEmpty || trimmedRegOtt.isEmpty {
-                    self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(nil))
-                    return
-                }
-
-                self.signature(
-                    mpinIdString: trimmedMpinId,
-                    regOTT: trimmedRegOtt
-                )
-            }
-        )
-    }
-
-    private func signature(mpinIdString: String, regOTT: String) {
-        logOperation(operation: LoggingConstants.signatureRequest)
-
         let keyPairResult = crypto.generateKeyPair()
-
         if let cryptoError = keyPairResult.error {
             callCompletionHandlerWithError(
                 error: RegistrationError.registrationFail(cryptoError)
@@ -149,164 +71,152 @@ final class Registrator: Sendable {
             return
         }
 
-        miraclAPI.signature(for: mpinIdString, regOTT: regOTT, publicKey: keyPairResult.publicKey.hex) { apiCallResult, signatureResponse, error in
-            if apiCallResult == .failed, let error = error {
-                self.logOperation(operation: "signature error = \(error)")
-
-                self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(error))
-                return
-            }
-
-            guard let signatureResponse = signatureResponse else {
-                self.logOperation(operation: "signature response = nil")
-
-                self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(nil)
-                )
-                return
-            }
-
-            let trimmedCS1 = signatureResponse.dvsClientSecretShare.trimmingCharacters(in: .whitespacesAndNewlines)
-            let trimmedCurve = signatureResponse.curve.trimmingCharacters(in: .whitespacesAndNewlines)
-            let trimmedDtas = signatureResponse.dtas.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            if trimmedCS1.isEmpty || trimmedCurve.isEmpty || trimmedDtas.isEmpty {
-                self.callCompletionHandlerWithError(
-                    error: RegistrationError.registrationFail(nil)
-                )
-                return
-            }
-
-            // Returned curve is not supported by this version of the SDK, so throw error.
-            if CryptoSupportedEllipticCurves(rawValue: trimmedCurve) == nil {
-                self.callCompletionHandlerWithError(error: RegistrationError.unsupportedEllipticCurve)
-                return
-            }
-
-            guard let cs2URL = signatureResponse.cs2URL else {
-                self.logOperation(operation: "No cs2URL.")
-                self.callCompletionHandlerWithError(
-                    error: RegistrationError.registrationFail(nil)
-                )
-                return
-            }
-
-            self.getClientSecret2(
-                cs2URL: cs2URL,
-                mpinId: mpinIdString,
-                clientSecret1: Data(hexString: trimmedCS1),
-                dtas: trimmedDtas,
-                keypair: (keyPairResult.privateKey, keyPairResult.publicKey)
-            )
-        }
-    }
-
-    func getWAMSecret(dvsRegistrationToken: String) {
-        logOperation(operation: LoggingConstants.getSigningClientSecret1)
-
-        let (privateKey, publicKey, cryptoError) = crypto.generateKeyPair()
-        let keypair = (privateKey, publicKey)
-
-        if let cryptoError {
-            callCompletionHandlerWithError(error: RegistrationError.registrationFail(cryptoError))
-            return
-        }
-
-        miraclAPI.signingClientSecret1(
-            publicKey: publicKey.hex,
-            signingRegistrationToken: dvsRegistrationToken,
-            deviceName: deviceName
+        miraclAPI.registerUser(
+            userId: userId,
+            activationToken: activationToken,
+            deviceName: deviceName,
+            publicKey: keyPairResult.publicKey.hex,
+            pushToken: pushNotificationsToken
         ) { _, response, error in
             if let error {
-                self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(error))
+                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_ACTIVATION_TOKEN {
+                    self.callCompletionHandlerWithError(error: RegistrationError.invalidActivationToken)
+                    return
+                }
+
+                self.callCompletionHandlerWithError(
+                    error: RegistrationError.registrationFail(error)
+                )
                 return
             }
 
             guard let response else {
+                self.logOperation(operation: "registration error with nil response")
+
+                self.callCompletionHandlerWithError(
+                    error: RegistrationError.registrationFail(nil)
+                )
+                return
+            }
+
+            if response.projectId != self.projectId {
+                self.callCompletionHandlerWithError(error: RegistrationError.projectMismatch)
+                return
+            }
+
+            if CryptoSupportedEllipticCurves(rawValue: response.curve) == nil {
+                self.callCompletionHandlerWithError(error: RegistrationError.unsupportedEllipticCurve)
+                return
+            }
+
+            if response.secretUrls.isEmpty {
+                self.logOperation(operation: "registerUser emtpy secret URLs")
+
                 self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(nil))
                 return
             }
 
-            let trimmedMpinId = response
-                .mpinId
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            let trimmedDtas = response
-                .dtas
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            let trimmedCSS = response
-                .signingClientSecretShare
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-
-            if trimmedMpinId.isEmpty || trimmedDtas.isEmpty || trimmedCSS.isEmpty {
-                self.callCompletionHandlerWithError(
-                    error: RegistrationError.registrationFail(nil)
-                )
-                return
-            }
-
-            guard let cs2URL = response.cs2URL else {
-                self.callCompletionHandlerWithError(
-                    error: RegistrationError.registrationFail(nil)
-                )
-                return
-            }
-
-            self.getClientSecret2(
-                cs2URL: cs2URL,
-                mpinId: trimmedMpinId,
-                clientSecret1: Data(hexString: trimmedCSS),
-                dtas: trimmedDtas,
-                keypair: keypair
+            self.getClientSecretShares(
+                mpinId: response.mpinId,
+                dtas: response.dtas,
+                keyPairResult: (keyPairResult.privateKey, keyPairResult.publicKey),
+                secretURLs: response.secretUrls
             )
         }
     }
 
-    private func getClientSecret2(
-        cs2URL: URL,
+    private func getClientSecretShares(
         mpinId: String,
-        clientSecret1: Data,
         dtas: String,
-        keypair: (privateKey: Data, publicKey: Data)
+        keyPairResult: (privateKey: Data, publicKey: Data),
+        secretURLs: [String]
     ) {
-        logOperation(operation: LoggingConstants.cs2Request)
+        logOperation(operation: LoggingConstants.registrationGettingClientSecretShares)
 
-        miraclAPI.getClientSecret2(for: cs2URL) { apiCallResult, clientSecretResponse, error in
-            if apiCallResult == .failed, let error = error {
-                self.logOperation(operation: "getClientSecret2 error = \(error)")
-                self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(error))
-                return
+        let dispatchGroup = DispatchGroup()
+        let writeQueue = DispatchQueue(label: "com.miracl.secretURLsQueue")
+
+        var results = [Data]()
+        var secretURLFetchingError: Error?
+
+        let filteredSecretURLs: [String] = Array(secretURLs.prefix(2))
+
+        for secretURL in filteredSecretURLs {
+            dispatchGroup.enter()
+
+            guard let clientSecretShareURL = URL(string: secretURL) else {
+                logOperation(operation: LoggingConstants.registrationInvalidClientSecretShareURL)
+                secretURLFetchingError = RegistrationError.registrationFail(nil)
+                dispatchGroup.leave()
+                break
             }
 
-            guard let clientSecretResponse = clientSecretResponse else {
-                self.logOperation(operation: "getClientSecret2 = nil")
-                self.callCompletionHandlerWithError(
-                    error: RegistrationError.registrationFail(nil)
-                )
-                return
+            getClientSecretShare(clientSecretShareURL: clientSecretShareURL) { result in
+                switch result {
+                case let .success(clientSecretShare):
+                    writeQueue.async {
+                        results.append(clientSecretShare)
+                    }
+                case let .failure(error):
+                    writeQueue.async {
+                        secretURLFetchingError = error
+                    }
+                }
+                dispatchGroup.leave()
             }
+        }
 
-            let trimmedCS2 = clientSecretResponse.dvsClientSecret.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            if trimmedCS2.isEmpty {
+        dispatchGroup.notify(queue: writeQueue) {
+            if let secretURLFetchingError {
                 self.callCompletionHandlerWithError(
-                    error: RegistrationError.registrationFail(nil)
+                    error: secretURLFetchingError
                 )
                 return
             }
 
             self.getClientToken(
                 mpinId: mpinId,
-                clientSecret1: clientSecret1,
-                clientSecret2: Data(hexString: trimmedCS2),
+                clientSecrets: results,
                 dtas: dtas,
-                keypair: keypair
+                keypair: keyPairResult
             )
+        }
+    }
+
+    private func getClientSecretShare(
+        clientSecretShareURL: URL,
+        completionHandler: @escaping (Result<Data, Error>) -> Void
+    ) {
+        miraclAPI.getClientSecretShare(clientSecretShareURL) { _, response, error in
+            if let error {
+                if case APIError.executionError = error {
+                    self.miraclAPI.getClientSecretShare(clientSecretShareURL) { _, retryResponse, retryError in
+                        if let retryResponse {
+                            completionHandler(
+                                .success(Data(hexString: retryResponse.dvsClientSecret))
+                            )
+                        } else if let retryError {
+                            completionHandler(.failure(RegistrationError.registrationFail(retryError)))
+                        } else {
+                            completionHandler(.failure(RegistrationError.registrationFail(nil)))
+                        }
+                    }
+                } else {
+                    completionHandler(.failure(RegistrationError.registrationFail(error)))
+                }
+            } else if let response {
+                completionHandler(
+                    .success(Data(hexString: response.dvsClientSecret))
+                )
+            } else {
+                completionHandler(.failure(RegistrationError.registrationFail(nil)))
+            }
         }
     }
 
     private func getClientToken(
         mpinId: String,
-        clientSecret1: Data,
-        clientSecret2: Data,
+        clientSecrets: [Data],
         dtas: String,
         keypair: (privateKey: Data, publicKey: Data)
     ) {
@@ -328,10 +238,15 @@ final class Registrator: Sendable {
         var combinedMpinId = Data(hexString: mpinId)
         combinedMpinId.append(publicKey)
 
+        if clientSecrets.count < 2 {
+            callCompletionHandlerWithError(error: RegistrationError.registrationFail(nil))
+            return
+        }
+
         let (clientTokenData, tokenCryptoError) =
             crypto.getSigningClientToken(
-                clientSecret1: clientSecret1,
-                clientSecret2: clientSecret2,
+                clientSecret1: clientSecrets[0],
+                clientSecret2: clientSecrets[1],
                 privateKey: keypair.privateKey,
                 signingMpinId: combinedMpinId,
                 pinCode: pin

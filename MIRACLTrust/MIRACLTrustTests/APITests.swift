@@ -35,7 +35,7 @@ class APITests: XCTestCase {
             headerFields: nil
         )
 
-        api.getClientSecret2(for: clientSecretURL, completionHandler: { result, response, error in
+        api.getClientSecretShare(clientSecretURL, completionHandler: { result, response, error in
             XCTAssertEqual(result, APICallResult.failed)
             XCTAssertNil(response)
             assertError(current: error, expected: desiredError)
@@ -51,7 +51,7 @@ class APITests: XCTestCase {
             { "dvsClientSecret": "\(clientSecret)" }
         """.utf8)
 
-        api.getClientSecret2(for: clientSecretURL) { result, response, error in
+        api.getClientSecretShare(clientSecretURL) { result, response, error in
             XCTAssertEqual(result, APICallResult.success)
             XCTAssertNil(error)
             do {
@@ -63,64 +63,45 @@ class APITests: XCTestCase {
         }
     }
 
-    func testSignature() throws {
-        let randomString = UUID().uuidString
-
-        let api = try XCTUnwrap(api)
-        let mpinId = randomString
-        let regOTT = randomString
-
-        mockURLSession.data = Data("""
-            {
-            "dvsClientSecretShare" : "\(randomString)",
-            "cs2url" : "\(baseURL.absoluteString)",
-            "curve"  : "\(randomString)",
-            "dtas"   : "\(randomString)"
-            }
-        """.utf8)
-
-        let baseURL = baseURL
-        api.signature(for: mpinId, regOTT: regOTT, publicKey: UUID().uuidString) { result, response, error in
-            do {
-                let response = try XCTUnwrap(response)
-                XCTAssertEqual(response.dvsClientSecretShare, randomString)
-                XCTAssertEqual(response.curve, randomString)
-                XCTAssertEqual(response.dtas, randomString)
-                XCTAssertEqual(response.cs2URL!, baseURL)
-            } catch {
-                XCTFail("Fail at \(#function) on row \(#line), error \(error)")
-            }
-
-            XCTAssertNil(error)
-            XCTAssertEqual(result, APICallResult.success)
-        }
-    }
-
     func testRegisterUser() throws {
         let randomString = UUID().uuidString
         let pinLength = 4
         let api = try XCTUnwrap(api)
+        let curve = "BN254CX"
+        let secretUrls = ["example.com", "example.com"]
 
-        mockURLSession.data = Data("""
-            {
-            "mpinId" : "\(randomString)",
-            "regOTT": "\(randomString)",
-            "pinLength": \(pinLength) ,
-            "projectId": "\(randomString)"
-            }
-        """.utf8)
+        let secretUrlsString = secretUrls.map { secretUrl in
+            "\"\(secretUrl)\""
+        }.joined(separator: ",")
+
+        mockURLSession.data = Data(
+            """
+                {
+                    "mpinId" : "\(randomString)",
+                    "projectId" : "\(randomString)",
+                    "dtas" : "\(randomString)",
+                    "curve" : "\(curve)",
+                    "pinLength" : \(pinLength),
+                    "secretUrls" : [ \(secretUrlsString)],
+                    "verificationType" : "PV"
+                }
+            """.utf8)
 
         api.registerUser(
-            for: randomString,
-            deviceName: randomString,
+            userId: randomString,
             activationToken: randomString,
+            deviceName: randomString,
+            publicKey: randomString,
             pushToken: nil
         ) { result, response, error in
             do {
                 let response = try XCTUnwrap(response)
+
                 XCTAssertEqual(response.mpinId, randomString)
-                XCTAssertEqual(response.regOTT, randomString)
                 XCTAssertEqual(response.projectId, randomString)
+                XCTAssertEqual(response.dtas, randomString)
+                XCTAssertEqual(response.curve, curve)
+                XCTAssertEqual(response.secretUrls, secretUrls)
             } catch {
                 XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
             }

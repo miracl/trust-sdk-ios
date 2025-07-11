@@ -2,22 +2,16 @@ import Foundation
 
 protocol APIBlueprint: Sendable {
     func registerUser(
-        for userId: String,
-        deviceName: String,
+        userId: String,
         activationToken: String,
+        deviceName: String,
+        publicKey: String,
         pushToken: String?,
         completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
     )
 
-    func signature(
-        for mpinId: String,
-        regOTT: String,
-        publicKey: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SignatureResponse>
-    )
-
-    func getClientSecret2(
-        for cs2URL: URL,
+    func getClientSecretShare(
+        _ clientSecretShareURL: URL,
         completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
     )
 
@@ -40,13 +34,6 @@ protocol APIBlueprint: Sendable {
     func authenticate(
         authOTT: String,
         completionHandler: @escaping APIRequestCompletionHandler<AuthenticateResponse>
-    )
-
-    func signingClientSecret1(
-        publicKey: String,
-        signingRegistrationToken: String,
-        deviceName: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SigningClientSecret1Response>
     )
 
     func verifyUser(

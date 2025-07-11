@@ -47,15 +47,11 @@ class MIRACLTrustTests: XCTestCase {
 
         let validRegistration = RegistrationResponse(
             mpinId: mpinId,
-            regOTT: UUID().uuidString,
-            projectId: projectId
+            projectId: projectId,
+            dtas: randomString,
+            curve: "BN254CX",
+            secretUrls: ["https://www.example.com", "https://www.example.com"]
         )
-
-        var emptySignatureResponse = SignatureResponse()
-        emptySignatureResponse.dvsClientSecretShare = randomString
-        emptySignatureResponse.curve = "BN254CX"
-        emptySignatureResponse.dtas = randomString
-        emptySignatureResponse.cs2URL = URL(string: "https://www.example.com")
 
         var clientSecretResponse = ClientSecretResponse()
         clientSecretResponse.dvsClientSecret = randomString
@@ -109,9 +105,10 @@ class MIRACLTrustTests: XCTestCase {
         mockAPI.pass1Response = pass1Response
         mockAPI.pass2Response = pass2Response
         mockAPI.authenticationResponseManager.authenticateResponse = authenticateResponse
+
         mockAPI.registrationResponse = validRegistration
-        mockAPI.signatureResponse = emptySignatureResponse
-        mockAPI.clientSecretResponse = clientSecretResponse
+        mockAPI.clientSecretResponsesManager.clientSecret1Response = clientSecretResponse
+        mockAPI.clientSecretResponsesManager.clientSecret2Response = clientSecretResponse
         mockAPI.verificationResponse = VerificationRequestResponse(backoff: backoff, method: "link")
         mockAPI.verificationConfirmationResponse = verificationConfirmationResponse
         mockAPI.sessionAborterResultCall = .success

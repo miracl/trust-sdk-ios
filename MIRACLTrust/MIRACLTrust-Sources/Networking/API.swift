@@ -28,32 +28,28 @@ struct API: Sendable, APIBlueprint {
         clientSettings = APISettings(platformURL: baseURL)
     }
 
-    /// Registering user
-    /// - Parameters:
-    ///   - userId: id
-    ///   - deviceName: device name
-    ///   - activationToken: code
-    ///   - completionHandler: handler
-    /// - Tag: API-_FUNC_registeruserfordevicenameactivationtokencompletionhandler
     func registerUser(
-        for userId: String,
-        deviceName: String,
+        userId: String,
         activationToken: String,
+        deviceName: String,
+        publicKey: String,
         pushToken: String?,
         completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
     ) {
-        let requestBody = RegistrationRequestBody()
-        requestBody.activateCode = activationToken
-        requestBody.deviceName = deviceName
-        requestBody.userId = userId
-        requestBody.pushToken = pushToken
+        let registrationRequestBody = RegistrationRequestBody(
+            userId: userId,
+            deviceName: deviceName,
+            activationToken: activationToken,
+            publicKey: publicKey,
+            pushToken: pushToken
+        )
 
         do {
             let request = try APIRequest(
-                url: clientSettings.registerURL,
+                url: clientSettings.registrationURL,
                 path: nil,
-                method: .put,
-                requestBody: requestBody,
+                method: .post,
+                requestBody: registrationRequestBody,
                 logger: logger
             )
 
@@ -63,45 +59,13 @@ struct API: Sendable, APIBlueprint {
         }
     }
 
-    /// Creates signature.
-    /// - Parameters:
-    ///   - mpinId: mpinid
-    ///   - regOTT: regott
-    ///   - completionHandler: completion handler
-    /// - Tag: API-_FUNC_signatureforregottcompletionhandler
-    func signature(
-        for mpinId: String,
-        regOTT: String,
-        publicKey: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SignatureResponse>
-    ) {
-        do {
-            let request = try APIRequest(
-                url: clientSettings.signatureURL,
-                path: "/\(mpinId)",
-                queryParameters: ["regOTT": regOTT, "publicKey": publicKey],
-                requestBody: EmptyRequestBody(),
-                logger: logger
-            )
-
-            executor.execute(apiRequest: request, completion: completionHandler)
-        } catch {
-            completionHandler(.failed, nil, error)
-        }
-    }
-
-    /// Getting second client secret share
-    /// - Parameters:
-    ///   - cs2URL: url
-    ///   - completionHandler: completion handler
-    /// - Tag: API-_FUNC_getclientsecret2forcompletionhandler
-    func getClientSecret2(
-        for cs2URL: URL,
+    func getClientSecretShare(
+        _ clientSecretShareURL: URL,
         completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
     ) {
         do {
             let request = try APIRequest(
-                url: cs2URL,
+                url: clientSecretShareURL,
                 path: nil,
                 requestBody: EmptyRequestBody(),
                 logger: logger
@@ -211,39 +175,6 @@ struct API: Sendable, APIBlueprint {
             executor.execute(apiRequest: request,
                              jsonDecoder: jsonDecoder,
                              completion: completionHandler)
-        } catch {
-            completionHandler(.failed, nil, error)
-        }
-    }
-
-    /// Get client secret 1 for signing
-    /// - Parameters:
-    ///   - publicKey: public key
-    ///   - signingRegistrationToken: token
-    ///   - deviceName: device identifier into the portal application.
-    ///   - completionHandler: completion handler
-    /// - Tag: API-_FUNC_signingclientsecret1publickeysigningregistrationtokendevicenamecompletionhandler
-    func signingClientSecret1(
-        publicKey: String,
-        signingRegistrationToken: String,
-        deviceName: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SigningClientSecret1Response>
-    ) {
-        let requestBody = SigningClientSecret1RequestBody()
-        requestBody.dvsRegisterToken = signingRegistrationToken
-        requestBody.publicKey = publicKey
-        requestBody.deviceName = deviceName
-
-        do {
-            let request = try APIRequest(
-                url: clientSettings.dvsRegURL,
-                path: nil,
-                method: .post,
-                requestBody: requestBody,
-                logger: logger
-            )
-
-            executor.execute(apiRequest: request, completion: completionHandler)
         } catch {
             completionHandler(.failed, nil, error)
         }
