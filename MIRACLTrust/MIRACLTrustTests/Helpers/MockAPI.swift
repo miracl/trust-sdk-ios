@@ -14,18 +14,32 @@ class AuthenticationResponseManager: @unchecked Sendable {
     }
 }
 
+class ClientSecretResponsesManager: @unchecked Sendable {
+    var retryEnabled = false
+    var retryEnabledForSecondClientSecret = false
+    var retryInProgress = false
+
+    var clientSecret1Error: Error?
+    var clientSecret1Response: ClientSecretResponse?
+    var clientSecret1ResultCall: APICallResult = .failed
+
+    var clientSecret1RetryError: Error?
+    var clientSecret1RetryResponse: ClientSecretResponse?
+    var clientSecret1RetryResultCall: APICallResult = .failed
+
+    var clientSecret2Error: Error?
+    var clientSecret2Response: ClientSecretResponse?
+    var clientSecret2ResultCall: APICallResult = .failed
+
+    var clientSecret2RetryError: Error?
+    var clientSecret2RetryResponse: ClientSecretResponse?
+    var clientSecret2RetryResultCall: APICallResult = .failed
+
+    var isSecondRequest = false
+}
+
 struct MockAPI: APIBlueprint {
-    var registerUserError: Error?
-    var registrationResponse: RegistrationResponse?
-    var registrationResultCall: APICallResult = .failed
-
-    var signatureError: Error?
-    var signatureResponse: SignatureResponse?
-    var signatureResultCall: APICallResult = .failed
-
-    var clientSecretError: Error?
-    var clientSecretResponse: ClientSecretResponse?
-    var clientSecretResultCall: APICallResult = .failed
+    var clientSecretResponsesManager = ClientSecretResponsesManager()
 
     var pass1Error: Error?
     var pass1Response: Pass1Response?
@@ -36,10 +50,6 @@ struct MockAPI: APIBlueprint {
     var pass2ResultCall: APICallResult = .failed
 
     var authenticationResponseManager = AuthenticationResponseManager()
-
-    var signingClientSecret1Error: Error?
-    var signingClientSecret1Response: SigningClientSecret1Response?
-    var signingClientSecret1ResultCall: APICallResult = .failed
 
     var verificationError: Error?
     var verificationResponse: VerificationRequestResponse?
@@ -73,30 +83,72 @@ struct MockAPI: APIBlueprint {
     var verificationQuickCodeResponse: VerificationQuickCodeResponse?
     var verificationQuickCodeResultCall: APICallResult = .failed
 
-    public func registerUser(
-        for _: String,
-        deviceName _: String,
-        activationToken _: String,
-        pushToken _: String?,
-        completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
-    ) {
-        completionHandler(registrationResultCall, registrationResponse, registerUserError)
-    }
+    var registrationError: Error?
+    var registrationResponse: RegistrationResponse?
+    var registrationResultCall: APICallResult = .failed
 
-    func signature(
-        for _: String,
-        regOTT _: String,
-        publicKey _: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SignatureResponse>
-    ) {
-        completionHandler(signatureResultCall, signatureResponse, signatureError)
-    }
-
-    public func getClientSecret2(
-        for _: URL,
+    public func getClientSecretShare(
+        _: URL,
         completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
     ) {
-        completionHandler(clientSecretResultCall, clientSecretResponse, clientSecretError)
+        if clientSecretResponsesManager.retryEnabled {
+            if clientSecretResponsesManager.retryInProgress {
+                completionHandler(
+                    clientSecretResponsesManager.clientSecret1RetryResultCall,
+                    clientSecretResponsesManager.clientSecret1RetryResponse,
+                    clientSecretResponsesManager.clientSecret1RetryError
+                )
+            } else {
+                clientSecretResponsesManager.retryInProgress = true
+
+                completionHandler(
+                    clientSecretResponsesManager.clientSecret1ResultCall,
+                    clientSecretResponsesManager.clientSecret1Response,
+                    clientSecretResponsesManager.clientSecret1Error
+                )
+            }
+        } else if clientSecretResponsesManager.retryEnabledForSecondClientSecret {
+            if clientSecretResponsesManager.isSecondRequest {
+                if clientSecretResponsesManager.retryInProgress {
+                    completionHandler(
+                        clientSecretResponsesManager.clientSecret2RetryResultCall,
+                        clientSecretResponsesManager.clientSecret2RetryResponse,
+                        clientSecretResponsesManager.clientSecret2RetryError
+                    )
+                } else {
+                    clientSecretResponsesManager.retryInProgress = true
+
+                    completionHandler(
+                        clientSecretResponsesManager.clientSecret2ResultCall,
+                        clientSecretResponsesManager.clientSecret2Response,
+                        clientSecretResponsesManager.clientSecret2Error
+                    )
+                }
+            } else {
+                clientSecretResponsesManager.isSecondRequest = true
+                completionHandler(
+                    clientSecretResponsesManager.clientSecret1ResultCall,
+                    clientSecretResponsesManager.clientSecret1Response,
+                    clientSecretResponsesManager.clientSecret1Error
+                )
+            }
+
+        } else {
+            if clientSecretResponsesManager.isSecondRequest {
+                completionHandler(
+                    clientSecretResponsesManager.clientSecret2ResultCall,
+                    clientSecretResponsesManager.clientSecret2Response,
+                    clientSecretResponsesManager.clientSecret2Error
+                )
+            } else {
+                clientSecretResponsesManager.isSecondRequest = true
+                completionHandler(
+                    clientSecretResponsesManager.clientSecret1ResultCall,
+                    clientSecretResponsesManager.clientSecret1Response,
+                    clientSecretResponsesManager.clientSecret1Error
+                )
+            }
+        }
     }
 
     func pass1(
@@ -130,15 +182,6 @@ struct MockAPI: APIBlueprint {
         )
 
         authenticationResponseManager.updateState()
-    }
-
-    func signingClientSecret1(
-        publicKey _: String,
-        signingRegistrationToken _: String,
-        deviceName _: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SigningClientSecret1Response>
-    ) {
-        completionHandler(signingClientSecret1ResultCall, signingClientSecret1Response, signingClientSecret1Error)
     }
 
     func verifyUser(
@@ -232,4 +275,19 @@ struct MockAPI: APIBlueprint {
         userId _: String,
         completionHandler _: @escaping APIRequestCompletionHandler<[String: String]>
     ) {}
+
+    func registerUser(
+        userId _: String,
+        activationToken _: String,
+        deviceName _: String,
+        publicKey _: String,
+        pushToken _: String?,
+        completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
+    ) {
+        completionHandler(
+            registrationResultCall,
+            registrationResponse,
+            registrationError
+        )
+    }
 }

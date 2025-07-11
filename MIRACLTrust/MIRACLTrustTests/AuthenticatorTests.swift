@@ -414,12 +414,6 @@ class AuthenticatorTests: XCTestCase {
 
         let dtas = "WyIyMDdiNWU5M2MxNTQ3YjY2ODY0MzUwNDIwZDU2MTU5MjVkODkyM2EyMWJkZDRlOTRmMzM0ZjViZWIxZDJhZjYxIiwiMThiYzUzYTQzY2VhOWM4MzE0MTRiYmFkZTE0NmE0NTcwNDJiMzNmYjQwN2ZiYzEzYjgyZWZhZjI4MTdmYjczOSJd"
 
-        var signingClientSecret1Response = SigningClientSecret1Response()
-        signingClientSecret1Response.mpinId = mpinId
-        signingClientSecret1Response.dtas = dtas
-        signingClientSecret1Response.signingClientSecretShare = UUID().uuidString
-        signingClientSecret1Response.cs2URL = URL(string: "https://www.example.com")
-
         var renewSecretResponse = RenewSecretResponse()
         renewSecretResponse.token = UUID().uuidString
 
@@ -430,13 +424,20 @@ class AuthenticatorTests: XCTestCase {
         api.authenticationResponseManager.authenticateResponse = authenticateResponse
         api.authenticationResponseManager.authenticateDVSAuth = true
 
-        api.signingClientSecret1Error = nil
-        api.signingClientSecret1Response = signingClientSecret1Response
-
         var clientSecretResponse = ClientSecretResponse()
         clientSecretResponse.dvsClientSecret = NSUUID().uuidString
 
-        api.clientSecretResponse = clientSecretResponse
+        api.clientSecretResponsesManager.clientSecret1Response = clientSecretResponse
+        api.clientSecretResponsesManager.clientSecret2Response = clientSecretResponse
+        api.registrationResponse = RegistrationResponse(
+            mpinId: mpinId,
+            projectId: projectId,
+            dtas: dtas,
+            curve: "BN254CX",
+            secretUrls: ["https://example.com", "https://example.com"]
+        )
+        api.registrationError = nil
+        api.registrationResultCall = .success
 
         let userId = userId
         let storage = storage

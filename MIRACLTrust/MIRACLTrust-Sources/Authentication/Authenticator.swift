@@ -272,15 +272,22 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
         authenticateResponse: AuthenticateResponse,
         pinCode: String
     ) {
-        let registrator = Registrator(
-            userId: user.userId,
-            api: miraclAPI,
-            userStorage: userStorage,
-            projectId: user.projectId,
-            crypto: crypto,
-            didRequestPinHandler: { processPinHandler in
+        guard let token = renewSecretResponse.token else {
+            finishAuthentication(with: authenticateResponse)
+            return
+        }
+
+        do {
+            let registrator = try Registrator(
+                userId: user.userId,
+                activationToken: token,
+                api: miraclAPI,
+                userStorage: userStorage,
+                projectId: user.projectId,
+                crypto: crypto
+            ) { processPinHandler in
                 processPinHandler(pinCode)
-            }, completionHandler: { updatedUser, error in
+            } completionHandler: { updatedUser, error in
                 if let updatedUser = updatedUser {
                     logOperation(operation: LoggingConstants.wamFinished)
                     redoAuthentication(with: updatedUser, pinCode: pinCode)
@@ -291,9 +298,11 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
                     finishAuthentication(with: authenticateResponse)
                 }
             }
-        )
 
-        registrator.getWAMSecret(dvsRegistrationToken: renewSecretResponse.token ?? "")
+            registrator.register()
+        } catch {
+            finishAuthentication(with: authenticateResponse)
+        }
     }
 
     private func finishAuthentication(with response: AuthenticateResponse) {

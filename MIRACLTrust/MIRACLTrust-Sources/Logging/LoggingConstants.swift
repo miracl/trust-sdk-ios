@@ -45,4 +45,6 @@ enum LoggingConstants {
     static let updatingCodeStatus = "Updating codeStatus."
     static let authenticateError = "Error in authenticate request: "
     static let quickCodeVerificationStarted = "Start quick code verification"
+    static let registrationInvalidClientSecretShareURL = "Invalid client secret share URL"
+    static let registrationGettingClientSecretShares = "Getting Client secret shares operation started"
 }
