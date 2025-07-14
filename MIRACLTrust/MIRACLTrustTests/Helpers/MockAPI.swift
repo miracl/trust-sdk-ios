@@ -87,7 +87,7 @@ struct MockAPI: APIBlueprint {
     var registrationResponse: RegistrationResponse?
     var registrationResultCall: APICallResult = .failed
 
-    public func getClientSecretShare(
+    func getClientSecretShare(
         _: URL,
         completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
     ) {

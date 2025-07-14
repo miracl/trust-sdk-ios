@@ -3,7 +3,7 @@ import Foundation
 let testDBName = "miracl"
 
 @objc class DBFileHelper: NSObject {
-    @objc public class func getDBFilePath() -> String {
+    @objc class func getDBFilePath() -> String {
         var path = ""
         do {
             let fileURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

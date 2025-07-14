@@ -161,11 +161,11 @@ struct Crypto: CryptoBlueprint, Sendable {
         return (tokenData, nil)
     }
 
-    public func sign(message: Data,
-                     signingMpinId: Data,
-                     signingToken: Data,
-                     pinCode: Int32,
-                     timestamp: Int32) -> (Data, Data, CryptoError?) {
+    func sign(message: Data,
+              signingMpinId: Data,
+              signingToken: Data,
+              pinCode: Int32,
+              timestamp: Int32) -> (Data, Data, CryptoError?) {
         logOperationStarted()
 
         let rng = randomNumberGenerator()

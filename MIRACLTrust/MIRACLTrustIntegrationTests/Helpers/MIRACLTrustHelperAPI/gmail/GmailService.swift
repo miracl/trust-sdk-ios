@@ -47,7 +47,7 @@ struct GmailService {
         return nil
     }
 
-    public func getVerificationCode(
+    func getVerificationCode(
         receiver: String,
         timestamp: Date
     ) async throws -> String? {
