@@ -6,7 +6,7 @@ import MIRACLTrust
     let processInfoDict = ProcessInfo.processInfo.environment
     let platformAPI = PlatformAPI(url: URL(string: ProcessInfo.processInfo.environment["platformURL"]!)!)
 
-    @objc public func getVerificaitonURL(
+    @objc func getVerificaitonURL(
         clientId: String,
         clientSecret: String,
         projectId: String,
@@ -36,7 +36,7 @@ import MIRACLTrust
         return verificationUrl
     }
 
-    @objc public func getJWKS() -> String? {
+    @objc func getJWKS() -> String? {
         let jwksExpectation = XCTestExpectation(description: "wait for JWKS")
         nonisolated(unsafe) var jwkSet: String?
 
@@ -52,7 +52,7 @@ import MIRACLTrust
         return jwkSet
     }
 
-    @objc public func getAccessId(
+    @objc func getAccessId(
         projectId: String,
         userId: String? = nil
     ) -> String? {
@@ -73,7 +73,7 @@ import MIRACLTrust
         return accessId
     }
 
-    @objc public func startSigningSession(
+    @objc func startSigningSession(
         projectID: String,
         userID: String,
         hash: String,

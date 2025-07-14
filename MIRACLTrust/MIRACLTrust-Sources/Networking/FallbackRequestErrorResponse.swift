@@ -4,7 +4,7 @@ struct FallbackRequestErrorResponse: Codable {
 }
 
 struct FallbackErrorResponse: Codable {
-    public var code: String
-    public var info: String
-    public var context: [String: String]?
+    var code: String
+    var info: String
+    var context: [String: String]?
 }
