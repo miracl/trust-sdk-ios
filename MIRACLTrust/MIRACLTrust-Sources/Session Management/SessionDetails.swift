@@ -65,10 +65,10 @@ import Foundation
 
 /// Possible identity types that can be used for identity verification.
 @objc public enum IdentityType: Int, Sendable {
-    // Identity is identified with email.
+    /// Identity is identified with email.
     case email
 
-    // Identity is identified with alphanumeric symbols.
+    /// Identity is identified with alphanumeric symbols.
     case alphanumeric
 
     public static func identityTypeFromString(

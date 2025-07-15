@@ -62,7 +62,7 @@ import Foundation
         }
     }
 
-    /// Configure SDK with values issued by MIRACL and stored in the [Configuration](x-source-tag://Configuration) object.
+    /// Configure SDK with values issued by MIRACL and stored in the ``Configuration`` object.
     /// It is recommended to be called right after the application is launched.
     /// - Parameter configuration:object storing configurations of the SDK.
     @objc public class func configure(with configuration: Configuration) throws {

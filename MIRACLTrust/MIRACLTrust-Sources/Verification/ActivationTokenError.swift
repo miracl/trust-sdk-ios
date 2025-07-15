@@ -8,7 +8,7 @@ public enum ActivationTokenError: Error {
     /// Empty verification code in the universal link.
     case emptyVerificationCode
 
-    /// Invalid or expired activation code. There may be [ActivationTokenErrorResponse](x-source-tag://classes-ActivationTokenErrorResponse) in the error.
+    /// Invalid or expired activation code. There may be ``ActivationTokenErrorResponse`` in the error.
     case unsuccessfulVerification(activationTokenErrorResponse: ActivationTokenErrorResponse?)
 
     /// The request for fetching the activation token failed.

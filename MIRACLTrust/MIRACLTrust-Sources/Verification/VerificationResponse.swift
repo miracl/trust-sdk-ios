@@ -1,6 +1,6 @@
 import Foundation
 
-/// The response returned from [sendVerificationEmail](x-source-tag://miracltrust-_FUNC_sendverificationemailuseridauthenticationsessiondetailscompletionhandler).
+/// The response returned from ``MIRACLTrust/MIRACLTrust/sendVerificationEmail(userId:authenticationSessionDetails:completionHandler:)``.
 @objcMembers
 public final class VerificationResponse: NSObject, Sendable {
     /// Unix timestamp before a new verification email could be sent for the same user ID.
