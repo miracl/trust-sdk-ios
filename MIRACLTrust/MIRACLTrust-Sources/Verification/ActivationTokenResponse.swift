@@ -1,6 +1,7 @@
 import Foundation
 
-/// The response returned from [getActivationToken](x-source-tag://miracltrust-_FUNC_getactivationtokenverificationurlcompletionhandler).
+/// The response returned from ``MIRACLTrust/MIRACLTrust/getActivationToken(verificationURL:completionHandler:)``
+/// and ``MIRACLTrust/MIRACLTrust/getActivationToken(userId:code:completionHandler:)``.
 @objcMembers
 @objc public final class ActivationTokenResponse: NSObject, Sendable {
     /// The activation token returned after successful user verification.

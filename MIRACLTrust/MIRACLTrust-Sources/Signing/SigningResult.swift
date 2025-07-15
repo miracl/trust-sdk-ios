@@ -1,6 +1,6 @@
 import Foundation
 
-/// Result returned by ``MIRACLTrust/MIRACLTrust/sign(message:user:signingSessionDetails:didRequestSigningPinHandler:completionHandler:)`` method.
+/// Result returned by ``MIRACLTrust/MIRACLTrust/sign(message:user:didRequestSigningPinHandler:completionHandler:)`` method.
 @objcMembers
 public final class SigningResult: NSObject, Sendable {
     /// Cryptographic representation of the signature

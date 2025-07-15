@@ -42,11 +42,11 @@ import Foundation
         loggingLevel = .none
     }
 
-    /// Builds [Configuration](x-source-tag://Configuration) objects.
+    /// Builds ``Configuration`` objects.
     @objc(ConfigurationBuilder) public class Builder: NSObject {
         private var configurationToBuild = Configuration()
 
-        ///  Initializing [Configuration.Builder](x-source-tag://Configuration.Builder) object.
+        ///  Initializing ``Configuration/Builder`` object.
         /// - Parameters:
         ///   - projectId: `Project ID` setting for the MIRACL Platform.
         ///   - deviceName: identifier that can help find the device on the MIRACL Trust Portal.
@@ -69,8 +69,8 @@ import Foundation
             }
         }
 
-        /// Set custom [UserStorage](x-source-tag://protocols-UserStorage) implementation.
-        /// - Parameter userStorage: custom [UserStorage](x-source-tag://protocols-UserStorage)) implementation.
+        /// Set custom ``UserStorage`` implementation.
+        /// - Parameter userStorage: custom ``UserStorage`` implementation.
         /// - Returns: Configuration.Builder object.
         @discardableResult public func userStorage(
             userStorage: UserStorage
@@ -89,8 +89,8 @@ import Foundation
             return self
         }
 
-        /// Set custom [Logger](x-source-tag://protocols-Logger) writer implementation.
-        /// - Parameter logger: custom [Logger](x-source-tag://protocols-Logger) implementation.
+        /// Set custom ``Logger`` writer implementation.
+        /// - Parameter logger: custom ``Logger`` implementation.
         /// - Returns: Configuration.Builder object.
         @objc(loggerWith:) @discardableResult public func logger(
             logger: Logger
@@ -99,9 +99,9 @@ import Foundation
             return self
         }
 
-        /// Sets custom [LoggingLevel](x-source-tag://enums-LoggingLevel) value. By default it is `none`.
+        /// Sets custom ``LoggingLevel`` value. By default it is ``LoggingLevel/none``.
         /// This level can be set only for default logger, otherwise will be ignored.
-        /// - Parameter level: custom [LoggingLevel](x-source-tag://enums-LoggingLevel)
+        /// - Parameter level: custom ``LoggingLevel``
         /// - Returns: Configuration.Builder object.
         @objc(loggingLevelWith:) @discardableResult public func loggingLevel(
             level: LoggingLevel
@@ -143,9 +143,9 @@ import Foundation
             return self
         }
 
-        /// Returns [Configuration](x-source-tag://Configuration) object.
-        /// - Throws: [ConfigurationError](x-source-tag://enums-ConfigurationError).
-        /// - Returns: [Configuration](x-source-tag://Configuration) object.
+        /// Returns ``Configuration`` object.
+        /// - Throws: ``ConfigurationError``.
+        /// - Returns: ``Configuration`` object.
         @objc public func build() throws -> Configuration {
             if configurationToBuild.projectId.isEmpty {
                 throw ConfigurationError.configurationEmptyProjectId
