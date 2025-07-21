@@ -52,8 +52,8 @@ To configure the SDK:
    [Getting Started](https://miracl.com/resources/docs/guides/get-started/)
    guide.
 2. Call the
-   [configure](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#configurewith)
-   method with a configuration created by the [Configuration.Builder](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/Configuration.Builder/)
+   [configure](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/configure(with:))
+   method with a configuration created by the [Configuration.Builder](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/configuration/builder)
    class:
 
 Swift:
@@ -97,23 +97,21 @@ if (configurationError == nil) {
 ```
 
 Call the
-[configure](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#configurewith)
+[configure](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/configure(with:))
 method as early as possible in the application lifecycle and avoid using the
-[getInstance](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#getinstance)
+[getInstance](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getinstance())
 method before that; otherwise assertion will be triggered.
 
 `deviceName` is an identifier that can help find the device on the MIRACL Trust Portal.
-For `iOS`, the MIRACL Trust SDK provides an
-[extension](https://miracl.com/resources/docs/apis-and-libraries/ios/extensions/UIDevice/)
-of `UIDevice` that returns the actual model name of the device
-(e.g iPhone 16 Pro Max). This extension value can be passed to the
-[Configuration.Builder](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/Configuration.Builder)
+For `iOS`, the MIRACL Trust SDK provides a `UIDevice.modelName` extension that
+returns the actual model name of the device (e.g iPhone 16 Pro Max). This
+extension value can be passed to the [Configuration.Builder](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/configuration/builder)
 constructor. By default, the value of `deviceName` is the name of
 the operation system (e.g `iOS`).
 
 ### Obtain instance of the SDK
 
-To obtain an instance of the SDK, call the [getInsatnce](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#getinstance)
+To obtain an instance of the SDK, call the [getInsatnce](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getinstance())
 method:
 
 Swift:
@@ -145,7 +143,7 @@ offers two options for that:
   - [Email Code](https://miracl.com/resources/docs/guides/built-in-user-verification/email-code/)
 
   Start the verification by calling the
-  [sendVerificationEmail](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#sendverificationemailuseridauthenticationsessiondetailscompletionhandler)
+  [sendVerificationEmail](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/sendverificationemail(userid:authenticationsessiondetails:completionhandler:))
   method:
 
   Swift:
@@ -171,7 +169,7 @@ offers two options for that:
   ```
 
   Then, a verification email is sent, and a
-  [VerificationResponse](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/VerificationResponse/)
+  [VerificationResponse](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/verificationresponse)
   with backoff and email verification method is returned.
 
   If the verification method you have chosen for your project is:
@@ -183,13 +181,13 @@ offers two options for that:
     - If the end user is registering for the first time or resetting their PIN,
       an email with a verification code will be sent, and the email
       verification method in the response will be
-      [EmailVerificationMethod.code](https://miracl.com/resources/docs/apis-and-libraries/ios/enums/EmailVerificationMethod/#code).
+      [EmailVerificationMethod.code](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/emailverificationmethod/code).
       Then, ask the user to enter the code in the application.
 
     - If the end user has already registered another device with the same
       User ID, a Verification URL will be sent, and the verification method in
       the response will be
-      [EmailVerificationMethod.link](https://miracl.com/resources/docs/apis-and-libraries/ios/enums/EmailVerificationMethod/#link).
+      [EmailVerificationMethod.link](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/emailverificationmethod/link).
       In this case, proceed as described for the **Email Link** verification
       method below.
 
@@ -211,7 +209,7 @@ offers two options for that:
 
       After the application recieves the Verification URL, it must confirm the
       verification by passing it to the
-      [getActivationToken](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#getactivationtokenverificationurlcompletionhandler)
+      [getActivationToken](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getactivationtoken(verificationurl:completionhandler:))
       method:
 
       Swift:
@@ -263,7 +261,7 @@ offers two options for that:
 
       When the end user enters the verification code, the application must
       confirm the verification by passing it to the
-      [getActivationToken](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#getactivationtokenuseridcodecompletionhandler)
+      [getActivationToken](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getactivationtoken(userid:code:completionhandler:))
       method:
 
       Swift:
@@ -289,11 +287,11 @@ offers two options for that:
       ```
 
 2. Pass the User ID (email or any string you use for identification), activation
-   token (received from verification), [PinRequestHandler](https://miracl.com/resources/docs/apis-and-libraries/ios/typealiases/PinRequestHandler/)
-   and [RegistrationCompletionHandler](https://miracl.com/resources/docs/apis-and-libraries/ios/typealiases/RegistrationCompletionHandler/)
-   implementations to the [register](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/#registerforactivationtokenpushnotificationstokendidrequestpinhandlercompletionhandler)
-   method. When the registration is successful, a [RegistrationCompletionHandler](https://miracl.com/resources/docs/apis-and-libraries/ios/typealiases/RegistrationCompletionHandler/)
-   callback is returned, passing the registered user. Otherwise [RegistrationError](https://miracl.com/resources/docs/apis-and-libraries/ios/enums/RegistrationError/)
+   token (received from verification), [PinRequestHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/pinrequesthandler)
+   and [RegistrationCompletionHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/registrationcompletionhandler)
+   implementations to the [register](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/register(for:activationtoken:pushnotificationstoken:didrequestpinhandler:completionhandler:))
+   method. When the registration is successful, a [RegistrationCompletionHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/registrationcompletionhandler)
+   callback is returned, passing the registered user. Otherwise [RegistrationError](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/registrationerror)
    is passed in the callback.
 
    Swift:
@@ -329,7 +327,7 @@ offers two options for that:
    ```
 
    If you call the
-   [register](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/#registerforactivationtokenpushnotificationstokendidrequestpinhandlercompletionhandler)
+   [register](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/register(for:activationtoken:pushnotificationstoken:didrequestpinhandler:completionhandler:))
    method with the same User ID more than once, the User ID will be overridden.
    Therefore, you can use it when you want to reset your authentication PIN
    code.
@@ -344,7 +342,7 @@ The MIRACL Trust SDK offers two options:
 #### Authenticate users on the mobile application
 
 The
-[authenticate](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#authenticateuserdidrequestpinhandlercompletionhandler)
+[authenticate](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticate(user:didrequestpinhandler:completionhandler:))
 method generates a [JWT](https://jwt.io) authentication token for а registered
 user.
 
@@ -386,7 +384,7 @@ To authenticate a user on another application, there are three options:
 - Authenticate with
   [Universal Links](https://developer.apple.com/ios/universal-links/)
 
-  Use the [authenticateWithUniversalLinkURL](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#authenticatewithuniversallinkurluseruniversallinkurldidrequestpinhandlercompletionhandler)
+  Use the [authenticateWithUniversalLinkURL](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticatewithuniversallinkurl(user:universallinkurl:didrequestpinhandler:completionhandler:))
   method:
 
   Swift:
@@ -430,16 +428,16 @@ To authenticate a user on another application, there are three options:
   }
   ```
 
-If your application doesn't use `UIScene`, add the
-`authenticateWithUniversalLinkURL` implementation to the
-`application:continueUserActivity:restorationHandler:` implementation in the
-Application Delegate.
+  If your application doesn't use `UIScene`, add the
+  `authenticateWithUniversalLinkURL` implementation to the
+  `application:continueUserActivity:restorationHandler:` implementation in the
+  Application Delegate.
 
-If using `SwiftUI`, use the `onOpenURL` modifier.
+  If using `SwiftUI`, use the `onOpenURL` modifier.
 
 - Authenticate with QR code
 
-  Use the [authenticateWithQRCode](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#authenticatewithqrcodeuserqrcodedidrequestpinhandlercompletionhandler)
+  Use the [authenticateWithQRCode](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticatewithqrcode(user:qrcode:didrequestpinhandler:completionhandler:))
   method:
 
   Swift:
@@ -476,7 +474,7 @@ If using `SwiftUI`, use the `onOpenURL` modifier.
 - Authenticate with
   [push notifications](https://developer.apple.com/notifications/) payload:
 
-  Use the [authenticateWithPushNotificationPayload](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#authenticatewithpushnotificationpayloadpayloaddidrequestpinhandlercompletionhandler)
+  Use the [authenticateWithPushNotificationPayload](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticatewithpushnotificationpayload(payload:didrequestpinhandler:completionhandler:))
   method:
 
   Swift:
@@ -537,7 +535,7 @@ cryptographic signing of documents. For more information, see
 In the context of this SDK, we refer to it as 'Signing'.
 
 To sign a document, use the
-[sign](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#signmessagetimestampusersigningsessiondetailsdidrequestsigningpinhandlercompletionhandler)
+[sign](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/sign(message:user:didrequestsigningpinhandler:completionhandler:))
 method as follows:
 
 Swift:
@@ -589,8 +587,8 @@ endpoint. If the MIRACL Trust platform returns status code `200`, the
 is a way to register another device without going through the verification
 process.
 
-To generate a QuickCode, call the [generateQuickCode](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/index.html#generatequickcodeuserdidrequestpinhandlercompletionhandler)
-method with an already registered [User](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/User/)
+To generate a QuickCode, call the [generateQuickCode](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/generatequickcode(user:didrequestpinhandler:completionhandler:))
+method with an already registered [User](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/user/)
 object:
 
 Swift:
@@ -627,7 +625,7 @@ Objective-C:
 1. How to provide a PIN code?
 
    For security reasons, the PIN code is sent to the SDK at the last possible
-   moment. A [PinRequestHandler](https://miracl.com/resources/docs/apis-and-libraries/ios/typealiases/PinRequestHandler/)
+   moment. A [PinRequestHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/pinrequesthandler)
    is responsible for that and when the SDK calls it, the currently executed
    operation is blocked until a PIN code is provided. Therefore, this is a good
    place to display some user interface for entering the PIN code. For example:
@@ -651,7 +649,7 @@ Objective-C:
    ```
 
    In the view controller for entering the PIN code, you need to call the
-   [pinProcessor](https://miracl.com/resources/docs/apis-and-libraries/ios/typealiases/ProcessPinHandler/)
+   [pinProcessor](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/processpinhandler)
    closure, which sends the PIN code to the SDK and restores the previously
    executed operation:
 
@@ -670,7 +668,7 @@ Objective-C:
    Activation Token is the value that links the verification flow with the
    registration flow. The value is returned by the verification flow and needs
    to be passed to the
-   [register](https://miracl.com/resources/docs/apis-and-libraries/ios/classes/MIRACLTrust/#registerforactivationtokenpushnotificationstokendidrequestpinhandlercompletionhandler)
+   [register](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/register(for:activationtoken:pushnotificationstoken:didrequestpinhandler:completionhandler:))
    method so the platform can verify it. Here are the options for that:
 
    - [Custom User Verification](https://miracl.com/resources/docs/guides/custom-user-verification/)
@@ -691,5 +689,5 @@ Objective-C:
 
 ## Documentation
 
-- See an overview of the mobile integration at
-  [miracl.com/resources/docs/guides/mobile/](https://miracl.com/resources/docs/guides/mobile/)
+- [Developer Documentation](https://miracl.com/resources/docs/get-started/overview/)
+- [API reference](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust)
