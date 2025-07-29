@@ -47,7 +47,7 @@ struct JWTGenerator: Sendable {
             } else {
                 let authenticator = try Authenticator(
                     user: user,
-                    accessId: nil,
+                    sessionType: .noSession,
                     crypto: crypto,
                     deviceName: deviceName,
                     api: miraclAPI,

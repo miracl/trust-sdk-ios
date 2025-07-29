@@ -5,6 +5,7 @@ public typealias PinRequestHandler = @MainActor @Sendable (@escaping ProcessPinH
 public typealias RegistrationCompletionHandler = @MainActor @Sendable (User?, Error?) -> Void
 public typealias AuthenticationCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
 public typealias SigningCompletionHandler = @MainActor @Sendable (SigningResult?, Error?) -> Void
+public typealias CrossDeviceSigningCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
 public typealias VerificationCompletionHandler = @MainActor @Sendable (VerificationResponse?, Error?) -> Void
 public typealias ActivationTokenCompletionHandler = @MainActor @Sendable (ActivationTokenResponse?, Error?) -> Void
 public typealias QuickCodeCompletionHandler = @MainActor @Sendable (QuickCode?, Error?) -> Void
@@ -18,3 +19,6 @@ public let MIRACL_API_URL = URL(string: "https://api.mpin.io")!
 
 typealias AuthenticateCompletionHandler = @MainActor @Sendable (AuthenticateResponse?, Error?) -> Void
 typealias APIRequestCompletionHandler<T> = @Sendable (APICallResult, T?, Error?) -> Void
+
+public typealias CrossDeviceSessionCompletionHandler = @MainActor @Sendable (CrossDeviceSession?, Error?) -> Void
+public typealias CrossDeviceSessionAborterCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void

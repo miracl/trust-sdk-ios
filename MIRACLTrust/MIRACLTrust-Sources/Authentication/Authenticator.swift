@@ -15,7 +15,7 @@ let INVALID_AUTHENTICATION_SESSION = "INVALID_AUTHENTICATION_SESSION"
 struct Authenticator: Sendable, AuthenticatorBlueprint {
     let user: User
     let didRequestPinHandler: PinRequestHandler
-    let accessId: String?
+    let sessionType: SessionType
     let scope: [String]
     let miraclAPI: APIBlueprint
     let crypto: CryptoBlueprint
@@ -26,7 +26,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
     var completionHandler: AuthenticateCompletionHandler
 
     init(user: User,
-         accessId: String?,
+         sessionType: SessionType,
          crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
          deviceName: String = MIRACLTrust.getInstance().deviceName,
          api: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
@@ -36,7 +36,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
          didRequestPinHandler: @escaping PinRequestHandler,
          completionHandler: @escaping AuthenticateCompletionHandler) throws {
         self.user = user
-        self.accessId = accessId?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.sessionType = sessionType
         self.didRequestPinHandler = didRequestPinHandler
         self.completionHandler = completionHandler
         miraclAPI = api
@@ -63,7 +63,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
     }
 
     private func updateCodeStatus() {
-        guard let accessId = accessId else {
+        guard let sessionIdentifier = sessionType.getSessionIdentifier() else {
             return
         }
 
@@ -73,7 +73,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
         )
 
         miraclAPI.updateCodeStatus(
-            accessId: accessId,
+            accessId: sessionIdentifier,
             userId: user.userId,
             completionHandler: { _, _, _ in }
         )
@@ -191,7 +191,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
     func serverPass2(vBytes: Data, pinCode: String) {
         miraclAPI.pass2(
             for: user.mpinId.hex,
-            accessId: accessId,
+            accessId: sessionType.getSessionIdentifier(),
             vValue: vBytes.hex
         ) { apiCallResult, response, error in
             if apiCallResult == .failed, let error = error {
@@ -230,7 +230,14 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
                             callCompletionHandler(with: AuthenticationError.revoked)
                             return
                         case INVALID_AUTH_SESSION, INVALID_AUTHENTICATION_SESSION:
-                            callCompletionHandler(with: AuthenticationError.invalidAuthenticationSession)
+                            switch sessionType {
+                            case .crossDevice:
+                                callCompletionHandler(with: AuthenticationError.invalidCrossDeviceSession)
+                            case .legacy:
+                                callCompletionHandler(with: AuthenticationError.invalidAuthenticationSession)
+                            case .noSession:
+                                callCompletionHandler(with: AuthenticationError.invalidAuthenticationSession)
+                            }
                             return
                         case INVALID_AUTH, UNSUCCESSFUL_AUTHENTICATION:
                             callCompletionHandler(with: AuthenticationError.unsuccessfulAuthentication)
@@ -322,7 +329,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
 
             let updatedAuthenticator = try Authenticator(
                 user: updatedUser,
-                accessId: accessId,
+                sessionType: sessionType,
                 crypto: crypto,
                 deviceName: deviceName,
                 api: miraclAPI,

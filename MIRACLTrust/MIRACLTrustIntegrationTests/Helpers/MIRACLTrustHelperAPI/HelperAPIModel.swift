@@ -33,6 +33,8 @@ struct Session: Codable {
 struct SessionRequestBody: Codable {
     var projectId: String
     var userId: String?
+    var hash: String?
+    var description: String?
 }
 
 struct EmptyRequestBody: Codable {}

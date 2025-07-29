@@ -492,7 +492,7 @@ class AuthenticatorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Wait for Authentication.")
         let authenticator = try Authenticator(
             user: user,
-            accessId: accessId,
+            sessionType: .legacy(accessId: accessId),
             crypto: crypto,
             api: api,
             scope: scope,

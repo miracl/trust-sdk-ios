@@ -14,6 +14,7 @@ class SigningIntegrationTests: XCTestCase {
     var getActivationToken = GetActivationTokenTestCase()
     var signing = SigningTestCase()
     var signingSessionDetails = GetSigningSessionDetailsTestCase()
+    var crossDeviceSession = GetCrossDeviceSessionTestCase()
 
     var accessId = ""
     var activationToken = ""
@@ -43,7 +44,6 @@ class SigningIntegrationTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        timestamp = Date()
         registration = RegistrationTestCase()
         registration.pinCode = randomPIN
 
@@ -154,6 +154,55 @@ class SigningIntegrationTests: XCTestCase {
         )
 
         XCTAssertTrue(isSignatureVerified)
+    }
+
+    func testSigningCorrectnessWithCrossDeviceSession() throws {
+        let sessionId = try XCTUnwrap(
+            api.getAccessId(projectId: projectId, userId: userId, hash: messageToSign, description: UUID().uuidString)
+        )
+        let qrCode = "tcb.miracl.app/mobile/sign#\(sessionId)"
+        let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(qrCode: qrCode)
+
+        let (signingResult, error) = try signing.signMessage(
+            crossDeviceSession: XCTUnwrap(crossDeviceSession),
+            user: XCTUnwrap(registeredSigningUser)
+        )
+
+        XCTAssertTrue(signingResult)
+        XCTAssertNil(error)
+    }
+
+    func testSigningCorrectnessWithCrossDeviceSessionForUniversalLink() throws {
+        let sessionId = try XCTUnwrap(
+            api.getAccessId(projectId: projectId, userId: userId, hash: messageToSign, description: UUID().uuidString)
+        )
+        let universalLinkURL = try XCTUnwrap(URL(string: "https://mcl.mpin.io/mobile/sign#\(sessionId)"))
+        let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(universalLinkURL: universalLinkURL)
+
+        let (signingResult, error) = try signing.signMessage(
+            crossDeviceSession: XCTUnwrap(crossDeviceSession),
+            user: XCTUnwrap(registeredSigningUser)
+        )
+
+        XCTAssertTrue(signingResult)
+        XCTAssertNil(error)
+    }
+
+    func testSigningCorrectnessWithCrossDeviceSessionForPayload() throws {
+        let sessionId = try XCTUnwrap(
+            api.getAccessId(projectId: projectId, userId: userId, hash: messageToSign, description: UUID().uuidString)
+        )
+        let payload = ["qrURL": "https://mcl.mpin.io/mobile/sign#\(sessionId)"]
+
+        let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(pushNotificationPayload: payload)
+
+        let (signingResult, error) = try signing.signMessage(
+            crossDeviceSession: XCTUnwrap(crossDeviceSession),
+            user: XCTUnwrap(registeredSigningUser)
+        )
+
+        XCTAssertTrue(signingResult)
+        XCTAssertNil(error)
     }
 
     func testSigningCorrectnessSHA384() throws {
@@ -315,6 +364,8 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(signingResult)
         assertError(current: error, expected: expectedError)
     }
+
+    // MARK: Private
 
     private func createRandomSigningSessionDetails(
         sessionId: String = UUID().uuidString

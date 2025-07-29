@@ -16,9 +16,17 @@ import MIRACLTrust
     @objc public func getAccessId(
         projectId: String,
         userId: String? = nil,
+        hash: String? = nil,
+        description: String? = nil,
         completionHandler: @escaping @Sendable (String?, Error?) -> Void
     ) {
-        guard let request = URLRequest.sessionRequest(url: url, projectId: projectId, userId: userId) else {
+        guard let request = URLRequest.sessionRequest(
+            url: url,
+            projectId: projectId,
+            userId: userId,
+            hash: hash,
+            description: description
+        ) else {
             return
         }
 

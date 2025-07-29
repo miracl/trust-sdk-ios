@@ -7,7 +7,7 @@ struct Verificator: Sendable {
     let userId: String
     let projectId: String
     let deviceName: String
-    let accessId: String?
+    let sessionType: SessionType
     let completionHandler: VerificationCompletionHandler
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
@@ -16,14 +16,14 @@ struct Verificator: Sendable {
     init(userId: String,
          projectId: String,
          deviceName: String,
-         accessId: String? = nil,
+         sessionType: SessionType,
          miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
          userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
          logger: Logger = MIRACLTrust.getInstance().logger,
          completionHandler: @escaping VerificationCompletionHandler) throws {
         self.userId = userId
         self.projectId = projectId
-        self.accessId = accessId
+        self.sessionType = sessionType
         self.deviceName =
             deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
         self.miraclAPI = miraclAPI
@@ -41,12 +41,13 @@ struct Verificator: Sendable {
             logOperation(operation: LoggingConstants.verificationStarted)
 
             let mpinId = userStorage.getUser(by: userId, projectId: projectId)?.mpinId.hex
+            let sessionIdentifier = sessionType.getSessionIdentifier()
 
             miraclAPI.verifyUser(
                 projectId: projectId,
                 userId: userId,
                 deviceName: deviceName,
-                accessId: accessId,
+                accessId: sessionIdentifier,
                 mpinId: mpinId
             ) { _, verificationAPIResponse, error in
                 logOperation(operation: LoggingConstants.finished)
@@ -83,7 +84,7 @@ struct Verificator: Sendable {
     }
 
     private func validateInput() throws {
-        if let accessId = accessId, accessId.isEmpty {
+        if case let .legacy(accessId) = sessionType, accessId.isEmpty {
             throw VerificationError.invalidSessionDetails
         }
 

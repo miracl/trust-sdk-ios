@@ -21,6 +21,10 @@
 		6D22F0E12B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D22F0DF2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m */; };
 		6D25C44A25D6853F00E878C9 /* JWTAuthenticationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D25C44925D6853F00E878C9 /* JWTAuthenticationTestCase.swift */; };
 		6D26142C24AB1B7C004F0B54 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D26142B24AB1B7C004F0B54 /* Constants.swift */; };
+		6D2E4F112E2E62DA0001B5A7 /* CrossDeviceSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E4F102E2E62D40001B5A7 /* CrossDeviceSession.swift */; };
+		6D2E4F132E2E62E60001B5A7 /* CrossDeviceSessionFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E4F122E2E62DF0001B5A7 /* CrossDeviceSessionFetcher.swift */; };
+		6D2E4F152E2E62FE0001B5A7 /* CrossDeviceSessionResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E4F142E2E62F90001B5A7 /* CrossDeviceSessionResponse.swift */; };
+		6D2E4F192E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E4F182E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift */; };
 		6D3567532D3E5EC100DD0A60 /* APIBlueprint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3567522D3E5EBC00DD0A60 /* APIBlueprint.swift */; };
 		6D3626CE256E874300993AD3 /* VerificationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3626CD256E874300993AD3 /* VerificationTestCase.swift */; };
 		6D36273B256FAE2600993AD3 /* VerificatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D36273A256FAE2600993AD3 /* VerificatorTests.swift */; };
@@ -29,6 +33,11 @@
 		6D3DD7722B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D3DD7702B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.m */; };
 		6D3DD7752B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D3DD7732B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h */; };
 		6D3DD7762B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D3DD7742B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m */; };
+		6D4167A02E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D41679F2E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift */; };
+		6D4167A32E435C61002E59EA /* CrossDeviceSessionCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4167A22E435C5B002E59EA /* CrossDeviceSessionCase.swift */; };
+		6D4167A52E435C78002E59EA /* CrossDeviceSessionAuthenticationCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4167A42E435C6E002E59EA /* CrossDeviceSessionAuthenticationCase.swift */; };
+		6D4167A72E435D7A002E59EA /* RegistrationAsyncTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4167A62E435D75002E59EA /* RegistrationAsyncTestCase.swift */; };
+		6D4167A92E435E6F002E59EA /* ActivationTokenAsyncCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4167A82E435E68002E59EA /* ActivationTokenAsyncCase.swift */; };
 		6D42DDAC2412799C00EFA78A /* MockAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42DDAB2412799C00EFA78A /* MockAPI.swift */; };
 		6D43A0E729F120A600E0939A /* ClientErrorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43A0E629F120A600E0939A /* ClientErrorData.swift */; };
 		6D444BED2A1C9BED00FD0329 /* APIRequestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D444BEC2A1C9BED00FD0329 /* APIRequestError.swift */; };
@@ -50,9 +59,17 @@
 		6D58BEE329F7A4AA0001C502 /* CryptoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D58BEE229F7A4AA0001C502 /* CryptoError.swift */; };
 		6D5AFD512428D35900FBACDA /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5AFD502428D35900FBACDA /* CryptoTests.swift */; };
 		6D5D1C8C2D9EC41C004BDA7B /* SigningResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5D1C8B2D9EC418004BDA7B /* SigningResult.swift */; };
+		6D663D742E312C79004B1D53 /* CrossDeviceSessionAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D663D732E312C70004B1D53 /* CrossDeviceSessionAuthenticator.swift */; };
+		6D663D762E322EFA004B1D53 /* CrossDeviceSessionFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D663D752E322EFA004B1D53 /* CrossDeviceSessionFetcherTest.swift */; };
+		6D663D782E33775D004B1D53 /* CrossDeviceSessionAborterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D663D772E33775D004B1D53 /* CrossDeviceSessionAborterTest.swift */; };
+		6D663D7A2E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D663D792E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift */; };
 		6D6811F228880F4200313578 /* SQLiteMigration1to2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6811F128880F4200313578 /* SQLiteMigration1to2.swift */; };
 		6D685E4B247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D685E4A247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift */; };
 		6D685E54247E7E0E000AEDAC /* PlatformAPIWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D685E53247E7E0E000AEDAC /* PlatformAPIWrapper.swift */; };
+		6D6B94B62E460A6D00BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94B52E460A6400BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift */; };
+		6D6B94B82E46141600BC7A60 /* CrossDeviceSessionAbortCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94B72E46140D00BC7A60 /* CrossDeviceSessionAbortCase.swift */; };
+		6D6B94BD2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94BC2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m */; };
+		6D6B94BE2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D6B94BB2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h */; };
 		6D6D9A0A282BE7E700316755 /* SigningSessionDetailsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D9A09282BE7E700316755 /* SigningSessionDetailsFetcher.swift */; };
 		6D6D9A0C282BEB9800316755 /* SigningSessionDetailsRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D9A0B282BEB9800316755 /* SigningSessionDetailsRequestBody.swift */; };
 		6D6D9A0E282BF39700316755 /* SigningSessionDetailsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D9A0D282BF39700316755 /* SigningSessionDetailsResponse.swift */; };
@@ -78,6 +95,7 @@
 		6D91ABDC26FDF7E700EE28CF /* SessionDetailIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D91ABDB26FDF7E700EE28CF /* SessionDetailIntegrationTests.swift */; };
 		6D953FBE24055B0000F22138 /* APIRequestExecutorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D953FBD24055B0000F22138 /* APIRequestExecutorTests.swift */; };
 		6D954C3324D82F77002A237F /* SignerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D954C3224D82F77002A237F /* SignerTests.swift */; };
+		6D97E52C2E4A09B600A48235 /* SessionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D97E52B2E4A09B300A48235 /* SessionType.swift */; };
 		6D98312325D5318100C829B7 /* JWTGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D98312225D5318100C829B7 /* JWTGenerator.swift */; };
 		6D98313C25D6787A00C829B7 /* AuthenticationIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D98313B25D6787A00C829B7 /* AuthenticationIntegrationTests.swift */; };
 		6D999B5F2431C99F002CA45D /* AuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D999B5E2431C99F002CA45D /* AuthenticatorTests.swift */; };
@@ -170,6 +188,9 @@
 		6DC46A9225B9BB2B0099866C /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D86ADC123FEABF700A6BCE6 /* APIRequest.swift */; };
 		6DC46A9325B9BB2B0099866C /* EmptyRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBA72E3240F92EB00561F89 /* EmptyRequestBody.swift */; };
 		6DC46A9425B9BB2B0099866C /* APISettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAAC0EB24000DA700652CD1 /* APISettings.swift */; };
+		6DC89F612E2FCA1000683AFB /* CrossDeviceSessionAborter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC89F602E2FCA0900683AFB /* CrossDeviceSessionAborter.swift */; };
+		6DC89F632E2FDBE900683AFB /* CrossDeviceSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC89F622E2FDBE400683AFB /* CrossDeviceSessionError.swift */; };
+		6DC987342E54C3CB00E1EDAB /* CrossDeviceSessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */; };
 		6DCDC7542834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCDC7532834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift */; };
 		6DCFDD4224AA0CEC00CED02F /* RegistrationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCFDD4124AA0CEC00CED02F /* RegistrationTestCase.swift */; };
 		6DCFDD4424AA0E7D00CED02F /* QRAuthenticationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCFDD4324AA0E7D00CED02F /* QRAuthenticationTestCase.swift */; };
@@ -307,6 +328,10 @@
 		6D22F0DF2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AbortAuthenticationSessionCompatibilityCase.m; sourceTree = "<group>"; };
 		6D25C44925D6853F00E878C9 /* JWTAuthenticationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTAuthenticationTestCase.swift; sourceTree = "<group>"; };
 		6D26142B24AB1B7C004F0B54 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		6D2E4F102E2E62D40001B5A7 /* CrossDeviceSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSession.swift; sourceTree = "<group>"; };
+		6D2E4F122E2E62DF0001B5A7 /* CrossDeviceSessionFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionFetcher.swift; sourceTree = "<group>"; };
+		6D2E4F142E2E62F90001B5A7 /* CrossDeviceSessionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionResponse.swift; sourceTree = "<group>"; };
+		6D2E4F182E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionIntegrationTest.swift; sourceTree = "<group>"; };
 		6D3567522D3E5EBC00DD0A60 /* APIBlueprint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIBlueprint.swift; sourceTree = "<group>"; };
 		6D3626CD256E874300993AD3 /* VerificationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationTestCase.swift; sourceTree = "<group>"; };
 		6D362715256F9AD100993AD3 /* VerificationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationError.swift; sourceTree = "<group>"; };
@@ -318,6 +343,11 @@
 		6D3DD7732B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortSigningSessionCompatibilityCase.h; sourceTree = "<group>"; };
 		6D3DD7742B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AbortSigningSessionCompatibilityCase.m; sourceTree = "<group>"; };
 		6D3DDA56255530C800A0CD94 /* OSLog+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OSLog+Helper.swift"; sourceTree = "<group>"; };
+		6D41679F2E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAuthenticationIntegrationTest.swift; sourceTree = "<group>"; };
+		6D4167A22E435C5B002E59EA /* CrossDeviceSessionCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionCase.swift; sourceTree = "<group>"; };
+		6D4167A42E435C6E002E59EA /* CrossDeviceSessionAuthenticationCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAuthenticationCase.swift; sourceTree = "<group>"; };
+		6D4167A62E435D75002E59EA /* RegistrationAsyncTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationAsyncTestCase.swift; sourceTree = "<group>"; };
+		6D4167A82E435E68002E59EA /* ActivationTokenAsyncCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationTokenAsyncCase.swift; sourceTree = "<group>"; };
 		6D42DDA7241135D100EFA78A /* RegistrationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationResponse.swift; sourceTree = "<group>"; };
 		6D42DDA924113E7500EFA78A /* RegistrationRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationRequestBody.swift; sourceTree = "<group>"; };
 		6D42DDAB2412799C00EFA78A /* MockAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPI.swift; sourceTree = "<group>"; };
@@ -344,11 +374,19 @@
 		6D5AFD9B242B718500FBACDA /* Pass1RequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pass1RequestBody.swift; sourceTree = "<group>"; };
 		6D5AFD9D242B735F00FBACDA /* Pass1Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pass1Response.swift; sourceTree = "<group>"; };
 		6D5D1C8B2D9EC418004BDA7B /* SigningResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningResult.swift; sourceTree = "<group>"; };
+		6D663D732E312C70004B1D53 /* CrossDeviceSessionAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAuthenticator.swift; sourceTree = "<group>"; };
+		6D663D752E322EFA004B1D53 /* CrossDeviceSessionFetcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionFetcherTest.swift; sourceTree = "<group>"; };
+		6D663D772E33775D004B1D53 /* CrossDeviceSessionAborterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAborterTest.swift; sourceTree = "<group>"; };
+		6D663D792E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAuthenticatorTest.swift; sourceTree = "<group>"; };
 		6D6811F128880F4200313578 /* SQLiteMigration1to2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteMigration1to2.swift; sourceTree = "<group>"; };
 		6D685E48247E7AC3000AEDAC /* MIRACLTrustIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MIRACLTrustIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D685E4A247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRAuthenticationIntegrationTests.swift; sourceTree = "<group>"; };
 		6D685E4C247E7AC3000AEDAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D685E53247E7E0E000AEDAC /* PlatformAPIWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformAPIWrapper.swift; sourceTree = "<group>"; };
+		6D6B94B52E460A6400BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAborterIntegrationTest.swift; sourceTree = "<group>"; };
+		6D6B94B72E46140D00BC7A60 /* CrossDeviceSessionAbortCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAbortCase.swift; sourceTree = "<group>"; };
+		6D6B94BB2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrossDeviceSessionCompatiblityCase.h; sourceTree = "<group>"; };
+		6D6B94BC2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CrossDeviceSessionCompatiblityCase.m; sourceTree = "<group>"; };
 		6D6C6B562564F9CB000BA52B /* LoggingConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingConstants.swift; sourceTree = "<group>"; };
 		6D6D9A09282BE7E700316755 /* SigningSessionDetailsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetailsFetcher.swift; sourceTree = "<group>"; };
 		6D6D9A0B282BEB9800316755 /* SigningSessionDetailsRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetailsRequestBody.swift; sourceTree = "<group>"; };
@@ -383,6 +421,7 @@
 		6D953FB92403DD4900F22138 /* APIRequestExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequestExecutor.swift; sourceTree = "<group>"; };
 		6D953FBD24055B0000F22138 /* APIRequestExecutorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequestExecutorTests.swift; sourceTree = "<group>"; };
 		6D954C3224D82F77002A237F /* SignerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignerTests.swift; path = Helpers/SignerTests.swift; sourceTree = "<group>"; };
+		6D97E52B2E4A09B300A48235 /* SessionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionType.swift; sourceTree = "<group>"; };
 		6D98312225D5318100C829B7 /* JWTGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTGenerator.swift; sourceTree = "<group>"; };
 		6D98313B25D6787A00C829B7 /* AuthenticationIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationIntegrationTests.swift; sourceTree = "<group>"; };
 		6D999B5E2431C99F002CA45D /* AuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorTests.swift; sourceTree = "<group>"; };
@@ -453,6 +492,9 @@
 		6DC80E2E242CBE8E001C353F /* Pass2Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pass2Response.swift; sourceTree = "<group>"; };
 		6DC80E30242CDDEB001C353F /* AuthenticateRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticateRequestBody.swift; sourceTree = "<group>"; };
 		6DC80E32242CDDF5001C353F /* AuthenticateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticateResponse.swift; sourceTree = "<group>"; };
+		6DC89F602E2FCA0900683AFB /* CrossDeviceSessionAborter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAborter.swift; sourceTree = "<group>"; };
+		6DC89F622E2FDBE400683AFB /* CrossDeviceSessionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionError.swift; sourceTree = "<group>"; };
+		6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionTestCase.swift; sourceTree = "<group>"; };
 		6DCDC7532834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetSigningSessionDetailsTestCase.swift; sourceTree = "<group>"; };
 		6DCFDD4124AA0CEC00CED02F /* RegistrationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationTestCase.swift; sourceTree = "<group>"; };
 		6DCFDD4324AA0E7D00CED02F /* QRAuthenticationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRAuthenticationTestCase.swift; sourceTree = "<group>"; };
@@ -630,6 +672,9 @@
 				6D7FB42D28366E5100538495 /* SigningSessionDetailsFetcherTest.swift */,
 				6D52C6F928489955005066D1 /* VerificationConfirmationHandlerTest.swift */,
 				6DF34CCC2AF5249A00836442 /* SigningSessionAborterTest.swift */,
+				6D663D752E322EFA004B1D53 /* CrossDeviceSessionFetcherTest.swift */,
+				6D663D772E33775D004B1D53 /* CrossDeviceSessionAborterTest.swift */,
+				6D663D792E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift */,
 				6D18500C23E038E8008E85E5 /* Info.plist */,
 			);
 			path = MIRACLTrustTests;
@@ -663,6 +708,31 @@
 				6D02B53B24C96DF700C5A277 /* Signature.swift */,
 			);
 			path = Signing;
+			sourceTree = "<group>";
+		};
+		6D2E4F0F2E2E62C70001B5A7 /* Cross Device Session */ = {
+			isa = PBXGroup;
+			children = (
+				6D663D732E312C70004B1D53 /* CrossDeviceSessionAuthenticator.swift */,
+				6DC89F622E2FDBE400683AFB /* CrossDeviceSessionError.swift */,
+				6DC89F602E2FCA0900683AFB /* CrossDeviceSessionAborter.swift */,
+				6D2E4F142E2E62F90001B5A7 /* CrossDeviceSessionResponse.swift */,
+				6D2E4F122E2E62DF0001B5A7 /* CrossDeviceSessionFetcher.swift */,
+				6D2E4F102E2E62D40001B5A7 /* CrossDeviceSession.swift */,
+			);
+			path = "Cross Device Session";
+			sourceTree = "<group>";
+		};
+		6D4167A12E435029002E59EA /* Async */ = {
+			isa = PBXGroup;
+			children = (
+				6D6B94B72E46140D00BC7A60 /* CrossDeviceSessionAbortCase.swift */,
+				6D4167A82E435E68002E59EA /* ActivationTokenAsyncCase.swift */,
+				6D4167A62E435D75002E59EA /* RegistrationAsyncTestCase.swift */,
+				6D4167A22E435C5B002E59EA /* CrossDeviceSessionCase.swift */,
+				6D4167A42E435C6E002E59EA /* CrossDeviceSessionAuthenticationCase.swift */,
+			);
+			path = Async;
 			sourceTree = "<group>";
 		};
 		6D446AB5283639AB00CB42E5 /* Signing Session Management */ = {
@@ -807,6 +877,14 @@
 			path = SQLiteMigration;
 			sourceTree = "<group>";
 		};
+		6D97E52A2E4A09AA00A48235 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6D97E52B2E4A09B300A48235 /* SessionType.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		6D98312125D530A000C829B7 /* JWT */ = {
 			isa = PBXGroup;
 			children = (
@@ -850,6 +928,7 @@
 		6DA992F724AC9265002F6AA2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				6D4167A12E435029002E59EA /* Async */,
 				FAE467E42CF9E14900754F5C /* MIRACLTrustHelperAPI */,
 				6DB7796424ADBBF600FA5219 /* Objective-C */,
 				6DB7796324ADBBF100FA5219 /* Swift */,
@@ -950,6 +1029,9 @@
 				6DDEB15027070C2B00C3313D /* AbortSessionIntergrationTest.swift */,
 				6D6D9A0F282BF94600316755 /* SigningSessionDetailsTest.swift */,
 				6DF34CD02AF5328F00836442 /* AbortSigningSessionTest.swift */,
+				6D41679F2E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift */,
+				6D2E4F182E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift */,
+				6D6B94B52E460A6400BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift */,
 			);
 			path = Swift;
 			sourceTree = "<group>";
@@ -957,6 +1039,7 @@
 		6DB7796324ADBBF100FA5219 /* Swift */ = {
 			isa = PBXGroup;
 			children = (
+				6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */,
 				6DCFDD4124AA0CEC00CED02F /* RegistrationTestCase.swift */,
 				6DCFDD4324AA0E7D00CED02F /* QRAuthenticationTestCase.swift */,
 				6DEC21E026F472CC0099C836 /* PushNotificationsAuthenticationTestCase.swift */,
@@ -1007,6 +1090,8 @@
 				6D3DD7742B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m */,
 				FA6357522CFDBA7600464840 /* GetActivationTokenCompatiblityCase.h */,
 				FA6357532CFDBA7600464840 /* GetActivationTokenCompatiblityCase.m */,
+				6D6B94BB2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h */,
+				6D6B94BC2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m */,
 			);
 			path = "Objective-C";
 			sourceTree = "<group>";
@@ -1034,6 +1119,8 @@
 		6DC4694925B9B0330099866C /* MIRACLTrust-Sources */ = {
 			isa = PBXGroup;
 			children = (
+				6D97E52A2E4A09AA00A48235 /* Helpers */,
+				6D2E4F0F2E2E62C70001B5A7 /* Cross Device Session */,
 				6DA788C9283659FD00A3D0BD /* Session Management */,
 				6D446AB5283639AB00CB42E5 /* Signing Session Management */,
 				6D91ABD226FDE11000EE28CF /* Authentication Session Management */,
@@ -1126,6 +1213,7 @@
 				6D476D98264A9E5E001B541C /* MIRACLTrust.h in Headers */,
 				6D70EF682B0F8E84004AE28A /* PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase.h in Headers */,
 				FA6357542CFDBA7600464840 /* GetActivationTokenCompatiblityCase.h in Headers */,
+				6D6B94BE2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h in Headers */,
 				6D21606E2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.h in Headers */,
 				6D22F0E02B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.h in Headers */,
 				6D70EF602B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.h in Headers */,
@@ -1351,12 +1439,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D36273B256FAE2600993AD3 /* VerificatorTests.swift in Sources */,
+				6D663D7A2E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift in Sources */,
 				6DDC22A8270AD0F7003A2DE8 /* AbortSessionTests.swift in Sources */,
 				6D42DDAC2412799C00EFA78A /* MockAPI.swift in Sources */,
 				6D18B18D26F899E40069C9AD /* UniversalLinkAuthenticatorTests.swift in Sources */,
 				6DE57893240578FB00D6628F /* APITests.swift in Sources */,
 				6D999B5F2431C99F002CA45D /* AuthenticatorTests.swift in Sources */,
 				6D954C3324D82F77002A237F /* SignerTests.swift in Sources */,
+				6D663D762E322EFA004B1D53 /* CrossDeviceSessionFetcherTest.swift in Sources */,
 				6D01C62F2AA7672D0059CA91 /* SQLiteUserStorageMigrationTests.swift in Sources */,
 				6DBD1A9425D16F6F002702F8 /* QuickCodeGeneratorTests.swift in Sources */,
 				6DAAC0EE24002D8D00652CD1 /* APIRequestTests.swift in Sources */,
@@ -1366,6 +1456,7 @@
 				6D18B19226F8B3950069C9AD /* PushNotificationAuthenticatorTests.swift in Sources */,
 				6D9D2A652630054700055B93 /* JWTGeneratorTests.swift in Sources */,
 				6D18500B23E038E8008E85E5 /* MIRACLTrustTests.swift in Sources */,
+				6D663D782E33775D004B1D53 /* CrossDeviceSessionAborterTest.swift in Sources */,
 				6DBA72F1240FDF9E00561F89 /* RegistratorTests.swift in Sources */,
 				6D52C6FA28489955005066D1 /* VerificationConfirmationHandlerTest.swift in Sources */,
 				6DB04A36241FD0010017F8C8 /* MockCrypto.swift in Sources */,
@@ -1389,9 +1480,13 @@
 				6D3DD7762B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m in Sources */,
 				83BD3EFB2CC902F000D4E47F /* GmailServiceWrapper.swift in Sources */,
 				6D26142C24AB1B7C004F0B54 /* Constants.swift in Sources */,
+				6D2E4F192E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift in Sources */,
 				6D91ABDA26FDF4C000EE28CF /* SessionDetailsTestCase.swift in Sources */,
+				6D6B94B82E46141600BC7A60 /* CrossDeviceSessionAbortCase.swift in Sources */,
+				6D4167A52E435C78002E59EA /* CrossDeviceSessionAuthenticationCase.swift in Sources */,
 				6DDEB15127070C2C00C3313D /* AbortSessionIntergrationTest.swift in Sources */,
 				6D70EF612B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.m in Sources */,
+				6D6B94BD2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m in Sources */,
 				6D22F0E12B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m in Sources */,
 				FAE467E82CF9E15E00754F5C /* HTTPRequestExecutor.swift in Sources */,
 				6D25C44A25D6853F00E878C9 /* JWTAuthenticationTestCase.swift in Sources */,
@@ -1415,13 +1510,16 @@
 				6DBD1A7425D1694A002702F8 /* QuickCodeIntegrationTests.swift in Sources */,
 				6DB4207C26F495A400B68AB4 /* UniversalLinkAuthenticationTestCase.swift in Sources */,
 				6DE95A4624E52BAF00BA253A /* SigningTestCase.swift in Sources */,
+				6D4167A32E435C61002E59EA /* CrossDeviceSessionCase.swift in Sources */,
 				FAE467ED2CF9E16E00754F5C /* Credentials.swift in Sources */,
 				6D13651627EC95C0003783CE /* GetActivationTokenTestCase.swift in Sources */,
 				6D685E54247E7E0E000AEDAC /* PlatformAPIWrapper.swift in Sources */,
 				6D21606F2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.m in Sources */,
 				6D6D9A10282BF94600316755 /* SigningSessionDetailsTest.swift in Sources */,
+				6D4167A92E435E6F002E59EA /* ActivationTokenAsyncCase.swift in Sources */,
 				6D3626CE256E874300993AD3 /* VerificationTestCase.swift in Sources */,
 				6D685E4B247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift in Sources */,
+				6D4167A72E435D7A002E59EA /* RegistrationAsyncTestCase.swift in Sources */,
 				6DB7796D24ADC06200FA5219 /* MIRACLTrustCompatibilityTests.m in Sources */,
 				6D70EF652B0F8E5E004AE28A /* UniversalLinkURLAuthenticationSessionDetailsCompatiblityCase.m in Sources */,
 				6DFE8FC527EB6E380085380D /* Helpers.swift in Sources */,
@@ -1431,12 +1529,15 @@
 				6DDEB14F2706F2CC00C3313D /* AbortSessionTestCase.swift in Sources */,
 				6DEC21D726F347B40099C836 /* UniversalLinkAuthenticationCompatibilityCase.m in Sources */,
 				6DB7797124ADC08F00FA5219 /* QRAuthenticationCompatibilityCase.m in Sources */,
+				6DC987342E54C3CB00E1EDAB /* CrossDeviceSessionTestCase.swift in Sources */,
 				83BD3F0B2CCA23A900D4E47F /* AuthenticationJWTPayload.swift in Sources */,
 				6D54164524E273B0003018C9 /* SigningIntegrationTests.swift in Sources */,
 				6DE89EBD256D4F4700C856E8 /* VerificationIntegrationTests.swift in Sources */,
 				6DEC21DD26F37BD20099C836 /* PushNotificationsIntegrationTest.swift in Sources */,
+				6D4167A02E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift in Sources */,
 				6D91ABDC26FDF7E700EE28CF /* SessionDetailIntegrationTests.swift in Sources */,
 				6DF34CCF2AF5306300836442 /* SigningSessionAborterTestCase.swift in Sources */,
+				6D6B94B62E460A6D00BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift in Sources */,
 				FAE467E52CF9E15E00754F5C /* URLRequest+Extensions.swift in Sources */,
 				6DEC21E126F472CC0099C836 /* PushNotificationsAuthenticationTestCase.swift in Sources */,
 				6D98313C25D6787A00C829B7 /* AuthenticationIntegrationTests.swift in Sources */,
@@ -1457,11 +1558,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D2E4F152E2E62FE0001B5A7 /* CrossDeviceSessionResponse.swift in Sources */,
 				6DECE5802D43AE4100450149 /* CryptoBlueprint.swift in Sources */,
 				6D98312325D5318100C829B7 /* JWTGenerator.swift in Sources */,
 				6DB4208526F4D0A700B68AB4 /* UniversalLinkAuthentication.swift in Sources */,
 				6D58BEE329F7A4AA0001C502 /* CryptoError.swift in Sources */,
 				6DC469F525B9B9B70099866C /* Crypto.swift in Sources */,
+				6D2E4F112E2E62DA0001B5A7 /* CrossDeviceSession.swift in Sources */,
+				6D663D742E312C79004B1D53 /* CrossDeviceSessionAuthenticator.swift in Sources */,
+				6DC89F612E2FCA1000683AFB /* CrossDeviceSessionAborter.swift in Sources */,
 				83695C1C2C9734AA00411EAA /* EmailVerificationMethod.swift in Sources */,
 				6DC46A2325B9BAE40099866C /* Signer.swift in Sources */,
 				6DF2D3FF26A06BEC004CAD54 /* SQLMigrationFactory.swift in Sources */,
@@ -1470,6 +1575,7 @@
 				6DF2D3F3269F00B5004CAD54 /* UserStorage.swift in Sources */,
 				6DC46A5125B9BAFD0099866C /* Verificator.swift in Sources */,
 				FA5382F62D0B376D00C76DBD /* QuickCodeError.swift in Sources */,
+				6DC89F632E2FDBE900683AFB /* CrossDeviceSessionError.swift in Sources */,
 				6DB4207E26F4CF8C00B68AB4 /* QRAuthenticator.swift in Sources */,
 				6DC46A5025B9BAFD0099866C /* VerificationConfirmationHandler.swift in Sources */,
 				6DC4696B25B9B7FC0099866C /* Constants.swift in Sources */,
@@ -1501,6 +1607,7 @@
 				6DB4580D269C17DB00C4FEFA /* SQLiteHelper.swift in Sources */,
 				6DC46A3925B9BAF20099866C /* Authenticator.swift in Sources */,
 				6DC4696A25B9B7FC0099866C /* ConfigurationError.swift in Sources */,
+				6D2E4F132E2E62E60001B5A7 /* CrossDeviceSessionFetcher.swift in Sources */,
 				6D91ABD626FDE62C00EE28CF /* AuthenticationSessionDetailsResponse.swift in Sources */,
 				6D444BED2A1C9BED00FD0329 /* APIRequestError.swift in Sources */,
 				6DC46A0625B9BAD40099866C /* LoggingConstants.swift in Sources */,
@@ -1552,6 +1659,7 @@
 				6DC46A6625B9BB080099866C /* RegistrationResponse.swift in Sources */,
 				6DC46A6725B9BB080099866C /* Registrator.swift in Sources */,
 				6DC46A3825B9BAF20099866C /* AuthenticateResponse.swift in Sources */,
+				6D97E52C2E4A09B600A48235 /* SessionType.swift in Sources */,
 				6DC46A2425B9BAE40099866C /* SigningError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1782,7 +1890,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8R7N43J6K6;
 				INFOPLIST_FILE = MIRACLTrustIntegrationTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1793,6 +1901,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "MIRACLTrustIntegrationTests/Cases/MIRACLTrustIntegrationTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MIRACLTrust-Test-Host-App.app/MIRACLTrust-Test-Host-App";
@@ -1806,7 +1915,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8R7N43J6K6;
 				INFOPLIST_FILE = MIRACLTrustIntegrationTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

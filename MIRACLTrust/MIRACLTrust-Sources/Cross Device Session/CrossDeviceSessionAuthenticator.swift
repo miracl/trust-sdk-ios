@@ -1,8 +1,8 @@
 import Foundation
 
-struct UniversalLinkAuthenticator: Sendable {
+struct CrossDeviceSessionAuthenticator: Sendable {
     let user: User
-    let universalLinkURL: URL
+    let crossDeviceSession: CrossDeviceSession
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
     let crypto: CryptoBlueprint
@@ -15,24 +15,24 @@ struct UniversalLinkAuthenticator: Sendable {
 
     init(
         user: User,
-        universalLinkURL: URL,
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
+        crossDeviceSession: CrossDeviceSession,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
+        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
+        deviceName: String = MIRACLTrust.getInstance().deviceName,
         logger: Logger = MIRACLTrust.getInstance().logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
         self.user = user
-        self.universalLinkURL = universalLinkURL
-        self.deviceName = deviceName
+        self.crossDeviceSession = crossDeviceSession
+        self.miraclAPI = miraclAPI
         self.userStorage = userStorage
         self.crypto = crypto
-        self.miraclAPI = miraclAPI
-        self.logger = logger
-        self.didRequestPinHandler = didRequestPinHandler
+        self.deviceName = deviceName
         self.completionHandler = completionHandler
+        self.didRequestPinHandler = didRequestPinHandler
+        self.logger = logger
     }
 
     func authenticate() {
@@ -41,16 +41,12 @@ struct UniversalLinkAuthenticator: Sendable {
             category: .authentication
         )
 
-        guard let urlComponents = URLComponents(url: universalLinkURL, resolvingAgainstBaseURL: false),
-              let accessId = urlComponents.fragment,
-              !accessId.isEmpty else {
-            callCompletionHandler(
-                authenticated: false,
-                error: AuthenticationError.invalidUniversalLink
-            )
-            return
+        DispatchQueue.global().async {
+            startAuthentication()
         }
+    }
 
+    func startAuthentication() {
         do {
             if var authenticator = authenticator {
                 authenticator.completionHandler = authenticationResult
@@ -60,7 +56,7 @@ struct UniversalLinkAuthenticator: Sendable {
 
             let authenticator = try Authenticator(
                 user: user,
-                sessionType: .legacy(accessId: accessId),
+                sessionType: .crossDevice(sessionId: crossDeviceSession.sessionId),
                 crypto: crypto,
                 deviceName: deviceName,
                 api: miraclAPI,
@@ -68,6 +64,7 @@ struct UniversalLinkAuthenticator: Sendable {
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )
+
             authenticator.authenticate()
         } catch {
             callCompletionHandler(
@@ -76,6 +73,8 @@ struct UniversalLinkAuthenticator: Sendable {
             )
         }
     }
+
+    // MARK: Private
 
     @Sendable private func authenticationResult(response: AuthenticateResponse?, error: Error?) {
         logger.info(

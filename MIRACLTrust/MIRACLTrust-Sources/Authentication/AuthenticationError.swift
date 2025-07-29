@@ -34,6 +34,9 @@ public enum AuthenticationError: Error {
 
     /// Pin code includes invalid symbols or pin length does not match.
     case invalidPin
+
+    /// Invalid or expired cross-device session.
+    case invalidCrossDeviceSession
 }
 
 extension AuthenticationError: Equatable {
@@ -68,6 +71,8 @@ extension AuthenticationError: LocalizedError {
             description = NSLocalizedString("\(AuthenticationError.unsuccessfulAuthentication)", comment: "")
         case let .authenticationFail(error):
             description = NSLocalizedString("\(AuthenticationError.authenticationFail(error))", comment: "")
+        case .invalidCrossDeviceSession:
+            description = NSLocalizedString("\(AuthenticationError.invalidCrossDeviceSession)", comment: "")
         }
         return description
     }
@@ -98,6 +103,8 @@ extension AuthenticationError: CustomNSError {
             return 10
         case .invalidPin:
             return 11
+        case .invalidCrossDeviceSession:
+            return 12
         }
     }
 

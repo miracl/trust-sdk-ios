@@ -54,20 +54,28 @@ import MIRACLTrust
 
     @objc func getAccessId(
         projectId: String,
-        userId: String? = nil
+        userId: String? = nil,
+        hash: String? = nil,
+        description: String? = nil
     ) -> String? {
         nonisolated(unsafe) var accessId: String?
         let accessIdExpectation = XCTestExpectation(description: "wait for Access Id")
 
         platformAPI
-            .getAccessId(projectId: projectId, userId: userId, completionHandler: { code, error in
-                if let code = code {
-                    accessId = code
-                } else if let error = error {
-                    print("Error when creating access id: \(error)")
+            .getAccessId(
+                projectId: projectId,
+                userId: userId,
+                hash: hash,
+                description: description,
+                completionHandler: { code, error in
+                    if let code = code {
+                        accessId = code
+                    } else if let error = error {
+                        print("Error when creating access id: \(error)")
+                    }
+                    accessIdExpectation.fulfill()
                 }
-                accessIdExpectation.fulfill()
-            })
+            )
 
         _ = XCTWaiter.wait(for: [accessIdExpectation], timeout: operationTimeout)
         return accessId
@@ -113,5 +121,56 @@ import MIRACLTrust
         _ = XCTWaiter.wait(for: [expectation], timeout: operationTimeout)
 
         return verifiedSignature
+    }
+
+    func getVerificationURL(
+        clientId: String,
+        clientSecret: String,
+        projectId: String,
+        userId: String,
+        accessId: String? = nil,
+        expiration: Date? = nil
+    ) async throws -> URL {
+        let url: URL = try await withCheckedThrowingContinuation { continuation in
+            platformAPI.getVerificationURL(
+                clientId: clientId,
+                clientSecret: clientSecret,
+                projectId: projectId,
+                userId: userId,
+                accessId: accessId,
+                expiration: expiration
+            ) { url, error in
+                if let url {
+                    continuation.resume(returning: url)
+                } else if let error {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+        return url
+    }
+
+    func getAsyncAccessId(
+        projectId: String,
+        userId: String? = nil,
+        hash: String? = nil,
+        description: String? = nil
+    ) async throws -> String {
+        let accessId: String = try await withCheckedThrowingContinuation { continuation in
+            platformAPI.getAccessId(
+                projectId: projectId,
+                userId: userId,
+                hash: hash,
+                description: description
+            ) { accessId, error in
+                if let accessId {
+                    continuation.resume(returning: accessId)
+                } else if let error {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+
+        return accessId
     }
 }
