@@ -14,6 +14,7 @@
 #import "UniversalLinkURLSigningSessionDetailsCompatiblityCase.h"
 #import "AbortSigningSessionCompatibilityCase.h"
 #import "GetActivationTokenCompatiblityCase.h"
+#import "CrossDeviceSessionCompatiblityCase.h"
 #import <MIRACLTrustIntegrationTests-Swift.h>
 #import <CommonCrypto/CommonCrypto.h>
 
@@ -33,6 +34,7 @@
 @property (nonatomic, strong) UniversalLinkURLSigningSessionDetailsCompatiblityCase *universalLinkURLSigningSessionDetailsCompatiblityCase;
 @property (nonatomic, strong) AbortSigningSessionCompatibilityCase *abortSigningSessionCompatibilityCase;
 @property (nonatomic, strong) GetActivationTokenCompatiblityCase *getActivationTokenCompatiblityCase;
+@property (nonatomic, strong) CrossDeviceSessionCompatiblityCase *getCrossDeviceSessionCompatibilityCase;
 
 @property (nonatomic,strong) Configuration *configuration;
 @property (nonatomic,strong) NSString *accessId;
@@ -43,6 +45,8 @@
 @property (nonatomic,strong) NSString *userId;
 @property (nonatomic,strong) NSString *qrCodeURL;
 @property (nonatomic,strong) NSString *projectId;
+@property (nonatomic,strong) CrossDeviceSession *crossDeviceSession;
+
 @end
 
 @implementation MIRACLTrustCompatibilityTests
@@ -81,6 +85,7 @@
     self.universalLinkURLSigningSessionDetailsCompatiblityCase = [[UniversalLinkURLSigningSessionDetailsCompatiblityCase alloc] init];
     self.abortSigningSessionCompatibilityCase = [[AbortSigningSessionCompatibilityCase alloc] init];
     self.getActivationTokenCompatiblityCase = [[GetActivationTokenCompatiblityCase alloc] init];
+    self.getCrossDeviceSessionCompatibilityCase = [[CrossDeviceSessionCompatiblityCase alloc] init];
 }
 
 - (void)testVerificationConfirmationError
@@ -110,7 +115,7 @@
     
     self.userId = @"int@miracl.com";
     self.api = [[PlatformAPIWrapper alloc] init];
-    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil];
+    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
   
     NSNumber *expirationInSeconds = @(5);
     NSDate *expirationDate = [NSCalendar.currentCalendar
@@ -147,6 +152,9 @@
     
     XCTWaiterResult result = [XCTWaiter waitForExpectations:@[waitForAuthentication]
                                                     timeout:10.0];
+    if(result != XCTWaiterResultCompleted ){
+        XCTFail(@"Tests failed");
+    }
 }
 
 - (void)testCompatibility
@@ -179,7 +187,6 @@
     projectId = NSProcessInfo.processInfo.environment[@"projectIdCUV"];
     NSString *clientId = NSProcessInfo.processInfo.environment[@"clientIdCUV"];
     
-    
     error = nil;
     [[MIRACLTrust getInstance] setProjectId:projectId];
     
@@ -191,7 +198,7 @@
     NSString *clientSecret = NSProcessInfo.processInfo.environment[@"clientSecretCUV"];
     self.userId = @"global@example.com";
     self.api = [[PlatformAPIWrapper alloc] init];
-    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil];
+    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
     
     self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
     self.projectId = projectId;
@@ -222,9 +229,40 @@
     NSNumber *isAborted = dict[@"isAborted"];
     XCTAssertTrue([isAborted boolValue]);
     
-    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil];
-    
+    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
     self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
+    
+    dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForQRCode:self.qrCodeURL];
+    XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
+    XCTAssertFalse([dict[@"crossDeviceSession"] isEqual:[NSNull null]]);
+    
+    universalLinkURL = [NSURL URLWithString:self.qrCodeURL];
+    dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForUniversalLinkURL: universalLinkURL];
+    XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
+    XCTAssertFalse([dict[@"crossDeviceSession"] isEqual:[NSNull null]]);
+    
+    payload = @{
+        @"userID" : self.userId,
+        @"qrURL" : self.qrCodeURL,
+        @"projectID": self.projectId
+    };
+    dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForPushNotificationsPayload: payload];
+    XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
+    XCTAssertFalse([dict[@"crossDeviceSession"] isEqual:[NSNull null]]);
+    
+    CrossDeviceSession *crossDeviceSession = (CrossDeviceSession *)dict[@"crossDeviceSession"];
+    dict = [self.getCrossDeviceSessionCompatibilityCase abortCrossDeviceSession:crossDeviceSession];
+    XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
+    isAborted = dict[@"isAborted"];
+    XCTAssertTrue([isAborted boolValue]);
+    
+    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
+    self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
+    
+    dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForQRCode:self.qrCodeURL];
+    XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
+    XCTAssertFalse([dict[@"crossDeviceSession"] isEqual:[NSNull null]]);
+    self.crossDeviceSession = (CrossDeviceSession *) dict[@"crossDeviceSession"];
     
     NSURL *verificationURL = [self.api getVerificaitonURLWithClientId:clientId
                                                          clientSecret:clientSecret
@@ -317,6 +355,14 @@
             @"projectID": self.projectId
         };
         dict = [self.pushNotificationAuthentication authenticateWithPayload:payload];
+        isAuth = dict[@"isAuthenticated"];
+        XCTAssertTrue([isAuth boolValue]);
+        XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
+        
+        dict = [self.getCrossDeviceSessionCompatibilityCase
+                authenticateWithUser:user
+                crossDeviceSession: self.crossDeviceSession
+                andPin: self.randomNumber];
         isAuth = dict[@"isAuthenticated"];
         XCTAssertTrue([isAuth boolValue]);
         XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);

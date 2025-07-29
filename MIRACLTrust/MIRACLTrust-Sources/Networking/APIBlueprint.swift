@@ -51,9 +51,20 @@ protocol APIBlueprint: Sendable {
         completionHandler: @escaping APIRequestCompletionHandler<VerificationConfirmationResponse>
     )
 
+    func getCrossDeviceSession(
+        sessionId: String,
+        completionHandler: @escaping APIRequestCompletionHandler<CrossDeviceSessionResponse>
+    )
+
     func getSessionDetails(
         accessId: String,
         completionHandler: @escaping APIRequestCompletionHandler<AuthenticationSessionsDetailsResponse>
+    )
+
+    func updateCrossDeviceSessionForSigning(
+        sessionId: String,
+        signature: String,
+        completionHandler: @escaping APIRequestCompletionHandler<[String: String]>
     )
 
     func abortSession(

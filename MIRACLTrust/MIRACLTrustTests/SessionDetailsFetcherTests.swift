@@ -216,9 +216,8 @@ class SessionDetailsFetcherTests: XCTestCase {
         let waitForSession = XCTestExpectation(description: "Wait for getSessionDetails to finish")
 
         do {
-            let url = try XCTUnwrap(universalLinkURL)
             let sessionDetailsFetcher = try AuthenticationSessionDetailsFetcher(
-                universalLinkURL: url,
+                pushNotificationsPayload: payload,
                 miraclAPI: api
             ) { details, error in
                 completionHandler(details, error)

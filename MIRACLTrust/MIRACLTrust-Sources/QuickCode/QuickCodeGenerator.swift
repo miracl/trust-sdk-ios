@@ -47,7 +47,7 @@ struct QuickCodeGenerator: Sendable {
             do {
                 let authenticator = try Authenticator(
                     user: user,
-                    accessId: nil,
+                    sessionType: .noSession,
                     crypto: crypto,
                     deviceName: deviceName,
                     api: api,

@@ -46,4 +46,27 @@ class SigningTestCase {
 
         return (returnedSigningResult, returnedError)
     }
+
+    func signMessage(crossDeviceSession: CrossDeviceSession, user: User) -> (Bool, Error?) {
+        let waitForSignature = XCTestExpectation(description: "wait for SigningUser")
+
+        nonisolated(unsafe) var returnedSigningResult = false
+        nonisolated(unsafe) var returnedError: Error?
+
+        let pinCode = signingPinCode
+        MIRACLTrust.getInstance()._sign(crossDeviceSession: crossDeviceSession, user: user) { pinHandler in
+            pinHandler(pinCode)
+        } completionHandler: { isSigned, error in
+            returnedSigningResult = isSigned
+            returnedError = error
+            waitForSignature.fulfill()
+        }
+
+        let result = XCTWaiter.wait(for: [waitForSignature], timeout: operationTimeout)
+        if result != .completed {
+            XCTFail("Something wrong happened")
+        }
+
+        return (returnedSigningResult, returnedError)
+    }
 }

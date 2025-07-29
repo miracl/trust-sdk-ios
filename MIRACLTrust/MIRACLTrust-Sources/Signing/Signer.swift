@@ -8,23 +8,25 @@ struct Signer: Sendable {
     let crypto: CryptoBlueprint
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
-    let signingSessionDetails: SigningSessionDetails?
+    let sessionType: SessionType
     let logger: Logger
 
     var authenticator: AuthenticatorBlueprint?
 
-    init(messageHash: Data,
-         user: User,
-         signingSessionDetails: SigningSessionDetails? = nil,
-         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-         logger: Logger = MIRACLTrust.getInstance().logger,
-         didRequestSigningPinHandler: @escaping PinRequestHandler,
-         completionHandler: @escaping SigningCompletionHandler) throws {
+    init(
+        messageHash: Data,
+        sessionType: SessionType,
+        user: User,
+        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
+        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
+        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
+        logger: Logger = MIRACLTrust.getInstance().logger,
+        didRequestSigningPinHandler: @escaping PinRequestHandler,
+        completionHandler: @escaping SigningCompletionHandler
+    ) throws {
         self.messageHash = messageHash
         self.user = user
-        self.signingSessionDetails = signingSessionDetails
+        self.sessionType = sessionType
         self.didRequestSigningPinHandler = didRequestSigningPinHandler
         self.crypto = crypto
         self.completionHandler = completionHandler
@@ -40,6 +42,7 @@ struct Signer: Sendable {
             message: LoggingConstants.started,
             category: .signing
         )
+
         DispatchQueue.global().async {
             signingAuthenticate()
         }
@@ -77,7 +80,7 @@ struct Signer: Sendable {
             do {
                 let authenticator = try Authenticator(
                     user: user,
-                    accessId: nil,
+                    sessionType: .noSession,
                     crypto: crypto,
                     api: MIRACLTrust.getInstance().miraclAPI,
                     scope: ["dvs-auth"],
@@ -155,16 +158,24 @@ struct Signer: Sendable {
             V: vData.hex,
             publicKey: publicKey.hex,
             dtas: user.dtas,
-            signatureHash: messageHash.hex
+            signatureHash: messageHash.hex,
+            timestamp: timestamp
         )
 
-        if let signingSessionDetails {
-            completeSigningSession(
-                signingSessionDetails: signingSessionDetails,
+        switch sessionType {
+        case let .crossDevice(sessionId):
+            completeCrossDeviceSession(
+                sessionId: sessionId,
                 signature: signature,
                 timestamp: timestamp
             )
-        } else {
+        case let .legacy(sessionId):
+            completeSigningSession(
+                sessionId: sessionId,
+                signature: signature,
+                timestamp: timestamp
+            )
+        case .noSession:
             logger.info(
                 message: LoggingConstants.finished,
                 category: .signing
@@ -175,13 +186,39 @@ struct Signer: Sendable {
         }
     }
 
+    private func completeCrossDeviceSession(
+        sessionId: String,
+        signature: Signature,
+        timestamp: Date
+    ) {
+        do {
+            let signatureData = try JSONEncoder().encode(signature)
+            let encodedSignature = signatureData.base64EncodedString()
+
+            miraclAPI.updateCrossDeviceSessionForSigning(
+                sessionId: sessionId,
+                signature: encodedSignature
+            ) { _, _, error in
+                if let error {
+                    callCompletionHandler(error: SigningError.signingFail(error))
+                } else {
+                    let signingResult = SigningResult(signature: signature, timestamp: timestamp)
+                    callCompletionHandler(signingResult: signingResult)
+                }
+            }
+
+        } catch {
+            callCompletionHandler(signingResult: nil, error: error)
+        }
+    }
+
     private func completeSigningSession(
-        signingSessionDetails: SigningSessionDetails,
+        sessionId: String,
         signature: Signature,
         timestamp: Date
     ) {
         miraclAPI.updateSigningSession(
-            identifier: signingSessionDetails.sessionId,
+            identifier: sessionId,
             signature: signature,
             timestamp: timestamp
         ) { _, responseObject, error in
@@ -260,7 +297,7 @@ struct Signer: Sendable {
             throw SigningError.emptyPublicKey
         }
 
-        if let signingSessionDetails, signingSessionDetails.sessionId.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+        if case let .legacy(accessId) = sessionType, accessId.isEmpty {
             throw SigningError.invalidSigningSessionDetails
         }
     }

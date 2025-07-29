@@ -8,6 +8,7 @@ import Foundation
     public let publicKey: String
     public let dtas: String
     public let signatureHash: String
+    public let timestamp: Int64
 
     enum CodingKeys: String, CodingKey {
         case mpinId
@@ -16,6 +17,7 @@ import Foundation
         case publicKey
         case dtas
         case signatureHash = "hash"
+        case timestamp
     }
 
     init(
@@ -24,7 +26,8 @@ import Foundation
         V: String,
         publicKey: String,
         dtas: String,
-        signatureHash: String
+        signatureHash: String,
+        timestamp: Date
     ) {
         self.mpinId = mpinId
         self.U = U
@@ -32,17 +35,19 @@ import Foundation
         self.publicKey = publicKey
         self.dtas = dtas
         self.signatureHash = signatureHash
+        self.timestamp = Int64(timestamp.timeIntervalSince1970)
     }
 
     @available(swift, obsoleted: 1.0)
-    public func dictionary() -> [String: String] {
+    public func dictionary() -> [String: Any] {
         [
             "mpinId": mpinId,
             "u": U,
             "v": V,
             "publicKey": publicKey,
             "dtas": dtas,
-            "hash": signatureHash
+            "hash": signatureHash,
+            "timestamp": timestamp
         ]
     }
 }

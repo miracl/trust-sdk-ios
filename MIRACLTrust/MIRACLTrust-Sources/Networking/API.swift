@@ -254,6 +254,63 @@ struct API: Sendable, APIBlueprint {
         }
     }
 
+    func getCrossDeviceSession(
+        sessionId: String,
+        completionHandler: @escaping APIRequestCompletionHandler<CrossDeviceSessionResponse>
+    ) {
+        let requestBody = CodeStatusRequestBody(
+            wid: sessionId,
+            status: "wid"
+        )
+
+        do {
+            let request = try APIRequest(
+                url: clientSettings.codeStatusURL,
+                path: nil,
+                method: .post,
+                requestBody: requestBody,
+                logger: logger
+            )
+
+            executor.execute(
+                apiRequest: request,
+                completion: completionHandler
+            )
+        } catch {
+            completionHandler(.failed, nil, error)
+        }
+    }
+
+    func updateCrossDeviceSessionForSigning(
+        sessionId: String,
+        signature: String,
+        completionHandler: @escaping APIRequestCompletionHandler<[String: String]>
+    ) {
+        let requestBody = CodeStatusRequestBody(
+            wid: sessionId,
+            status: "signed",
+            userId: nil,
+            signature: signature
+        )
+
+        do {
+            let request = try APIRequest(
+                url: clientSettings.codeStatusURL,
+                path: nil,
+                method: .post,
+                requestBody: requestBody,
+                logger: logger
+            )
+
+            executor.execute(
+                apiRequest: request,
+                completion: completionHandler
+            )
+        } catch {
+            completionHandler(.failed, nil, error)
+        }
+    }
+
     func getSessionDetails(
         accessId: String,
         completionHandler: @escaping APIRequestCompletionHandler<AuthenticationSessionsDetailsResponse>

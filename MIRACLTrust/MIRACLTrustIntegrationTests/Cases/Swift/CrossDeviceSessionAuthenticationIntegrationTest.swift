@@ -1,0 +1,226 @@
+import MIRACLTrust
+import Testing
+
+struct CrossDeviceSessionAuthenticationIntegrationTest {
+    let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
+    let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
+    let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let userId = "int@miracl.com"
+
+    let activationTokenCase = ActivationTokenAsyncCase()
+    let crossDeviceSessionCase = CrossDeviceSessionCase()
+    let platformAPI = PlatformAPIWrapper()
+
+    var registrationCase = RegistrationAsyncTestCase()
+    var authenticationTestCase = CrossDeviceSessionAuthenticationCase()
+
+    var randomPIN = ""
+    var user: User
+    var crossDeviceSession: CrossDeviceSession
+    var accessId: String
+
+    init() async throws {
+        randomPIN = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin()
+        registrationCase.pinCode = randomPIN
+        authenticationTestCase.pinCode = randomPIN
+
+        let url = URL(string: platformURL)!
+        let configuration = try Configuration.Builder(
+            projectId: projectId
+        ).platformURL(url: url)
+            .build()
+
+        try MIRACLTrust.configure(with: configuration)
+
+        accessId = try await platformAPI.getAsyncAccessId(projectId: projectId)
+        let qrCode = "https://mcl.mpin.io#\(accessId)"
+        crossDeviceSession = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
+        let activationToken = try await activationTokenCase.getActivationToken(
+            clientId: clientId,
+            clientSecret: clientSecret,
+            projectId: projectId,
+            userId: userId
+        )
+        user = try await registrationCase.register(userId: userId, activationToken: activationToken)
+    }
+
+    @Test("Tests successful authentication with cross device session for QR Code", .timeLimit(.minutes(1)))
+    func authenticationWithQRCodeCrossDeviceSession() async throws {
+        let isAuthenticated = try await authenticationTestCase.authenticate(
+            user: user,
+            crossDeviceSession: crossDeviceSession
+        )
+        #expect(isAuthenticated)
+    }
+
+    @Test("Tests successful authentication with cross device session for Universal Link URL", .timeLimit(.minutes(1)))
+    func authenticationWithUniviversalLinkURLCrossDeviceSession() async throws {
+        let url = try #require(URL(string: "https://mcl.mpin.io/#\(accessId)"))
+        let crossDeviceSession = try await crossDeviceSessionCase
+            .getCrossDeviceSessionForUniversalLinkURL(universalLinkURL: url)
+        let isAuthenticated = try await authenticationTestCase.authenticate(
+            user: user,
+            crossDeviceSession: crossDeviceSession
+        )
+
+        #expect(isAuthenticated)
+    }
+
+    @Test("Tests successful authentication with cross device session for Universal Link URL", .timeLimit(.minutes(1)))
+    func authenticationWithPushNotificationPayloadForCrossDeviceSession() async throws {
+        let qrCode = "https://mcl.mpin.io#\(accessId)"
+        let payload = [
+            "qrURL": qrCode
+        ]
+        let crossDeviceSession = try await crossDeviceSessionCase
+            .getCrossDeviceSessionForPushNotificationPayload(payload: payload)
+        let isAuthenticated = try await authenticationTestCase.authenticate(
+            user: user,
+            crossDeviceSession: crossDeviceSession
+        )
+
+        #expect(isAuthenticated)
+    }
+
+    @Test("Tests failed authentication with invalid session id", .timeLimit(.minutes(1)))
+    func authenticationFailedWithWrongSessionId() async throws {
+        let crossDeviceSession = createCrossDeviceSessionObject()
+
+        let desiredError = AuthenticationError.invalidCrossDeviceSession
+        let error = await #expect(throws: AuthenticationError.self, performing: {
+            try await authenticationTestCase.authenticate(
+                user: user,
+                crossDeviceSession: crossDeviceSession
+            )
+        })
+
+        #expect(desiredError == error)
+    }
+
+    @Test("Tests failed authentication with empty session id", .timeLimit(.minutes(1)))
+    func authenticationFailedWithEmptySessionId() async throws {
+        let crossDeviceSession = createCrossDeviceSessionObject(sessionId: "")
+
+        let error = await #expect(throws: AuthenticationError.self) {
+            try await authenticationTestCase.authenticate(
+                user: user,
+                crossDeviceSession: crossDeviceSession
+            )
+        }
+
+        var isAuthenticationFailError = false
+        if let error, case .authenticationFail = error {
+            isAuthenticationFailError = true
+        }
+        #expect(isAuthenticationFailError)
+    }
+
+    @Test("Tests failed authentication for invalid pin (e.g `abcde`)", .timeLimit(.minutes(1)))
+    mutating func failedAuthenticationWithInvalidPin() async throws {
+        authenticationTestCase.pinCode = UUID().uuidString
+
+        let desiredError = AuthenticationError.invalidPin
+        let error = await #expect(throws: AuthenticationError.self, performing: {
+            try await authenticationTestCase.authenticate(
+                user: user,
+                crossDeviceSession: crossDeviceSession
+            )
+        })
+
+        #expect(desiredError == error)
+    }
+
+    @Test("Tests failed authentication for wrong pin", .timeLimit(.minutes(1)))
+    mutating func failedAuthenticationWithWrongPin() async throws {
+        authenticationTestCase.pinCode = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin()
+
+        let desiredError = AuthenticationError.unsuccessfulAuthentication
+        let error = await #expect(throws: AuthenticationError.self, performing: {
+            try await authenticationTestCase.authenticate(
+                user: user,
+                crossDeviceSession: crossDeviceSession
+            )
+        })
+
+        #expect(desiredError == error)
+    }
+
+    @Test("Tests failed authentication for longer pin. 6 instead of 4", .timeLimit(.minutes(1)))
+    mutating func failedAuthenticationWithLongerPin() async throws {
+        authenticationTestCase.pinCode = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin(length: 6)
+
+        let desiredError = AuthenticationError.invalidPin
+        let error = await #expect(throws: AuthenticationError.self, performing: {
+            try await authenticationTestCase.authenticate(
+                user: user,
+                crossDeviceSession: crossDeviceSession
+            )
+        })
+
+        #expect(desiredError == error)
+    }
+
+    @Test("Tests failed authentication for longer pin. 3 instead of 4", .timeLimit(.minutes(1)))
+    mutating func failedAuthenticationWithShorterPin() async throws {
+        authenticationTestCase.pinCode = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin(length: 3)
+
+        let desiredError = AuthenticationError.invalidPin
+        let error = await #expect(throws: AuthenticationError.self, performing: {
+            try await authenticationTestCase.authenticate(
+                user: user,
+                crossDeviceSession: crossDeviceSession
+            )
+        })
+
+        #expect(desiredError == error)
+    }
+
+    @Test("Tests failed authentication for nil pin.", .timeLimit(.minutes(1)))
+    mutating func failedAuthenticationWithNilPin() async throws {
+        authenticationTestCase.pinCode = nil
+
+        let desiredError = AuthenticationError.pinCancelled
+        let error = await #expect(throws: AuthenticationError.self, performing: {
+            try await authenticationTestCase.authenticate(
+                user: user,
+                crossDeviceSession: crossDeviceSession
+            )
+        })
+
+        #expect(desiredError == error)
+    }
+
+    // MARK: Private
+
+    private static func makeRandomPin(length: Int = 4) -> String {
+        var pinBuilder = ""
+        for _ in 0 ..< length {
+            pinBuilder.append(String(Int.random(in: 0 ... 9)))
+        }
+
+        return pinBuilder
+    }
+
+    func createCrossDeviceSessionObject(
+        sessionId: String = UUID().uuidString
+    ) -> CrossDeviceSession {
+        CrossDeviceSession(
+            userId: UUID().uuidString,
+            projectName: UUID().uuidString,
+            projectLogoURL: UUID().uuidString,
+            projectId: UUID().uuidString,
+            pinLength: 4,
+            verificationMethod: .standardEmail,
+            verificationURL: UUID().uuidString,
+            verificationCustomText: UUID().uuidString,
+            identityTypeLabel: UUID().uuidString,
+            quickCodeEnabled: true,
+            limitQuickCodeRegistration: false,
+            identityType: .email,
+            sessionId: sessionId,
+            sessionDescription: "",
+            signingHash: ""
+        )
+    }
+}

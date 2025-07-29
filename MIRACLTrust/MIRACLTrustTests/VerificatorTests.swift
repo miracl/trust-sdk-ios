@@ -17,6 +17,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
+            sessionType: .noSession,
             miraclAPI: api,
             completionHandler: { verified, error in
                 XCTAssertNotNil(verified)
@@ -48,7 +49,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            accessId: invalidAccessId,
+            sessionType: .legacy(accessId: invalidAccessId),
             miraclAPI: api,
             completionHandler: { _, _ in
             }
@@ -69,6 +70,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
+            sessionType: .noSession,
             miraclAPI: api,
             completionHandler: { _, _ in
             }
@@ -92,6 +94,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
+            sessionType: .noSession,
             miraclAPI: api,
             completionHandler: { response, error in
                 XCTAssertNil(response)
@@ -124,6 +127,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
+            sessionType: .noSession,
             miraclAPI: api,
             completionHandler: { response, error in
                 XCTAssertNil(response)
@@ -154,6 +158,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
+            sessionType: .noSession,
             miraclAPI: api,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)
@@ -186,6 +191,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
+            sessionType: .noSession,
             miraclAPI: api,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)

@@ -1,7 +1,7 @@
 import MIRACLTrust
 
 extension URLRequest {
-    static func sessionRequest(url: URL, projectId: String, userId: String?) -> Self? {
+    static func sessionRequest(url: URL, projectId: String, userId: String?, hash: String?, description: String?) -> Self? {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return nil
         }
@@ -16,7 +16,7 @@ extension URLRequest {
         request.httpMethod = "POST"
 
         do {
-            let body = SessionRequestBody(projectId: projectId, userId: userId)
+            let body = SessionRequestBody(projectId: projectId, userId: userId, hash: hash, description: description)
             let bodyData = try JSONEncoder().encode(body)
             request.httpBody = bodyData
         } catch {

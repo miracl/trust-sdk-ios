@@ -87,6 +87,14 @@ struct MockAPI: APIBlueprint {
     var registrationResponse: RegistrationResponse?
     var registrationResultCall: APICallResult = .failed
 
+    var crossDeviceSessionError: Error?
+    var crossDeviceSessionResponse: CrossDeviceSessionResponse?
+    var crossDeviceSessionResultCall: APICallResult = .failed
+
+    var updateCrossDeviceSessionError: Error?
+    var updateCrossDeviceSessionResponse: [String: String]?
+    var updateCrossDeviceSessionResultCall: APICallResult = .failed
+
     func getClientSecretShare(
         _: URL,
         completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
@@ -288,6 +296,26 @@ struct MockAPI: APIBlueprint {
             registrationResultCall,
             registrationResponse,
             registrationError
+        )
+    }
+
+    func getCrossDeviceSession(sessionId _: String, completionHandler: @escaping APIRequestCompletionHandler<CrossDeviceSessionResponse>) {
+        completionHandler(
+            crossDeviceSessionResultCall,
+            crossDeviceSessionResponse,
+            crossDeviceSessionError
+        )
+    }
+
+    func updateCrossDeviceSessionForSigning(
+        sessionId _: String,
+        signature _: String,
+        completionHandler: @escaping APIRequestCompletionHandler<[String: String]>
+    ) {
+        completionHandler(
+            updateCrossDeviceSessionResultCall,
+            updateCrossDeviceSessionResponse,
+            updateCrossDeviceSessionError
         )
     }
 }
