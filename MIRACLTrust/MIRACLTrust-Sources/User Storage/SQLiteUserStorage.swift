@@ -10,12 +10,15 @@ final class SQLiteUserStorage: NSObject, UserStorage {
     let databaseName: String
     let projectId: String
     let sqliteHelper = SQLiteHelper()
+    let directoryURL: URL?
 
     init(
         projectId: String,
+        directoryURL: URL? = nil,
         databaseName: String = "miracl"
     ) {
         self.projectId = projectId
+        self.directoryURL = directoryURL
         self.databaseName = databaseName
     }
 
@@ -24,12 +27,15 @@ final class SQLiteUserStorage: NSObject, UserStorage {
     let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 
     func loadStorage() throws {
-        let directoryURL = try sqliteHelper.getDocumentsDirectory()
-        let dbFileURL = directoryURL
+        let databaseDirectoryURL = try sqliteHelper.getDatabaseDirectoryURL(directoryURL: directoryURL)
+        let dbFileURL = databaseDirectoryURL
             .appendingPathComponent("\(databaseName).sqlite")
         let isDatabaseExist = FileManager.default.fileExists(atPath: dbFileURL.path)
 
-        try sqliteHelper.openDatabaseConnection(for: databaseName)
+        try sqliteHelper.openDatabaseConnection(
+            for: databaseName,
+            directoryURL: databaseDirectoryURL
+        )
         try sqliteHelper.encryptDatabase()
 
         let currentDatabaseVersion = try sqliteHelper.getCurrentDatabaseVersion()

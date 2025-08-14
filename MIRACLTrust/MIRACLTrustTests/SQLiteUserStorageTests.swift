@@ -30,7 +30,44 @@ class SQLiteUserStorageTests: XCTestCase {
         }
     }
 
-    // MARK: Migrations test
+    // MARK: `loadStorage()` method tests
+
+    func testChangedDatabaseName() throws {
+        let newName = "miracl-test-new"
+        let newStorage = SQLiteUserStorage(projectId: UUID().uuidString, databaseName: newName)
+        let configuration = try Configuration
+            .Builder(
+                projectId: projectId
+            )
+            .userStorage(userStorage: newStorage)
+            .build()
+        try MIRACLTrust.configure(with: configuration)
+
+        let fileURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let path = fileURL.appendingPathComponent("\(newName).sqlite").relativePath
+        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+    }
+
+    func testChangedDatabaseURL() throws {
+        let newName = "miracl-test-new"
+        let tempDirectorURL = FileManager.default.temporaryDirectory
+        let newStorage = SQLiteUserStorage(
+            projectId: UUID().uuidString,
+            directoryURL: tempDirectorURL,
+            databaseName: newName
+        )
+
+        let configuration = try Configuration
+            .Builder(
+                projectId: projectId
+            )
+            .userStorage(userStorage: newStorage)
+            .build()
+        try MIRACLTrust.configure(with: configuration)
+
+        let path = tempDirectorURL.appendingPathComponent("\(newName).sqlite").relativePath
+        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+    }
 
     // MARK: `add` method test
 
