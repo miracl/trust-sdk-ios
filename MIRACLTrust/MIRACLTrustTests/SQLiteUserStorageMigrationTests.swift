@@ -135,7 +135,8 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
     }
 
     private func createV2Storage() throws {
-        try sqliteHelper.openDatabaseConnection(for: databaseName)
+        let directoryURL = try sqliteHelper.getDatabaseDirectoryURL(directoryURL: nil)
+        try sqliteHelper.openDatabaseConnection(for: databaseName, directoryURL: directoryURL)
         try sqliteHelper.encryptDatabase()
         try sqliteHelper.setCurrentDatabaseVersion(databaseVersion: 2)
 
@@ -229,7 +230,8 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
     }
 
     private func createV1Storage() throws {
-        try sqliteHelper.openDatabaseConnection(for: databaseName)
+        let directoryURL = try sqliteHelper.getDatabaseDirectoryURL(directoryURL: nil)
+        try sqliteHelper.openDatabaseConnection(for: databaseName, directoryURL: directoryURL)
         try sqliteHelper.encryptDatabase()
         try sqliteHelper.setCurrentDatabaseVersion(databaseVersion: 1)
 
@@ -323,7 +325,8 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
     }
 
     private func createV0Storage() throws {
-        try sqliteHelper.openDatabaseConnection(for: "test-for-migration")
+        let directoryURL = try sqliteHelper.getDatabaseDirectoryURL(directoryURL: nil)
+        try sqliteHelper.openDatabaseConnection(for: "test-for-migration", directoryURL: directoryURL)
         try sqliteHelper.encryptDatabase()
         try sqliteHelper.setCurrentDatabaseVersion(databaseVersion: 0)
 

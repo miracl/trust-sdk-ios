@@ -19,9 +19,8 @@ final class SQLiteHelper: @unchecked Sendable {
         }
     }
 
-    func openDatabaseConnection(for dbName: String) throws {
+    func openDatabaseConnection(for dbName: String, directoryURL: URL) throws {
         try queue.sync {
-            let directoryURL = try getDocumentsDirectory()
             var dbFileURL = directoryURL
                 .appendingPathComponent("\(dbName).sqlite")
             let dbFilePath = dbFileURL.relativePath
@@ -281,16 +280,22 @@ final class SQLiteHelper: @unchecked Sendable {
         return isNeeded
     }
 
-    func getDocumentsDirectory() throws -> URL {
-        guard let directoryURL = try? FileManager.default.url(
-            for: .documentDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        ) else {
-            throw SQLiteDefaultStorageError.noDir
+    func getDatabaseDirectoryURL(directoryURL: URL?) throws -> URL {
+        let databaseDirectoryURL: URL
+        if let directoryURL {
+            databaseDirectoryURL = directoryURL
+        } else {
+            guard let directoryURL = try? FileManager.default.url(
+                for: .documentDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
+            ) else {
+                throw SQLiteDefaultStorageError.noDir
+            }
+            databaseDirectoryURL = directoryURL
         }
-        return directoryURL
+        return databaseDirectoryURL
     }
 
     private func getErrorMessage() -> String? {
