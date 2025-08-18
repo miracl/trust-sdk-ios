@@ -401,7 +401,7 @@ class MIRACLTrustTests: XCTestCase {
 
     func testPushAuthenticate() throws {
         let user = createUser()
-        try mockUserStorage.add(user: user)
+        try mockUserStorage.add(user: user.toUserDTO())
 
         let qrCode = "https://mcl.mpin.io#b227d0850d4280b98c5124a14aec84bf"
         let payload = [
@@ -428,7 +428,7 @@ class MIRACLTrustTests: XCTestCase {
 
     func testPushAuthenticateWithValidationError() throws {
         let user = createUser()
-        try mockUserStorage.add(user: user)
+        try mockUserStorage.add(user: user.toUserDTO())
 
         let qrCode = "https://mcl.mpin.io#"
         let payload = [
@@ -959,7 +959,61 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [completionHandlerExpectation], timeout: 20.0)
     }
 
-    func createUser(userId: String = UUID().uuidString) -> User {
+    func testGetUser() throws {
+        let userDTO = createUserDTO()
+        try mockUserStorage.add(user: userDTO)
+        let user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: randomString))
+
+        XCTAssertEqual(user.userId, userDTO.userId)
+        XCTAssertEqual(user.projectId, userDTO.projectId)
+        XCTAssertEqual(user.revoked, userDTO.revoked)
+        XCTAssertEqual(user.pinLength, userDTO.pinLength)
+        XCTAssertEqual(user.mpinId, userDTO.mpinId)
+        XCTAssertEqual(user.token, userDTO.token)
+        XCTAssertEqual(user.dtas, userDTO.dtas)
+        XCTAssertEqual(user.publicKey, userDTO.publicKey)
+    }
+
+    func testGetNotExisitingUser() throws {
+        projectId = randomString
+        var userDTO = createUserDTO()
+
+        try mockUserStorage.add(user: userDTO)
+        XCTAssertNil(MIRACLTrust.getInstance().getUser(by: randomString))
+    }
+
+    func testDeleteUser() throws {
+        let userDTO = createUserDTO()
+        try mockUserStorage.add(user: userDTO)
+
+        let user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: randomString))
+        try MIRACLTrust.getInstance().delete(user: user)
+
+        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
+    }
+
+    func testGetAllUsers() throws {
+        let userDTO = createUserDTO()
+        try mockUserStorage.add(user: userDTO)
+        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 1)
+    }
+
+    // MARK: Private
+
+    private func createUserDTO() -> UserDTO {
+        UserDTO(
+            userId: randomString,
+            projectId: projectId,
+            revoked: false,
+            pinLength: 4,
+            mpinId: Data([1, 2, 3]),
+            token: Data([1, 2, 3]),
+            dtas: randomString,
+            publicKey: nil
+        )
+    }
+
+    private func createUser(userId: String = UUID().uuidString) -> User {
         User(
             userId: userId,
             projectId: randomString,
@@ -972,7 +1026,7 @@ class MIRACLTrustTests: XCTestCase {
         )
     }
 
-    func createSessionDetails(
+    private func createSessionDetails(
         accessId: String = "b227d0850d4280b98c5124a14aec84bf"
     ) -> AuthenticationSessionDetails {
         AuthenticationSessionDetails(
@@ -992,7 +1046,7 @@ class MIRACLTrustTests: XCTestCase {
         )
     }
 
-    func createSigningSessionDetails(sessionId: String = "b227d0850d4280b98c5124a14aec84bf") -> SigningSessionDetails {
+    private func createSigningSessionDetails(sessionId: String = "b227d0850d4280b98c5124a14aec84bf") -> SigningSessionDetails {
         SigningSessionDetails(
             userId: UUID().uuidString,
             projectName: UUID().uuidString,

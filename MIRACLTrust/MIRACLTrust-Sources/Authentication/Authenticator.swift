@@ -152,7 +152,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
                     if let clientErrorData, clientErrorData.code == MPINID_EXPIRED || clientErrorData.code == EXPIRED_MPINID {
                         let user = user.revoke()
 
-                        try? userStorage.update(user: user)
+                        try? userStorage.update(user: user.toUserDTO())
 
                         callCompletionHandler(with: AuthenticationError.revoked)
                         return
@@ -225,7 +225,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
                         case MPINID_REVOKED, REVOKED_MPINID:
                             let user = user.revoke()
 
-                            try? userStorage.update(user: user)
+                            try? userStorage.update(user: user.toUserDTO())
 
                             callCompletionHandler(with: AuthenticationError.revoked)
                             return

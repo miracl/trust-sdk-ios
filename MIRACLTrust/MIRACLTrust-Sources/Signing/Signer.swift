@@ -123,7 +123,7 @@ struct Signer: Sendable {
         logOperation(operation: LoggingConstants.signingExecution)
 
         // User could be updated from WaM.
-        let user = userStorage.getUser(by: user.userId, projectId: user.projectId) ?? user
+        let user = userStorage.getUser(by: user.userId, projectId: user.projectId)?.toUser() ?? user
         let timestamp = Date()
 
         guard let publicKey = user.publicKey else {

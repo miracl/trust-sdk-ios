@@ -72,7 +72,7 @@ class SQLiteUserStorageTests: XCTestCase {
     // MARK: `add` method test
 
     func testAddUser() throws {
-        let user = createUser()
+        let user = createUserDTO()
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
@@ -88,7 +88,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testAddUserWithEmptyUserId() throws {
-        let user = createUser(userId: "")
+        let user = createUserDTO(userId: "")
         XCTAssertThrowsError(try storage.add(user: user)) { error in
             XCTAssertNotNil(error as? SQLiteUserStorageError)
             var isErrorStorage = false
@@ -101,7 +101,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testAddUserWithoutPublicKey() throws {
-        let user = createUser(publicKey: nil)
+        let user = createUserDTO(publicKey: nil)
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
@@ -117,7 +117,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testAddAnotherUser() throws {
-        let user = createUser()
+        let user = createUserDTO()
 
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
@@ -134,7 +134,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testAddAnotherUserForNewUserIdForSameProjectId() throws {
-        var user = createUser()
+        var user = createUserDTO()
 
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
@@ -150,7 +150,7 @@ class SQLiteUserStorageTests: XCTestCase {
         XCTAssertEqual(userFromDB.publicKey, user.publicKey)
 
         let secondUserId = UUID().uuidString
-        user = createUser(userId: secondUserId)
+        user = createUserDTO(userId: secondUserId)
 
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 2)
@@ -169,7 +169,7 @@ class SQLiteUserStorageTests: XCTestCase {
     // MARK: `delete` method test
 
     func testDeleteUser() throws {
-        let unwrappedUser = createUser()
+        let unwrappedUser = createUserDTO()
 
         try storage.add(user: unwrappedUser)
         XCTAssertEqual(storage.all().count, 1)
@@ -179,35 +179,35 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testDeleteUnexistingUser() throws {
-        var user = createUser()
+        var user = createUserDTO()
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
-        user = createUser(userId: "alice@miracl.com")
+        user = createUserDTO(userId: "alice@miracl.com")
 
         try storage.delete(user: user)
         XCTAssertEqual(storage.all().count, 1)
     }
 
     func testDeleteEmptyUserId() throws {
-        var user = createUser()
+        var user = createUserDTO()
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
-        user = createUser(userId: "")
+        user = createUserDTO(userId: "")
 
         try storage.delete(user: user)
         XCTAssertEqual(storage.all().count, 1)
     }
 
     func testDeleteProjectId() throws {
-        var user = createUser()
+        var user = createUserDTO()
 
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
         projectId = ""
-        user = createUser()
+        user = createUserDTO()
 
         try storage.delete(user: user)
         XCTAssertEqual(storage.all().count, 1)
@@ -216,7 +216,7 @@ class SQLiteUserStorageTests: XCTestCase {
     // MARK: `update` method test
 
     func testUpdateUser() throws {
-        var user = createUser()
+        var user = createUserDTO()
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
@@ -225,7 +225,7 @@ class SQLiteUserStorageTests: XCTestCase {
         let updateDtas = UUID().uuidString
         let updatePublicKey = Data([10, 11, 12])
 
-        user = createUser(
+        user = createUserDTO(
             userId: user.userId,
             projectId: user.projectId,
             mpinId: updatedMpinId,
@@ -256,7 +256,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testUpdateUserEmptyMpinId() throws {
-        var user = createUser()
+        var user = createUserDTO()
         let initialMPinID = user.mpinId
 
         try storage.add(user: user)
@@ -267,7 +267,7 @@ class SQLiteUserStorageTests: XCTestCase {
         let updateDtas = UUID().uuidString
         let updatePublicKey = Data([10, 11, 12])
 
-        user = createUser(
+        user = createUserDTO(
             userId: user.userId,
             projectId: user.projectId,
             mpinId: updatedMpinId,
@@ -302,7 +302,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testUpdateUserEmptyToken() throws {
-        var user = createUser()
+        var user = createUserDTO()
         let initialToken = user.token
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
@@ -312,7 +312,7 @@ class SQLiteUserStorageTests: XCTestCase {
         let updateDtas = UUID().uuidString
         let updatePublicKey = Data([10, 11, 12])
 
-        user = createUser(
+        user = createUserDTO(
             userId: user.userId,
             projectId: user.projectId,
             mpinId: updatedMpinId,
@@ -347,7 +347,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testUpdateUserEmptyDtas() throws {
-        var user = createUser()
+        var user = createUserDTO()
         let dtasInitial = user.dtas
 
         try storage.add(user: user)
@@ -358,7 +358,7 @@ class SQLiteUserStorageTests: XCTestCase {
         let updateDtas = ""
         let updatePublicKey = Data([10, 11, 12])
 
-        user = createUser(
+        user = createUserDTO(
             userId: user.userId,
             projectId: user.projectId,
             mpinId: updatedMpinId,
@@ -393,13 +393,13 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testUpdateUserNegativePinLength() throws {
-        var user = createUser()
+        var user = createUserDTO()
         let pinLengthInitial = user.pinLength
 
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
-        user = createUser(
+        user = createUserDTO(
             userId: user.userId,
             projectId: user.projectId,
             pinLength: -1
@@ -431,25 +431,25 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testUpdateUserEmptyProjectId() throws {
-        let user = createUser()
+        let user = createUserDTO()
 
         try storage.add(user: user)
         XCTAssertEqual(storage.all().count, 1)
 
         projectId = ""
-        let secondUser = createUser()
+        let secondUser = createUserDTO()
         try storage.update(user: secondUser)
     }
 
     // MARK: `all()` tests
 
     func testAll() throws {
-        let user = createUser()
+        let user = createUserDTO()
         let firstUserId = user.userId
         try storage.add(user: user)
 
         let secondUserId = UUID().uuidString
-        let secondUser = createUser(userId: secondUserId)
+        let secondUser = createUserDTO(userId: secondUserId)
         try storage.add(user: secondUser)
 
         XCTAssertEqual(storage.all().count, 2)
@@ -484,7 +484,7 @@ class SQLiteUserStorageTests: XCTestCase {
     // MARK: `getUser`
 
     func testGetUserByProjectIdAndUserID() throws {
-        let user = createUser()
+        let user = createUserDTO()
         try storage.add(user: user)
 
         let fetchedUser = try XCTUnwrap(storage.getUser(by: user.userId, projectId: user.projectId))
@@ -499,7 +499,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testGetUserByDifferentUserId() throws {
-        let unwrappedUser = createUser()
+        let unwrappedUser = createUserDTO()
         try storage.add(user: unwrappedUser)
 
         let fetchedUser = storage.getUser(by: UUID().uuidString, projectId: unwrappedUser.projectId)
@@ -507,7 +507,7 @@ class SQLiteUserStorageTests: XCTestCase {
     }
 
     func testGetUserByDifferentProjectId() throws {
-        let unwrappedUser = createUser()
+        let unwrappedUser = createUserDTO()
         try storage.add(user: unwrappedUser)
 
         let fetchedUser = storage.getUser(by: unwrappedUser.userId, projectId: UUID().uuidString)
@@ -522,7 +522,7 @@ class SQLiteUserStorageTests: XCTestCase {
         XCTAssertEqual(current as? T, expected)
     }
 
-    private func createUser(
+    private func createUserDTO(
         userId: String = UUID().uuidString,
         projectId: String = UUID().uuidString,
         revoked: Bool = Bool.random(),
@@ -531,8 +531,8 @@ class SQLiteUserStorageTests: XCTestCase {
         token: Data = Data([3, 4, 5]),
         dtas: String = UUID().uuidString,
         publicKey: Data? = Data([6, 7, 8])
-    ) -> User {
-        User(
+    ) -> UserDTO {
+        UserDTO(
             userId: userId,
             projectId: projectId,
             revoked: revoked,

@@ -37,8 +37,9 @@ class QuickCodeGeneratorTests: XCTestCase {
             .build()
 
         user = createUser(userId: userId, projectId: projectId)
+        let userDTO = try XCTUnwrap(user).toUserDTO()
         try MIRACLTrust.configure(with: configuration)
-        try storage.add(user: XCTUnwrap(user))
+        try storage.add(user: userDTO)
 
         authenticator = mockAuthenticator()
     }

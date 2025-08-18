@@ -285,7 +285,7 @@ class SigningIntegrationTests: XCTestCase {
     func testSigningInvalidPublicKey() throws {
         let registeredSigningUser = createRandomUser(publicKey: Data())
 
-        try storage.update(user: registeredSigningUser)
+        try storage.update(user: registeredSigningUser.toUserDTO())
 
         guard let messageData = messageToSign.data(using: .utf8) else {
             XCTFail("Cannot create data from message.")

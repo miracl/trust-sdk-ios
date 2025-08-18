@@ -79,7 +79,7 @@ final class SQLiteUserStorage: NSObject, UserStorage {
         }
     }
 
-    func add(user: User) throws {
+    func add(user: UserDTO) throws {
         let insertUser = """
             INSERT INTO
                 User(userId, projectId, revoked, pinLength, mpinId, token, dtas, publicKey) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -119,7 +119,7 @@ final class SQLiteUserStorage: NSObject, UserStorage {
         }
     }
 
-    func delete(user: User) throws {
+    func delete(user: UserDTO) throws {
         let deleteUser = """
             DELETE FROM User WHERE userId = ? AND projectId = ?
         """
@@ -136,7 +136,7 @@ final class SQLiteUserStorage: NSObject, UserStorage {
         )
     }
 
-    func update(user: User) throws {
+    func update(user: UserDTO) throws {
         let updateUser = """
             UPDATE User
             SET revoked = ?, pinLength = ? , mpinId = ?, token = ?, dtas = ?, publicKey = ?
@@ -178,13 +178,13 @@ final class SQLiteUserStorage: NSObject, UserStorage {
         )
     }
 
-    func all() -> [User] {
+    func all() -> [UserDTO] {
         let selectAllUsers = """
             SELECT * FROM User
         """
 
         do {
-            var users = [User]()
+            var users = [UserDTO]()
             try sqliteHelper.select(
                 statement: selectAllUsers,
                 bindingsBlock: nil,
@@ -223,7 +223,7 @@ final class SQLiteUserStorage: NSObject, UserStorage {
                         publicKey = data
                     }
 
-                    let iteratedUser = User(
+                    let iteratedUser = UserDTO(
                         userId: userId,
                         projectId: projectId,
                         revoked: revoked,
@@ -242,13 +242,13 @@ final class SQLiteUserStorage: NSObject, UserStorage {
         }
     }
 
-    func getUser(by userId: String, projectId: String) -> User? {
+    func getUser(by userId: String, projectId: String) -> UserDTO? {
         let selectUserByUserIdAndProjectId = """
             SELECT * FROM User WHERE userId = ? AND projectId = ?
         """
 
         do {
-            var user: User?
+            var user: UserDTO?
             try sqliteHelper.select(
                 statement: selectUserByUserIdAndProjectId,
                 bindingsBlock: { statement in
@@ -291,7 +291,7 @@ final class SQLiteUserStorage: NSObject, UserStorage {
 
                         publicKey = data
                     }
-                    user = User(
+                    user = UserDTO(
                         userId: userId,
                         projectId: projectId,
                         revoked: revoked,

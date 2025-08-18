@@ -299,7 +299,7 @@ final class Registrator: Sendable {
                     category: .registration
                 )
 
-                try userStorage.update(user: user)
+                try userStorage.update(user: user.toUserDTO())
 
                 DispatchQueue.main.async {
                     self.completionHandler(user, nil)
@@ -310,7 +310,7 @@ final class Registrator: Sendable {
                     category: .registration
                 )
 
-                try userStorage.add(user: user)
+                try userStorage.add(user: user.toUserDTO())
 
                 DispatchQueue.main.async {
                     self.completionHandler(user, nil)

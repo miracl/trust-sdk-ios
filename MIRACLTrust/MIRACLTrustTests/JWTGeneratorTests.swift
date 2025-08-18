@@ -27,7 +27,7 @@ class JWTGeneratorTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: configuration)
 
-        try MIRACLTrust.getInstance().userStorage.add(user: user)
+        try MIRACLTrust.getInstance().userStorage.add(user: user.toUserDTO())
         authenticator = try mockAuthenticator()
     }
 

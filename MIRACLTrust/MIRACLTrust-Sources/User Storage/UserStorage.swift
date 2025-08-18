@@ -10,22 +10,22 @@ public protocol UserStorage: Sendable {
 
     /// Adds a new user to the storage.
     /// - Parameter user: a user that needs to be added to the storage.
-    func add(user: User) throws
+    func add(user: UserDTO) throws
 
     /// Deletes the user from the storage.
     /// - Parameter user: a user that needs to be deleted to the storage.
-    func delete(user: User) throws
+    func delete(user: UserDTO) throws
 
     /// Updates the user in the storage
     /// - Parameter user: a user that needs to be updated to the storage.
-    func update(user: User) throws
+    func update(user: UserDTO) throws
 
     /// Get all users written in the storage.
-    func all() -> [User]
+    func all() -> [UserDTO]
 
     /// Get User object by its user id and project id. If User isn't present in the storage this method returns nil.
     /// - Parameters:
     ///   - userId: a user id to be checked in the storage.
     ///   - projectId: a project id to be checked in the storage.
-    func getUser(by userId: String, projectId: String) -> User?
+    func getUser(by userId: String, projectId: String) -> UserDTO?
 }

@@ -28,7 +28,9 @@ class PushNotificationAuthenticatorTests: XCTestCase {
             .userStorage(userStorage: storage)
             .build()
         try MIRACLTrust.configure(with: configuration)
-        try MIRACLTrust.getInstance().userStorage.add(user: createUser())
+        user = createUser()
+        let userDTO = try XCTUnwrap(user?.toUserDTO())
+        try MIRACLTrust.getInstance().userStorage.add(user: userDTO)
 
         authenticator = mockAuthenticator()
         payload = [
