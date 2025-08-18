@@ -137,7 +137,7 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
     private func createV2Storage() throws {
         let directoryURL = try sqliteHelper.getDatabaseDirectoryURL(directoryURL: nil)
         try sqliteHelper.openDatabaseConnection(for: databaseName, directoryURL: directoryURL)
-        try sqliteHelper.encryptDatabase()
+        try sqliteHelper.encryptDatabase(keychainAccessGroup: nil)
         try sqliteHelper.setCurrentDatabaseVersion(databaseVersion: 2)
 
         let alterOldTablesStatement = """
@@ -232,7 +232,7 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
     private func createV1Storage() throws {
         let directoryURL = try sqliteHelper.getDatabaseDirectoryURL(directoryURL: nil)
         try sqliteHelper.openDatabaseConnection(for: databaseName, directoryURL: directoryURL)
-        try sqliteHelper.encryptDatabase()
+        try sqliteHelper.encryptDatabase(keychainAccessGroup: nil)
         try sqliteHelper.setCurrentDatabaseVersion(databaseVersion: 1)
 
         let alterOldTablesStatement = """
@@ -327,7 +327,7 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
     private func createV0Storage() throws {
         let directoryURL = try sqliteHelper.getDatabaseDirectoryURL(directoryURL: nil)
         try sqliteHelper.openDatabaseConnection(for: "test-for-migration", directoryURL: directoryURL)
-        try sqliteHelper.encryptDatabase()
+        try sqliteHelper.encryptDatabase(keychainAccessGroup: nil)
         try sqliteHelper.setCurrentDatabaseVersion(databaseVersion: 0)
 
         let alterOldTablesStatement = """

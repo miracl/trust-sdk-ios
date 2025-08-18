@@ -6,4 +6,5 @@ enum SQLiteDefaultStorageError: Error, Equatable {
     case emptyOrNullParametersError
     case encryptionError
     case encryptionKeyUpdateError
+    case accessGroupUpdateError
 }

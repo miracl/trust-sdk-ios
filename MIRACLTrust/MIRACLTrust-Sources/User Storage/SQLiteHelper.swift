@@ -43,9 +43,9 @@ final class SQLiteHelper: @unchecked Sendable {
         }
     }
 
-    func encryptDatabase() throws {
+    func encryptDatabase(keychainAccessGroup: String?) throws {
         try queue.sync {
-            let encryptionHelper = SQLiteEncryptionHandler()
+            let encryptionHelper = SQLiteEncryptionHandler(keychainAccessGroup: keychainAccessGroup)
 
             var encryptionKey = encryptionHelper.loadEncryptionKey()
 
@@ -53,6 +53,9 @@ final class SQLiteHelper: @unchecked Sendable {
                 encryptionKey = encryptionHelper.createEncryptionKey()
             }
 
+            if !encryptionHelper.updateEncryptionKeyAccessGroupIfNeeded() {
+                throw SQLiteDefaultStorageError.accessGroupUpdateError
+            }
             if !encryptionHelper.updateEncryptionKeyAccessibilityIfNeeded() {
                 throw SQLiteDefaultStorageError.encryptionKeyUpdateError
             }

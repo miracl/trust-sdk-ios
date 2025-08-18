@@ -11,15 +11,18 @@ final class SQLiteUserStorage: NSObject, UserStorage {
     let projectId: String
     let sqliteHelper = SQLiteHelper()
     let directoryURL: URL?
+    let keychainAccessGroup: String?
 
     init(
         projectId: String,
         directoryURL: URL? = nil,
-        databaseName: String = "miracl"
+        databaseName: String = "miracl",
+        keychainAccessGroup: String? = nil
     ) {
         self.projectId = projectId
         self.directoryURL = directoryURL
         self.databaseName = databaseName
+        self.keychainAccessGroup = keychainAccessGroup
     }
 
     // Current version of the SQLite database
@@ -36,7 +39,7 @@ final class SQLiteUserStorage: NSObject, UserStorage {
             for: databaseName,
             directoryURL: databaseDirectoryURL
         )
-        try sqliteHelper.encryptDatabase()
+        try sqliteHelper.encryptDatabase(keychainAccessGroup: keychainAccessGroup)
 
         let currentDatabaseVersion = try sqliteHelper.getCurrentDatabaseVersion()
         if sqliteHelper.isMigrationNeeded(
