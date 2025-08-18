@@ -39,7 +39,7 @@ class AuthenticatorTests: XCTestCase {
 
             user = AuthenticatorTests.createUser(userId: userId, projectId: projectId)
 
-            try MIRACLTrust.getInstance().userStorage.add(user: user)
+            try MIRACLTrust.getInstance().userStorage.add(user: user.toUserDTO())
         } catch {
             XCTFail("Cannot create user and identity.")
         }

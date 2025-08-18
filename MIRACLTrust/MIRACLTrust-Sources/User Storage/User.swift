@@ -81,3 +81,18 @@ import Foundation
         )
     }
 }
+
+extension User {
+    func toUserDTO() -> UserDTO {
+        UserDTO(
+            userId: userId,
+            projectId: projectId,
+            revoked: revoked,
+            pinLength: pinLength,
+            mpinId: mpinId,
+            token: token,
+            dtas: dtas,
+            publicKey: publicKey
+        )
+    }
+}

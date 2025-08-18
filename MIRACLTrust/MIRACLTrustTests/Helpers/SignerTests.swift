@@ -28,7 +28,7 @@ class SignerTests: XCTestCase {
 
         signingUser = SignerTests.createUser()
         try MIRACLTrust.configure(with: configuration)
-        try MIRACLTrust.getInstance().userStorage.add(user: signingUser)
+        try MIRACLTrust.getInstance().userStorage.add(user: signingUser.toUserDTO())
 
         timestamp = Date()
         crypto = SignerTests.mockCrypto()

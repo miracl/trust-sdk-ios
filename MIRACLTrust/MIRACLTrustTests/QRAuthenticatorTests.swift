@@ -26,8 +26,9 @@ class QRAuthenticatorTests: XCTestCase {
         try MIRACLTrust.configure(with: configuration)
 
         user = createUser()
+        let userDTO = try XCTUnwrap(user?.toUserDTO())
 
-        try MIRACLTrust.getInstance().userStorage.add(user: XCTUnwrap(user))
+        try MIRACLTrust.getInstance().userStorage.add(user: userDTO)
 
         authenticator = mockAuthenticator()
     }

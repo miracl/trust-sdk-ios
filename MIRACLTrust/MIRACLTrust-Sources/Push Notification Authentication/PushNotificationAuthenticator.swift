@@ -39,7 +39,7 @@ struct PushNotificationAuthenticator: Sendable {
             return
         }
 
-        guard let user = userStorage.getUser(by: userId, projectId: projectId) else {
+        guard let user = userStorage.getUser(by: userId, projectId: projectId)?.toUser() else {
             callCompletionHandler(
                 authenticated: false,
                 error: AuthenticationError.userNotFound

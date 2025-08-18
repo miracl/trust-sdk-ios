@@ -47,7 +47,7 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
 
         user = createUser()
 
-        try MIRACLTrust.getInstance().userStorage.add(user: XCTUnwrap(user))
+        try MIRACLTrust.getInstance().userStorage.add(user: XCTUnwrap(user?.toUserDTO()))
 
         authenticator = mockAuthenticator()
     }

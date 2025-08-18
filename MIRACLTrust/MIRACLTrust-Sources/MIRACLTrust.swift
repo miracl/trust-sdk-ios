@@ -6,7 +6,9 @@ import Foundation
     // MARK: Public properties
 
     @objc public var users: [User] {
-        userStorage.all()
+        userStorage.all().map {
+            $0.toUser()
+        }
     }
 
     @objc public var projectId: String
@@ -847,7 +849,7 @@ import Foundation
     ///   - userId: id of the user. Can be email or any other string.
     /// - Returns: User object from the database. Returns nil if there is no such object in the storage.
     @objc public func getUser(by userId: String) -> User? {
-        userStorage.getUser(by: userId, projectId: projectId)
+        userStorage.getUser(by: userId, projectId: projectId)?.toUser()
     }
 
     // MARK: Identities Removal
@@ -855,7 +857,7 @@ import Foundation
     /// Delete a registered user.
     /// - Parameter user: object that needs to be deleted.
     @objc public func delete(user: User) throws {
-        try userStorage.delete(user: user)
+        try userStorage.delete(user: user.toUserDTO())
     }
 
     // MARK: Private methods
