@@ -1,4 +1,5 @@
 {
+  "originHash" : "e0ac3fd34b7305dbde096625b8eefa11940bc1a3b6d213527e91bedce8a4b7ac",
   "pins" : [
     {
       "identity" : "jwt-kit",
@@ -28,5 +29,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

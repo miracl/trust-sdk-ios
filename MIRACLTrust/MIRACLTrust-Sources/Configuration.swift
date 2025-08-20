@@ -6,9 +6,6 @@ import Foundation
     /// Identifier of the project in the MIRACL Trust platform.
     var projectId: String
 
-    /// User objects are kept in this storage when they are registered. By default, they are written into an internal for the application SQLite database.
-    var userStorage: UserStorage?
-
     /// Base URL of the MIRACL platform.
     var platformURL: URL
 
@@ -29,6 +26,9 @@ import Foundation
     // Additional information that will be sent via `X-MIRACL-CLIENT` HTTP header.
     var applicationInfo: String?
 
+    /// Type of the storage that could be configured.
+    var storageType: StorageType
+
     override private init() {
         projectId = ""
         platformURL = MIRACL_API_URL
@@ -38,8 +38,8 @@ import Foundation
         urlSessionConfiguration.timeoutIntervalForRequest = 30
         urlSessionConfiguration.timeoutIntervalForResource = 300
         deviceName = ""
-
         loggingLevel = .none
+        storageType = .default(DefaultUserStorageOptions())
     }
 
     /// Builds ``Configuration`` objects.
@@ -69,13 +69,33 @@ import Foundation
             }
         }
 
+        ///  Sets ``DefaultStorageOptions``.
+        ///
+        ///  The default storage is and encrypted SQLite database stored in the `documents` directory.
+        ///
+        /// - Parameter closure: A closure that receives an inout ``DefaultUserStorageOptions`` instance
+        ///   so you can modify its properties. Any changes you make inside the closure
+        ///   are applied to the user storage setup.
+        /// - Returns: ``Configuration/Builder`` object.
+        @discardableResult
+        public func configureDefaultUserStorage(
+            _ closure: (inout DefaultUserStorageOptions) -> Void
+        ) -> Builder {
+            var options = DefaultUserStorageOptions()
+            closure(&options)
+
+            configurationToBuild.storageType = .default(options)
+
+            return self
+        }
+
         /// Set custom ``UserStorage`` implementation.
         /// - Parameter userStorage: custom ``UserStorage`` implementation.
         /// - Returns: Configuration.Builder object.
         @discardableResult public func userStorage(
             userStorage: UserStorage
         ) -> Builder {
-            configurationToBuild.userStorage = userStorage
+            configurationToBuild.storageType = .custom(userStorage)
             return self
         }
 

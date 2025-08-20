@@ -21,6 +21,8 @@
 		6D22F0E12B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D22F0DF2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m */; };
 		6D25C44A25D6853F00E878C9 /* JWTAuthenticationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D25C44925D6853F00E878C9 /* JWTAuthenticationTestCase.swift */; };
 		6D26142C24AB1B7C004F0B54 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D26142B24AB1B7C004F0B54 /* Constants.swift */; };
+		6D291E942E55F80600C6AD80 /* StorageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D291E932E55F80200C6AD80 /* StorageType.swift */; };
+		6D291E962E55F8CD00C6AD80 /* DefaultUserStorageOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D291E952E55F8C600C6AD80 /* DefaultUserStorageOptions.swift */; };
 		6D2E4F112E2E62DA0001B5A7 /* CrossDeviceSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E4F102E2E62D40001B5A7 /* CrossDeviceSession.swift */; };
 		6D2E4F132E2E62E60001B5A7 /* CrossDeviceSessionFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E4F122E2E62DF0001B5A7 /* CrossDeviceSessionFetcher.swift */; };
 		6D2E4F152E2E62FE0001B5A7 /* CrossDeviceSessionResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E4F142E2E62F90001B5A7 /* CrossDeviceSessionResponse.swift */; };
@@ -328,6 +330,8 @@
 		6D22F0DF2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AbortAuthenticationSessionCompatibilityCase.m; sourceTree = "<group>"; };
 		6D25C44925D6853F00E878C9 /* JWTAuthenticationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTAuthenticationTestCase.swift; sourceTree = "<group>"; };
 		6D26142B24AB1B7C004F0B54 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		6D291E932E55F80200C6AD80 /* StorageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageType.swift; sourceTree = "<group>"; };
+		6D291E952E55F8C600C6AD80 /* DefaultUserStorageOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUserStorageOptions.swift; sourceTree = "<group>"; };
 		6D2E4F102E2E62D40001B5A7 /* CrossDeviceSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSession.swift; sourceTree = "<group>"; };
 		6D2E4F122E2E62DF0001B5A7 /* CrossDeviceSessionFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionFetcher.swift; sourceTree = "<group>"; };
 		6D2E4F142E2E62F90001B5A7 /* CrossDeviceSessionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionResponse.swift; sourceTree = "<group>"; };
@@ -763,6 +767,8 @@
 				6DB4580C269C17DB00C4FEFA /* SQLiteHelper.swift */,
 				6DF2D3F8269F0DAF004CAD54 /* SQLiteEncryptionHelper.swift */,
 				6DF2D3F6269F03DE004CAD54 /* SQLiteUserStorageError.swift */,
+				6D291E952E55F8C600C6AD80 /* DefaultUserStorageOptions.swift */,
+				6D291E932E55F80200C6AD80 /* StorageType.swift */,
 			);
 			path = "User Storage";
 			sourceTree = "<group>";
@@ -1592,6 +1598,7 @@
 				6DC46A7E25B9BB210099866C /* Data+Extensions.swift in Sources */,
 				6DC46A6A25B9BB080099866C /* ClientSecretResponse.swift in Sources */,
 				6DC46A5425B9BAFD0099866C /* VerificationRequestResponse.swift in Sources */,
+				6D291E942E55F80600C6AD80 /* StorageType.swift in Sources */,
 				FA5D21162D0890CC00E3548C /* VerificationQuickCodeRequestBody.swift in Sources */,
 				6DC4696725B9B7FC0099866C /* Configuration.swift in Sources */,
 				6DC46A2025B9BAE40099866C /* Signature.swift in Sources */,
@@ -1613,6 +1620,7 @@
 				6DC46A0625B9BAD40099866C /* LoggingConstants.swift in Sources */,
 				6D6D9A0C282BEB9800316755 /* SigningSessionDetailsRequestBody.swift in Sources */,
 				6DC46A5225B9BAFD0099866C /* ActivationTokenError.swift in Sources */,
+				6D291E962E55F8CD00C6AD80 /* DefaultUserStorageOptions.swift in Sources */,
 				6DF2D3F7269F03DE004CAD54 /* SQLiteUserStorageError.swift in Sources */,
 				6DDFB53A29EFDCCE00B981FB /* FallbackRequestErrorResponse.swift in Sources */,
 				6DC46A7D25B9BB210099866C /* UIDevice+Helpers.swift in Sources */,

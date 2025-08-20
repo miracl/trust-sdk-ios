@@ -34,11 +34,18 @@ import Foundation
         projectId = configuration.projectId
         deviceName = configuration.deviceName
         urlSessionConfiguration = configuration.urlSessionConfiguration
-        userStorage =
-            configuration.userStorage ??
-            SQLiteUserStorage(
-                projectId: configuration.projectId
+
+        switch configuration.storageType {
+        case let .default(options):
+            userStorage = SQLiteUserStorage(
+                projectId: projectId,
+                directoryURL: options.directoryURL,
+                databaseName: options.storageName,
+                keychainAccessGroup: options.keychainAccessGroup
             )
+        case let .custom(storage):
+            userStorage = storage
+        }
 
         miraclAPI = API(
             baseURL: configuration.platformURL,
