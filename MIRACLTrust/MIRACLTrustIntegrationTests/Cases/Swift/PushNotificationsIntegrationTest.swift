@@ -16,7 +16,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
         databaseName: testDBName
     )
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
@@ -34,7 +34,9 @@ class PushNotificationsIntegrationTest: XCTestCase {
         authentication = PushNotificationsAuthenticationTestCase()
         authentication.pinCode = randomPIN
 
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        let accessId = try XCTUnwrap(
+            api.getAccessId(projectId: projectId, projectURL: projectURL)
+        )
         qrURL = "https://mcl.mpin.io/mobile-login/#\(accessId)"
         payload = [
             "userID": userId,
@@ -42,12 +44,9 @@ class PushNotificationsIntegrationTest: XCTestCase {
             "qrURL": qrURL
         ]
 
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(projectId: projectId, projectURL: projectURL)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -55,6 +54,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId,
             accessId: accessId
         )
@@ -242,7 +242,8 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL)
+        )
         qrURL = "https://mcl.mpin.io/mobile-login/#\(differentAccessId)"
         payload = [
             "userID": userId,

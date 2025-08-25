@@ -21,7 +21,8 @@ class SignerTests: XCTestCase {
         randomString = UUID().uuidString
         let configuration = try Configuration
             .Builder(
-                projectId: NSUUID().uuidString
+                projectId: NSUUID().uuidString,
+                projectURL: projectURL
             )
             .userStorage(userStorage: storage)
             .build()

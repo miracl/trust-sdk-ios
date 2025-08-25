@@ -3,6 +3,7 @@ import XCTest
 
 class SQLiteUserStorageTests: XCTestCase {
     let testDatabaseName = "miracl-test"
+
     var storage = SQLiteUserStorage(projectId: UUID().uuidString, databaseName: "miracl-test")
 
     var projectId = UUID().uuidString
@@ -10,7 +11,8 @@ class SQLiteUserStorageTests: XCTestCase {
     override func setUpWithError() throws {
         let configuration = try Configuration
             .Builder(
-                projectId: projectId
+                projectId: projectId,
+                projectURL: projectURL
             )
             .userStorage(userStorage: storage)
             .build()

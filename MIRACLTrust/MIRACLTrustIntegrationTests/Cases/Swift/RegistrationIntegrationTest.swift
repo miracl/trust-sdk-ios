@@ -4,9 +4,10 @@ import XCTest
 class RegistrationIntegrationTests: XCTestCase {
     let gmailService = GmailServiceTestWrapper()
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
 
     let projectIdDV = ProcessInfo.processInfo.environment["projectIdDV"]!
+    let projectURLDV = ProcessInfo.processInfo.environment["projectURLDV"]!
 
     let clientIdPV = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let projectIdPV = ProcessInfo.processInfo.environment["projectIdCUV"]!
@@ -33,12 +34,9 @@ class RegistrationIntegrationTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         configuration = try Configuration
-            .Builder(projectId: projectIdPV)
+            .Builder(projectId: projectIdPV, projectURL: projectURL)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -50,6 +48,7 @@ class RegistrationIntegrationTests: XCTestCase {
             clientId: clientIdPV,
             clientSecret: clientSecretPV,
             projectId: projectIdPV,
+            projectURL: projectURL,
             userId: userId
         )
 
@@ -73,7 +72,7 @@ class RegistrationIntegrationTests: XCTestCase {
 
         try MIRACLTrust
             .getInstance()
-            .setProjectId(projectId: projectIdDV)
+            .updateProjectSettings(projectId: projectIdDV, projectURL: projectURLDV)
 
         let timestamp = Date()
         let (verified, error) = verificationTestCase.sendVerificationEmail(userId: currentUserId)
@@ -102,6 +101,7 @@ class RegistrationIntegrationTests: XCTestCase {
             clientId: clientIdPV,
             clientSecret: clientSecretPV,
             projectId: projectIdPV,
+            projectURL: projectURL,
             userId: userId
         )
 
@@ -287,6 +287,7 @@ class RegistrationIntegrationTests: XCTestCase {
             clientId: clientIdPV,
             clientSecret: clientSecretPV,
             projectId: projectIdPV,
+            projectURL: projectURL,
             userId: userId
         )
 
@@ -332,6 +333,7 @@ class RegistrationIntegrationTests: XCTestCase {
             clientId: clientIdPV,
             clientSecret: clientSecretPV,
             projectId: projectIdPV,
+            projectURL: projectURL,
             userId: userId
         )
         let verificationURL = try XCTUnwrap(verificationURLString)
@@ -354,12 +356,9 @@ class RegistrationIntegrationTests: XCTestCase {
     }
 
     func testProjectMismatch() throws {
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         configuration = try Configuration
-            .Builder(projectId: projectIdDV)
+            .Builder(projectId: projectIdDV, projectURL: projectURL)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
 
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
@@ -368,6 +367,7 @@ class RegistrationIntegrationTests: XCTestCase {
             clientId: clientIdPV,
             clientSecret: clientSecretPV,
             projectId: projectIdPV,
+            projectURL: projectURL,
             userId: userId
         )
 

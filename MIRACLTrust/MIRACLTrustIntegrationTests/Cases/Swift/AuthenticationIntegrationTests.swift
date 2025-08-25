@@ -16,7 +16,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         databaseName: testDBName
     )
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
@@ -32,14 +32,14 @@ class AuthenticationIntegrationTests: XCTestCase {
         jwtAuthenticationTestCase = JWTAuthenticationTestCase()
         jwtAuthenticationTestCase.pinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
-
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(
+                projectId: projectId,
+                projectURL: projectURL
+            )
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -47,6 +47,7 @@ class AuthenticationIntegrationTests: XCTestCase {
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId,
             accessId: accessId
         )
@@ -88,7 +89,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         XCTAssertNil(jwtError)
         XCTAssertNotNil(jwt)
 
-        let jwks = try XCTUnwrap(api.getJWKS())
+        let jwks = try XCTUnwrap(api.getJWKS(projectURL: projectURL))
         let signers = JWTSigners()
         try signers.use(jwksJSON: jwks)
         let payload = try signers.verify(jwt!, as: AuthenticationJWTPayload.self)

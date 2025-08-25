@@ -47,7 +47,8 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
 
         let configuration = try Configuration
             .Builder(
-                projectId: NSUUID().uuidString
+                projectId: NSUUID().uuidString,
+                projectURL: projectURL
             )
             .build()
         try MIRACLTrust.configure(with: configuration)

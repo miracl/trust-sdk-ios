@@ -5,7 +5,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let userId = "int@miracl.com"
 
     let activationTokenCase = ActivationTokenAsyncCase()
@@ -25,21 +25,21 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
         registrationCase.pinCode = randomPIN
         authenticationTestCase.pinCode = randomPIN
 
-        let url = URL(string: platformURL)!
         let configuration = try Configuration.Builder(
-            projectId: projectId
-        ).platformURL(url: url)
-            .build()
+            projectId: projectId,
+            projectURL: projectURL
+        ).build()
 
         try MIRACLTrust.configure(with: configuration)
 
-        accessId = try await platformAPI.getAsyncAccessId(projectId: projectId)
+        accessId = try await platformAPI.getAsyncAccessId(projectId: projectId, projectURL: projectURL)
         let qrCode = "https://mcl.mpin.io#\(accessId)"
         crossDeviceSession = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
         let activationToken = try await activationTokenCase.getActivationToken(
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId
         )
         user = try await registrationCase.register(userId: userId, activationToken: activationToken)

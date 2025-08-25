@@ -1,13 +1,12 @@
 import Foundation
 
 /// Object that stores configurations of the SDK with values issued by MIRACL.
-/// - Tag: Configuration
 @objc public class Configuration: NSObject {
     /// Identifier of the project in the MIRACL Trust platform.
     var projectId: String
 
     /// Base URL of the MIRACL platform.
-    var platformURL: URL
+    var projectURL: URL
 
     /// URL Session configuration object. Use this when you want to set the custom configuration to the SDK's instance of URLSession.
     /// As a default value it uses `ephemeral` configuration, 30 seconds for `timeoutIntervalForRequest` and
@@ -31,7 +30,7 @@ import Foundation
 
     override private init() {
         projectId = ""
-        platformURL = MIRACL_API_URL
+        projectURL = URL(string: MIRACL_API_URL)!
         applicationInfo = nil
 
         urlSessionConfiguration = URLSessionConfiguration.ephemeral
@@ -45,17 +44,22 @@ import Foundation
     /// Builds ``Configuration`` objects.
     @objc(ConfigurationBuilder) public class Builder: NSObject {
         private var configurationToBuild = Configuration()
+        private let projectURL: String
 
         ///  Initializing ``Configuration/Builder`` object.
         /// - Parameters:
         ///   - projectId: `Project ID` setting for the MIRACL Platform.
+        ///   - projectURL:  `Project URL` setting for the MIRACL Platform.
         ///   - deviceName: identifier that can help find the device on the MIRACL Trust Portal.
         ///   If not provided,  the value of `deviceName` is the name of the operation system (e.g `iOS`).
         @objc public init(
             projectId: String,
+            projectURL: String = MIRACL_API_URL,
             deviceName: String? = nil
         ) {
             configurationToBuild.projectId = projectId.trimmingCharacters(in: .whitespacesAndNewlines)
+            self.projectURL = projectURL
+
             if let deviceName {
                 configurationToBuild.deviceName = deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
             } else {
@@ -130,16 +134,6 @@ import Foundation
             return self
         }
 
-        /// Sets custom MIRACL platform URL.
-        /// - Parameter url: custom MIRACL platform URL.
-        /// - Returns: Configuration.Builder object.
-        @objc(platformURLWith:) @discardableResult public func platformURL(
-            url: URL
-        ) -> Builder {
-            configurationToBuild.platformURL = url
-            return self
-        }
-
         /// Sets additional application information that will be sent via X-MIRACL-CLIENT HTTP header.
         /// - Parameter applicationInfo: application info.
         /// - Returns: Configuration.Builder object.
@@ -168,8 +162,14 @@ import Foundation
         /// - Returns: ``Configuration`` object.
         @objc public func build() throws -> Configuration {
             if configurationToBuild.projectId.isEmpty {
-                throw ConfigurationError.configurationEmptyProjectId
+                throw ConfigurationError.emptyProjectId
             }
+
+            guard let projectURL = URL(string: projectURL) else {
+                throw ConfigurationError.invalidProjectURL
+            }
+
+            configurationToBuild.projectURL = projectURL
 
             return configurationToBuild
         }

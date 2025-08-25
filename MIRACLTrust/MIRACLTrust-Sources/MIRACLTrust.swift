@@ -50,7 +50,7 @@ import Foundation
         }
 
         miraclAPI = API(
-            baseURL: configuration.platformURL,
+            baseURL: configuration.projectURL,
             urlSessionConfiguration: configuration.urlSessionConfiguration,
             logger: logger
         )
@@ -92,7 +92,7 @@ import Foundation
             }
 
             shared.miraclAPI = API(
-                baseURL: configuration.platformURL,
+                baseURL: configuration.projectURL,
                 urlSessionConfiguration: configuration.urlSessionConfiguration,
                 logger: shared.logger
             )
@@ -104,15 +104,28 @@ import Foundation
         }
     }
 
-    /// Configure a new project ID when the SDK have to work with a different project.
+    /// Configures new project settings when the SDK have to work with a different project.
     /// - Parameters:
-    ///   - projectId: `Project ID` setting for the MIRACL Platform that needs to be updated.
-    @objc public func setProjectId(projectId: String) throws {
+    ///   - projectId: The unique identifier for your MIRACL Trust project.
+    ///   - projectURL: MIRACL Trust Project URL that is used for communication with the MIRACL Trust API.
+    @objc public func updateProjectSettings(
+        projectId: String,
+        projectURL: String
+    ) throws {
         if projectId.isEmpty {
-            throw ConfigurationError.configurationEmptyProjectId
+            throw ConfigurationError.emptyProjectId
+        }
+
+        guard let validProjectURL = URL(string: projectURL) else {
+            throw ConfigurationError.invalidProjectURL
         }
 
         self.projectId = projectId
+        miraclAPI = API(
+            baseURL: validProjectURL,
+            urlSessionConfiguration: urlSessionConfiguration,
+            logger: logger
+        )
     }
 
     // MARK: Verification

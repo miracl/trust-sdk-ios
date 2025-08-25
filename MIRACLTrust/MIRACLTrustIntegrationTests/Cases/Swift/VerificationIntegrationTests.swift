@@ -3,12 +3,16 @@ import XCTest
 @testable import MIRACLTrust
 
 class VerificationIntegrationTests: XCTestCase {
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURLDV = ProcessInfo.processInfo.environment["projectURLDV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdDV"]!
-    let projectIdEVC = ProcessInfo.processInfo.environment["projectIdECV"]!
+
+    let projectIdECV = ProcessInfo.processInfo.environment["projectIdECV"]!
+    let projectURLECV = ProcessInfo.processInfo.environment["projectURLECV"]!
+
     let projectIdPV = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientIdPV = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecretPV = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let projectURLPV = ProcessInfo.processInfo.environment["projectURLCUV"]!
 
     let verificationTestCase = VerificationTestCase()
     let activationTokenTestCase = GetActivationTokenTestCase()
@@ -27,12 +31,12 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testVerification() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectId)
-            .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
+            .Builder(
+                projectId: projectId,
+                projectURL: projectURLDV
+            ).userStorage(userStorage: storage)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -65,12 +69,10 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testVerificationWithMpinId() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(projectId: projectId, projectURL: projectURLDV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -114,12 +116,10 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testBackoffError() throws {
         let mailAddress = "int@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(projectId: projectId, projectURL: projectURLDV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -148,7 +148,7 @@ class VerificationIntegrationTests: XCTestCase {
         let mailAddress = ""
 
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(projectId: projectId, projectURL: projectURLDV)
             .userStorage(userStorage: storage)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
@@ -165,15 +165,12 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testVerificationWithSessionDetails() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
         let qrCode = "https://mcl.mpin.io#\(accessId)"
 
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(projectId: projectId, projectURL: projectURLDV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -202,12 +199,10 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testEmailCodeVerification() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectIdEVC)
+            .Builder(projectId: projectIdECV, projectURL: projectURLECV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -231,12 +226,10 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testEmailCodeVerificationWithMpinId() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectIdEVC)
+            .Builder(projectId: projectIdECV, projectURL: projectURLECV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -281,12 +274,10 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testEmailCodeVerificationWithoutMpinId() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectIdEVC)
+            .Builder(projectId: projectIdECV, projectURL: projectURLECV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -331,12 +322,10 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testEmailCodeVerificationWithRevokedMpinId() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectIdEVC)
+            .Builder(projectId: projectIdECV, projectURL: projectURLECV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -394,14 +383,11 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testCustomVerification() throws {
         let mailAddress = "int@miracl.com"
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
-
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
+        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
 
         configuration = try Configuration
-            .Builder(projectId: projectIdPV)
+            .Builder(projectId: projectIdPV, projectURL: projectURLPV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
 
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
@@ -413,6 +399,7 @@ class VerificationIntegrationTests: XCTestCase {
                 clientId: clientIdPV,
                 clientSecret: clientSecretPV,
                 projectId: projectIdPV,
+                projectURL: projectURLPV,
                 userId: mailAddress,
                 accessId: accessId,
                 expiration: expirationDate
@@ -438,14 +425,11 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testExpiredActivationCode() throws {
         let mailAddress = "int@miracl.com"
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
-
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
+        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
 
         configuration = try Configuration
-            .Builder(projectId: projectIdPV)
+            .Builder(projectId: projectIdPV, projectURL: projectURLPV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
 
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
@@ -457,6 +441,7 @@ class VerificationIntegrationTests: XCTestCase {
                 clientId: clientIdPV,
                 clientSecret: clientSecretPV,
                 projectId: projectIdPV,
+                projectURL: projectURLPV,
                 userId: mailAddress,
                 accessId: accessId,
                 expiration: expirationDate
@@ -480,12 +465,10 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testInvalidActivationCode() throws {
         let mailAddress = "int@miracl.com"
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectIdPV)
+            .Builder(projectId: projectIdPV, projectURL: projectURLPV)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
 
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
@@ -495,6 +478,7 @@ class VerificationIntegrationTests: XCTestCase {
                 clientId: clientIdPV,
                 clientSecret: clientSecretPV,
                 projectId: projectIdPV,
+                projectURL: projectURLPV,
                 userId: mailAddress
             )
         )

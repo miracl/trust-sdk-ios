@@ -3,14 +3,11 @@ import XCTest
 
 class UpdateProjectSettingsIntegrationTests: XCTestCase {
     let projectId = ProcessInfo.processInfo.environment["projectIdDV"]!
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
 
     override func setUpWithError() throws {
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         let configuration = try Configuration
-            .Builder(projectId: projectId)
-            .platformURL(url: platformURL)
+            .Builder(projectId: projectId, projectURL: projectURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
     }
@@ -19,17 +16,40 @@ class UpdateProjectSettingsIntegrationTests: XCTestCase {
         let expectedProjectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
 
         try MIRACLTrust.getInstance()
-            .setProjectId(projectId: expectedProjectId)
+            .updateProjectSettings(
+                projectId: expectedProjectId,
+                projectURL: projectURL
+            )
         XCTAssertEqual(expectedProjectId, MIRACLTrust.getInstance().projectId)
     }
 
     func testUpdateProjectSettingsEmptyProjectId() {
         XCTAssertThrowsError(
             try MIRACLTrust.getInstance()
-                .setProjectId(projectId: ""),
+                .updateProjectSettings(projectId: "", projectURL: projectURL),
             "Error not thrown when project Id is empty"
         ) { error in
-            assertError(current: error, expected: ConfigurationError.configurationEmptyProjectId)
+            assertError(current: error, expected: ConfigurationError.emptyProjectId)
+        }
+    }
+
+    func testUpdateProjectSettingsEmptyProjectURL() {
+        XCTAssertThrowsError(
+            try MIRACLTrust.getInstance()
+                .updateProjectSettings(projectId: projectId, projectURL: ""),
+            "Error not thrown when project URL is empty"
+        ) { error in
+            assertError(current: error, expected: ConfigurationError.invalidProjectURL)
+        }
+    }
+
+    func testUpdateProjectSettingsInvalidProjectURL() {
+        XCTAssertThrowsError(
+            try MIRACLTrust.getInstance()
+                .updateProjectSettings(projectId: projectId, projectURL: "https:// example .com. "),
+            "Error not thrown when project URL is invalid"
+        ) { error in
+            assertError(current: error, expected: ConfigurationError.invalidProjectURL)
         }
     }
 }

@@ -4,7 +4,7 @@ import XCTest
 class SigningSessionDetailsTest: XCTestCase {
     let projectId = ProcessInfo.processInfo.environment["projectIdDV"]!
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let userId = "int@miracl.com"
     let testTransaction = "Test transaction"
     var api = PlatformAPIWrapper()
@@ -13,17 +13,18 @@ class SigningSessionDetailsTest: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         let configuration = try Configuration
-            .Builder(projectId: projectId)
-            .platformURL(url: platformURL)
+            .Builder(
+                projectId: projectId,
+                projectURL: projectURL
+            )
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         qrCode = try XCTUnwrap(
             api.startSigningSession(
                 projectID: projectId,
+                projectURL: projectURL,
                 userID: userId,
                 hash: UUID().uuidString,
                 description: testTransaction

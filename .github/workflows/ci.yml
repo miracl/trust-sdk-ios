@@ -67,6 +67,9 @@ jobs:
           TEST_ECV_PROJECT_ID: ${{ vars.TEST_ECV_PROJECT_ID }}
           GMAIL_TOKEN: ${{ secrets.GMAIL_TOKEN }}
           GMAIL_CREDENTIALS: ${{ secrets.GMAIL_CREDENTIALS }}
+          TEST_ECV_PROJECT_URL: ${{ vars.TEST_ECV_PROJECT_URL }}
+          TEST_DV_PROJECT_URL: ${{ vars.TEST_DV_PROJECT_URL }}
+          TEST_CUV_PROJECT_URL: ${{ vars.TEST_CUV_PROJECT_URL }}
         run: |
             cd MIRACLTrust
             xcrun simctl erase "iPhone 16"

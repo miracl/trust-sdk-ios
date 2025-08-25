@@ -2,7 +2,7 @@
 import XCTest
 
 class SessionDetailIntegrationTests: XCTestCase {
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let testCase = SessionDetailsTestCase()
 
@@ -13,19 +13,17 @@ class SessionDetailIntegrationTests: XCTestCase {
     var api = PlatformAPIWrapper()
 
     let expectedProjectId = ProcessInfo.processInfo.environment["projectIdDV"]!
+    let projectURLDV = ProcessInfo.processInfo.environment["projectURLDV"]!
     let userId = "int@miracl.com"
 
     override func setUpWithError() throws {
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io#\(accessId)"
         universalLinkURL = URL(string: qrCode)
         pushNotificationsPayload = ["qrURL": qrCode]
 
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         let configuration = try Configuration
-            .Builder(projectId: projectId)
-            .platformURL(url: platformURL)
+            .Builder(projectId: projectId, projectURL: projectURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
     }
@@ -42,7 +40,7 @@ class SessionDetailIntegrationTests: XCTestCase {
     }
 
     func testGetSessionDetailForDifferentProject() throws {
-        accessId = try XCTUnwrap(api.getAccessId(projectId: expectedProjectId))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: expectedProjectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io#\(accessId)"
 
         let (details, error) = testCase.getSessionDetails(qrCode: qrCode)
@@ -89,7 +87,7 @@ class SessionDetailIntegrationTests: XCTestCase {
     }
 
     func testGetSessionDetailsUniversalLinkURLForDifferentProject() throws {
-        accessId = try XCTUnwrap(api.getAccessId(projectId: expectedProjectId))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: expectedProjectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io#\(accessId)"
         let universalLinkURL = try XCTUnwrap(URL(string: qrCode))
 

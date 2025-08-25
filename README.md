@@ -47,25 +47,29 @@ Drag and drop the XCFramework to your application.
 
 To configure the SDK:
 
-1. Create an application in the MIRACL Trust platform. For information about how
+1. Create an account in the MIRACL Trust platform. For information about how
    to do it, see the
    [Getting Started](https://miracl.com/resources/docs/guides/get-started/)
    guide.
 2. Call the
    [configure](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/configure(with:))
-   method with a configuration created by the [Configuration.Builder](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/configuration/builder)
-   class:
+   method with a configuration created by the
+   [Configuration.Builder](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/configuration/builder)
+   class using
+   [your project properties](https://miracl.com/resources/docs/get-started/create-project/#project-properties):
 
 Swift:
 
 ```swift
 let projectId = <#Enter your Project ID here#>
-let deviceName = <#Enter your device name here or use UIDevice.current.modelName provided by MIRACL SDK #>
+let projectURL = <#Enter your Project Domain here#>
+let deviceName = <#Enter your device name here or use UIDevice.current.modelName provided by MIRACL Trust iOS SDK #>
 
 do {
     let configuration = try Configuration
         .Builder(
             projectId: projectId,
+            projectURL: projectURL,
             deviceName: deviceName
         ).build()
     try MIRACLTrust.configure(with: configuration)
@@ -78,11 +82,15 @@ Objective-C:
 
 ```objc
 NSString *projectId = <#Enter your Project ID#>;
+NSString *projectURL = <#Enter your Project Domain here#>;
 NSString *deviceName = <#Enter your device name here or use UIDevice.current.modelName provided by MIRACL SDK #>;
+
 NSError *configurationError;
 
 ConfigurationBuilder *configurationBuilder =
-    [[ConfigurationBuilder alloc] initWithProjectId:projectId deviceName: deviceName];
+    [[ConfigurationBuilder alloc] initWithProjectId: projectId 
+                                         projectURL: projectURL 
+                                         deviceName: deviceName];
 Configuration *configuration =
     [configurationBuilder buildAndReturnError:&configurationError];
 

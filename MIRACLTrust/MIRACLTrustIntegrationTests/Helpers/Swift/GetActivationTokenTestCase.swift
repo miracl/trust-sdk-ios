@@ -8,6 +8,7 @@ class GetActivationTokenTestCase: XCTest {
         clientId: String,
         clientSecret: String,
         projectId: String,
+        projectURL: String,
         userId: String,
         accessId: String? = nil
     ) -> (ActivationTokenResponse?, Error?) {
@@ -19,6 +20,7 @@ class GetActivationTokenTestCase: XCTest {
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId,
             accessId: accessId
         )

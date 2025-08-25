@@ -15,7 +15,7 @@ public typealias AuthenticationSessionAborterCompletionHandler = @MainActor @Sen
 public typealias SigningSessionDetailsCompletionHandler = @MainActor @Sendable (SigningSessionDetails?, Error?) -> Void
 public typealias SigningSessionAborterCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
 
-public let MIRACL_API_URL = URL(string: "https://api.mpin.io")!
+public let MIRACL_API_URL = "https://api.mpin.io"
 
 typealias AuthenticateCompletionHandler = @MainActor @Sendable (AuthenticateResponse?, Error?) -> Void
 typealias APIRequestCompletionHandler<T> = @Sendable (APICallResult, T?, Error?) -> Void

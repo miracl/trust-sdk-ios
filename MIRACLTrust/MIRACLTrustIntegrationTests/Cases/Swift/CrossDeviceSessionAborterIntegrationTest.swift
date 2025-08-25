@@ -3,7 +3,7 @@ import Testing
 
 struct CrossDeviceSessionAborterIntegrationTest {
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let url = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
 
     let crossDeviceSessionCase = CrossDeviceSessionCase()
     let abortCrossDeviceSessionCase = CrossDeviceSessionAbortCase()
@@ -14,14 +14,15 @@ struct CrossDeviceSessionAborterIntegrationTest {
 
     init() async throws {
         let configuration = try Configuration.Builder(
-            projectId: projectId
-        )
-        .platformURL(url: URL(string: url)!)
-        .build()
+            projectId: projectId, projectURL: projectURL
+        ).build()
 
         try MIRACLTrust.configure(with: configuration)
 
-        sessionId = try await platformAPI.getAsyncAccessId(projectId: projectId)
+        sessionId = try await platformAPI.getAsyncAccessId(
+            projectId: projectId,
+            projectURL: projectURL
+        )
         let qrCode = "https://mcl.mpin.io#\(sessionId)"
         crossDeviceSession = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
     }

@@ -43,7 +43,8 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
 
         let configuration = try Configuration
             .Builder(
-                projectId: v1ProjectId
+                projectId: v1ProjectId,
+                projectURL: projectURL
             )
             .userStorage(userStorage: storage)
             .build()
@@ -73,7 +74,8 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
 
         let configuration = try Configuration
             .Builder(
-                projectId: NSUUID().uuidString
+                projectId: NSUUID().uuidString,
+                projectURL: projectURL
             )
             .userStorage(userStorage: storage)
             .build()
@@ -104,7 +106,8 @@ class SQLiteUserStorageMigrationTests: XCTestCase {
 
         let configuration = try Configuration
             .Builder(
-                projectId: NSUUID().uuidString
+                projectId: NSUUID().uuidString,
+                projectURL: projectURL
             )
             .userStorage(userStorage: storage)
             .build()
