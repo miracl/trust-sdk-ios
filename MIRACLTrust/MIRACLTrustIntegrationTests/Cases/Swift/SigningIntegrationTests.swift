@@ -30,7 +30,7 @@ class SigningIntegrationTests: XCTestCase {
 
     var messageToSign = UUID().uuidString
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
@@ -50,16 +50,14 @@ class SigningIntegrationTests: XCTestCase {
         authentication = QRAuthenticationTestCase()
         authentication.pinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
-
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
 
         configuration = try Configuration
             .Builder(
                 projectId: projectId,
+                projectURL: projectURL,
                 deviceName: UUID().uuidString
             ).userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -67,6 +65,7 @@ class SigningIntegrationTests: XCTestCase {
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId
         )
 
@@ -117,7 +116,8 @@ class SigningIntegrationTests: XCTestCase {
             signingResult: unwrappedSigningResult,
             clientId: clientId,
             clientSecret: clientSecret,
-            projectId: projectId
+            projectId: projectId,
+            projectURL: projectURL
         )
 
         XCTAssertTrue(isSignatureVerified)
@@ -127,6 +127,7 @@ class SigningIntegrationTests: XCTestCase {
         let qrCode = try XCTUnwrap(
             api.startSigningSession(
                 projectID: projectId,
+                projectURL: projectURL,
                 userID: userId,
                 hash: UUID().uuidString,
                 description: "Test transaction"
@@ -150,7 +151,8 @@ class SigningIntegrationTests: XCTestCase {
             signingResult: unwrappedSigningResult,
             clientId: clientId,
             clientSecret: clientSecret,
-            projectId: projectId
+            projectId: projectId,
+            projectURL: projectURL
         )
 
         XCTAssertTrue(isSignatureVerified)
@@ -158,7 +160,7 @@ class SigningIntegrationTests: XCTestCase {
 
     func testSigningCorrectnessWithCrossDeviceSession() throws {
         let sessionId = try XCTUnwrap(
-            api.getAccessId(projectId: projectId, userId: userId, hash: messageToSign, description: UUID().uuidString)
+            api.getAccessId(projectId: projectId, projectURL: projectURL, userId: userId, hash: messageToSign, description: UUID().uuidString)
         )
         let qrCode = "tcb.miracl.app/mobile/sign#\(sessionId)"
         let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(qrCode: qrCode)
@@ -174,7 +176,7 @@ class SigningIntegrationTests: XCTestCase {
 
     func testSigningCorrectnessWithCrossDeviceSessionForUniversalLink() throws {
         let sessionId = try XCTUnwrap(
-            api.getAccessId(projectId: projectId, userId: userId, hash: messageToSign, description: UUID().uuidString)
+            api.getAccessId(projectId: projectId, projectURL: projectURL, userId: userId, hash: messageToSign, description: UUID().uuidString)
         )
         let universalLinkURL = try XCTUnwrap(URL(string: "https://mcl.mpin.io/mobile/sign#\(sessionId)"))
         let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(universalLinkURL: universalLinkURL)
@@ -190,7 +192,7 @@ class SigningIntegrationTests: XCTestCase {
 
     func testSigningCorrectnessWithCrossDeviceSessionForPayload() throws {
         let sessionId = try XCTUnwrap(
-            api.getAccessId(projectId: projectId, userId: userId, hash: messageToSign, description: UUID().uuidString)
+            api.getAccessId(projectId: projectId, projectURL: projectURL, userId: userId, hash: messageToSign, description: UUID().uuidString)
         )
         let payload = ["qrURL": "https://mcl.mpin.io/mobile/sign#\(sessionId)"]
 
@@ -224,7 +226,8 @@ class SigningIntegrationTests: XCTestCase {
             signingResult: unwrappedSigningResult,
             clientId: clientId,
             clientSecret: clientSecret,
-            projectId: projectId
+            projectId: projectId,
+            projectURL: projectURL
         )
 
         XCTAssertTrue(isSignatureVerified)

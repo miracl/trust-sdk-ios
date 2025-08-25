@@ -7,7 +7,7 @@ class AbortSessionIntegrationTests: XCTestCase {
 
     var sessionDetails: AuthenticationSessionDetails?
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let platformURLCUV = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
@@ -31,21 +31,19 @@ class AbortSessionIntegrationTests: XCTestCase {
         registrationTestCase = RegistrationTestCase()
         registrationTestCase.pinCode = "8902"
 
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         let configuration = try Configuration
-            .Builder(projectId: projectId)
-            .platformURL(url: platformURL)
+            .Builder(projectId: projectId, projectURL: platformURLCUV)
             .userStorage(userStorage: storage)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: platformURLCUV))
 
         let (response, _) = getActivationToken.getActivationToken(
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: platformURLCUV,
             userId: userId,
             accessId: accessId
         )

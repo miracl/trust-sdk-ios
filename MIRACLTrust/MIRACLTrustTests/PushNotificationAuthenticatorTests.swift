@@ -23,7 +23,8 @@ class PushNotificationAuthenticatorTests: XCTestCase {
 
         let configuration = try Configuration
             .Builder(
-                projectId: NSUUID().uuidString
+                projectId: NSUUID().uuidString,
+                projectURL: projectURL
             )
             .userStorage(userStorage: storage)
             .build()

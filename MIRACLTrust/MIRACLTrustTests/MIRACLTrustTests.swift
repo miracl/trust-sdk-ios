@@ -20,7 +20,8 @@ class MIRACLTrustTests: XCTestCase {
     override func setUpWithError() throws {
         let configuration = try Configuration
             .Builder(
-                projectId: projectId
+                projectId: projectId,
+                projectURL: projectURL
             )
             .userStorage(userStorage: mockUserStorage)
             .build()

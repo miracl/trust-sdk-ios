@@ -1,17 +1,21 @@
 import Foundation
 
 /// An enumeration that describes issues with the SDK configuration.
-/// - Tag: enums-ConfigurationError
 public enum ConfigurationError: Error, Equatable {
     // Empty Proejct ID.
-    case configurationEmptyProjectId
+    case emptyProjectId
+
+    // Invalid project URL.
+    case invalidProjectURL
 }
 
 extension ConfigurationError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .configurationEmptyProjectId:
-            return NSLocalizedString("\(ConfigurationError.configurationEmptyProjectId)", comment: "")
+        case .emptyProjectId:
+            return NSLocalizedString("\(ConfigurationError.emptyProjectId)", comment: "")
+        case .invalidProjectURL:
+            return NSLocalizedString("\(ConfigurationError.invalidProjectURL)", comment: "")
         }
     }
 }

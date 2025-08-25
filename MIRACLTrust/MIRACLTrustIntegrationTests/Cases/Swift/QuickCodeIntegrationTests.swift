@@ -15,7 +15,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         databaseName: testDBName
     )
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
@@ -33,14 +33,11 @@ class QuickCodeIntegrationTests: XCTestCase {
         quickCodeTestCase = QuickCodeTestCase()
         quickCodeTestCase.authenticationPinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
-
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
 
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(projectId: projectId, projectURL: projectURL)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -50,6 +47,7 @@ class QuickCodeIntegrationTests: XCTestCase {
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId,
             accessId: accessId
         )

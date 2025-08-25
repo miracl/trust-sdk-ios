@@ -4,7 +4,7 @@ import Testing
 struct CrossDeviceSessionIntegrationTest {
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
-    let url = ProcessInfo.processInfo.environment["platformURL"]!
+    let url = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let expectedProjectId = ProcessInfo.processInfo.environment["projectIdDV"]!
 
     var hash = UUID().uuidString
@@ -16,12 +16,12 @@ struct CrossDeviceSessionIntegrationTest {
 
     init() async throws {
         let configuration = try Configuration.Builder(
-            projectId: projectId
+            projectId: projectId,
+            projectURL: url
         )
-        .platformURL(url: URL(string: url)!)
         .build()
 
-        sessionId = try await platformAPI.getAsyncAccessId(projectId: projectId)
+        sessionId = try await platformAPI.getAsyncAccessId(projectId: projectId, projectURL: url)
 
         try MIRACLTrust.configure(with: configuration)
     }
@@ -37,7 +37,7 @@ struct CrossDeviceSessionIntegrationTest {
     func getCrossDeviceSessionForDifferentProject() async throws {
         let hash = UUID().uuidString
         let description = UUID().uuidString
-        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, hash: hash, description: description)
+        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description)
         let qrCode = "https://mcl.mpin.io#\(sessionId)"
         let session = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
         #expect(session.projectId == expectedProjectId)
@@ -86,7 +86,7 @@ struct CrossDeviceSessionIntegrationTest {
     func getCrossDeviceSessionsUniversalLinkURLForDifferentProject() async throws {
         let hash = UUID().uuidString
         let description = UUID().uuidString
-        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, hash: hash, description: description)
+        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description)
         let universalLinkURL = try #require(URL(string: "https://mcl.mpin.io#\(sessionId)"))
         let session = try await crossDeviceSessionCase.getCrossDeviceSessionForUniversalLinkURL(universalLinkURL: universalLinkURL)
 
@@ -124,7 +124,7 @@ struct CrossDeviceSessionIntegrationTest {
     func getCrossDeviceSessionsFromPushNotificationsPayloadDifferent() async throws {
         let hash = UUID().uuidString
         let description = UUID().uuidString
-        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, hash: hash, description: description)
+        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description)
         let qrCode = "https://mcl.mpin.io#\(sessionId)"
         let payload = [
             "qrURL": qrCode

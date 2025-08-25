@@ -5,7 +5,7 @@ final class AbortSigningSessionTest: XCTestCase {
     var signingSessionAborterTestCase = SigningSessionAborterTestCase()
     var signingSessionDetailsCase = GetSigningSessionDetailsTestCase()
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let api = PlatformAPIWrapper()
 
@@ -18,11 +18,11 @@ final class AbortSigningSessionTest: XCTestCase {
     var signingSessionDetails: SigningSessionDetails?
 
     override func setUpWithError() throws {
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         let configuration = try Configuration
-            .Builder(projectId: projectId)
-            .platformURL(url: platformURL)
+            .Builder(
+                projectId: projectId,
+                projectURL: projectURL
+            )
             .userStorage(userStorage: storage)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
@@ -30,6 +30,7 @@ final class AbortSigningSessionTest: XCTestCase {
         qrCode = try XCTUnwrap(
             api.startSigningSession(
                 projectID: projectId,
+                projectURL: projectURL,
                 userID: "global@example.com",
                 hash: UUID().uuidString,
                 description: "Test transaction"

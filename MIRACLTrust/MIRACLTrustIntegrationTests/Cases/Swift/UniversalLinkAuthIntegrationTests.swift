@@ -16,7 +16,7 @@ class UniversalLinkAuthIntegrationTests: XCTestCase {
         databaseName: testDBName
     )
 
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
@@ -33,20 +33,17 @@ class UniversalLinkAuthIntegrationTests: XCTestCase {
         authentication = UniversalLinkAuthenticationTestCase()
         authentication.pinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io/mobile-login/#\(accessId)"
         universalLinkURL = URL(string: qrCode)
 
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
-
         configuration = try Configuration
-            .Builder(projectId: projectId)
+            .Builder(projectId: projectId, projectURL: projectURL)
             .userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (response, _) = getActivationToken.getActivationToken(clientId: clientId, clientSecret: clientSecret, projectId: projectId, userId: userId)
+        let (response, _) = getActivationToken.getActivationToken(clientId: clientId, clientSecret: clientSecret, projectId: projectId, projectURL: projectURL, userId: userId)
 
         activationToken = try XCTUnwrap(response?.activationToken)
     }
@@ -142,7 +139,7 @@ class UniversalLinkAuthIntegrationTests: XCTestCase {
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io/mobile-login/#\(differentAccessId)"
         universalLinkURL = URL(string: qrCode)
         let universalLinkURL = try XCTUnwrap(universalLinkURL)

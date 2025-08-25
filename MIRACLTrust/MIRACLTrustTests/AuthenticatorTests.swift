@@ -31,7 +31,8 @@ class AuthenticatorTests: XCTestCase {
         do {
             let configuration = try Configuration
                 .Builder(
-                    projectId: projectId
+                    projectId: projectId,
+                    projectURL: projectURL
                 )
                 .userStorage(userStorage: storage)
                 .build()

@@ -93,17 +93,17 @@
     NSString *projectId = NSProcessInfo.processInfo.environment[@"projectIdCUV"];
     NSString *clientId = NSProcessInfo.processInfo.environment[@"clientIdCUV"];
     NSString *clientSecret = NSProcessInfo.processInfo.environment[@"clientSecretCUV"];
-    NSString *platformURL = NSProcessInfo.processInfo.environment[@"platformURL"];
+    NSString *projectURL = NSProcessInfo.processInfo.environment[@"projectURLCUV"];
 
     NSString *deviceName = [[NSUUID UUID] UUIDString];
-    ConfigurationBuilder *builder =
-    [[ConfigurationBuilder alloc]
-        initWithProjectId: projectId
-        deviceName: deviceName
-    ];
+
+    ConfigurationBuilder *builder = [
+        [ConfigurationBuilder alloc]
+        initWithProjectId:projectId
+        projectURL:projectURL
+        deviceName:deviceName];
     
     NSError *error;
-    [builder platformURLWith:[NSURL URLWithString:platformURL]];
     Configuration *configuration = [builder buildAndReturnError:&error];
     
     [MIRACLTrust configureWith:configuration error:&error];
@@ -115,7 +115,11 @@
     
     self.userId = @"int@miracl.com";
     self.api = [[PlatformAPIWrapper alloc] init];
-    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
+    self.accessId = [self.api getAccessIdWithProjectId:projectId
+                                            projectURL:projectURL
+                                                userId:nil
+                                                  hash:nil
+                                           description:nil];
   
     NSNumber *expirationInSeconds = @(5);
     NSDate *expirationDate = [NSCalendar.currentCalendar
@@ -127,6 +131,7 @@
     NSURL *verificationURL = [self.api getVerificaitonURLWithClientId:clientId
                                                          clientSecret:clientSecret
                                                             projectId:projectId
+                                                           projectURL:projectURL
                                                                userId:self.userId
                                                              accessId:self.accessId
                                                            expiration:expirationDate];
@@ -162,17 +167,16 @@
     NSError *error;
     
     NSString *projectId = NSProcessInfo.processInfo.environment[@"projectIdDV"];
-    NSString *platformURL = NSProcessInfo.processInfo.environment[@"platformURL"];
+    NSString *projectURL = NSProcessInfo.processInfo.environment[@"projectURLCUV"];
     
     NSString *deviceName = [[NSUUID UUID] UUIDString];
     ConfigurationBuilder *builder =
     [[ConfigurationBuilder alloc]
-        initWithProjectId: projectId
-        deviceName: deviceName
+        initWithProjectId:projectId
+               projectURL:projectURL
+               deviceName:deviceName
     ];
 
-    
-    [builder platformURLWith:[NSURL URLWithString:platformURL]];
     Configuration *configuration = [builder buildAndReturnError:&error];
     
     
@@ -198,7 +202,11 @@
     NSString *clientSecret = NSProcessInfo.processInfo.environment[@"clientSecretCUV"];
     self.userId = @"global@example.com";
     self.api = [[PlatformAPIWrapper alloc] init];
-    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
+    self.accessId = [self.api getAccessIdWithProjectId:projectId
+                                            projectURL:projectURL
+                                                userId:nil
+                                                  hash:nil
+                                           description:nil];
     
     self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
     self.projectId = projectId;
@@ -229,7 +237,11 @@
     NSNumber *isAborted = dict[@"isAborted"];
     XCTAssertTrue([isAborted boolValue]);
     
-    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
+    self.accessId = [self.api getAccessIdWithProjectId:projectId
+                                            projectURL:projectURL
+                                                userId:nil
+                                                  hash:nil
+                                           description:nil];
     self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
     
     dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForQRCode:self.qrCodeURL];
@@ -256,7 +268,11 @@
     isAborted = dict[@"isAborted"];
     XCTAssertTrue([isAborted boolValue]);
     
-    self.accessId = [self.api getAccessIdWithProjectId:projectId userId:nil hash:nil description:nil];
+    self.accessId = [self.api getAccessIdWithProjectId:projectId
+                                            projectURL:projectURL
+                                                userId:nil
+                                                  hash:nil
+                                           description:nil];
     self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
     
     dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForQRCode:self.qrCodeURL];
@@ -267,6 +283,7 @@
     NSURL *verificationURL = [self.api getVerificaitonURLWithClientId:clientId
                                                          clientSecret:clientSecret
                                                             projectId:projectId
+                                                           projectURL:projectURL
                                                                userId:self.userId
                                                              accessId:self.accessId
                                                            expiration:nil];
@@ -295,6 +312,7 @@
             NSData *messageHash = [self messageHash:message];
             
             NSString *signingQRCode = [self.api startSigningSessionWithProjectID:projectId
+                                                                      projectURL:projectURL
                                                                           userID:user.userId
                                                                             hash:message
                                                                      description:@"Test Transaction"];

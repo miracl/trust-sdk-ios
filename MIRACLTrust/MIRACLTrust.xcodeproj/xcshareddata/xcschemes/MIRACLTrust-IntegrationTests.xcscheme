@@ -53,11 +53,6 @@
       </MacroExpansion>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "platformURL"
-            value = "$(TEST_ENVIRONMENT_URL)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
             key = "clientSecretCUV"
             value = "$(TEST_CUV_CLIENT_SECRET)"
             isEnabled = "YES">
@@ -100,6 +95,21 @@
          <EnvironmentVariable
             key = "gmailToken"
             value = "$(GMAIL_TOKEN)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "projectURLCUV"
+            value = "$(TEST_CUV_PROJECT_URL)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "projectURLDV"
+            value = "$(TEST_DV_PROJECT_URL)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "projectURLECV"
+            value = "$(TEST_ECV_PROJECT_URL)"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

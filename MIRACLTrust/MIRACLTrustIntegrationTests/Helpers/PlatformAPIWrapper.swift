@@ -3,13 +3,13 @@ import XCTest
 import MIRACLTrust
 
 @objc class PlatformAPIWrapper: NSObject {
-    let processInfoDict = ProcessInfo.processInfo.environment
-    let platformAPI = PlatformAPI(url: URL(string: ProcessInfo.processInfo.environment["platformURL"]!)!)
+    let platformAPI = PlatformAPI()
 
     @objc func getVerificaitonURL(
         clientId: String,
         clientSecret: String,
         projectId: String,
+        projectURL: String,
         userId: String,
         accessId: String? = nil,
         expiration: Date? = nil
@@ -21,6 +21,7 @@ import MIRACLTrust
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId,
             accessId: accessId,
             expiration: expiration
@@ -36,11 +37,11 @@ import MIRACLTrust
         return verificationUrl
     }
 
-    @objc func getJWKS() -> String? {
+    @objc func getJWKS(projectURL: String) -> String? {
         let jwksExpectation = XCTestExpectation(description: "wait for JWKS")
         nonisolated(unsafe) var jwkSet: String?
 
-        platformAPI.getJWKS { jwks, error in
+        platformAPI.getJWKS(projectURL: projectURL) { jwks, error in
             if let jwks = jwks {
                 jwkSet = jwks
             } else if let error = error {
@@ -54,6 +55,7 @@ import MIRACLTrust
 
     @objc func getAccessId(
         projectId: String,
+        projectURL: String,
         userId: String? = nil,
         hash: String? = nil,
         description: String? = nil
@@ -63,6 +65,7 @@ import MIRACLTrust
 
         platformAPI
             .getAccessId(
+                projectURL: projectURL,
                 projectId: projectId,
                 userId: userId,
                 hash: hash,
@@ -83,6 +86,7 @@ import MIRACLTrust
 
     @objc func startSigningSession(
         projectID: String,
+        projectURL: String,
         userID: String,
         hash: String,
         description: String
@@ -92,6 +96,7 @@ import MIRACLTrust
 
         platformAPI.startSigningSession(
             projectID: projectID,
+            projectURL: projectURL,
             userID: userID,
             hash: hash,
             description: description
@@ -109,12 +114,13 @@ import MIRACLTrust
         signingResult: SigningResult,
         clientId: String,
         clientSecret: String,
-        projectId: String
+        projectId: String,
+        projectURL: String
     ) -> Bool {
         nonisolated(unsafe) var verifiedSignature = false
         let expectation = XCTestExpectation(description: "Waiting for signature verification")
 
-        platformAPI.verifySignature(for: signingResult.signature, timestamp: signingResult.timestamp, clientId: clientId, clientSecret: clientSecret, projectId: projectId) { isVerified, _ in
+        platformAPI.verifySignature(for: signingResult.signature, timestamp: signingResult.timestamp, clientId: clientId, clientSecret: clientSecret, projectId: projectId, projectURL: projectURL) { isVerified, _ in
             verifiedSignature = isVerified
             expectation.fulfill()
         }
@@ -127,6 +133,7 @@ import MIRACLTrust
         clientId: String,
         clientSecret: String,
         projectId: String,
+        projectURL: String,
         userId: String,
         accessId: String? = nil,
         expiration: Date? = nil
@@ -136,6 +143,7 @@ import MIRACLTrust
                 clientId: clientId,
                 clientSecret: clientSecret,
                 projectId: projectId,
+                projectURL: projectURL,
                 userId: userId,
                 accessId: accessId,
                 expiration: expiration
@@ -152,12 +160,14 @@ import MIRACLTrust
 
     func getAsyncAccessId(
         projectId: String,
+        projectURL: String,
         userId: String? = nil,
         hash: String? = nil,
         description: String? = nil
     ) async throws -> String {
         let accessId: String = try await withCheckedThrowingContinuation { continuation in
             platformAPI.getAccessId(
+                projectURL: projectURL,
                 projectId: projectId,
                 userId: userId,
                 hash: hash,

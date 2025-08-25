@@ -2,15 +2,13 @@
 import XCTest
 
 final class ConfigurationTests: XCTestCase {
-    private var baseURL = URL(string: "https://api.mpin.io")!
-
     func testSDKCorrectConfiguration() throws {
         let applicationInfo = UUID().uuidString
 
         guard let configuration = try? Configuration.Builder(
-            projectId: "mockedProjectId"
-        ).platformURL(url: baseURL)
-            .applicationInfo(applicationInfo: applicationInfo)
+            projectId: "mockedProjectId",
+            projectURL: projectURL
+        ).applicationInfo(applicationInfo: applicationInfo)
             .build() else {
             XCTFail("Fail at \(#function) on row \(#line)")
             return
@@ -36,10 +34,11 @@ final class ConfigurationTests: XCTestCase {
         let projectId = ""
 
         XCTAssertThrowsError(try Configuration.Builder(
-            projectId: projectId
+            projectId: projectId,
+            projectURL: projectURL
         ).build()) { error in
             XCTAssertTrue(error is ConfigurationError)
-            XCTAssertEqual(error as? ConfigurationError, ConfigurationError.configurationEmptyProjectId)
+            XCTAssertEqual(error as? ConfigurationError, ConfigurationError.emptyProjectId)
         }
     }
 
@@ -47,10 +46,36 @@ final class ConfigurationTests: XCTestCase {
         let projectId = "       "
 
         XCTAssertThrowsError(try Configuration.Builder(
-            projectId: projectId).build()
+            projectId: projectId,
+            projectURL: projectURL
+        ).build()
         ) { error in
             XCTAssertTrue(error is ConfigurationError)
-            XCTAssertEqual(error as? ConfigurationError, ConfigurationError.configurationEmptyProjectId)
+            XCTAssertEqual(error as? ConfigurationError, ConfigurationError.emptyProjectId)
+        }
+    }
+
+    func testSDKInvalidURLConfiguration() {
+        let projectURL = ""
+
+        XCTAssertThrowsError(try Configuration.Builder(
+            projectId: UUID().uuidString,
+            projectURL: projectURL
+        ).build()) { error in
+            XCTAssertTrue(error is ConfigurationError)
+            XCTAssertEqual(error as? ConfigurationError, ConfigurationError.invalidProjectURL)
+        }
+    }
+
+    func testSDKDifferentInvalidURLConfiguration() {
+        let projectURL = "https://api. mpin. io "
+
+        XCTAssertThrowsError(try Configuration.Builder(
+            projectId: UUID().uuidString,
+            projectURL: projectURL
+        ).build()) { error in
+            XCTAssertTrue(error is ConfigurationError)
+            XCTAssertEqual(error as? ConfigurationError, ConfigurationError.invalidProjectURL)
         }
     }
 }

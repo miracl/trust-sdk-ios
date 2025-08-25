@@ -7,19 +7,18 @@ import MIRACLTrust
 @objc public class PlatformAPI: NSObject {
     var requestExecutor = HTTPRequestExecutor()
 
-    public var url: URL
-
-    @objc public init(url: URL) {
-        self.url = url
-    }
-
     @objc public func getAccessId(
+        projectURL: String,
         projectId: String,
         userId: String? = nil,
         hash: String? = nil,
         description: String? = nil,
         completionHandler: @escaping @Sendable (String?, Error?) -> Void
     ) {
+        guard let url = URL(string: projectURL) else {
+            return
+        }
+
         guard let request = URLRequest.sessionRequest(
             url: url,
             projectId: projectId,
@@ -50,11 +49,16 @@ import MIRACLTrust
         clientId: String,
         clientSecret: String,
         projectId: String,
+        projectURL: String,
         userId: String,
         accessId: String? = nil,
         expiration: Date? = nil,
         completionHandler: @escaping @Sendable (URL?, Error?) -> Void
     ) {
+        guard let url = URL(string: projectURL) else {
+            return
+        }
+
         guard let request = URLRequest.verificationURLRequest(
             url: url,
             clientId: clientId,
@@ -81,7 +85,14 @@ import MIRACLTrust
         }
     }
 
-    public func getJWKS(completionHandler: @escaping @Sendable (String?, Error?) -> Void) {
+    public func getJWKS(
+        projectURL: String,
+        completionHandler: @escaping @Sendable (String?, Error?) -> Void
+    ) {
+        guard let url = URL(string: projectURL) else {
+            return
+        }
+
         guard let request = URLRequest.jwksRequest(url: url) else {
             return
         }
@@ -125,11 +136,16 @@ import MIRACLTrust
 
     @objc public func startSigningSession(
         projectID: String,
+        projectURL: String,
         userID: String,
         hash: String,
         description: String,
         completionHandler: @escaping @Sendable (SigningSession?, Error?) -> Void
     ) {
+        guard let url = URL(string: projectURL) else {
+            return
+        }
+
         guard let request = URLRequest.signingSessionRequest(
             url: url,
             projectID: projectID,
@@ -157,8 +173,13 @@ import MIRACLTrust
         clientId: String,
         clientSecret: String,
         projectId: String,
+        projectURL: String,
         completionHandler: @escaping @Sendable (Bool, Error?) -> Void
     ) {
+        guard let url = URL(string: projectURL) else {
+            return
+        }
+
         guard let request = URLRequest.verifySignatureRequest(url: url, signature: signature, timestamp: timestamp, clientId: clientId, clientSecret: clientSecret, projectId: projectId) else {
             return
         }

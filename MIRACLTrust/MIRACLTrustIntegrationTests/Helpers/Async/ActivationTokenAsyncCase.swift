@@ -7,6 +7,7 @@ struct ActivationTokenAsyncCase {
         clientId: String,
         clientSecret: String,
         projectId: String,
+        projectURL: String,
         userId: String,
         accessId: String? = nil
     ) async throws -> String {
@@ -14,6 +15,7 @@ struct ActivationTokenAsyncCase {
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId,
             accessId: accessId
         )

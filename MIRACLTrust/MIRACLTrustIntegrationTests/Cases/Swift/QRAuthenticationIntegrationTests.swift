@@ -2,7 +2,7 @@
 import XCTest
 
 class QRAuthenticationIntegrationTests: XCTestCase {
-    let platformURL = ProcessInfo.processInfo.environment["platformURL"]!
+    let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
 
     var registration = RegistrationTestCase()
     var authentication = QRAuthenticationTestCase()
@@ -33,16 +33,14 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         authentication = QRAuthenticationTestCase()
         authentication.pinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io/mobile-login/#\(accessId)"
-
-        let platformURL = try XCTUnwrap(URL(string: platformURL))
 
         configuration = try Configuration
             .Builder(
-                projectId: projectId
+                projectId: projectId,
+                projectURL: projectURL
             ).userStorage(userStorage: storage)
-            .platformURL(url: platformURL)
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
@@ -50,6 +48,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
             clientId: clientId,
             clientSecret: clientSecret,
             projectId: projectId,
+            projectURL: projectURL,
             userId: userId,
             accessId: accessId
         )
@@ -142,7 +141,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId))
+        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io/mobile-login/#\(differentAccessId)"
         let (isAuthenticated, authError) = try authentication.authenticateUser(
             user: XCTUnwrap(user),
