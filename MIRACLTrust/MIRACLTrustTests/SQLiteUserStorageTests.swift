@@ -90,9 +90,9 @@ class SQLiteUserStorageTests: XCTestCase {
     func testAddUserWithEmptyUserId() throws {
         let user = createUser(userId: "")
         XCTAssertThrowsError(try storage.add(user: user)) { error in
-            XCTAssertNotNil(error as? SQLiteDefaultStorageError)
+            XCTAssertNotNil(error as? SQLiteUserStorageError)
             var isErrorStorage = false
-            if case SQLiteDefaultStorageError.sqliteQueryError(message: _) = error {
+            if case SQLiteUserStorageError.sqliteQueryError(message: _) = error {
                 isErrorStorage = true
             }
 
@@ -123,9 +123,9 @@ class SQLiteUserStorageTests: XCTestCase {
         XCTAssertEqual(storage.all().count, 1)
 
         XCTAssertThrowsError(try storage.add(user: user)) { error in
-            XCTAssertNotNil(error as? SQLiteDefaultStorageError)
+            XCTAssertNotNil(error as? SQLiteUserStorageError)
             var isErrorStorage = false
-            if case SQLiteDefaultStorageError.sqliteQueryError(message: _) = error {
+            if case SQLiteUserStorageError.sqliteQueryError(message: _) = error {
                 isErrorStorage = true
             }
 
@@ -278,9 +278,9 @@ class SQLiteUserStorageTests: XCTestCase {
 
         XCTAssertThrowsError(try storage.update(user: user)) { error in
             XCTAssertEqual(storage.all().count, 1)
-            XCTAssertNotNil(error as? SQLiteDefaultStorageError)
+            XCTAssertNotNil(error as? SQLiteUserStorageError)
             var isErrorStorage = false
-            if case SQLiteDefaultStorageError.sqliteQueryError(message: _) = error {
+            if case SQLiteUserStorageError.sqliteQueryError(message: _) = error {
                 isErrorStorage = true
             }
 
@@ -323,9 +323,9 @@ class SQLiteUserStorageTests: XCTestCase {
 
         XCTAssertThrowsError(try storage.update(user: user)) { error in
             XCTAssertEqual(storage.all().count, 1)
-            XCTAssertNotNil(error as? SQLiteDefaultStorageError)
+            XCTAssertNotNil(error as? SQLiteUserStorageError)
             var isErrorStorage = false
-            if case SQLiteDefaultStorageError.sqliteQueryError(message: _) = error {
+            if case SQLiteUserStorageError.sqliteQueryError(message: _) = error {
                 isErrorStorage = true
             }
 
@@ -369,9 +369,9 @@ class SQLiteUserStorageTests: XCTestCase {
 
         XCTAssertThrowsError(try storage.update(user: user)) { error in
             XCTAssertEqual(storage.all().count, 1)
-            XCTAssertNotNil(error as? SQLiteDefaultStorageError)
+            XCTAssertNotNil(error as? SQLiteUserStorageError)
             var isErrorStorage = false
-            if case SQLiteDefaultStorageError.sqliteQueryError(message: _) = error {
+            if case SQLiteUserStorageError.sqliteQueryError(message: _) = error {
                 isErrorStorage = true
             }
 
@@ -407,9 +407,9 @@ class SQLiteUserStorageTests: XCTestCase {
 
         XCTAssertThrowsError(try storage.update(user: user)) { error in
             XCTAssertEqual(storage.all().count, 1)
-            XCTAssertNotNil(error as? SQLiteDefaultStorageError)
+            XCTAssertNotNil(error as? SQLiteUserStorageError)
             var isErrorStorage = false
-            if case SQLiteDefaultStorageError.sqliteQueryError(message: _) = error {
+            if case SQLiteUserStorageError.sqliteQueryError(message: _) = error {
                 isErrorStorage = true
             }
 

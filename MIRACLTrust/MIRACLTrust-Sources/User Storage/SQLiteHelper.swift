@@ -38,7 +38,7 @@ final class SQLiteHelper: @unchecked Sendable {
             }
 
             if sqlite3_open(dbFilePath, &database) != SQLITE_OK {
-                throw SQLiteDefaultStorageError.noConnection
+                throw SQLiteUserStorageError.noConnection
             }
         }
     }
@@ -54,14 +54,14 @@ final class SQLiteHelper: @unchecked Sendable {
             }
 
             if !encryptionHelper.updateEncryptionKeyAccessGroupIfNeeded() {
-                throw SQLiteDefaultStorageError.accessGroupUpdateError
+                throw SQLiteUserStorageError.accessGroupUpdateError
             }
             if !encryptionHelper.updateEncryptionKeyAccessibilityIfNeeded() {
-                throw SQLiteDefaultStorageError.encryptionKeyUpdateError
+                throw SQLiteUserStorageError.encryptionKeyUpdateAccessibilityError
             }
 
             guard let encryptionKeyAsNSString = encryptionKey as NSString? else {
-                throw SQLiteDefaultStorageError.encryptionError
+                throw SQLiteUserStorageError.encryptionKeyConfigurationError
             }
 
             let dbOperationResult = sqlite3_key(
@@ -71,7 +71,7 @@ final class SQLiteHelper: @unchecked Sendable {
             )
 
             if dbOperationResult != SQLITE_OK {
-                throw SQLiteDefaultStorageError.encryptionError
+                throw SQLiteUserStorageError.encryptionKeyConfigurationError
             }
         }
     }
@@ -92,12 +92,12 @@ final class SQLiteHelper: @unchecked Sendable {
             )
 
             guard prepareQueryResult == SQLITE_OK else {
-                throw SQLiteDefaultStorageError.prepareStatementError(message: getErrorMessage())
+                throw SQLiteUserStorageError.prepareStatementError(message: getErrorMessage())
             }
 
             prepareQueryResult = sqlite3_step(createTableStatement)
             guard prepareQueryResult == SQLITE_DONE else {
-                throw SQLiteDefaultStorageError.sqliteQueryError(message: getErrorMessage())
+                throw SQLiteUserStorageError.sqliteQueryError(message: getErrorMessage())
             }
         }
     }
@@ -126,10 +126,10 @@ final class SQLiteHelper: @unchecked Sendable {
 
                 let dbOperationResult = sqlite3_step(insertStatement)
                 if dbOperationResult != SQLITE_DONE {
-                    throw SQLiteDefaultStorageError.sqliteQueryError(message: getErrorMessage())
+                    throw SQLiteUserStorageError.sqliteQueryError(message: getErrorMessage())
                 }
             } else {
-                throw SQLiteDefaultStorageError.prepareStatementError(message: getErrorMessage())
+                throw SQLiteUserStorageError.prepareStatementError(message: getErrorMessage())
             }
         }
     }
@@ -153,7 +153,7 @@ final class SQLiteHelper: @unchecked Sendable {
                 nil
             )
             guard dbOperationResult == SQLITE_OK else {
-                throw SQLiteDefaultStorageError.prepareStatementError(message: getErrorMessage())
+                throw SQLiteUserStorageError.prepareStatementError(message: getErrorMessage())
             }
 
             if let bindingsBlock = bindingsBlock {
@@ -182,14 +182,14 @@ final class SQLiteHelper: @unchecked Sendable {
             )
 
             guard dbOperationResult == SQLITE_OK else {
-                throw SQLiteDefaultStorageError.prepareStatementError(message: getErrorMessage())
+                throw SQLiteUserStorageError.prepareStatementError(message: getErrorMessage())
             }
 
             buildBindings(deleteStatement)
 
             dbOperationResult = sqlite3_step(deleteStatement)
             if dbOperationResult != SQLITE_DONE {
-                throw SQLiteDefaultStorageError.sqliteQueryError(message: getErrorMessage())
+                throw SQLiteUserStorageError.sqliteQueryError(message: getErrorMessage())
             }
         }
     }
@@ -213,7 +213,7 @@ final class SQLiteHelper: @unchecked Sendable {
             )
 
             guard dbOperationResult == SQLITE_OK else {
-                throw SQLiteDefaultStorageError.prepareStatementError(message: getErrorMessage())
+                throw SQLiteUserStorageError.prepareStatementError(message: getErrorMessage())
             }
 
             buildBindings(updateStatement)
@@ -221,7 +221,7 @@ final class SQLiteHelper: @unchecked Sendable {
             dbOperationResult = sqlite3_step(updateStatement)
 
             guard dbOperationResult == SQLITE_DONE else {
-                throw SQLiteDefaultStorageError.sqliteQueryError(message: getErrorMessage())
+                throw SQLiteUserStorageError.sqliteQueryError(message: getErrorMessage())
             }
         }
     }
@@ -250,7 +250,7 @@ final class SQLiteHelper: @unchecked Sendable {
             )
 
             guard dbOperationResult == SQLITE_OK else {
-                throw SQLiteDefaultStorageError.prepareStatementError(message: getErrorMessage())
+                throw SQLiteUserStorageError.prepareStatementError(message: getErrorMessage())
             }
 
             var currentDatabaseVersion = Int32()
@@ -269,7 +269,7 @@ final class SQLiteHelper: @unchecked Sendable {
             """
             let result = sqlite3_exec(database, statement, nil, nil, nil)
             if result != SQLITE_OK {
-                throw SQLiteDefaultStorageError.sqliteQueryError(message: getErrorMessage())
+                throw SQLiteUserStorageError.sqliteQueryError(message: getErrorMessage())
             }
         }
     }
@@ -294,7 +294,7 @@ final class SQLiteHelper: @unchecked Sendable {
                 appropriateFor: nil,
                 create: true
             ) else {
-                throw SQLiteDefaultStorageError.noDir
+                throw SQLiteUserStorageError.documentsDirectoryMissing
             }
             databaseDirectoryURL = directoryURL
         }
