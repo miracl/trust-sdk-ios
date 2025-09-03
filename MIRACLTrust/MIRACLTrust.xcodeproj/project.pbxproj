@@ -192,8 +192,8 @@
 		6DC46A9425B9BB2B0099866C /* APISettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAAC0EB24000DA700652CD1 /* APISettings.swift */; };
 		6DC89F612E2FCA1000683AFB /* CrossDeviceSessionAborter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC89F602E2FCA0900683AFB /* CrossDeviceSessionAborter.swift */; };
 		6DC89F632E2FDBE900683AFB /* CrossDeviceSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC89F622E2FDBE400683AFB /* CrossDeviceSessionError.swift */; };
-		6DC987342E54C3CB00E1EDAB /* CrossDeviceSessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */; };
 		6DC987222E5332D200E1EDAB /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC987212E5332CF00E1EDAB /* UserDTO.swift */; };
+		6DC987342E54C3CB00E1EDAB /* CrossDeviceSessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */; };
 		6DCDC7542834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCDC7532834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift */; };
 		6DCFDD4224AA0CEC00CED02F /* RegistrationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCFDD4124AA0CEC00CED02F /* RegistrationTestCase.swift */; };
 		6DCFDD4424AA0E7D00CED02F /* QRAuthenticationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCFDD4324AA0E7D00CED02F /* QRAuthenticationTestCase.swift */; };
@@ -500,8 +500,8 @@
 		6DC80E32242CDDF5001C353F /* AuthenticateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticateResponse.swift; sourceTree = "<group>"; };
 		6DC89F602E2FCA0900683AFB /* CrossDeviceSessionAborter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAborter.swift; sourceTree = "<group>"; };
 		6DC89F622E2FDBE400683AFB /* CrossDeviceSessionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionError.swift; sourceTree = "<group>"; };
-		6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionTestCase.swift; sourceTree = "<group>"; };
 		6DC987212E5332CF00E1EDAB /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
+		6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionTestCase.swift; sourceTree = "<group>"; };
 		6DCDC7532834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetSigningSessionDetailsTestCase.swift; sourceTree = "<group>"; };
 		6DCFDD4124AA0CEC00CED02F /* RegistrationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationTestCase.swift; sourceTree = "<group>"; };
 		6DCFDD4324AA0E7D00CED02F /* QRAuthenticationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRAuthenticationTestCase.swift; sourceTree = "<group>"; };
@@ -1783,7 +1783,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1846,7 +1846,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1870,7 +1870,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.trust.sdk-ios.MIRACLTrustTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1890,7 +1890,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.trust.sdk-ios.MIRACLTrustTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1912,7 +1912,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radoslavpenev.MIRACLTrustIntegrationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "MIRACLTrustIntegrationTests/Cases/MIRACLTrustIntegrationTests-Bridging-Header.h";
@@ -1937,7 +1937,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radoslavpenev.MIRACLTrustIntegrationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "MIRACLTrustIntegrationTests/Cases/MIRACLTrustIntegrationTests-Bridging-Header.h";
@@ -1960,7 +1960,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.applclippoc.MIRACLTrust-Test-Host-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1980,7 +1980,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.applclippoc.MIRACLTrust-Test-Host-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2019,7 +2019,7 @@
 					"$(PROJECT_DIR)/MIRACLTrust-Sources/Crypto/src",
 				);
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				MODULEMAP_FILE = "$(SRCROOT)/MIRACLTrust-Sources/MIRACLTrust.modulemap";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2068,7 +2068,7 @@
 					"$(PROJECT_DIR)/MIRACLTrust-Sources/Crypto/src",
 				);
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.5.0;
+				MIRACL_SDK_VERSION = 1.6.0;
 				MODULEMAP_FILE = "$(SRCROOT)/MIRACLTrust-Sources/MIRACLTrust.modulemap";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
