@@ -174,15 +174,21 @@ import Foundation
     ///   - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
     @objc public func _sendVerificationEmail(
         userId: String,
-        crossDeviceSession: CrossDeviceSession,
+        crossDeviceSession: CrossDeviceSession? = nil,
         completionHandler: @escaping VerificationCompletionHandler
     ) {
         do {
+            var sessionType = SessionType.noSession
+
+            if let crossDeviceSession {
+                sessionType = .crossDevice(sessionId: crossDeviceSession.sessionId)
+            }
+
             let verificator = try Verificator(
                 userId: userId,
                 projectId: projectId,
                 deviceName: deviceName,
-                sessionType: .crossDevice(sessionId: crossDeviceSession.sessionId),
+                sessionType: sessionType,
                 miraclAPI: miraclAPI,
                 completionHandler: completionHandler
             )

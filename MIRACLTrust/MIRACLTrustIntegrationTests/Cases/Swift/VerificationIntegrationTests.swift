@@ -19,6 +19,7 @@ class VerificationIntegrationTests: XCTestCase {
     let registrationTestCase = RegistrationTestCase()
     let deviceName = "iOS Simulator"
     let sessionDetailsTestCase = SessionDetailsTestCase()
+    let crossDeviceSessionTestCase = CrossDeviceSessionCase()
     let api = PlatformAPIWrapper()
     let gmailService = GmailServiceTestWrapper()
 
@@ -29,7 +30,7 @@ class VerificationIntegrationTests: XCTestCase {
 
     var configuration: Configuration?
 
-    func testVerification() async throws {
+    func testVerificationWithoutAuthenticationSession() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
 
         configuration = try Configuration
@@ -42,6 +43,44 @@ class VerificationIntegrationTests: XCTestCase {
 
         let timestamp = Date()
         let (verified, error) = verificationTestCase.sendVerificationEmail(
+            userId: extendedMailAddress
+        )
+
+        XCTAssertNotNil(verified)
+        XCTAssertNil(error)
+
+        let verificationResult = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
+        let verificationURL = try XCTUnwrap(verificationResult)
+
+        let queryItems = try XCTUnwrap(URLComponents(url: verificationURL, resolvingAgainstBaseURL: false)?.queryItems)
+
+        let userIdItem = try XCTUnwrap(queryItems.filter { item in
+            item.name == "user_id"
+        }.first)
+        XCTAssertEqual(userIdItem.value, extendedMailAddress)
+
+        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+            verificationURL: XCTUnwrap(verificationURL)
+        )
+
+        XCTAssertNil(activationTokenError)
+        XCTAssertNotNil(activationTokenResponse)
+        XCTAssertEqual(activationTokenResponse?.projectId, projectId)
+    }
+
+    func testVerificationWithoutCrossDeviceSession() async throws {
+        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+
+        configuration = try Configuration
+            .Builder(
+                projectId: projectId,
+                projectURL: projectURLDV
+            ).userStorage(userStorage: storage)
+            .build()
+        try MIRACLTrust.configure(with: XCTUnwrap(configuration))
+
+        let timestamp = Date()
+        let (verified, error) = verificationTestCase.sendVerificationEmailForCrossDeviceSession(
             userId: extendedMailAddress
         )
 
@@ -197,6 +236,38 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertEqual(response.accessId, accessId)
     }
 
+    func testVerificationWithCrossDeviceSessionDetails() async throws {
+        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
+        let qrCode = "https://mcl.mpin.io#\(accessId)"
+
+        configuration = try Configuration
+            .Builder(projectId: projectId, projectURL: projectURLDV)
+            .userStorage(userStorage: storage)
+            .build()
+        try MIRACLTrust.configure(with: XCTUnwrap(configuration))
+
+        let crossDeviceSession = try await crossDeviceSessionTestCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
+
+        let timestamp = Date()
+        let (verified, error) = verificationTestCase.sendVerificationEmailForCrossDeviceSession(
+            userId: extendedMailAddress,
+            crossDeviceSession: crossDeviceSession
+        )
+        XCTAssertNotNil(verified)
+        XCTAssertNil(error)
+
+        let verificationURL = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
+
+        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+            verificationURL: XCTUnwrap(verificationURL)
+        )
+
+        XCTAssertNil(activationTokenError)
+        let response = try XCTUnwrap(activationTokenResponse)
+        XCTAssertEqual(response.accessId, accessId)
+    }
+
     func testEmailCodeVerification() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
 
@@ -204,6 +275,7 @@ class VerificationIntegrationTests: XCTestCase {
             .Builder(projectId: projectIdECV, projectURL: projectURLECV)
             .userStorage(userStorage: storage)
             .build()
+
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()

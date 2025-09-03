@@ -27,4 +27,30 @@ class VerificationTestCase {
 
         return (verificationResponse, returnedError)
     }
+
+    func sendVerificationEmailForCrossDeviceSession(
+        userId: String,
+        crossDeviceSession: CrossDeviceSession? = nil
+    ) -> (VerificationResponse?, Error?) {
+        let waitForVerification = XCTestExpectation(description: "wait for verification")
+
+        nonisolated(unsafe) var verificationResponse: VerificationResponse?
+        nonisolated(unsafe) var returnedError: Error?
+
+        MIRACLTrust.getInstance()._sendVerificationEmail(
+            userId: userId,
+            crossDeviceSession: crossDeviceSession
+        ) { result, error in
+            verificationResponse = result
+            returnedError = error
+            waitForVerification.fulfill()
+        }
+
+        let waitResult = XCTWaiter.wait(for: [waitForVerification], timeout: operationTimeout)
+        if waitResult != .completed {
+            XCTFail("Failed expectation")
+        }
+
+        return (verificationResponse, returnedError)
+    }
 }

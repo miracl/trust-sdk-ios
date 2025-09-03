@@ -118,6 +118,10 @@ class MIRACLTrustTests: XCTestCase {
         mockAPI.signingSessionCompleterError = nil
         mockAPI.signingSessionCompleterResultCall = .success
         mockAPI.signingSessionCompleterResponse = SigningSessionCompleterResponse(status: "signed")
+
+        mockAPI.verificationResponse = VerificationRequestResponse(backoff: backoff, method: "link")
+        mockAPI.verificationResultCall = .success
+        mockAPI.verificationError = nil
     }
 
     func createMockCrypto() {
@@ -172,6 +176,47 @@ class MIRACLTrustTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 20.0)
+    }
+
+    func testSendVerificationEmailWithCrossDeviceSession() throws {
+        let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail with cross device session")
+        let crossDeviceSession = createCrossDeviceSession()
+
+        MIRACLTrust.getInstance()._sendVerificationEmail(userId: randomString, crossDeviceSession: crossDeviceSession) { response, error in
+            XCTAssertNil(error)
+            XCTAssertNotNil(response)
+
+            completionHandlerExpectation.fulfill()
+        }
+
+        wait(for: [completionHandlerExpectation], timeout: 20.0)
+    }
+
+    func testSendVerificationEmailWithAuthenticationSessionDetails() throws {
+        let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail with authentication session")
+        let authenticationSessionDetails = createSessionDetails()
+
+        MIRACLTrust.getInstance().sendVerificationEmail(userId: randomString, authenticationSessionDetails: authenticationSessionDetails) { response, error in
+            XCTAssertNil(error)
+            XCTAssertNotNil(response)
+
+            completionHandlerExpectation.fulfill()
+        }
+
+        wait(for: [completionHandlerExpectation], timeout: 20.0)
+    }
+
+    func testSendVerificationEmailWithoutCrossDeviceSession() throws {
+        let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail without cross device session")
+
+        MIRACLTrust.getInstance()._sendVerificationEmail(userId: randomString) { response, error in
+            XCTAssertNil(error)
+            XCTAssertNotNil(response)
+
+            completionHandlerExpectation.fulfill()
+        }
+
+        wait(for: [completionHandlerExpectation], timeout: 20.0)
     }
 
     func testGetActivationToken() throws {
@@ -977,7 +1022,7 @@ class MIRACLTrustTests: XCTestCase {
 
     func testGetNotExisitingUser() throws {
         projectId = randomString
-        var userDTO = createUserDTO()
+        let userDTO = createUserDTO()
 
         try mockUserStorage.add(user: userDTO)
         XCTAssertNil(MIRACLTrust.getInstance().getUser(by: randomString))
@@ -1066,6 +1111,26 @@ class MIRACLTrustTests: XCTestCase {
             signingDescription: UUID().uuidString,
             status: .signed,
             expireTime: Date()
+        )
+    }
+
+    private func createCrossDeviceSession() -> CrossDeviceSession {
+        CrossDeviceSession(
+            userId: UUID().uuidString,
+            projectName: UUID().uuidString,
+            projectLogoURL: UUID().uuidString,
+            projectId: UUID().uuidString,
+            pinLength: 4,
+            verificationMethod: .standardEmail,
+            verificationURL: UUID().uuidString,
+            verificationCustomText: UUID().uuidString,
+            identityTypeLabel: UUID().uuidString,
+            quickCodeEnabled: true,
+            limitQuickCodeRegistration: false,
+            identityType: .alphanumeric,
+            sessionId: UUID().uuidString,
+            sessionDescription: "",
+            signingHash: ""
         )
     }
 }
