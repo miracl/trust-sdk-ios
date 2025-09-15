@@ -136,8 +136,8 @@ final class Registrator: Sendable {
         let dispatchGroup = DispatchGroup()
         let writeQueue = DispatchQueue(label: "com.miracl.secretURLsQueue")
 
-        var results = [Data]()
-        var secretURLFetchingError: Error?
+        nonisolated(unsafe) var results = [Data]()
+        nonisolated(unsafe) var secretURLFetchingError: Error?
 
         let filteredSecretURLs: [String] = Array(secretURLs.prefix(2))
 
@@ -185,7 +185,7 @@ final class Registrator: Sendable {
 
     private func getClientSecretShare(
         clientSecretShareURL: URL,
-        completionHandler: @escaping (Result<Data, Error>) -> Void
+        completionHandler: @escaping @Sendable (Result<Data, Error>) -> Void
     ) {
         miraclAPI.getClientSecretShare(clientSecretShareURL) { _, response, error in
             if let error {
@@ -352,19 +352,19 @@ final class Registrator: Sendable {
     }
 
     private func getPinCode() -> Result<(enteredPin: Int32, enteredPinLength: Int), RegistrationError> {
-        nonisolated(unsafe) var userEnteredPin: String?
+        let pinController = PinController()
         let semaphore = DispatchSemaphore(value: 0)
 
         DispatchQueue.main.async {
             self.didRequestPinHandler { pin in
-                userEnteredPin = pin
+                pinController.updatePin(pin)
                 semaphore.signal()
             }
         }
 
         _ = semaphore.wait(timeout: .distantFuture)
 
-        guard let pinCode = userEnteredPin else {
+        guard let pinCode = pinController.readPin() else {
             return .failure(.pinCancelled)
         }
 

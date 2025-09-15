@@ -58,6 +58,7 @@
 		6D52C6FA28489955005066D1 /* VerificationConfirmationHandlerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D52C6F928489955005066D1 /* VerificationConfirmationHandlerTest.swift */; };
 		6D54164524E273B0003018C9 /* SigningIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D54164424E273B0003018C9 /* SigningIntegrationTests.swift */; };
 		6D5573C42A8A4B79001AFD23 /* APIErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5573C32A8A4B79001AFD23 /* APIErrorResponse.swift */; };
+		6D56E98E2E745B1600A261E2 /* PinController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D56E98D2E745B1100A261E2 /* PinController.swift */; };
 		6D58BEE329F7A4AA0001C502 /* CryptoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D58BEE229F7A4AA0001C502 /* CryptoError.swift */; };
 		6D5AFD512428D35900FBACDA /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5AFD502428D35900FBACDA /* CryptoTests.swift */; };
 		6D5D1C8C2D9EC41C004BDA7B /* SigningResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5D1C8B2D9EC418004BDA7B /* SigningResult.swift */; };
@@ -372,6 +373,7 @@
 		6D54164024E16EDD003018C9 /* SigningError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningError.swift; sourceTree = "<group>"; };
 		6D54164424E273B0003018C9 /* SigningIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningIntegrationTests.swift; sourceTree = "<group>"; };
 		6D5573C32A8A4B79001AFD23 /* APIErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIErrorResponse.swift; sourceTree = "<group>"; };
+		6D56E98D2E745B1100A261E2 /* PinController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinController.swift; sourceTree = "<group>"; };
 		6D58BEE229F7A4AA0001C502 /* CryptoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoError.swift; sourceTree = "<group>"; };
 		6D5AFD412422315000FBACDA /* StringProtocol+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringProtocol+Helpers.swift"; sourceTree = "<group>"; };
 		6D5AFD502428D35900FBACDA /* CryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
@@ -892,6 +894,7 @@
 		6D97E52A2E4A09AA00A48235 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				6D56E98D2E745B1100A261E2 /* PinController.swift */,
 				6D97E52B2E4A09B300A48235 /* SessionType.swift */,
 			);
 			path = Helpers;
@@ -1653,6 +1656,7 @@
 				6D7258B22A1F8B410029751B /* АuthenticationSessionError.swift in Sources */,
 				6DC46A0B25B9BAD40099866C /* LogCategory.swift in Sources */,
 				6DC46A6825B9BB080099866C /* RegistrationRequestBody.swift in Sources */,
+				6D56E98E2E745B1600A261E2 /* PinController.swift in Sources */,
 				6DF322182A1F95A5003C8939 /* SigningSessionError.swift in Sources */,
 				6DDEB14B2705F23900C3313D /* AuthenticationSessionAborter.swift in Sources */,
 				6DC46A3725B9BAF20099866C /* Pass1RequestBody.swift in Sources */,

@@ -11,7 +11,7 @@ struct APIRequestExecutor: Sendable {
         self.logger = logger
     }
 
-    func execute<T: Codable>(
+    func execute<T: Codable & Sendable>(
         apiRequest: APIRequest<some Codable>,
         jsonDecoder: JSONDecoder = JSONDecoder(),
         completion: @escaping @Sendable (APICallResult, T?, Error?) -> Void
@@ -24,7 +24,7 @@ struct APIRequestExecutor: Sendable {
         let task = urlSession.dataTask(
             with: urlRequest
         ) { data, response, error in
-            if let error = error {
+            if let error {
                 completion(.failed, nil, error)
                 return
             }
