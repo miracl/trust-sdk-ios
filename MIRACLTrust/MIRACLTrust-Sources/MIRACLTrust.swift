@@ -104,6 +104,19 @@ import Foundation
         }
     }
 
+    /// Configure a new project ID when the SDK have to work with a different project.
+    /// - Parameters:
+    ///   - projectId: `Project ID` setting for the MIRACL Platform that needs to be updated.
+    @objc public func setProjectId(
+        projectId: String
+    ) throws {
+        if projectId.isEmpty {
+            throw ConfigurationError.emptyProjectId
+        }
+
+        self.projectId = projectId
+    }
+
     /// Configures new project settings when the SDK have to work with a different project.
     /// - Parameters:
     ///   - projectId: The unique identifier for your MIRACL Trust project.
