@@ -310,19 +310,19 @@ struct Signer: Sendable {
     }
 
     private func getPinCode() -> Result<String, SigningError> {
-        nonisolated(unsafe) var userEnteredPin: String?
         let semaphore = DispatchSemaphore(value: 0)
+        let pinController = PinController()
 
         DispatchQueue.main.async {
             didRequestSigningPinHandler { pin in
-                userEnteredPin = pin
+                pinController.updatePin(pin)
                 semaphore.signal()
             }
         }
 
         _ = semaphore.wait(timeout: .distantFuture)
 
-        guard let pinCode = userEnteredPin else {
+        guard let pinCode = pinController.readPin() else {
             return .failure(.pinCancelled)
         }
 

@@ -82,19 +82,19 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
     private func clientPass1() {
         logOperation(operation: LoggingConstants.clientPass1)
 
-        nonisolated(unsafe) var userEnteredPin: String?
+        let pinController = PinController()
         let semaphore = DispatchSemaphore(value: 0)
 
         DispatchQueue.main.async {
             didRequestPinHandler { pin in
-                userEnteredPin = pin
+                pinController.updatePin(pin)
                 semaphore.signal()
             }
         }
 
         _ = semaphore.wait(timeout: .distantFuture)
 
-        guard let pinCode = userEnteredPin else {
+        guard let pinCode = pinController.readPin() else {
             callCompletionHandler(with: AuthenticationError.pinCancelled)
             return
         }
