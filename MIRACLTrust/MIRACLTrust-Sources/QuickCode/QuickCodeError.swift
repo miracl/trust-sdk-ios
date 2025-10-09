@@ -14,9 +14,6 @@ public enum QuickCodeError: Error {
     /// Pin code includes invalid symbols or pin length does not match.
     case invalidPin
 
-    /// Generating QuickCode from this registration is not allowed.
-    case limitedQuickCodeGeneration
-
     /// QuickCode generation failed.
     case generationFail(Error?)
 }
@@ -39,8 +36,6 @@ extension QuickCodeError: LocalizedError {
             description = NSLocalizedString("\(QuickCodeError.pinCancelled)", comment: "")
         case .invalidPin:
             description = NSLocalizedString("\(QuickCodeError.invalidPin)", comment: "")
-        case .limitedQuickCodeGeneration:
-            description = NSLocalizedString("\(QuickCodeError.limitedQuickCodeGeneration)", comment: "")
         case let .generationFail(error):
             description = NSLocalizedString("\(QuickCodeError.generationFail(error))", comment: "")
         }
@@ -59,10 +54,8 @@ extension QuickCodeError: CustomNSError {
             3
         case .invalidPin:
             4
-        case .limitedQuickCodeGeneration:
-            5
         case .generationFail:
-            6
+            5
         }
     }
 

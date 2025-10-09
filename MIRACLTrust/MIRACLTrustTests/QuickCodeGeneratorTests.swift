@@ -173,20 +173,6 @@ class QuickCodeGeneratorTests: XCTestCase {
         }
     }
 
-    func testForLimitedQuickCodeGeneration() throws {
-        let expectedError = QuickCodeError.limitedQuickCodeGeneration
-
-        authenticator?.response = nil
-        authenticator?.error = AuthenticationError.authenticationFail(
-            apiClientError(with: LIMITED_QUICKCODE_GENERATION)
-        )
-
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
-            assertError(current: error, expected: expectedError)
-        }
-    }
-
     func testForUnknownCode() throws {
         let returnedError = AuthenticationError.authenticationFail(
             apiClientError(with: "EXAMPLE_CODE"))

@@ -33,9 +33,6 @@ import Foundation
     /// Indicates whether [QuickCode](https://miracl.com/resources/docs/guides/built-in-user-verification/quickcode/) is enabled for the project or not.
     public let quickCodeEnabled: Bool
 
-    /// Indicates whether registration with QuickCode is allowed for identities registered also with QuickCode.
-    public let limitQuickCodeRegistration: Bool
-
     /// Identity type which will be used for identity verification.
     public let identityType: IdentityType
 
@@ -59,7 +56,6 @@ import Foundation
         verificationCustomText: String,
         identityTypeLabel: String,
         quickCodeEnabled: Bool,
-        limitQuickCodeRegistration: Bool,
         identityType: IdentityType,
         sessionId: String,
         sessionDescription: String,
@@ -75,7 +71,6 @@ import Foundation
         self.verificationCustomText = verificationCustomText
         self.identityTypeLabel = identityTypeLabel
         self.quickCodeEnabled = quickCodeEnabled
-        self.limitQuickCodeRegistration = limitQuickCodeRegistration
         self.identityType = identityType
         self.sessionId = sessionId
         self.sessionDescription = sessionDescription

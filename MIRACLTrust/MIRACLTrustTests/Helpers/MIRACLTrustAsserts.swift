@@ -28,7 +28,6 @@ public func assertSessionDetails(
         XCTAssertEqual(fetchedDetails.verificationCustomText, randomString)
         XCTAssertEqual(fetchedDetails.identityType, IdentityType.email)
         XCTAssertEqual(fetchedDetails.quickCodeEnabled, true)
-        XCTAssertEqual(fetchedDetails.limitQuickCodeRegistration, true)
 
     } catch {
         XCTFail("Get session detail failed")

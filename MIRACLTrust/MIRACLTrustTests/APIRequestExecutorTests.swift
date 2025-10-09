@@ -456,12 +456,6 @@ class APIRequestExecutorTests: XCTestCase {
         try testInvalidErrorCodes(code)
     }
 
-    func testQuickCodeLimited() throws {
-        let code = "QUICKCODE_LIMITED"
-
-        try testInvalidErrorCodes(code)
-    }
-
     func testMpinIDExpired() throws {
         let code = "MPINID_EXPIRED"
 

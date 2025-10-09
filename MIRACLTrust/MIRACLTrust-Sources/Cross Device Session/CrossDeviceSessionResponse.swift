@@ -10,7 +10,6 @@ struct CrossDeviceSessionResponse: Codable {
     var identityTypeLabel: String
     var identityType: String
     var quickCodeEnabled: Bool
-    var limitQuickCodeRegistration: Bool
     var signingHash: String
     var sessionDescription: String
 
@@ -26,7 +25,6 @@ struct CrossDeviceSessionResponse: Codable {
         case identityTypeLabel
         case identityType
         case quickCodeEnabled = "enableRegistrationCode"
-        case limitQuickCodeRegistration = "limitRegCodeVerified"
         case signingHash = "hash"
         case sessionDescription = "description"
     }

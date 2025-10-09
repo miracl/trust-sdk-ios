@@ -71,7 +71,6 @@ final class CrossDeviceSessionFetcher: Sendable {
                 verificationCustomText: response.verificationCustomText,
                 identityTypeLabel: response.identityTypeLabel,
                 quickCodeEnabled: response.quickCodeEnabled,
-                limitQuickCodeRegistration: response.limitQuickCodeRegistration,
                 identityType: IdentityType.identityTypeFromString(response.identityType),
                 sessionId: self.sessionId,
                 sessionDescription: response.sessionDescription,

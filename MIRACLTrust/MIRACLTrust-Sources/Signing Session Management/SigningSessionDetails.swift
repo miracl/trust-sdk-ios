@@ -23,8 +23,6 @@ import Foundation
 
     public let quickCodeEnabled: Bool
 
-    public let limitQuickCodeRegistration: Bool
-
     public let identityType: IdentityType
 
     /// Identifier of the signing session.
@@ -53,7 +51,6 @@ import Foundation
         verificationCustomText: String,
         identityTypeLabel: String,
         quickCodeEnabled: Bool,
-        limitQuickCodeRegistration: Bool,
         identityType: IdentityType,
         sessionId: String,
         signingHash: String,
@@ -71,7 +68,6 @@ import Foundation
         self.verificationCustomText = verificationCustomText
         self.identityTypeLabel = identityTypeLabel
         self.quickCodeEnabled = quickCodeEnabled
-        self.limitQuickCodeRegistration = limitQuickCodeRegistration
         self.identityType = identityType
         self.sessionId = sessionId
         self.signingHash = signingHash

@@ -69,7 +69,6 @@ struct SigningSessionDetailsFetcher: Sendable {
                         verificationCustomText: response.verificationCustomText,
                         identityTypeLabel: response.identityTypeLabel,
                         quickCodeEnabled: response.enableRegistrationCode,
-                        limitQuickCodeRegistration: response.limitRegCodeVerified,
                         identityType: IdentityType.identityTypeFromString(response.identityType),
                         sessionId: accessId,
                         signingHash: response.signingHash,

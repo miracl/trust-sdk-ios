@@ -29,7 +29,6 @@ class SessionDetailsFetcherTests: XCTestCase {
         sessionDetailResponse.verificationCustomText = randomString
         sessionDetailResponse.identityTypeLabel = randomString
         sessionDetailResponse.identityType = "email"
-        sessionDetailResponse.limitQuickCodeRegistration = true
         sessionDetailResponse.quickCodeEnabled = true
 
         api = MockAPI()

@@ -79,7 +79,6 @@ class MIRACLTrustTests: XCTestCase {
         sessionDetailResponse.verificationCustomText = randomString
         sessionDetailResponse.identityTypeLabel = randomString
         sessionDetailResponse.identityType = "email"
-        sessionDetailResponse.limitQuickCodeRegistration = true
         sessionDetailResponse.quickCodeEnabled = true
 
         let signingSessionDetailsResponse = SigningSessionDetailsResponse(
@@ -97,8 +96,7 @@ class MIRACLTrustTests: XCTestCase {
             identityType: "email",
             identityTypeLabel: randomString,
             pinLength: 4,
-            enableRegistrationCode: randomBool,
-            limitRegCodeVerified: randomBool
+            enableRegistrationCode: randomBool
         )
 
         mockAPI.signingSessionDetailsResponse = signingSessionDetailsResponse
@@ -606,7 +604,6 @@ class MIRACLTrustTests: XCTestCase {
                 XCTAssertEqual(fetchedDetails.verificationCustomText, randomString)
                 XCTAssertEqual(fetchedDetails.identityType, IdentityType.email)
                 XCTAssertEqual(fetchedDetails.quickCodeEnabled, true)
-                XCTAssertEqual(fetchedDetails.limitQuickCodeRegistration, true)
 
                 expectation.fulfill()
             } catch {
@@ -659,7 +656,6 @@ class MIRACLTrustTests: XCTestCase {
                 XCTAssertEqual(fetchedDetails.verificationCustomText, randomString)
                 XCTAssertEqual(fetchedDetails.identityType, IdentityType.email)
                 XCTAssertEqual(fetchedDetails.quickCodeEnabled, true)
-                XCTAssertEqual(fetchedDetails.limitQuickCodeRegistration, true)
 
                 expectation.fulfill()
             } catch {
@@ -710,7 +706,6 @@ class MIRACLTrustTests: XCTestCase {
                 XCTAssertEqual(fetchedDetails.verificationCustomText, randomString)
                 XCTAssertEqual(fetchedDetails.identityType, IdentityType.email)
                 XCTAssertEqual(fetchedDetails.quickCodeEnabled, true)
-                XCTAssertEqual(fetchedDetails.limitQuickCodeRegistration, true)
 
             } catch {
                 XCTFail("Get session detail failed")
@@ -769,7 +764,6 @@ class MIRACLTrustTests: XCTestCase {
                 XCTAssertEqual(unwrappedSessionDetails.identityTypeLabel, randomString)
                 XCTAssertEqual(unwrappedSessionDetails.pinLength, 4)
                 XCTAssertEqual(unwrappedSessionDetails.quickCodeEnabled, randomBool)
-                XCTAssertEqual(unwrappedSessionDetails.limitQuickCodeRegistration, randomBool)
                 XCTAssertEqual(unwrappedSessionDetails.expireTime, Date(timeIntervalSince1970: TimeInterval(currentDate)))
             } catch {
                 XCTFail("No signingSessionDetails object")
@@ -828,7 +822,6 @@ class MIRACLTrustTests: XCTestCase {
                 XCTAssertEqual(unwrappedSessionDetails.identityTypeLabel, randomString)
                 XCTAssertEqual(unwrappedSessionDetails.pinLength, 4)
                 XCTAssertEqual(unwrappedSessionDetails.quickCodeEnabled, randomBool)
-                XCTAssertEqual(unwrappedSessionDetails.limitQuickCodeRegistration, randomBool)
                 XCTAssertEqual(unwrappedSessionDetails.expireTime, Date(timeIntervalSince1970: TimeInterval(currentDate)))
             } catch {
                 XCTFail("No signingSessionDetails object")
@@ -1086,7 +1079,6 @@ class MIRACLTrustTests: XCTestCase {
             verificationCustomText: UUID().uuidString,
             identityTypeLabel: UUID().uuidString,
             quickCodeEnabled: true,
-            limitQuickCodeRegistration: false,
             identityType: .email,
             accessId: accessId
         )
@@ -1104,7 +1096,6 @@ class MIRACLTrustTests: XCTestCase {
             verificationCustomText: UUID().uuidString,
             identityTypeLabel: UUID().uuidString,
             quickCodeEnabled: true,
-            limitQuickCodeRegistration: true,
             identityType: .email,
             sessionId: sessionId,
             signingHash: UUID().uuidString,
@@ -1126,7 +1117,6 @@ class MIRACLTrustTests: XCTestCase {
             verificationCustomText: UUID().uuidString,
             identityTypeLabel: UUID().uuidString,
             quickCodeEnabled: true,
-            limitQuickCodeRegistration: false,
             identityType: .alphanumeric,
             sessionId: UUID().uuidString,
             sessionDescription: "",
