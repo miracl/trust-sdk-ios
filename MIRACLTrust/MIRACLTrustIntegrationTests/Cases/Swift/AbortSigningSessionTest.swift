@@ -104,7 +104,6 @@ final class AbortSigningSessionTest: XCTestCase {
             verificationCustomText: UUID().uuidString,
             identityTypeLabel: UUID().uuidString,
             quickCodeEnabled: Bool.random(),
-            limitQuickCodeRegistration: Bool.random(),
             identityType: .alphanumeric,
             sessionId: sessionId,
             signingHash: UUID().uuidString,

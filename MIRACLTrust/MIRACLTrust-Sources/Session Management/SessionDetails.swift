@@ -31,9 +31,6 @@ import Foundation
     /// Whether the QuickCode is enabled for the project or not.
     var quickCodeEnabled: Bool { get }
 
-    /// Flag indicating whether registration with QuickCode is allowed for identities registered also with QuickCode.
-    var limitQuickCodeRegistration: Bool { get }
-
     /// Identity type which will be used for identity verification.
     var identityType: IdentityType { get }
 }

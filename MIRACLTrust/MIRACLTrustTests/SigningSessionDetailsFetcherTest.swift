@@ -58,7 +58,6 @@ class SigningSessionDetailsFetcherTest: XCTestCase {
                 XCTAssertEqual(unwrappedSessionDetails.identityTypeLabel, randomUUIDCopy)
                 XCTAssertEqual(unwrappedSessionDetails.pinLength, pinLengthCopy)
                 XCTAssertEqual(unwrappedSessionDetails.quickCodeEnabled, randomBoolCopy)
-                XCTAssertEqual(unwrappedSessionDetails.limitQuickCodeRegistration, randomBoolCopy)
                 XCTAssertEqual(unwrappedSessionDetails.expireTime, Date(timeIntervalSince1970: TimeInterval(currentDateCopy)))
             } catch {
                 XCTFail("No signingSessionDetails object")
@@ -92,7 +91,6 @@ class SigningSessionDetailsFetcherTest: XCTestCase {
                 XCTAssertEqual(unwrappedSessionDetails.identityTypeLabel, randomUUIDCopy)
                 XCTAssertEqual(unwrappedSessionDetails.pinLength, pinLengthCopy)
                 XCTAssertEqual(unwrappedSessionDetails.quickCodeEnabled, randomBoolCopy)
-                XCTAssertEqual(unwrappedSessionDetails.limitQuickCodeRegistration, randomBoolCopy)
                 XCTAssertEqual(unwrappedSessionDetails.expireTime, Date(timeIntervalSince1970: TimeInterval(currentDateCopy)))
             } catch {
                 XCTFail("No signingSessionDetails object")
@@ -283,8 +281,7 @@ class SigningSessionDetailsFetcherTest: XCTestCase {
             identityType: "email",
             identityTypeLabel: randomUUID,
             pinLength: pinLength,
-            enableRegistrationCode: randomBool,
-            limitRegCodeVerified: randomBool
+            enableRegistrationCode: randomBool
         )
     }
 }

@@ -11,10 +11,10 @@ class MockUserStorage: UserStorage, @unchecked Sendable {
     }
 
     func delete(user: UserDTO) throws {
-        if let index = authenticationUsersMockArray.firstIndex { currentUser in
+        if let index = authenticationUsersMockArray.firstIndex(where: { currentUser in
             user.userId == currentUser.userId &&
                 user.projectId == currentUser.projectId
-        } {
+        }) {
             authenticationUsersMockArray.remove(at: index)
         }
     }

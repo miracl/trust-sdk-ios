@@ -39,7 +39,6 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
             verificationCustomText: randomString,
             identityTypeLabel: randomString,
             quickCodeEnabled: true,
-            limitQuickCodeRegistration: true,
             identityType: .alphanumeric,
             sessionId: randomString,
             sessionDescription: "",

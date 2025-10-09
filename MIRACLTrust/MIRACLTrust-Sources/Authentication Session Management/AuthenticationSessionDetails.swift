@@ -23,8 +23,6 @@ import Foundation
 
     public let quickCodeEnabled: Bool
 
-    public let limitQuickCodeRegistration: Bool
-
     public let identityType: IdentityType
 
     /// Identifier of the authentication session.
@@ -41,7 +39,6 @@ import Foundation
         verificationCustomText: String,
         identityTypeLabel: String,
         quickCodeEnabled: Bool,
-        limitQuickCodeRegistration: Bool,
         identityType: IdentityType,
         accessId: String
     ) {
@@ -55,7 +52,6 @@ import Foundation
         self.verificationCustomText = verificationCustomText
         self.identityTypeLabel = identityTypeLabel
         self.quickCodeEnabled = quickCodeEnabled
-        self.limitQuickCodeRegistration = limitQuickCodeRegistration
         self.identityType = identityType
         self.accessId = accessId
     }

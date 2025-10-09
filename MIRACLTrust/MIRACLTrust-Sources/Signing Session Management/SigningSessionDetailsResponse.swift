@@ -14,7 +14,6 @@ struct SigningSessionDetailsResponse: Codable {
     var identityTypeLabel: String
     var pinLength: Int
     var enableRegistrationCode: Bool
-    var limitRegCodeVerified: Bool
 
     enum CodingKeys: String, CodingKey {
         case userID
@@ -32,6 +31,5 @@ struct SigningSessionDetailsResponse: Codable {
         case identityTypeLabel
         case pinLength
         case enableRegistrationCode
-        case limitRegCodeVerified
     }
 }

@@ -240,41 +240,6 @@ class QuickCodeIntegrationTests: XCTestCase {
         assertError(current: authenticationError, expected: AuthenticationError.revoked)
     }
 
-    func testLimitedQuickCodeGeneration() throws {
-        try MIRACLTrust.configure(with: XCTUnwrap(configuration))
-
-        let (user, regError) = registrationTestCase.registerUser(
-            userId: userId,
-            activationToken: activationToken
-        )
-        XCTAssertNil(regError)
-        XCTAssertNotNil(user)
-
-        // Register user with QuickCode
-        var (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
-        XCTAssertNil(quickCodeError)
-        XCTAssertNotNil(quickCode)
-
-        let (newActicationTokenResponse, _) = try getActivationToken.getActivationToken(userId: userId, code: XCTUnwrap(quickCode?.code))
-
-        let (quickCodeGeneratedUser, quickCodeUserRegError) = try registrationTestCase.registerUser(
-            userId: userId,
-            activationToken: XCTUnwrap(newActicationTokenResponse?.activationToken)
-        )
-        XCTAssertNil(quickCodeUserRegError)
-        XCTAssertNotNil(quickCodeGeneratedUser)
-
-        // Try to generate QuickCode with user registered with QuickCode and Limit QuickCode Verified
-        // option enabled for the project.
-        (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(quickCodeGeneratedUser))
-        XCTExpectFailure("QuickCodeError.limitedQuickCodeGeneration is currently disabled and quick code is generated")
-        XCTAssertNil(quickCode)
-        assertError(
-            current: quickCodeError,
-            expected: QuickCodeError.limitedQuickCodeGeneration
-        )
-    }
-
     func createRandomUser(
         mpinId: Data = Data([1, 2, 3]),
         token: Data = Data([4, 5, 6]),

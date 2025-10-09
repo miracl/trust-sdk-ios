@@ -1,7 +1,5 @@
 import Foundation
 
-let LIMITED_QUICKCODE_GENERATION = "LIMITED_QUICKCODE_GENERATION"
-
 struct QuickCodeGenerator: Sendable {
     let user: User
     let completionHandler: QuickCodeCompletionHandler
@@ -65,12 +63,7 @@ struct QuickCodeGenerator: Sendable {
 
     @Sendable func authenticationResult(response: AuthenticateResponse?, error: Error?) {
         if let error = error {
-            if case let AuthenticationError.authenticationFail(authError) = error,
-               let authError = authError as? APIError,
-               case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = authError,
-               clientErrorData?.code == LIMITED_QUICKCODE_GENERATION {
-                callCompletionHandler(with: QuickCodeError.limitedQuickCodeGeneration)
-            } else if case AuthenticationError.revoked = error {
+            if case AuthenticationError.revoked = error {
                 callCompletionHandler(with: QuickCodeError.revoked)
             } else if case AuthenticationError.unsuccessfulAuthentication = error {
                 callCompletionHandler(with: QuickCodeError.unsuccessfulAuthentication)

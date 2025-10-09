@@ -10,7 +10,6 @@ struct AuthenticationSessionsDetailsResponse: Codable {
     var identityTypeLabel = ""
     var identityType = ""
     var quickCodeEnabled = false
-    var limitQuickCodeRegistration = false
 
     enum CodingKeys: String, CodingKey {
         case prerollId
@@ -24,6 +23,5 @@ struct AuthenticationSessionsDetailsResponse: Codable {
         case identityTypeLabel
         case identityType
         case quickCodeEnabled = "enableRegistrationCode"
-        case limitQuickCodeRegistration = "limitRegCodeVerified"
     }
 }

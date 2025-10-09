@@ -59,7 +59,6 @@ struct CrossDeviceSessionAborterIntegrationTest {
             verificationCustomText: UUID().uuidString,
             identityTypeLabel: UUID().uuidString,
             quickCodeEnabled: true,
-            limitQuickCodeRegistration: false,
             identityType: .email,
             sessionId: sessionId,
             sessionDescription: "",

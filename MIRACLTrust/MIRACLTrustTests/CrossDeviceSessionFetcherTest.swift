@@ -35,7 +35,6 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
             identityTypeLabel: randomString,
             identityType: "email",
             quickCodeEnabled: true,
-            limitQuickCodeRegistration: true,
             signingHash: randomString,
             sessionDescription: randomString
         )
@@ -249,7 +248,6 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
             XCTAssertEqual(fetchedDetails.verificationCustomText, randomString)
             XCTAssertEqual(fetchedDetails.identityType, IdentityType.email)
             XCTAssertEqual(fetchedDetails.quickCodeEnabled, true)
-            XCTAssertEqual(fetchedDetails.limitQuickCodeRegistration, true)
 
         } catch {
             XCTFail("Get session detail failed")

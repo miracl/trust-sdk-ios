@@ -110,7 +110,6 @@ class AbortSessionIntegrationTests: XCTestCase {
             verificationCustomText: UUID().uuidString,
             identityTypeLabel: UUID().uuidString,
             quickCodeEnabled: Bool.random(),
-            limitQuickCodeRegistration: Bool.random(),
             identityType: .alphanumeric,
             accessId: accessId
         )

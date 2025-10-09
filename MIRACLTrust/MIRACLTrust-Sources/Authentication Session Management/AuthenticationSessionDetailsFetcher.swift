@@ -69,7 +69,6 @@ struct AuthenticationSessionDetailsFetcher: Sendable {
                         verificationCustomText: sessionDetailsResponse.verificationCustomText,
                         identityTypeLabel: sessionDetailsResponse.identityTypeLabel,
                         quickCodeEnabled: sessionDetailsResponse.quickCodeEnabled,
-                        limitQuickCodeRegistration: sessionDetailsResponse.limitQuickCodeRegistration,
                         identityType: IdentityType.identityTypeFromString(sessionDetailsResponse.identityType),
                         accessId: accessId
                     )
