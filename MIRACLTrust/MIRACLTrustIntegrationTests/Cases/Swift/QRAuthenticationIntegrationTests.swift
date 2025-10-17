@@ -7,7 +7,6 @@ class QRAuthenticationIntegrationTests: XCTestCase {
     var registration = RegistrationTestCase()
     var authentication = QRAuthenticationTestCase()
     var getActivationToken = GetActivationTokenTestCase()
-    var accessId = ""
     var qrCode = ""
     var activationToken = ""
     var configuration: Configuration?
@@ -33,8 +32,8 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         authentication = QRAuthenticationTestCase()
         authentication.pinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
-        qrCode = "https://mcl.mpin.io/mobile-login/#\(accessId)"
+        let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL))
+        qrCode = "https://mcl.mpin.io/mobile-login/#\(session.accessId)"
 
         configuration = try Configuration
             .Builder(
@@ -50,7 +49,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,
-            accessId: accessId
+            accessId: session.accessId
         )
 
         activationToken = try XCTUnwrap(response?.activationToken)
@@ -141,7 +140,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
+        let differentAccessId = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL)).accessId
         qrCode = "https://mcl.mpin.io/mobile-login/#\(differentAccessId)"
         let (isAuthenticated, authError) = try authentication.authenticateUser(
             user: XCTUnwrap(user),

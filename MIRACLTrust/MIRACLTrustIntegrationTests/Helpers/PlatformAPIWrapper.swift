@@ -53,14 +53,14 @@ import MIRACLTrust
         return jwkSet
     }
 
-    @objc func getAccessId(
+    @objc func startSession(
         projectId: String,
         projectURL: String,
         userId: String? = nil,
         hash: String? = nil,
         description: String? = nil
-    ) -> String? {
-        nonisolated(unsafe) var accessId: String?
+    ) -> StartSessionResult? {
+        nonisolated(unsafe) var session: StartSessionResult?
         let accessIdExpectation = XCTestExpectation(description: "wait for Access Id")
 
         platformAPI
@@ -70,9 +70,9 @@ import MIRACLTrust
                 userId: userId,
                 hash: hash,
                 description: description,
-                completionHandler: { code, error in
-                    if let code = code {
-                        accessId = code
+                completionHandler: { session1, error in
+                    if let session1 {
+                        session = session1
                     } else if let error = error {
                         print("Error when creating access id: \(error)")
                     }
@@ -81,7 +81,7 @@ import MIRACLTrust
             )
 
         _ = XCTWaiter.wait(for: [accessIdExpectation], timeout: operationTimeout)
-        return accessId
+        return session
     }
 
     @objc func startSigningSession(
@@ -120,7 +120,41 @@ import MIRACLTrust
         nonisolated(unsafe) var verifiedSignature = false
         let expectation = XCTestExpectation(description: "Waiting for signature verification")
 
-        platformAPI.verifySignature(for: signingResult.signature, timestamp: signingResult.timestamp, clientId: clientId, clientSecret: clientSecret, projectId: projectId, projectURL: projectURL) { isVerified, _ in
+        platformAPI.verifySignature(
+            for: signingResult.signature,
+            timestamp: signingResult.timestamp,
+            clientId: clientId,
+            clientSecret: clientSecret,
+            projectId: projectId,
+            projectURL: projectURL
+        ) { isVerified, _ in
+            verifiedSignature = isVerified
+            expectation.fulfill()
+        }
+        _ = XCTWaiter.wait(for: [expectation], timeout: operationTimeout)
+
+        return verifiedSignature
+    }
+
+    @objc func verifySignature(
+        signature: Signature,
+        timestamp: Date,
+        clientId: String,
+        clientSecret: String,
+        projectId: String,
+        projectURL: String
+    ) -> Bool {
+        nonisolated(unsafe) var verifiedSignature = false
+        let expectation = XCTestExpectation(description: "Waiting for signature verification")
+
+        platformAPI.verifySignature(
+            for: signature,
+            timestamp: timestamp,
+            clientId: clientId,
+            clientSecret: clientSecret,
+            projectId: projectId,
+            projectURL: projectURL
+        ) { isVerified, _ in
             verifiedSignature = isVerified
             expectation.fulfill()
         }
@@ -164,23 +198,44 @@ import MIRACLTrust
         userId: String? = nil,
         hash: String? = nil,
         description: String? = nil
-    ) async throws -> String {
-        let accessId: String = try await withCheckedThrowingContinuation { continuation in
+    ) async throws -> StartSessionResult {
+        let session: StartSessionResult = try await withCheckedThrowingContinuation { continuation in
             platformAPI.getAccessId(
                 projectURL: projectURL,
                 projectId: projectId,
                 userId: userId,
                 hash: hash,
                 description: description
-            ) { accessId, error in
-                if let accessId {
-                    continuation.resume(returning: accessId)
+            ) { session, error in
+                if let session {
+                    continuation.resume(returning: session)
                 } else if let error {
                     continuation.resume(throwing: error)
                 }
             }
         }
 
-        return accessId
+        return session
+    }
+
+    func getSessionStatus(
+        projectURL: String,
+        webOTT: String
+    ) async throws -> SessionStatusResponse {
+        let sessionStatusResponse: SessionStatusResponse =
+            try await withCheckedThrowingContinuation { continuation in
+                platformAPI.accessRequest(
+                    projectURL: projectURL,
+                    webOTT: webOTT
+                ) { response, error in
+                    if let response {
+                        continuation.resume(returning: response)
+                    } else if let error {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+
+        return sessionStatusResponse
     }
 }

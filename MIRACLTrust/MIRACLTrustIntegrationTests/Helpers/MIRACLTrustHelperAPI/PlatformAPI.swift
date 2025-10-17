@@ -13,7 +13,7 @@ import MIRACLTrust
         userId: String? = nil,
         hash: String? = nil,
         description: String? = nil,
-        completionHandler: @escaping @Sendable (String?, Error?) -> Void
+        completionHandler: @escaping @Sendable (StartSessionResult?, Error?) -> Void
     ) {
         guard let url = URL(string: projectURL) else {
             return
@@ -29,13 +29,14 @@ import MIRACLTrust
             return
         }
 
-        requestExecutor.executeHTTPRequest(request: request) { (result: Result<Session?, HelperAPIError>) in
+        requestExecutor.executeHTTPRequest(request: request) { (result: Result<StartSessionResponse?, HelperAPIError>) in
             switch result {
             case let .success(session):
                 if let session = session {
                     if let urlComponents = URLComponents(url: session.qrURL, resolvingAgainstBaseURL: false) {
                         if let fragment = urlComponents.fragment {
-                            completionHandler(fragment, nil)
+                            let session = StartSessionResult(accessId: fragment, webOTT: session.webOTT)
+                            completionHandler(session, nil)
                         }
                     }
                 }
@@ -132,6 +133,29 @@ import MIRACLTrust
         }
 
         task.resume()
+    }
+
+    public func accessRequest(
+        projectURL: String,
+        webOTT: String,
+        completionHandler: @escaping @Sendable (SessionStatusResponse?, Error?) -> Void
+    ) {
+        guard let url = URL(string: projectURL) else {
+            return
+        }
+
+        guard let request = URLRequest.accessRequest(url: url, webOTT: webOTT) else {
+            return
+        }
+
+        requestExecutor.executeHTTPRequest(request: request) { (result: Result<SessionStatusResponse?, HelperAPIError>) in
+            switch result {
+            case let .success(success):
+                completionHandler(success, nil)
+            case let .failure(failure):
+                completionHandler(nil, failure)
+            }
+        }
     }
 
     @objc public func startSigningSession(

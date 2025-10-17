@@ -5,7 +5,6 @@ class UniversalLinkAuthIntegrationTests: XCTestCase {
     var registration = RegistrationTestCase()
     var authentication = UniversalLinkAuthenticationTestCase()
     var getActivationToken = GetActivationTokenTestCase()
-    var accessId = ""
     var qrCode = ""
     var universalLinkURL: URL?
     var activationToken = ""
@@ -33,8 +32,8 @@ class UniversalLinkAuthIntegrationTests: XCTestCase {
         authentication = UniversalLinkAuthenticationTestCase()
         authentication.pinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
-        qrCode = "https://mcl.mpin.io/mobile-login/#\(accessId)"
+        let accessId = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL))
+        qrCode = "https://mcl.mpin.io/mobile-login/#\(accessId.accessId)"
         universalLinkURL = URL(string: qrCode)
 
         configuration = try Configuration
@@ -139,7 +138,7 @@ class UniversalLinkAuthIntegrationTests: XCTestCase {
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
+        let differentAccessId = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL)).accessId
         qrCode = "https://mcl.mpin.io/mobile-login/#\(differentAccessId)"
         universalLinkURL = URL(string: qrCode)
         let universalLinkURL = try XCTUnwrap(universalLinkURL)

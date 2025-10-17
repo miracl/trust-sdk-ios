@@ -226,6 +226,35 @@ extension URLRequest {
         return request
     }
 
+    static func accessRequest(
+        url: URL,
+        webOTT: String
+    ) -> URLRequest? {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return nil
+        }
+
+        components.path = "/rps/v2/access"
+
+        guard let url = components.url else {
+            return nil
+        }
+
+        var request = URLRequest(url: url)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+
+        let requestBody = SessionStatusRequestBody(webOTT: webOTT)
+
+        do {
+            request.httpBody = try JSONEncoder().encode(requestBody)
+        } catch {
+            return nil
+        }
+
+        return request
+    }
+
     static func gmailAccessTokenRequest(for credentials: Credentials, refreshToken: String) -> URLRequest? {
         var request = URLRequest(url: URL(string: credentials.installed.tokenURI)!)
         request.httpMethod = "POST"

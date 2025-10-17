@@ -844,15 +844,8 @@ import Foundation
         completionHandler: @escaping CrossDeviceSigningCompletionHandler
     ) {
         do {
-            guard let hash = crossDeviceSession.signingHash.data(using: .utf8) else {
-                DispatchQueue.main.async {
-                    completionHandler(false, SigningError.emptyMessageHash)
-                }
-                return
-            }
-
             let signer = try Signer(
-                messageHash: hash,
+                messageHash: Data(hexString: crossDeviceSession.signingHash),
                 sessionType: .crossDevice(sessionId: crossDeviceSession.sessionId),
                 user: user,
                 didRequestSigningPinHandler: didRequestSigningPinHandler

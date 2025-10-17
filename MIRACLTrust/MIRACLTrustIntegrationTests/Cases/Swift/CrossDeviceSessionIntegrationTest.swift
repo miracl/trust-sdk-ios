@@ -21,7 +21,7 @@ struct CrossDeviceSessionIntegrationTest {
         )
         .build()
 
-        sessionId = try await platformAPI.getAsyncAccessId(projectId: projectId, projectURL: url)
+        sessionId = try await platformAPI.getAsyncAccessId(projectId: projectId, projectURL: url).accessId
 
         try MIRACLTrust.configure(with: configuration)
     }
@@ -37,7 +37,7 @@ struct CrossDeviceSessionIntegrationTest {
     func getCrossDeviceSessionForDifferentProject() async throws {
         let hash = UUID().uuidString
         let description = UUID().uuidString
-        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description)
+        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description).accessId
         let qrCode = "https://mcl.mpin.io#\(sessionId)"
         let session = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
         #expect(session.projectId == expectedProjectId)
@@ -86,7 +86,7 @@ struct CrossDeviceSessionIntegrationTest {
     func getCrossDeviceSessionsUniversalLinkURLForDifferentProject() async throws {
         let hash = UUID().uuidString
         let description = UUID().uuidString
-        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description)
+        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description).accessId
         let universalLinkURL = try #require(URL(string: "https://mcl.mpin.io#\(sessionId)"))
         let session = try await crossDeviceSessionCase.getCrossDeviceSessionForUniversalLinkURL(universalLinkURL: universalLinkURL)
 
@@ -124,7 +124,7 @@ struct CrossDeviceSessionIntegrationTest {
     func getCrossDeviceSessionsFromPushNotificationsPayloadDifferent() async throws {
         let hash = UUID().uuidString
         let description = UUID().uuidString
-        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description)
+        let sessionId = try await platformAPI.getAsyncAccessId(projectId: expectedProjectId, projectURL: url, hash: hash, description: description).accessId
         let qrCode = "https://mcl.mpin.io#\(sessionId)"
         let payload = [
             "qrURL": qrCode

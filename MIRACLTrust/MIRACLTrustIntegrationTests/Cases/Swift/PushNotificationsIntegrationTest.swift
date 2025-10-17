@@ -34,10 +34,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         authentication = PushNotificationsAuthenticationTestCase()
         authentication.pinCode = randomPIN
 
-        let accessId = try XCTUnwrap(
-            api.getAccessId(projectId: projectId, projectURL: projectURL)
+        let session = try XCTUnwrap(
+            api.startSession(projectId: projectId, projectURL: projectURL)
         )
-        qrURL = "https://mcl.mpin.io/mobile-login/#\(accessId)"
+        qrURL = "https://mcl.mpin.io/mobile-login/#\(session.accessId)"
         payload = [
             "userID": userId,
             "projectID": projectId,
@@ -56,7 +56,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,
-            accessId: accessId
+            accessId: session.accessId
         )
 
         activationToken = try XCTUnwrap(response?.activationToken)
@@ -242,8 +242,8 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let differentAccessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL)
-        )
+        let differentAccessId = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL)
+        ).accessId
         qrURL = "https://mcl.mpin.io/mobile-login/#\(differentAccessId)"
         payload = [
             "userID": userId,

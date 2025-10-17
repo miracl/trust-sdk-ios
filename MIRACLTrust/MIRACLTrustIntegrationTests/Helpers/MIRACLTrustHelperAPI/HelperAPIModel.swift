@@ -26,8 +26,29 @@ struct VerifySigningRequestBody: Codable {
     var type = "verification"
 }
 
-struct Session: Codable {
+struct StartSessionResponse: Codable {
     var qrURL: URL
+    var webOTT: String
+}
+
+struct SessionStatusRequestBody: Codable {
+    var webOTT: String
+}
+
+public struct SessionStatusResponse: Codable {
+    var status: String
+    var signature: String
+}
+
+@objcMembers
+@objc public class StartSessionResult: NSObject, Codable {
+    public var accessId: String
+    public var webOTT: String
+
+    init(accessId: String, webOTT: String) {
+        self.accessId = accessId
+        self.webOTT = webOTT
+    }
 }
 
 struct SessionRequestBody: Codable {
