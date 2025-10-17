@@ -6,7 +6,7 @@ class QuickCodeIntegrationTests: XCTestCase {
     var authenticationTestCase = QRAuthenticationTestCase()
     var quickCodeTestCase = QuickCodeTestCase()
     var getActivationToken = GetActivationTokenTestCase()
-    var accessId = ""
+    var session: StartSessionResult?
     var activationToken = ""
     var configuration: Configuration?
 
@@ -33,7 +33,8 @@ class QuickCodeIntegrationTests: XCTestCase {
         quickCodeTestCase = QuickCodeTestCase()
         quickCodeTestCase.authenticationPinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
+        session = api.startSession(projectId: projectId, projectURL: projectURL)
+        let session = try XCTUnwrap(session)
 
         configuration = try Configuration
             .Builder(projectId: projectId, projectURL: projectURL)
@@ -49,7 +50,7 @@ class QuickCodeIntegrationTests: XCTestCase {
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,
-            accessId: accessId
+            accessId: session.accessId
         )
 
         activationToken = try XCTUnwrap(response?.activationToken)
@@ -230,7 +231,8 @@ class QuickCodeIntegrationTests: XCTestCase {
         )
 
         // After three unsuccessful tries, the user is blocked and cannot authenticate anymore.
-        let qrCode = "https://mcl.mpin.io/mobile-login/#\(accessId)"
+        let session = try XCTUnwrap(session)
+        let qrCode = "https://mcl.mpin.io/mobile-login/#\(session.accessId)"
         let (authenticationResult, authenticationError) = try authenticationTestCase.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode

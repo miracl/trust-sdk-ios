@@ -18,7 +18,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     var randomPIN = ""
     var user: User
     var crossDeviceSession: CrossDeviceSession
-    var accessId: String
+    var session: StartSessionResult
 
     init() async throws {
         randomPIN = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin()
@@ -32,8 +32,8 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
 
         try MIRACLTrust.configure(with: configuration)
 
-        accessId = try await platformAPI.getAsyncAccessId(projectId: projectId, projectURL: projectURL)
-        let qrCode = "https://mcl.mpin.io#\(accessId)"
+        session = try await platformAPI.getAsyncAccessId(projectId: projectId, projectURL: projectURL)
+        let qrCode = "https://mcl.mpin.io#\(session.accessId)"
         crossDeviceSession = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
         let activationToken = try await activationTokenCase.getActivationToken(
             clientId: clientId,
@@ -56,7 +56,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
 
     @Test("Tests successful authentication with cross device session for Universal Link URL", .timeLimit(.minutes(1)))
     func authenticationWithUniviversalLinkURLCrossDeviceSession() async throws {
-        let url = try #require(URL(string: "https://mcl.mpin.io/#\(accessId)"))
+        let url = try #require(URL(string: "https://mcl.mpin.io/#\(session.accessId)"))
         let crossDeviceSession = try await crossDeviceSessionCase
             .getCrossDeviceSessionForUniversalLinkURL(universalLinkURL: url)
         let isAuthenticated = try await authenticationTestCase.authenticate(
@@ -69,7 +69,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
 
     @Test("Tests successful authentication with cross device session for Universal Link URL", .timeLimit(.minutes(1)))
     func authenticationWithPushNotificationPayloadForCrossDeviceSession() async throws {
-        let qrCode = "https://mcl.mpin.io#\(accessId)"
+        let qrCode = "https://mcl.mpin.io#\(session.accessId)"
         let payload = [
             "qrURL": qrCode
         ]

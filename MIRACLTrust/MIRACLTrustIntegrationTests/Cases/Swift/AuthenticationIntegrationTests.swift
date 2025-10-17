@@ -7,7 +7,7 @@ class AuthenticationIntegrationTests: XCTestCase {
     var authentication = QRAuthenticationTestCase()
     var jwtAuthenticationTestCase = JWTAuthenticationTestCase()
     var getActivationToken = GetActivationTokenTestCase()
-    var accessId = ""
+    var session: StartSessionResult?
     var activationToken = ""
     var configuration: Configuration?
 
@@ -32,7 +32,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         jwtAuthenticationTestCase = JWTAuthenticationTestCase()
         jwtAuthenticationTestCase.pinCode = randomPIN
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
+        session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL))
 
         configuration = try Configuration
             .Builder(
@@ -49,7 +49,7 @@ class AuthenticationIntegrationTests: XCTestCase {
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,
-            accessId: accessId
+            accessId: session!.accessId
         )
 
         activationToken = try XCTUnwrap(response?.activationToken)
@@ -237,7 +237,8 @@ class AuthenticationIntegrationTests: XCTestCase {
         assertError(current: jwtError, expected: AuthenticationError.revoked)
 
         // After three unsuccessful tries, the user is blocked and cannot authenticate anymore.
-        let qrCode = "https://mcl.mpin.io/mobile-login/#\(accessId)"
+        let session = try XCTUnwrap(session)
+        let qrCode = "https://mcl.mpin.io/mobile-login/#\(session.accessId)"
         let (authenticationResult, authenticationError) = try authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode

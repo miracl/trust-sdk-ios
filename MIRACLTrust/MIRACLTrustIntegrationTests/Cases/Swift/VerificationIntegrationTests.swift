@@ -204,8 +204,8 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testVerificationWithSessionDetails() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
-        let qrCode = "https://mcl.mpin.io#\(accessId)"
+        let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
+        let qrCode = "https://mcl.mpin.io#\(session.accessId)"
 
         configuration = try Configuration
             .Builder(projectId: projectId, projectURL: projectURLDV)
@@ -233,13 +233,13 @@ class VerificationIntegrationTests: XCTestCase {
 
         XCTAssertNil(activationTokenError)
         let response = try XCTUnwrap(activationTokenResponse)
-        XCTAssertEqual(response.accessId, accessId)
+        XCTAssertEqual(response.accessId, session.accessId)
     }
 
     func testVerificationWithCrossDeviceSessionDetails() async throws {
         let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
-        let qrCode = "https://mcl.mpin.io#\(accessId)"
+        let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
+        let qrCode = "https://mcl.mpin.io#\(session.accessId)"
 
         configuration = try Configuration
             .Builder(projectId: projectId, projectURL: projectURLDV)
@@ -265,7 +265,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         XCTAssertNil(activationTokenError)
         let response = try XCTUnwrap(activationTokenResponse)
-        XCTAssertEqual(response.accessId, accessId)
+        XCTAssertEqual(response.accessId, session.accessId)
     }
 
     func testEmailCodeVerification() async throws {
@@ -455,7 +455,7 @@ class VerificationIntegrationTests: XCTestCase {
 
     func testCustomVerification() throws {
         let mailAddress = "int@miracl.com"
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
+        let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
 
         configuration = try Configuration
             .Builder(projectId: projectIdPV, projectURL: projectURLPV)
@@ -473,7 +473,7 @@ class VerificationIntegrationTests: XCTestCase {
                 projectId: projectIdPV,
                 projectURL: projectURLPV,
                 userId: mailAddress,
-                accessId: accessId,
+                accessId: session.accessId,
                 expiration: expirationDate
             )
         )
@@ -492,12 +492,12 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(activationTokenResponse)
         XCTAssertNil(activationTokenError)
         XCTAssertEqual(activationTokenResponse?.projectId, projectIdPV)
-        XCTAssertEqual(activationTokenResponse?.accessId, accessId)
+        XCTAssertEqual(activationTokenResponse?.accessId, session.accessId)
     }
 
     func testExpiredActivationCode() throws {
         let mailAddress = "int@miracl.com"
-        let accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURLDV))
+        let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
 
         configuration = try Configuration
             .Builder(projectId: projectIdPV, projectURL: projectURLPV)
@@ -515,7 +515,7 @@ class VerificationIntegrationTests: XCTestCase {
                 projectId: projectIdPV,
                 projectURL: projectURLPV,
                 userId: mailAddress,
-                accessId: accessId,
+                accessId: session.accessId,
                 expiration: expirationDate
             )
         )
@@ -527,7 +527,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         if let confirmationError = tokenError as? ActivationTokenError, case let ActivationTokenError.unsuccessfulVerification(activationTokenErrorResponse: response) = confirmationError {
             let unwrappedResponse = try XCTUnwrap(response)
-            XCTAssertEqual(unwrappedResponse.accessId, accessId)
+            XCTAssertEqual(unwrappedResponse.accessId, session.accessId)
             XCTAssertEqual(unwrappedResponse.projectId, projectIdPV)
             XCTAssertEqual(unwrappedResponse.userId, mailAddress)
         } else {

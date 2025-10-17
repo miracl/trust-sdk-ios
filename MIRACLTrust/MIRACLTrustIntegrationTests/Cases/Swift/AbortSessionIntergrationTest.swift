@@ -3,7 +3,6 @@ import XCTest
 
 class AbortSessionIntegrationTests: XCTestCase {
     var userId = ""
-    var accessId = ""
 
     var sessionDetails: AuthenticationSessionDetails?
 
@@ -37,7 +36,7 @@ class AbortSessionIntegrationTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: platformURLCUV))
+        let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: platformURLCUV))
 
         let (response, _) = getActivationToken.getActivationToken(
             clientId: clientId,
@@ -45,7 +44,7 @@ class AbortSessionIntegrationTests: XCTestCase {
             projectId: projectId,
             projectURL: platformURLCUV,
             userId: userId,
-            accessId: accessId
+            accessId: session.accessId
         )
 
         activationToken = try XCTUnwrap(response?.activationToken)
@@ -55,7 +54,7 @@ class AbortSessionIntegrationTests: XCTestCase {
             activationToken: activationToken
         )
 
-        let (details, _) = sessionDetailsTestCase.getSessionDetails(qrCode: "https://mcl.mpin.io#\(accessId)")
+        let (details, _) = sessionDetailsTestCase.getSessionDetails(qrCode: "https://mcl.mpin.io#\(session.accessId)")
 
         sessionDetails = try XCTUnwrap(details)
     }

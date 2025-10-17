@@ -6,7 +6,7 @@ class SessionDetailIntegrationTests: XCTestCase {
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
     let testCase = SessionDetailsTestCase()
 
-    var accessId = ""
+    var session: StartSessionResult?
     var qrCode = ""
     var pushNotificationsPayload = [AnyHashable: Any]()
     var universalLinkURL: URL?
@@ -17,8 +17,8 @@ class SessionDetailIntegrationTests: XCTestCase {
     let userId = "int@miracl.com"
 
     override func setUpWithError() throws {
-        accessId = try XCTUnwrap(api.getAccessId(projectId: projectId, projectURL: projectURL))
-        qrCode = "https://mcl.mpin.io#\(accessId)"
+        let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL))
+        qrCode = "https://mcl.mpin.io#\(session.accessId)"
         universalLinkURL = URL(string: qrCode)
         pushNotificationsPayload = ["qrURL": qrCode]
 
@@ -40,8 +40,8 @@ class SessionDetailIntegrationTests: XCTestCase {
     }
 
     func testGetSessionDetailForDifferentProject() throws {
-        accessId = try XCTUnwrap(api.getAccessId(projectId: expectedProjectId, projectURL: projectURL))
-        qrCode = "https://mcl.mpin.io#\(accessId)"
+        let session = try XCTUnwrap(api.startSession(projectId: expectedProjectId, projectURL: projectURL))
+        qrCode = "https://mcl.mpin.io#\(session.accessId)"
 
         let (details, error) = testCase.getSessionDetails(qrCode: qrCode)
         XCTAssertNil(error)
@@ -87,8 +87,8 @@ class SessionDetailIntegrationTests: XCTestCase {
     }
 
     func testGetSessionDetailsUniversalLinkURLForDifferentProject() throws {
-        accessId = try XCTUnwrap(api.getAccessId(projectId: expectedProjectId, projectURL: projectURL))
-        qrCode = "https://mcl.mpin.io#\(accessId)"
+        let session = try XCTUnwrap(api.startSession(projectId: expectedProjectId, projectURL: projectURL))
+        qrCode = "https://mcl.mpin.io#\(session.accessId)"
         let universalLinkURL = try XCTUnwrap(URL(string: qrCode))
 
         let (details, error) = testCase.getSessionDetails(universalLinkURL: universalLinkURL)

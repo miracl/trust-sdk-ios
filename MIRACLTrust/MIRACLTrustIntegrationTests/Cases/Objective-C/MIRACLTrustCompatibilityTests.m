@@ -37,7 +37,7 @@
 @property (nonatomic, strong) CrossDeviceSessionCompatiblityCase *getCrossDeviceSessionCompatibilityCase;
 
 @property (nonatomic,strong) Configuration *configuration;
-@property (nonatomic,strong) NSString *accessId;
+@property (nonatomic,strong) StartSessionResult *session;
 @property (nonatomic,strong) NSString *activationToken;
 @property (nonatomic,strong) NSString *randomNumber;
 
@@ -115,7 +115,7 @@
     
     self.userId = @"int@miracl.com";
     self.api = [[PlatformAPIWrapper alloc] init];
-    self.accessId = [self.api getAccessIdWithProjectId:projectId
+    self.session = [self.api startSessionWithProjectId:projectId
                                             projectURL:projectURL
                                                 userId:nil
                                                   hash:nil
@@ -133,7 +133,7 @@
                                                             projectId:projectId
                                                            projectURL:projectURL
                                                                userId:self.userId
-                                                             accessId:self.accessId
+                                                             accessId:self.session.accessId
                                                            expiration:expirationDate];
     NSNumber *sleepTime = @(expirationInSeconds.intValue + 1);
     sleep(sleepTime.intValue);
@@ -148,7 +148,7 @@
         XCTAssertEqual(error.code, 3);
         XCTAssertEqualObjects(error.domain, @"MIRACLTrust.ActivationTokenError");
         XCTAssertNotNil(errorResponse);
-        XCTAssertEqualObjects(errorResponse.accessId, self.accessId);
+        XCTAssertEqualObjects(errorResponse.accessId, self.session.accessId);
         XCTAssertEqualObjects(errorResponse.userId, self.userId);
         XCTAssertEqualObjects(errorResponse.projectId, projectId);
         
@@ -202,13 +202,13 @@
     NSString *clientSecret = NSProcessInfo.processInfo.environment[@"clientSecretCUV"];
     self.userId = @"global@example.com";
     self.api = [[PlatformAPIWrapper alloc] init];
-    self.accessId = [self.api getAccessIdWithProjectId:projectId
+    self.session = [self.api startSessionWithProjectId:projectId
                                             projectURL:projectURL
                                                 userId:nil
                                                   hash:nil
                                            description:nil];
     
-    self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
+    self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.session.accessId];
     self.projectId = projectId;
     
     
@@ -237,12 +237,12 @@
     NSNumber *isAborted = dict[@"isAborted"];
     XCTAssertTrue([isAborted boolValue]);
     
-    self.accessId = [self.api getAccessIdWithProjectId:projectId
+    self.session = [self.api startSessionWithProjectId:projectId
                                             projectURL:projectURL
                                                 userId:nil
                                                   hash:nil
                                            description:nil];
-    self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
+    self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.session.accessId];
     
     dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForQRCode:self.qrCodeURL];
     XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
@@ -268,12 +268,12 @@
     isAborted = dict[@"isAborted"];
     XCTAssertTrue([isAborted boolValue]);
     
-    self.accessId = [self.api getAccessIdWithProjectId:projectId
+    self.session = [self.api startSessionWithProjectId:projectId
                                             projectURL:projectURL
                                                 userId:nil
                                                   hash:nil
                                            description:nil];
-    self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.accessId];
+    self.qrCodeURL = [NSString stringWithFormat:@"https://mcl.mpin.io/mobile-login/#%@",self.session.accessId];
     
     dict = [self.getCrossDeviceSessionCompatibilityCase getCrossDeviceSessionForQRCode:self.qrCodeURL];
     XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
@@ -285,7 +285,7 @@
                                                             projectId:projectId
                                                            projectURL:projectURL
                                                                userId:self.userId
-                                                             accessId:self.accessId
+                                                             accessId:self.session.accessId
                                                            expiration:nil];
     dict = [self.getActivationTokenCompatiblityCase getActivationTokenFrom:verificationURL];
     self.activationToken = dict[@"activationToken"];
