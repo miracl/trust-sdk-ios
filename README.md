@@ -29,7 +29,7 @@ To integrate using Apple's Swift package manager, without
 Xcode integration, add the following as a dependency to your Package.swift:
 
 ```bash
-.package(url: "https://github.com/miracl/trust-sdk-ios", .upToNextMajor(from: "1.7.0"))
+.package(url: "https://github.com/miracl/trust-sdk-ios", .upToNextMajor(from: "1.7.1"))
 ```
 
 In both cases after the package is downloaded, go to the
