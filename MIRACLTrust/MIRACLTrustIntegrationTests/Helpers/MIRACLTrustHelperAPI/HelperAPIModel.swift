@@ -23,7 +23,6 @@ struct VerifyJWTSignatureRequestBody: Codable {
 struct VerifySigningRequestBody: Codable {
     var signature: Signature
     var timestamp: Int32
-    var type = "verification"
 }
 
 struct StartSessionResponse: Codable {
