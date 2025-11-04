@@ -184,15 +184,35 @@ class RegistrationIntegrationTests: XCTestCase {
     }
 
     func testIncorrectActivationTokenFailedRegistration() throws {
-        let emptyActivationToken = UUID().uuidString
+        let incorrectActivationToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6Ikg0OEJsaXRza0M5b2ZnaVdsY0Z3MzJ5QzhLZnF0X3RVWENaOGowTkxyT1k9IiwidHlwIjoiSldUIn0.eyJkZXZpY2VOYW1lIjoiaU9TIiwiZXhwIjoxNzYyMjUyMzQ0LCJpYXQiOjE3NjIyNTIyNTQsImlzcyI6Imh0dHBzOi8vYXBpLm1waW4uaW8iLCJqdGkiOiJmMDUwODNiOC0wMzM4LTQ2MDgtODAwZS0wOTAwZTdhOGFkM2YiLCJwcm9qZWN0SUQiOiJiMTg3ZThiYi0yN2FjLTQzMDAtYWQ2My1jMmUwMmU1YmJjZDMiLCJzY29wZSI6InZlcmlmaWNhdGlvbiIsInN1YiI6ImludEBtaXJhY2wuY29tIn0.5JEOwgkWYuAVQKU2oQCCnLx9NzbtvMtLIe4JRzoTa4LF-y3QM7pI-Vr2laEpR-0WZJKhRmr0ZipARYGuU-7CPFwZB2x8r6sgwHaUYb82UKWndycA3mt2svFoqRxi9WyhP-BFLYLqsBZBD74nhwdSwZwaGqUtezUSlmosgVatBjcpqUI9dNSgKfP-seeqgOKgPgVTIrJMufz7c7Nk-i6-ydfgYNsuYdFcUqnUKugtS2kbRf2Yi46aCmWl3cu1du1KR4RJtde10yfEqFNACFXO1QnX8v4Gq8lLbfGzVKHu_s1TCc4gIWbYC0N5-hg-gcTykXgwpBahiHwXhLF_Ek2ygw"
 
         let (user, regError) = registrationTestCase.registerUser(
             userId: userId,
-            activationToken: emptyActivationToken
+            activationToken: incorrectActivationToken
         )
 
         XCTAssertNil(user)
         assertError(current: regError, expected: RegistrationError.invalidActivationToken)
+    }
+
+    func testRandomActivationTokenFailedRegistration() throws {
+        let randomActivationToken = UUID().uuidString
+
+        let (user, regError) = registrationTestCase.registerUser(
+            userId: userId,
+            activationToken: randomActivationToken
+        )
+
+        XCTAssertNil(user)
+        let error = try XCTUnwrap(regError)
+        var isErrorCorrect = false
+        if case let RegistrationError.registrationFail(underlyingError) = error, let underlyingError {
+            if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = underlyingError, let clientErrorData {
+                isErrorCorrect = clientErrorData.code == INVALID_REQUEST_PARAMETERS
+            }
+        }
+
+        XCTAssertTrue(isErrorCorrect)
     }
 
     func testFailedRegistrationForCancelledPIN() {
