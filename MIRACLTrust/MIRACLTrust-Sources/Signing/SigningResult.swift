@@ -9,6 +9,10 @@ public final class SigningResult: NSObject, Sendable {
     /// When the document has been signed.
     public let timestamp: Date
 
+    override public var description: String {
+        "SigningResult(signature: \(signature), timestamp: \(timestamp))"
+    }
+
     init(
         signature: Signature,
         timestamp: Date

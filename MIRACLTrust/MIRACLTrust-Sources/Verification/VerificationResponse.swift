@@ -13,4 +13,8 @@ public final class VerificationResponse: NSObject, Sendable {
         self.backoff = backoff
         self.method = method
     }
+
+    override public var description: String {
+        "VerificationResponse(backoff: \(backoff), method: \(method))"
+    }
 }

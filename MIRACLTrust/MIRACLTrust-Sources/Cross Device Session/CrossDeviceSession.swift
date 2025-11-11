@@ -76,4 +76,8 @@ import Foundation
         self.sessionDescription = sessionDescription
         self.signingHash = signingHash
     }
+
+    override public var description: String {
+        "CrossDeviceSession(userId: \(userId), projectName: \(projectName), projectLogoURL: \(projectLogoURL), projectId: \(projectId), pinLength: \(pinLength), verificationMethod: \(verificationMethod), verificationURL: \(verificationURL), verificationCustomText: \(verificationCustomText), identityTypeLabel: \(identityTypeLabel),  quickCodeEnabled: \(quickCodeEnabled), identityType: \(identityType), sessionId: \(sessionId), sessionDescription: \(sessionDescription), signingHash: \(signingHash))"
+    }
 }

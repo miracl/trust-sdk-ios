@@ -54,6 +54,10 @@ public final class UserDTO: NSObject, Sendable {
         self.dtas = dtas
         self.publicKey = publicKey
     }
+
+    override public var description: String {
+        "UserDTO(userId: \(userId), projectId: \(projectId), revoked: \(revoked), pinLength: \(pinLength), token: \(REDACTED_STRING), dtas: \(dtas), publicKey: \(String(describing: publicKey)))"
+    }
 }
 
 extension UserDTO {
