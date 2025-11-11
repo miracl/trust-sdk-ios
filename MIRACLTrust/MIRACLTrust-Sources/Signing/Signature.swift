@@ -38,6 +38,10 @@ import Foundation
         self.timestamp = Int64(timestamp.timeIntervalSince1970)
     }
 
+    override public var description: String {
+        "Signature(mpinId: \(mpinId), U: \(REDACTED_STRING), V: \(REDACTED_STRING), publicKey: \(publicKey), dtas: \(dtas), signatureHash: \(signatureHash), timestamp: \(timestamp))"
+    }
+
     @available(swift, obsoleted: 1.0)
     public func dictionary() -> [String: Any] {
         [

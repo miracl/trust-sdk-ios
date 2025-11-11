@@ -75,4 +75,8 @@ import Foundation
         self.status = status
         self.expireTime = expireTime
     }
+
+    override public var description: String {
+        "SigningSessionDetails(userId: \(userId), projectName: \(projectName), projectLogoURL: \(projectLogoURL), projectId: \(projectId), pinLength: \(pinLength), verificationMethod: \(verificationMethod), verificationURL: \(verificationURL), quickCodeEnabled: \(quickCodeEnabled),  verificationCustomText: \(verificationCustomText), identityTypeLabel: \(identityTypeLabel), identityType: \(identityType), sessionId: \(sessionId), signingDescription: \(signingDescription), signingHash: \(signingHash)), status: \(status), expireTime: \(expireTime)"
+    }
 }

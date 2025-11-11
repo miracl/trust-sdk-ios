@@ -27,4 +27,8 @@ import Foundation
         self.userId = userId
         self.accessId = accessId
     }
+
+    override public var description: String {
+        "ActivationTokenResponse(activationToken: \(REDACTED_STRING), projectId: \(projectId), userId: \(userId), accessId: \(String(describing: accessId))"
+    }
 }

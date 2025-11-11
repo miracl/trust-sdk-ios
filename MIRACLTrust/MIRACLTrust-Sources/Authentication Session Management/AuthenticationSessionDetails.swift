@@ -55,4 +55,8 @@ import Foundation
         self.identityType = identityType
         self.accessId = accessId
     }
+
+    override public var description: String {
+        "AuthenticationSessionDetails(userId: \(userId), projectName: \(projectName), projectLogoURL: \(projectLogoURL), projectId: \(projectId), pinLength: \(pinLength), verificationMethod: \(verificationMethod), verificationURL: \(verificationURL), quickCodeEnabled: \(quickCodeEnabled),  verificationCustomText: \(verificationCustomText), identityTypeLabel: \(identityTypeLabel), identityType: \(identityType), accessId: \(accessId))"
+    }
 }

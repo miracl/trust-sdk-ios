@@ -80,6 +80,10 @@ import Foundation
             publicKey: publicKey
         )
     }
+
+    override public var description: String {
+        "User(userId: \(userId), projectId: \(projectId), revoked: \(revoked), pinLength: \(pinLength), hashedMpinId: \(hashedMpinId), token: \(REDACTED_STRING), dtas: \(dtas), publicKey: \(String(describing: publicKey)))"
+    }
 }
 
 extension User {

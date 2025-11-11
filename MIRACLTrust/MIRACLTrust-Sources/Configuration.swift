@@ -41,6 +41,10 @@ import Foundation
         storageType = .default(DefaultUserStorageOptions())
     }
 
+    override public var description: String {
+        "Configuration(projectId: \(projectId), projectURL: \(projectURL), deviceName: \(deviceName), applicationInfo: \(String(describing: applicationInfo)), urlSessionConfiguration: \(urlSessionConfiguration), logger: \(String(describing: logger)), loggingLevel: \(loggingLevel), storageType: \(storageType))"
+    }
+
     /// Builds ``Configuration`` objects.
     @objc(ConfigurationBuilder) public class Builder: NSObject {
         private var configurationToBuild = Configuration()

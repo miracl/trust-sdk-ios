@@ -15,4 +15,8 @@ import Foundation
         self.expireTime = expireTime
         self.ttlSeconds = ttlSeconds
     }
+
+    override public var description: String {
+        "QuickCode(code: \(REDACTED_STRING), expireTime: \(expireTime), ttlSeconds: \(ttlSeconds)"
+    }
 }

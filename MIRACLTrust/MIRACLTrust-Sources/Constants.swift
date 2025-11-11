@@ -22,3 +22,4 @@ typealias APIRequestCompletionHandler<T> = @Sendable (APICallResult, T?, Error?)
 
 public typealias CrossDeviceSessionCompletionHandler = @MainActor @Sendable (CrossDeviceSession?, Error?) -> Void
 public typealias CrossDeviceSessionAborterCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
+let REDACTED_STRING = "<REDACTED>"

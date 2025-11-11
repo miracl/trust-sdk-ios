@@ -17,4 +17,8 @@ import Foundation
         self.info = info
         self.context = context
     }
+
+    override public var description: String {
+        "ClientErrorData(code: \(code), info: \(info), context: \(String(describing: context)))"
+    }
 }
