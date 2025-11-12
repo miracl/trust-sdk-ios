@@ -5,8 +5,7 @@ class GetActivationTokenTestCase: XCTest {
     let api = PlatformAPIWrapper()
 
     func getActivationToken(
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String,
         userId: String,
@@ -17,8 +16,7 @@ class GetActivationTokenTestCase: XCTest {
         nonisolated(unsafe) var returnedError: Error?
 
         let verificationURL = api.getVerificaitonURL(
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,

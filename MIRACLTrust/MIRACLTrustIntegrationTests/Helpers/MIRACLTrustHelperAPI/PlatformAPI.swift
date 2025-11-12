@@ -47,8 +47,7 @@ import MIRACLTrust
     }
 
     public func getVerificationURL(
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String,
         userId: String,
@@ -62,8 +61,7 @@ import MIRACLTrust
 
         guard let request = URLRequest.verificationURLRequest(
             url: url,
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             userId: userId,
             expiration: expiration,
@@ -194,8 +192,7 @@ import MIRACLTrust
     public func verifySignature(
         for signature: Signature,
         timestamp: Date,
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String,
         completionHandler: @escaping @Sendable (Bool, Error?) -> Void
@@ -204,7 +201,7 @@ import MIRACLTrust
             return
         }
 
-        guard let request = URLRequest.verifySignatureRequest(url: url, signature: signature, timestamp: timestamp, clientId: clientId, clientSecret: clientSecret, projectId: projectId) else {
+        guard let request = URLRequest.verifySignatureRequest(url: url, signature: signature, timestamp: timestamp, serviceAccountToken: serviceAccountToken, projectId: projectId) else {
             return
         }
 

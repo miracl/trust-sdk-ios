@@ -18,8 +18,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
 
     let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
-    let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let serviceAccountToken = ProcessInfo.processInfo.environment["serviceAccountTokenCUV"]!
 
     let userId = "global@example.com"
     let randomPIN = String(Int32.random(in: 1000 ..< 9999))
@@ -51,8 +50,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let (response, _) = getActivationToken.getActivationToken(
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,

@@ -61,8 +61,7 @@ extension URLRequest {
         url: URL,
         signature: Signature,
         timestamp: Date,
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String
     ) -> Self? {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
@@ -79,10 +78,7 @@ extension URLRequest {
 
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
-
-        let authHeaderData = Data("\(clientId):\(clientSecret)".utf8)
-        let base64Str = authHeaderData.base64EncodedString()
-        urlRequest.addValue("Basic \(base64Str)", forHTTPHeaderField: "Authorization")
+        urlRequest.addValue("Bearer \(serviceAccountToken)", forHTTPHeaderField: "Authorization")
 
         do {
             let body = VerifySigningRequestBody(
@@ -135,8 +131,7 @@ extension URLRequest {
 
     static func verificationURLRequest(
         url: URL,
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         userId: String,
         expiration: Date? = nil,
@@ -168,9 +163,7 @@ extension URLRequest {
             request.httpBody = postData
         }
 
-        let authHeaderData = Data("\(clientId):\(clientSecret)".utf8)
-        let base64Str = authHeaderData.base64EncodedString()
-        request.addValue("Basic \(base64Str)", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer \(serviceAccountToken)", forHTTPHeaderField: "Authorization")
 
         return request
     }

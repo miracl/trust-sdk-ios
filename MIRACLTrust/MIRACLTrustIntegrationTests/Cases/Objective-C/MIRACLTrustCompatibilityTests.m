@@ -91,8 +91,7 @@
 - (void)testVerificationConfirmationError
 {
     NSString *projectId = NSProcessInfo.processInfo.environment[@"projectIdCUV"];
-    NSString *clientId = NSProcessInfo.processInfo.environment[@"clientIdCUV"];
-    NSString *clientSecret = NSProcessInfo.processInfo.environment[@"clientSecretCUV"];
+    NSString *serviceAccountToken = NSProcessInfo.processInfo.environment[@"serviceAccountTokenCUV"];
     NSString *projectURL = NSProcessInfo.processInfo.environment[@"projectURLCUV"];
 
     NSString *deviceName = [[NSUUID UUID] UUIDString];
@@ -128,13 +127,12 @@
                               toDate:[NSDate date]
                               options: 0];
     
-    NSURL *verificationURL = [self.api getVerificaitonURLWithClientId:clientId
-                                                         clientSecret:clientSecret
-                                                            projectId:projectId
-                                                           projectURL:projectURL
-                                                               userId:self.userId
-                                                             accessId:self.session.accessId
-                                                           expiration:expirationDate];
+    NSURL *verificationURL = [self.api getVerificaitonURLWithServiceAccountToken:serviceAccountToken
+                                                                       projectId:projectId
+                                                                      projectURL:projectURL
+                                                                          userId:self.userId
+                                                                        accessId:self.session.accessId
+                                                                      expiration:expirationDate];
     NSNumber *sleepTime = @(expirationInSeconds.intValue + 1);
     sleep(sleepTime.intValue);
     
@@ -189,7 +187,7 @@
     }
     
     projectId = NSProcessInfo.processInfo.environment[@"projectIdCUV"];
-    NSString *clientId = NSProcessInfo.processInfo.environment[@"clientIdCUV"];
+    NSString *serviceAccountToken = NSProcessInfo.processInfo.environment[@"serviceAccountTokenCUV"];
     
     error = nil;
     [[MIRACLTrust getInstance] setProjectId:projectId];
@@ -199,7 +197,6 @@
         return;
     }
     
-    NSString *clientSecret = NSProcessInfo.processInfo.environment[@"clientSecretCUV"];
     self.userId = @"global@example.com";
     self.api = [[PlatformAPIWrapper alloc] init];
     self.session = [self.api startSessionWithProjectId:projectId
@@ -280,13 +277,12 @@
     XCTAssertFalse([dict[@"crossDeviceSession"] isEqual:[NSNull null]]);
     self.crossDeviceSession = (CrossDeviceSession *) dict[@"crossDeviceSession"];
     
-    NSURL *verificationURL = [self.api getVerificaitonURLWithClientId:clientId
-                                                         clientSecret:clientSecret
-                                                            projectId:projectId
-                                                           projectURL:projectURL
-                                                               userId:self.userId
-                                                             accessId:self.session.accessId
-                                                           expiration:nil];
+    NSURL *verificationURL = [self.api getVerificaitonURLWithServiceAccountToken:serviceAccountToken
+                                                                       projectId:projectId
+                                                                      projectURL:projectURL
+                                                                          userId:self.userId
+                                                                        accessId:self.session.accessId
+                                                                      expiration:nil];
     dict = [self.getActivationTokenCompatiblityCase getActivationTokenFrom:verificationURL];
     self.activationToken = dict[@"activationToken"];
     
