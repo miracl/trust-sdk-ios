@@ -53,28 +53,8 @@
       </MacroExpansion>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "clientSecretCUV"
-            value = "$(TEST_CUV_CLIENT_SECRET)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "clientIdCUV"
-            value = "$(TEST_CUV_CLIENT_ID)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
             key = "projectIdCUV"
             value = "$(TEST_CUV_PROJECT_ID)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "clientSecretDV"
-            value = "$(TEST_DV_CLIENT_SECRET)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "clientIdDV"
-            value = "$(TEST_DV_CLIENT_ID)"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
@@ -110,6 +90,11 @@
          <EnvironmentVariable
             key = "projectURLECV"
             value = "$(TEST_ECV_PROJECT_URL)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "serviceAccountTokenCUV"
+            value = "$(TEST_CUV_SERVICE_ACCOUNT_TOKEN)"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

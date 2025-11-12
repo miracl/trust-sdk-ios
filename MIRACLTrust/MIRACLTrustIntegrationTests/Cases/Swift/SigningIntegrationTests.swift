@@ -27,8 +27,7 @@ class SigningIntegrationTests: XCTestCase {
 
     let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
-    let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let serviceAccountToken = ProcessInfo.processInfo.environment["serviceAccountTokenCUV"]!
 
     let userId = "global@example.com"
     let randomPIN = String(Int32.random(in: 1000 ..< 9999))
@@ -58,8 +57,7 @@ class SigningIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let (response, _) = getActivationToken.getActivationToken(
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
             userId: userId
@@ -110,8 +108,7 @@ class SigningIntegrationTests: XCTestCase {
         let unwrappedSigningResult = try XCTUnwrap(signingResult)
         let isSignatureVerified = api.verifySignature(
             signingResult: unwrappedSigningResult,
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
         )
@@ -145,8 +142,7 @@ class SigningIntegrationTests: XCTestCase {
         let unwrappedSigningResult = try XCTUnwrap(signingResult)
         let isSignatureVerified = api.verifySignature(
             signingResult: unwrappedSigningResult,
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
         )
@@ -190,8 +186,7 @@ class SigningIntegrationTests: XCTestCase {
         let isSignatureVerified = api.verifySignature(
             signature: signature,
             timestamp: date,
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
         )
@@ -249,8 +244,7 @@ class SigningIntegrationTests: XCTestCase {
         let unwrappedSigningResult = try XCTUnwrap(signingResult)
         let isSignatureVerified = api.verifySignature(
             signingResult: unwrappedSigningResult,
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
         )

@@ -4,16 +4,14 @@ struct ActivationTokenAsyncCase {
     let platformAPI = PlatformAPIWrapper()
 
     func getActivationToken(
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String,
         userId: String,
         accessId: String? = nil
     ) async throws -> String {
         let verificationURL = try await platformAPI.getVerificationURL(
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,

@@ -3,7 +3,6 @@ import Testing
 
 struct CrossDeviceSessionIntegrationTest {
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let url = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let expectedProjectId = ProcessInfo.processInfo.environment["projectIdDV"]!
 

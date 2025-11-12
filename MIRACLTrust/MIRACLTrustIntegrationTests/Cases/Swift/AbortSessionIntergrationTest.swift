@@ -8,8 +8,7 @@ class AbortSessionIntegrationTests: XCTestCase {
 
     let platformURLCUV = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
-    let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let serviceAccountToken = ProcessInfo.processInfo.environment["serviceAccountTokenCUV"]!
 
     var abortSessionTestCase = AbortSessionTestCase()
     var registrationTestCase = RegistrationTestCase()
@@ -39,8 +38,7 @@ class AbortSessionIntegrationTests: XCTestCase {
         let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: platformURLCUV))
 
         let (response, _) = getActivationToken.getActivationToken(
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: platformURLCUV,
             userId: userId,

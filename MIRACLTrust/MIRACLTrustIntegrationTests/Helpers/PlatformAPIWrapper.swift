@@ -6,8 +6,7 @@ import MIRACLTrust
     let platformAPI = PlatformAPI()
 
     @objc func getVerificaitonURL(
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String,
         userId: String,
@@ -18,8 +17,7 @@ import MIRACLTrust
         nonisolated(unsafe) var verificationUrl: URL?
 
         platformAPI.getVerificationURL(
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
             userId: userId,
@@ -112,8 +110,7 @@ import MIRACLTrust
 
     @objc func verifySignature(
         signingResult: SigningResult,
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String
     ) -> Bool {
@@ -123,8 +120,7 @@ import MIRACLTrust
         platformAPI.verifySignature(
             for: signingResult.signature,
             timestamp: signingResult.timestamp,
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
         ) { isVerified, _ in
@@ -139,8 +135,7 @@ import MIRACLTrust
     @objc func verifySignature(
         signature: Signature,
         timestamp: Date,
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String
     ) -> Bool {
@@ -150,8 +145,7 @@ import MIRACLTrust
         platformAPI.verifySignature(
             for: signature,
             timestamp: timestamp,
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
         ) { isVerified, _ in
@@ -164,8 +158,7 @@ import MIRACLTrust
     }
 
     func getVerificationURL(
-        clientId: String,
-        clientSecret: String,
+        serviceAccountToken: String,
         projectId: String,
         projectURL: String,
         userId: String,
@@ -174,8 +167,7 @@ import MIRACLTrust
     ) async throws -> URL {
         let url: URL = try await withCheckedThrowingContinuation { continuation in
             platformAPI.getVerificationURL(
-                clientId: clientId,
-                clientSecret: clientSecret,
+                serviceAccountToken: serviceAccountToken,
                 projectId: projectId,
                 projectURL: projectURL,
                 userId: userId,

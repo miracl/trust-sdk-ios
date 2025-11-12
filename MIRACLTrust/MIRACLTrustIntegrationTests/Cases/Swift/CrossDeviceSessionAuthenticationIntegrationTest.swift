@@ -3,8 +3,7 @@ import Testing
 
 struct CrossDeviceSessionAuthenticationIntegrationTest {
     let projectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let clientId = ProcessInfo.processInfo.environment["clientIdCUV"]!
-    let clientSecret = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let serviceAccountToken = ProcessInfo.processInfo.environment["serviceAccountTokenCUV"]!
     let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
     let userId = "int@miracl.com"
 
@@ -36,8 +35,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
         let qrCode = "https://mcl.mpin.io#\(session.accessId)"
         crossDeviceSession = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
         let activationToken = try await activationTokenCase.getActivationToken(
-            clientId: clientId,
-            clientSecret: clientSecret,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
             userId: userId

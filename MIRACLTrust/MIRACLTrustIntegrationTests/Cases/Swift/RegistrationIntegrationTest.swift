@@ -9,9 +9,8 @@ class RegistrationIntegrationTests: XCTestCase {
     let projectIdDV = ProcessInfo.processInfo.environment["projectIdDV"]!
     let projectURLDV = ProcessInfo.processInfo.environment["projectURLDV"]!
 
-    let clientIdPV = ProcessInfo.processInfo.environment["clientIdCUV"]!
     let projectIdPV = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let clientSecretPV = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let serviceAccountToken = ProcessInfo.processInfo.environment["serviceAccountTokenCUV"]!
 
     let verificationTestCase = VerificationTestCase()
     let getActivationTokenTestCase = GetActivationTokenTestCase()
@@ -45,8 +44,7 @@ class RegistrationIntegrationTests: XCTestCase {
         authenticationTestCase.pinCode = anotherRandomPin
 
         let (response, _) = getActivationTokenTestCase.getActivationToken(
-            clientId: clientIdPV,
-            clientSecret: clientSecretPV,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
             userId: userId
@@ -98,8 +96,7 @@ class RegistrationIntegrationTests: XCTestCase {
 
     func testSuccessfulRegistrationCustomVerification() throws {
         let verificationURLString = api.getVerificaitonURL(
-            clientId: clientIdPV,
-            clientSecret: clientSecretPV,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
             userId: userId
@@ -304,8 +301,7 @@ class RegistrationIntegrationTests: XCTestCase {
         let mpinId = registeredUser.mpinId
 
         let (response, _) = getActivationTokenTestCase.getActivationToken(
-            clientId: clientIdPV,
-            clientSecret: clientSecretPV,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
             userId: userId
@@ -350,8 +346,7 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertEqual(existingUser.revoked, true)
 
         let verificationURLString = api.getVerificaitonURL(
-            clientId: clientIdPV,
-            clientSecret: clientSecretPV,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
             userId: userId
@@ -384,8 +379,7 @@ class RegistrationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let (response, _) = getActivationTokenTestCase.getActivationToken(
-            clientId: clientIdPV,
-            clientSecret: clientSecretPV,
+            serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
             userId: userId

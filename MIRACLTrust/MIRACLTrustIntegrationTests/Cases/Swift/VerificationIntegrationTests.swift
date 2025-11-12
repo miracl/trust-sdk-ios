@@ -10,8 +10,7 @@ class VerificationIntegrationTests: XCTestCase {
     let projectURLECV = ProcessInfo.processInfo.environment["projectURLECV"]!
 
     let projectIdPV = ProcessInfo.processInfo.environment["projectIdCUV"]!
-    let clientIdPV = ProcessInfo.processInfo.environment["clientIdCUV"]!
-    let clientSecretPV = ProcessInfo.processInfo.environment["clientSecretCUV"]!
+    let serviceAccountToken = ProcessInfo.processInfo.environment["serviceAccountTokenCUV"]!
     let projectURLPV = ProcessInfo.processInfo.environment["projectURLCUV"]!
 
     let verificationTestCase = VerificationTestCase()
@@ -468,8 +467,7 @@ class VerificationIntegrationTests: XCTestCase {
         let expirationDate = Calendar.current.date(byAdding: .second, value: expirationInSeconds, to: Date())
         let verificationURL = try XCTUnwrap(
             api.getVerificaitonURL(
-                clientId: clientIdPV,
-                clientSecret: clientSecretPV,
+                serviceAccountToken: serviceAccountToken,
                 projectId: projectIdPV,
                 projectURL: projectURLPV,
                 userId: mailAddress,
@@ -510,8 +508,7 @@ class VerificationIntegrationTests: XCTestCase {
         let expirationDate = Calendar.current.date(byAdding: .second, value: expirationInSeconds, to: Date())
         let verificationURL = try XCTUnwrap(
             api.getVerificaitonURL(
-                clientId: clientIdPV,
-                clientSecret: clientSecretPV,
+                serviceAccountToken: serviceAccountToken,
                 projectId: projectIdPV,
                 projectURL: projectURLPV,
                 userId: mailAddress,
@@ -547,8 +544,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         let verificationURL = try XCTUnwrap(
             api.getVerificaitonURL(
-                clientId: clientIdPV,
-                clientSecret: clientSecretPV,
+                serviceAccountToken: serviceAccountToken,
                 projectId: projectIdPV,
                 projectURL: projectURLPV,
                 userId: mailAddress
