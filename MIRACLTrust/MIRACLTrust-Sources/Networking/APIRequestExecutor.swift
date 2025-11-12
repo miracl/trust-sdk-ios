@@ -102,7 +102,7 @@ struct APIRequestExecutor: Sendable {
 
     func handleClientError<T: Codable>(
         data: Data?,
-        statusCode _: Int,
+        statusCode: Int,
         requestURL: URL?,
         completion: @escaping @Sendable (APICallResult, T?, Error?) -> Void
     ) {
@@ -111,6 +111,7 @@ struct APIRequestExecutor: Sendable {
                 .failed,
                 nil,
                 APIError.apiClientError(
+                    statusCode: statusCode,
                     clientErrorData: nil,
                     requestId: "",
                     message: nil,
@@ -127,6 +128,7 @@ struct APIRequestExecutor: Sendable {
                 .failed,
                 nil,
                 APIError.apiClientError(
+                    statusCode: statusCode,
                     clientErrorData: clientErrorData,
                     requestId: clientErrorData.context?["requestID"] ?? "",
                     message: nil,
@@ -143,6 +145,7 @@ struct APIRequestExecutor: Sendable {
                     .failed,
                     nil,
                     APIError.apiClientError(
+                        statusCode: statusCode,
                         clientErrorData: tuple.clientErrorData,
                         requestId: tuple.requestId,
                         message: nil,
@@ -156,6 +159,7 @@ struct APIRequestExecutor: Sendable {
                     .failed,
                     nil,
                     APIError.apiClientError(
+                        statusCode: statusCode,
                         clientErrorData: nil,
                         requestId: "",
                         message: message,

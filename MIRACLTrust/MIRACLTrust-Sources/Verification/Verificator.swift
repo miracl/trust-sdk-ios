@@ -60,7 +60,7 @@ struct Verificator: Sendable {
                         )
                         completionHandler(verificationResponse, nil)
                     } else if let error {
-                        if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error,
+                        if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error,
                            let clientErrorData,
                            clientErrorData.code == BACKOFF_ERROR || clientErrorData.code == REQUEST_BACKOFF,
                            let context = clientErrorData.context,

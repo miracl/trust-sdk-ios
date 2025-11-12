@@ -122,6 +122,7 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         )
 
         return APIError.apiClientError(
+            statusCode: 400,
             clientErrorData: clientErrorData,
             requestId: "",
             message: nil,

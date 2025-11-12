@@ -88,6 +88,12 @@ final class SigningSessionAborterTest: XCTestCase {
             context: context
         )
 
-        return APIError.apiClientError(clientErrorData: clientErrorData, requestId: "", message: nil, requestURL: nil)
+        return APIError.apiClientError(
+            statusCode: 400,
+            clientErrorData: clientErrorData,
+            requestId: "",
+            message: nil,
+            requestURL: nil
+        )
     }
 }

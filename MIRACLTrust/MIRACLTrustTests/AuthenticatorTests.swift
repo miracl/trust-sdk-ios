@@ -471,6 +471,7 @@ class AuthenticatorTests: XCTestCase {
 
     func testAuthenticationForPass2Error() throws {
         let wrappedError = APIError.apiClientError(
+            statusCode: 400,
             clientErrorData: nil,
             requestId: "",
             message: nil,
@@ -571,6 +572,7 @@ class AuthenticatorTests: XCTestCase {
         )
 
         return APIError.apiClientError(
+            statusCode: 400,
             clientErrorData: clientErrorData,
             requestId: "",
             message: nil,

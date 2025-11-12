@@ -204,7 +204,7 @@ class RegistrationIntegrationTests: XCTestCase {
         let error = try XCTUnwrap(regError)
         var isErrorCorrect = false
         if case let RegistrationError.registrationFail(underlyingError) = error, let underlyingError {
-            if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = underlyingError, let clientErrorData {
+            if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = underlyingError, let clientErrorData {
                 isErrorCorrect = clientErrorData.code == INVALID_REQUEST_PARAMETERS
             }
         }
