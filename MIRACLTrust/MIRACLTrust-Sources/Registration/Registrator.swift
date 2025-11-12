@@ -79,7 +79,7 @@ final class Registrator: Sendable {
             pushToken: pushNotificationsToken
         ) { _, response, error in
             if let error {
-                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_ACTIVATION_TOKEN {
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_ACTIVATION_TOKEN {
                     self.callCompletionHandlerWithError(error: RegistrationError.invalidActivationToken)
                     return
                 }

@@ -20,7 +20,7 @@ struct SigningSessionAborter: Sendable {
     func abort() {
         miraclAPI.abortSigningSession(sessionId: sessionId) { _, _, error in
             if let error {
-                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_REQUEST_PARAMETERS, let context = clientErrorData.context, context["params"] == "id" {
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_REQUEST_PARAMETERS, let context = clientErrorData.context, context["params"] == "id" {
                     callCompletionHandler(
                         isAborted: false,
                         error: SigningSessionError.invalidSigningSession

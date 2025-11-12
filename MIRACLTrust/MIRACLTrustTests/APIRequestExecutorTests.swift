@@ -97,7 +97,7 @@ class APIRequestExecutorTests: XCTestCase {
         let requestExecutor = try XCTUnwrap(requestExecutor)
 
         let desiredStatusCode = 401
-        let desiredError = APIError.apiClientError(clientErrorData: nil, requestId: "", message: nil, requestURL: URL(string: "https://www.example.com/examplePath"))
+        let desiredError = APIError.apiClientError(statusCode: desiredStatusCode, clientErrorData: nil, requestId: "", message: nil, requestURL: URL(string: "https://www.example.com/examplePath"))
         mockSession.response = HTTPURLResponse(
             url: exampleURL,
             statusCode: desiredStatusCode,
@@ -169,7 +169,7 @@ class APIRequestExecutorTests: XCTestCase {
 
             XCTAssertNotNil(error)
             if let error {
-                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: requestId, message: _, requestURL: _) = error {
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: requestId, message: _, requestURL: _) = error {
                     do {
                         let clientErrorData = try XCTUnwrap(clientErrorData)
                         XCTAssertEqual(clientErrorData.code, code)
@@ -230,7 +230,7 @@ class APIRequestExecutorTests: XCTestCase {
 
             XCTAssertNotNil(error)
             if let error {
-                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: requestId, message: _, requestURL: _) = error {
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: requestId, message: _, requestURL: _) = error {
                     do {
                         let clientErrorData = try XCTUnwrap(clientErrorData)
                         XCTAssertEqual(clientErrorData.code, code)
@@ -260,7 +260,7 @@ class APIRequestExecutorTests: XCTestCase {
         """
 
         let desiredStatusCode = 401
-        let desiredError = APIError.apiClientError(clientErrorData: nil, requestId: "", message: responseData, requestURL: URL(string: "https://www.example.com/examplePath"))
+        let desiredError = APIError.apiClientError(statusCode: desiredStatusCode, clientErrorData: nil, requestId: "", message: responseData, requestURL: URL(string: "https://www.example.com/examplePath"))
         mockSession.response = HTTPURLResponse(
             url: exampleURL,
             statusCode: desiredStatusCode,
@@ -549,7 +549,7 @@ class APIRequestExecutorTests: XCTestCase {
 
             XCTAssertNotNil(error)
             if let error {
-                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: requestId, message: _, requestURL: _) = error {
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: requestId, message: _, requestURL: _) = error {
                     do {
                         let clientErrorData = try XCTUnwrap(clientErrorData)
                         XCTAssertEqual(clientErrorData.code, code)

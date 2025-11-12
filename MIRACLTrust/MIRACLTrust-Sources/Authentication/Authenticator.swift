@@ -148,7 +148,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
             if apiCallResult == .failed, let error = error {
                 logOperation(operation: "Pass1 error = \(error)")
 
-                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error {
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error {
                     if let clientErrorData, clientErrorData.code == MPINID_EXPIRED || clientErrorData.code == EXPIRED_MPINID {
                         let user = user.revoke()
 
@@ -219,7 +219,7 @@ struct Authenticator: Sendable, AuthenticatorBlueprint {
             if apiCallResult == .failed, let error = error {
                 logOperation(operation: "Authenticate error = \(error)")
 
-                if case let APIError.apiClientError(clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error {
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error {
                     if let clientErrorData {
                         switch clientErrorData.code {
                         case MPINID_REVOKED, REVOKED_MPINID:

@@ -22,7 +22,7 @@ class APITests: XCTestCase {
         let desiredStatusCode = 400
 
         let clientSecretURL = try XCTUnwrap(URL(string: "https://www.clientsecret.com"))
-        let desiredError = APIError.apiClientError(clientErrorData: nil, requestId: "", message: nil, requestURL: clientSecretURL)
+        let desiredError = APIError.apiClientError(statusCode: desiredStatusCode, clientErrorData: nil, requestId: "", message: nil, requestURL: clientSecretURL)
 
         let api = try XCTUnwrap(api)
 

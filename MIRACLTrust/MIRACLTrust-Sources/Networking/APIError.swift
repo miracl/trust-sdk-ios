@@ -6,7 +6,7 @@ public enum APIError: Error {
     case apiServerError(statusCode: Int, message: String?, requestURL: URL?)
 
     /// The request response is a client error (4xx).
-    case apiClientError(clientErrorData: ClientErrorData?, requestId: String, message: String?, requestURL: URL?)
+    case apiClientError(statusCode: Int, clientErrorData: ClientErrorData?, requestId: String, message: String?, requestURL: URL?)
 
     /// JSON received as a response is invalid.
     case apiMalformedJSON(Error?, URL?)
@@ -27,8 +27,8 @@ extension APIError: LocalizedError {
         switch self {
         case let .apiServerError(statusCode, message, requestURL):
             description = NSLocalizedString("\(APIError.apiServerError(statusCode: statusCode, message: message, requestURL: requestURL))", comment: "")
-        case let .apiClientError(clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL):
-            description = NSLocalizedString("\(APIError.apiClientError(clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL))", comment: "")
+        case let .apiClientError(statusCode: statusCode, clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL):
+            description = NSLocalizedString("\(APIError.apiClientError(statusCode: statusCode, clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL))", comment: "")
         case let .apiMalformedJSON(error, requestURL):
             description = NSLocalizedString("\(APIError.apiMalformedJSON(error, requestURL))", comment: "")
         case let .executionError(message, requestURL):
@@ -67,8 +67,9 @@ extension APIError: CustomNSError {
             }
 
             return badStatusCodeUserInfo
-        case let .apiClientError(clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL):
+        case let .apiClientError(statusCode: statusCode, clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL):
             var clientErrorDataUserInfo = [String: Any]()
+            clientErrorDataUserInfo["statusCode"] = statusCode
             if let clientErrorData {
                 clientErrorDataUserInfo["code"] = clientErrorData.code
                 clientErrorDataUserInfo["info"] = clientErrorData.info
