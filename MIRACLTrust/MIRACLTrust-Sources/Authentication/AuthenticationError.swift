@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes authentication issues.
-public enum AuthenticationError: Error {
+public enum AuthenticationError: Error, DefaultLocalizedError {
     /// User object passed for authentication is not valid.
     case invalidUserData
 
@@ -42,39 +42,6 @@ public enum AuthenticationError: Error {
 extension AuthenticationError: Equatable {
     public static func == (lhs: AuthenticationError, rhs: AuthenticationError) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension AuthenticationError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .invalidUserData:
-            description = NSLocalizedString("\(AuthenticationError.invalidUserData)", comment: "")
-        case .invalidQRCode:
-            description = NSLocalizedString("\(AuthenticationError.invalidQRCode)", comment: "")
-        case .invalidPushNotificationPayload:
-            description = NSLocalizedString("\(AuthenticationError.invalidPushNotificationPayload)", comment: "")
-        case .userNotFound:
-            description = NSLocalizedString("\(AuthenticationError.userNotFound)", comment: "")
-        case .invalidUniversalLink:
-            description = NSLocalizedString("\(AuthenticationError.invalidUniversalLink)", comment: "")
-        case .pinCancelled:
-            description = NSLocalizedString("\(AuthenticationError.pinCancelled)", comment: "")
-        case .invalidPin:
-            description = NSLocalizedString("\(AuthenticationError.invalidPin)", comment: "")
-        case .revoked:
-            description = NSLocalizedString("\(AuthenticationError.revoked)", comment: "")
-        case .invalidAuthenticationSession:
-            description = NSLocalizedString("\(AuthenticationError.invalidAuthenticationSession)", comment: "")
-        case .unsuccessfulAuthentication:
-            description = NSLocalizedString("\(AuthenticationError.unsuccessfulAuthentication)", comment: "")
-        case let .authenticationFail(error):
-            description = NSLocalizedString("\(AuthenticationError.authenticationFail(error))", comment: "")
-        case .invalidCrossDeviceSession:
-            description = NSLocalizedString("\(AuthenticationError.invalidCrossDeviceSession)", comment: "")
-        }
-        return description
     }
 }
 

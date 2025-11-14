@@ -1,6 +1,6 @@
 import Foundation
 
-public enum SigningSessionError: Error {
+public enum SigningSessionError: Error, DefaultLocalizedError {
     /// Could not find the signing session identifier in the Universal Link URL.
     case invalidUniversalLinkURL
 
@@ -23,27 +23,6 @@ public enum SigningSessionError: Error {
 extension SigningSessionError: Equatable {
     public static func == (lhs: SigningSessionError, rhs: SigningSessionError) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension SigningSessionError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .invalidQRCode:
-            description = NSLocalizedString("\(SigningSessionError.invalidQRCode)", comment: "")
-        case .invalidUniversalLinkURL:
-            description = NSLocalizedString("\(SigningSessionError.invalidUniversalLinkURL)", comment: "")
-        case let .getSigningSessionDetailsFail(error):
-            description = NSLocalizedString("\(SigningSessionError.getSigningSessionDetailsFail(error))", comment: "")
-        case .invalidSigningSessionDetails:
-            description = NSLocalizedString("\(SigningSessionError.invalidSigningSessionDetails)", comment: "")
-        case .invalidSigningSession:
-            description = NSLocalizedString("\(SigningSessionError.invalidSigningSession)", comment: "")
-        case let .abortSigningSessionFail(error):
-            description = NSLocalizedString("\(SigningSessionError.abortSigningSessionFail(error))", comment: "")
-        }
-        return description
     }
 }
 

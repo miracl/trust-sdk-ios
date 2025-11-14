@@ -1,7 +1,7 @@
 import Foundation
 
 ///  An enumeration that describes issues with the authentication session management.
-public enum AuthenticationSessionError: Error {
+public enum AuthenticationSessionError: Error, DefaultLocalizedError {
     /// Could not find the session identifier in the Universal Link URL.
     case invalidUniversalLinkURL
 
@@ -24,27 +24,6 @@ public enum AuthenticationSessionError: Error {
 extension AuthenticationSessionError: Equatable {
     public static func == (lhs: AuthenticationSessionError, rhs: AuthenticationSessionError) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension AuthenticationSessionError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .invalidQRCode:
-            description = NSLocalizedString("\(AuthenticationSessionError.invalidQRCode)", comment: "")
-        case .invalidUniversalLinkURL:
-            description = NSLocalizedString("\(AuthenticationSessionError.invalidUniversalLinkURL)", comment: "")
-        case .invalidPushNotificationPayload:
-            description = NSLocalizedString("\(AuthenticationSessionError.invalidPushNotificationPayload)", comment: "")
-        case .invalidAuthenticationSessionDetails:
-            description = NSLocalizedString("\(AuthenticationSessionError.invalidAuthenticationSessionDetails)", comment: "")
-        case let .getAuthenticationSessionDetailsFail(error):
-            description = NSLocalizedString("\(AuthenticationSessionError.getAuthenticationSessionDetailsFail(error))", comment: "")
-        case let .abortSessionFail(error):
-            description = NSLocalizedString("\(AuthenticationSessionError.abortSessionFail(error))", comment: "")
-        }
-        return description
     }
 }
 

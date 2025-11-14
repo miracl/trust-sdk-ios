@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes issues with cryptography calculations.
-public enum CryptoError: Error, Equatable {
+public enum CryptoError: Error, Equatable, DefaultLocalizedError {
     /// Error while getting client token.
     case getClientTokenError(info: String)
 
@@ -19,27 +19,6 @@ public enum CryptoError: Error, Equatable {
 
     /// Error while signing.
     case signError(info: String)
-}
-
-extension CryptoError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case let .getClientTokenError(info):
-            description = NSLocalizedString("\(CryptoError.getClientTokenError(info: info))", comment: "")
-        case let .clientPass1Error(info):
-            description = NSLocalizedString("\(CryptoError.clientPass1Error(info: info))", comment: "")
-        case let .clientPass2Error(info):
-            description = NSLocalizedString("\(CryptoError.clientPass1Error(info: info))", comment: "")
-        case let .generateSigningKeypairError(info):
-            description = NSLocalizedString("\(CryptoError.generateSigningKeypairError(info: info))", comment: "")
-        case let .getSigningClientToken(info):
-            description = NSLocalizedString("\(CryptoError.getSigningClientToken(info: info))", comment: "")
-        case let .signError(info):
-            description = NSLocalizedString("\(CryptoError.signError(info: info))", comment: "")
-        }
-        return description
-    }
 }
 
 extension CryptoError: CustomNSError {

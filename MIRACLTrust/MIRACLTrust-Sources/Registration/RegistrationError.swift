@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes registration issues.
-public enum RegistrationError: Error {
+public enum RegistrationError: Error, DefaultLocalizedError {
     /// Empty user ID.
     case emptyUserId
 
@@ -25,31 +25,6 @@ public enum RegistrationError: Error {
 
     /// The registration was started for a different project.
     case projectMismatch
-}
-
-extension RegistrationError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .emptyUserId:
-            description = NSLocalizedString("\(RegistrationError.emptyUserId)", comment: "")
-        case .invalidActivationToken:
-            description = NSLocalizedString("\(RegistrationError.invalidActivationToken)", comment: "")
-        case let .registrationFail(error):
-            description = NSLocalizedString("\(RegistrationError.registrationFail(error))", comment: "")
-        case .unsupportedEllipticCurve:
-            description = NSLocalizedString("\(RegistrationError.unsupportedEllipticCurve)", comment: "")
-        case .pinCancelled:
-            description = NSLocalizedString("\(RegistrationError.pinCancelled)", comment: "")
-        case .invalidPin:
-            description = NSLocalizedString("\(RegistrationError.invalidPin)", comment: "")
-        case .emptyActivationToken:
-            description = NSLocalizedString("\(RegistrationError.emptyActivationToken)", comment: "")
-        case .projectMismatch:
-            description = NSLocalizedString("\(RegistrationError.projectMismatch)", comment: "")
-        }
-        return description
-    }
 }
 
 extension RegistrationError: Equatable {

@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes signing issues.
-public enum SigningError: Error {
+public enum SigningError: Error, DefaultLocalizedError {
     /// Empty message hash.
     case emptyMessageHash
 
@@ -36,35 +36,6 @@ public enum SigningError: Error {
 extension SigningError: Equatable {
     public static func == (lhs: SigningError, rhs: SigningError) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension SigningError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .emptyMessageHash:
-            description = NSLocalizedString("\(SigningError.emptyMessageHash)", comment: "")
-        case .emptyPublicKey:
-            description = NSLocalizedString("\(SigningError.emptyPublicKey)", comment: "")
-        case .invalidUserData:
-            description = NSLocalizedString("\(SigningError.invalidUserData)", comment: "")
-        case .pinCancelled:
-            description = NSLocalizedString("\(SigningError.pinCancelled)", comment: "")
-        case .invalidPin:
-            description = NSLocalizedString("\(SigningError.invalidPin)", comment: "")
-        case .revoked:
-            description = NSLocalizedString("\(SigningError.revoked)", comment: "")
-        case let .signingFail(error):
-            description = NSLocalizedString("\(SigningError.signingFail(error))", comment: "")
-        case .unsuccessfulAuthentication:
-            description = NSLocalizedString("\(SigningError.unsuccessfulAuthentication)", comment: "")
-        case .invalidSigningSession:
-            description = NSLocalizedString("\(SigningError.invalidSigningSession)", comment: "")
-        case .invalidSigningSessionDetails:
-            description = NSLocalizedString("\(SigningError.invalidSigningSessionDetails)", comment: "")
-        }
-        return description
     }
 }
 

@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes issues with the default user storage.
-enum SQLiteUserStorageError: Error {
+enum SQLiteUserStorageError: Error, DefaultLocalizedError {
     /// There is no documents directory in the application.
     case documentsDirectoryMissing
 
@@ -30,29 +30,6 @@ extension SQLiteUserStorageError: Equatable {
         rhs: SQLiteUserStorageError
     ) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension SQLiteUserStorageError: LocalizedError {
-    var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .documentsDirectoryMissing:
-            description = NSLocalizedString("\(SQLiteUserStorageError.documentsDirectoryMissing)", comment: "")
-        case .noConnection:
-            description = NSLocalizedString("\(SQLiteUserStorageError.noConnection)", comment: "")
-        case let .sqliteQueryError(message: message):
-            description = NSLocalizedString("\(SQLiteUserStorageError.sqliteQueryError(message: message))", comment: "")
-        case let .prepareStatementError(message: message):
-            description = NSLocalizedString("\(SQLiteUserStorageError.prepareStatementError(message: message))", comment: "")
-        case .encryptionKeyConfigurationError:
-            description = NSLocalizedString("\(SQLiteUserStorageError.encryptionKeyConfigurationError)", comment: "")
-        case .encryptionKeyUpdateAccessibilityError:
-            description = NSLocalizedString("\(SQLiteUserStorageError.encryptionKeyUpdateAccessibilityError)", comment: "")
-        case .accessGroupUpdateError:
-            description = NSLocalizedString("\(SQLiteUserStorageError.accessGroupUpdateError)", comment: "")
-        }
-        return description
     }
 }
 

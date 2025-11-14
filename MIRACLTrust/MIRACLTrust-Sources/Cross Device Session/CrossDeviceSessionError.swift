@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes issues with the cross-device session management.
-public enum CrossDeviceSessionError: Error {
+public enum CrossDeviceSessionError: Error, DefaultLocalizedError {
     /// Could not find the session identifier in the Universal Link URL.
     case invalidUniversalLinkURL
 
@@ -27,27 +27,6 @@ extension CrossDeviceSessionError: Equatable {
         rhs: CrossDeviceSessionError
     ) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension CrossDeviceSessionError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .invalidUniversalLinkURL:
-            description = NSLocalizedString("\(CrossDeviceSessionError.invalidUniversalLinkURL)", comment: "")
-        case .invalidQRCode:
-            description = NSLocalizedString("\(CrossDeviceSessionError.invalidQRCode)", comment: "")
-        case .invalidPushNotificationPayload:
-            description = NSLocalizedString("\(CrossDeviceSessionError.invalidPushNotificationPayload)", comment: "")
-        case .invalidCrossDeviceSession:
-            description = NSLocalizedString("\(CrossDeviceSessionError.invalidCrossDeviceSession)", comment: "")
-        case let .getCrossDeviceSessionFail(error):
-            description = NSLocalizedString("\(CrossDeviceSessionError.getCrossDeviceSessionFail(error))", comment: "")
-        case let .abortCrossDeviceSessionFail(error):
-            description = NSLocalizedString("\(CrossDeviceSessionError.abortCrossDeviceSessionFail(error))", comment: "")
-        }
-        return description
     }
 }
 

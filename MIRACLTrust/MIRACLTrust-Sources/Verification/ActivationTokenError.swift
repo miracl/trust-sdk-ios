@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes issues with verification confirmation.
-public enum ActivationTokenError: Error {
+public enum ActivationTokenError: Error, DefaultLocalizedError {
     /// Empty user ID in the universal link.
     case emptyUserId
 
@@ -18,23 +18,6 @@ public enum ActivationTokenError: Error {
 extension ActivationTokenError: Equatable {
     public static func == (lhs: ActivationTokenError, rhs: ActivationTokenError) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension ActivationTokenError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .emptyVerificationCode:
-            description = NSLocalizedString("\(ActivationTokenError.emptyVerificationCode)", comment: "")
-        case .emptyUserId:
-            description = NSLocalizedString("\(ActivationTokenError.emptyUserId)", comment: "")
-        case let .getActivationTokenFail(cause):
-            description = NSLocalizedString("\(ActivationTokenError.getActivationTokenFail(cause))", comment: "")
-        case .unsuccessfulVerification:
-            description = NSLocalizedString("\(String(describing: ActivationTokenError.unsuccessfulVerification))", comment: "")
-        }
-        return description
     }
 }
 
