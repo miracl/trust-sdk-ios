@@ -1,7 +1,7 @@
 import Foundation
 
 // An enumeration that describes network issues.
-public enum APIError: Error {
+public enum APIError: Error, DefaultLocalizedError {
     /// The request response is a server error (5xx).
     case apiServerError(statusCode: Int, message: String?, requestURL: URL?)
 
@@ -18,23 +18,6 @@ public enum APIError: Error {
 extension APIError: Equatable {
     public static func == (lhs: APIError, rhs: APIError) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension APIError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case let .apiServerError(statusCode, message, requestURL):
-            description = NSLocalizedString("\(APIError.apiServerError(statusCode: statusCode, message: message, requestURL: requestURL))", comment: "")
-        case let .apiClientError(statusCode: statusCode, clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL):
-            description = NSLocalizedString("\(APIError.apiClientError(statusCode: statusCode, clientErrorData: clientErrorData, requestId: requestId, message: message, requestURL: requestURL))", comment: "")
-        case let .apiMalformedJSON(error, requestURL):
-            description = NSLocalizedString("\(APIError.apiMalformedJSON(error, requestURL))", comment: "")
-        case let .executionError(message, requestURL):
-            description = NSLocalizedString("\(APIError.executionError(message, requestURL))", comment: "")
-        }
-        return description
     }
 }
 

@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration that describes verification issues.
-public enum VerificationError: Error {
+public enum VerificationError: Error, DefaultLocalizedError {
     /// Empty user ID.
     case emptyUserId
 
@@ -20,23 +20,6 @@ public enum VerificationError: Error {
 extension VerificationError: Equatable {
     public static func == (lhs: VerificationError, rhs: VerificationError) -> Bool {
         String(reflecting: lhs) == String(reflecting: rhs)
-    }
-}
-
-extension VerificationError: LocalizedError {
-    public var errorDescription: String? {
-        var description = ""
-        switch self {
-        case .emptyUserId:
-            description = NSLocalizedString("\(VerificationError.emptyUserId)", comment: "")
-        case .invalidSessionDetails:
-            description = NSLocalizedString("\(VerificationError.invalidSessionDetails)", comment: "")
-        case let .verificaitonFail(error):
-            description = NSLocalizedString("\(VerificationError.verificaitonFail(error))", comment: "")
-        case let .requestBackoff(backoff):
-            description = NSLocalizedString("\(VerificationError.requestBackoff(backoff: backoff))", comment: "")
-        }
-        return description
     }
 }
 
