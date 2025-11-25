@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.homepage = "https://github.com/miracl/trust-sdk-ios"
   s.source = {
     :git => "https://github.com/miracl/trust-sdk-ios",
-    :branch => "main"
+    :tag => "1.8.0"
   }
 
   s.framework = "UIKit"

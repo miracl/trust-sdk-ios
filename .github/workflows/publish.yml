@@ -1,0 +1,22 @@
+name: Publish to MIRACL Cocoapods Spec repository
+
+on:
+  push:
+    tags:
+    - '[0-9]*.[0-9]*.[0-9]*'
+
+jobs:
+  publish-cocoapods:
+    runs-on: macos-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Install SSH Key
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.SSH_SPEC_KEY }}
+            known_hosts: unnecessary
+        - name: Publish to MIRACL's CocoaPods spec repo
+          run: | 
+            pod repo add MIRACLTrust git@github.com:miracl/cocoapods-specs.git
+            pod repo push MIRACLTrust MIRACLTrust.podspec --allow-warnings 
