@@ -37,6 +37,25 @@ Target's `General` tab, Expand the
 `Frameworks, Libraries, and Embedded Content` section,
 click the Add button (+) and select `MIRACLTrust` framework.
 
+### Cocoapods
+
+The MIRACL Trust iOS SDK provides its own podspec repository.
+If you want to integrate it using CocoaPods, add the following
+line at the top of your `Podfile`:
+
+```ruby
+source 'https://github.com/miracl/cocoapods-specs' 
+```
+
+Then add the MIRACLTrust iOS SDK pod to your `Podfile`:
+
+```ruby
+pod 'MIRACLTrust', '~> 1.8.0'
+```
+
+Keep in mind that Swift Package Manager is the recommended
+way to use the MIRACL Trust iOS SDK.
+
 ### Manual
 
 Drag and drop the XCFramework to your application.
