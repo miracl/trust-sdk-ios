@@ -1,4 +1,5 @@
 import CryptoKit
+import JWTKit
 import XCTest
 
 @testable import MIRACLTrust
@@ -106,23 +107,33 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(error)
 
         let unwrappedSigningResult = try XCTUnwrap(signingResult)
-        let isSignatureVerified = api.verifySignature(
-            signingResult: unwrappedSigningResult,
-            serviceAccountToken: serviceAccountToken,
-            projectId: projectId,
-            projectURL: projectURL
+        XCTAssertEqual(messageHash.hex, unwrappedSigningResult.signature.signatureHash)
+
+        let verifySigningResponse = try XCTUnwrap(
+            api.verifySignature(
+                signingResult: unwrappedSigningResult,
+                serviceAccountToken: serviceAccountToken,
+                projectId: projectId,
+                projectURL: projectURL
+            )
         )
 
-        XCTAssertTrue(isSignatureVerified)
+        let jwks = try String(contentsOf: XCTUnwrap(URL(string: "\(projectURL)/dvs/jwks")))
+        let signers = JWTSigners()
+        try signers.use(jwksJSON: jwks)
+        let payload = try signers.verify(verifySigningResponse.certificate, as: SignatureCertificateJWTPayload.self)
+
+        XCTAssertEqual(messageHash.hex, payload.hash)
     }
 
     func testSigningCorrectnessWithSessionDetails() throws {
+        let hash = messageHash.hex
         let qrCode = try XCTUnwrap(
             api.startSigningSession(
                 projectID: projectId,
                 projectURL: projectURL,
                 userID: userId,
-                hash: UUID().uuidString,
+                hash: hash,
                 description: "Test transaction"
             )
         )
@@ -140,14 +151,23 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(error)
 
         let unwrappedSigningResult = try XCTUnwrap(signingResult)
-        let isSignatureVerified = api.verifySignature(
-            signingResult: unwrappedSigningResult,
-            serviceAccountToken: serviceAccountToken,
-            projectId: projectId,
-            projectURL: projectURL
+        XCTAssertEqual(hash, unwrappedSigningResult.signature.signatureHash)
+
+        let verifySigningResponse = try XCTUnwrap(
+            api.verifySignature(
+                signingResult: unwrappedSigningResult,
+                serviceAccountToken: serviceAccountToken,
+                projectId: projectId,
+                projectURL: projectURL
+            )
         )
 
-        XCTAssertTrue(isSignatureVerified)
+        let jwks = try String(contentsOf: XCTUnwrap(URL(string: "\(projectURL)/dvs/jwks")))
+        let signers = JWTSigners()
+        try signers.use(jwksJSON: jwks)
+        let payload = try signers.verify(verifySigningResponse.certificate, as: SignatureCertificateJWTPayload.self)
+
+        XCTAssertEqual(messageHash.hex, payload.hash)
     }
 
     func testSigningCorrectnessWithCrossDeviceSession() async throws {
@@ -183,15 +203,22 @@ class SigningIntegrationTests: XCTestCase {
         let timeInterval = TimeInterval(signature.timestamp)
         let date = Date(timeIntervalSince1970: timeInterval)
 
-        let isSignatureVerified = api.verifySignature(
-            signature: signature,
-            timestamp: date,
-            serviceAccountToken: serviceAccountToken,
-            projectId: projectId,
-            projectURL: projectURL
+        let verifySigningResponse = try XCTUnwrap(
+            api.verifySignature(
+                signature: signature,
+                timestamp: date,
+                serviceAccountToken: serviceAccountToken,
+                projectId: projectId,
+                projectURL: projectURL
+            )
         )
 
-        XCTAssertTrue(isSignatureVerified)
+        let jwks = try String(contentsOf: XCTUnwrap(URL(string: "\(projectURL)/dvs/jwks")))
+        let signers = JWTSigners()
+        try signers.use(jwksJSON: jwks)
+        let payload = try signers.verify(verifySigningResponse.certificate, as: SignatureCertificateJWTPayload.self)
+
+        XCTAssertEqual(signature.signatureHash, payload.hash)
     }
 
     func testSigningCorrectnessWithCrossDeviceSessionForUniversalLink() throws {
@@ -242,14 +269,23 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(error)
 
         let unwrappedSigningResult = try XCTUnwrap(signingResult)
-        let isSignatureVerified = api.verifySignature(
-            signingResult: unwrappedSigningResult,
-            serviceAccountToken: serviceAccountToken,
-            projectId: projectId,
-            projectURL: projectURL
+        XCTAssertEqual(messageHash.hex, unwrappedSigningResult.signature.signatureHash)
+
+        let verifySigningResponse = try XCTUnwrap(
+            api.verifySignature(
+                signingResult: unwrappedSigningResult,
+                serviceAccountToken: serviceAccountToken,
+                projectId: projectId,
+                projectURL: projectURL
+            )
         )
 
-        XCTAssertTrue(isSignatureVerified)
+        let jwks = try String(contentsOf: XCTUnwrap(URL(string: "\(projectURL)/dvs/jwks")))
+        let signers = JWTSigners()
+        try signers.use(jwksJSON: jwks)
+        let payload = try signers.verify(verifySigningResponse.certificate, as: SignatureCertificateJWTPayload.self)
+
+        XCTAssertEqual(messageHash.hex, payload.hash)
     }
 
     func testSigningEmptyMessageHash() throws {

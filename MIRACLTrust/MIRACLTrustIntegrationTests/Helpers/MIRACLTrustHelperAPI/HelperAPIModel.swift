@@ -25,6 +25,10 @@ struct VerifySigningRequestBody: Codable {
     var timestamp: Int32
 }
 
+struct VerifySigningResponse: Codable {
+    var certificate: String
+}
+
 struct StartSessionResponse: Codable {
     var qrURL: URL
     var webOTT: String

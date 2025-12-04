@@ -87,7 +87,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         XCTAssertNil(jwtError)
         XCTAssertNotNil(jwt)
 
-        let jwks = try XCTUnwrap(api.getJWKS(projectURL: projectURL))
+        let jwks = try String(contentsOf: XCTUnwrap(URL(string: "\(projectURL)/.well-known/jwks")))
         let signers = JWTSigners()
         try signers.use(jwksJSON: jwks)
         let payload = try signers.verify(jwt!, as: AuthenticationJWTPayload.self)
