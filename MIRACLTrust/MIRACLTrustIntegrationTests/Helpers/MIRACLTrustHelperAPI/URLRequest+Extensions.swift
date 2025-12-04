@@ -168,20 +168,6 @@ extension URLRequest {
         return request
     }
 
-    static func jwksRequest(url: URL) -> Self? {
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-
-        components.path = "/.well-known/jwks"
-
-        guard let url = components.url else {
-            return nil
-        }
-
-        return URLRequest(url: url)
-    }
-
     static func signingSessionRequest(
         url: URL,
         projectID: String,

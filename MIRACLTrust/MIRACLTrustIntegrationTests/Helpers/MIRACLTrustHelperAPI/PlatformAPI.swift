@@ -84,55 +84,6 @@ import MIRACLTrust
         }
     }
 
-    public func getJWKS(
-        projectURL: String,
-        completionHandler: @escaping @Sendable (String?, Error?) -> Void
-    ) {
-        guard let url = URL(string: projectURL) else {
-            return
-        }
-
-        guard let request = URLRequest.jwksRequest(url: url) else {
-            return
-        }
-
-        let task = URLSession.shared.dataTask(with: request) { responseData, response, error in
-            if error != nil {
-                DispatchQueue.main.async {
-                    completionHandler(nil, HelperAPIError.internalError)
-                }
-                return
-            }
-
-            if let response = response as? HTTPURLResponse {
-                if response.statusCode != 200 {
-                    DispatchQueue.main.async {
-                        completionHandler(nil, HelperAPIError.internalError)
-                    }
-                    return
-                }
-            }
-
-            guard let data = responseData else {
-                DispatchQueue.main.async {
-                    completionHandler(nil, HelperAPIError.noData)
-                }
-                return
-            }
-
-            if data.isEmpty {
-                DispatchQueue.main.async {
-                    completionHandler(nil, nil)
-                }
-                return
-            }
-
-            completionHandler(String(data: data, encoding: String.Encoding.utf8), nil)
-        }
-
-        task.resume()
-    }
-
     public func accessRequest(
         projectURL: String,
         webOTT: String,
@@ -189,13 +140,13 @@ import MIRACLTrust
         }
     }
 
-    public func verifySignature(
+    func verifySignature(
         for signature: Signature,
         timestamp: Date,
         serviceAccountToken: String,
         projectId: String,
         projectURL: String,
-        completionHandler: @escaping @Sendable (Bool, Error?) -> Void
+        completionHandler: @escaping @Sendable (VerifySigningResponse?, Error?) -> Void
     ) {
         guard let url = URL(string: projectURL) else {
             return
@@ -205,12 +156,12 @@ import MIRACLTrust
             return
         }
 
-        requestExecutor.executeHTTPRequest(request: request) { (result: Result<EmptyResponse?, HelperAPIError>) in
+        requestExecutor.executeHTTPRequest(request: request) { (result: Result<VerifySigningResponse?, HelperAPIError>) in
             switch result {
-            case .success:
-                completionHandler(true, nil)
+            case let .success(success):
+                completionHandler(success, nil)
             case let .failure(error):
-                completionHandler(false, error)
+                completionHandler(nil, error)
             }
         }
     }

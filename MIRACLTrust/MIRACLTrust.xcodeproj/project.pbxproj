@@ -240,6 +240,7 @@
 		6DFE8FC527EB6E380085380D /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFE8FC427EB6E380085380D /* Helpers.swift */; };
 		6DFEC8CE26E1049100E8F682 /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */; };
 		83695C1C2C9734AA00411EAA /* EmailVerificationMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */; };
+		838EE9302EDECD2000042452 /* SignatureCertificateJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838EE92F2EDECD1200042452 /* SignatureCertificateJWTPayload.swift */; };
 		83BD3EFB2CC902F000D4E47F /* GmailServiceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83BD3EFA2CC902DF00D4E47F /* GmailServiceWrapper.swift */; };
 		83BD3F0B2CCA23A900D4E47F /* AuthenticationJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83BD3F0A2CCA23A500D4E47F /* AuthenticationJWTPayload.swift */; };
 		83DE9EBE2CCA320D00BD7749 /* JWTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 83DE9EBD2CCA320D00BD7749 /* JWTKit */; };
@@ -555,6 +556,7 @@
 		6DFE8FC427EB6E380085380D /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
 		83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailVerificationMethod.swift; sourceTree = "<group>"; };
+		838EE92F2EDECD1200042452 /* SignatureCertificateJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureCertificateJWTPayload.swift; sourceTree = "<group>"; };
 		83BD3EF82CC7CDBD00D4E47F /* GmailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailService.swift; sourceTree = "<group>"; };
 		83BD3EFA2CC902DF00D4E47F /* GmailServiceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailServiceWrapper.swift; sourceTree = "<group>"; };
 		83BD3F0A2CCA23A500D4E47F /* AuthenticationJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationJWTPayload.swift; sourceTree = "<group>"; };
@@ -956,6 +958,7 @@
 				83BD3EFA2CC902DF00D4E47F /* GmailServiceWrapper.swift */,
 				6DFE8FC427EB6E380085380D /* Helpers.swift */,
 				83BD3F0A2CCA23A500D4E47F /* AuthenticationJWTPayload.swift */,
+				838EE92F2EDECD1200042452 /* SignatureCertificateJWTPayload.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1501,6 +1504,7 @@
 				6D26142C24AB1B7C004F0B54 /* Constants.swift in Sources */,
 				6D2E4F192E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift in Sources */,
 				6D91ABDA26FDF4C000EE28CF /* SessionDetailsTestCase.swift in Sources */,
+				838EE9302EDECD2000042452 /* SignatureCertificateJWTPayload.swift in Sources */,
 				6D6B94B82E46141600BC7A60 /* CrossDeviceSessionAbortCase.swift in Sources */,
 				6D4167A52E435C78002E59EA /* CrossDeviceSessionAuthenticationCase.swift in Sources */,
 				6DDEB15127070C2C00C3313D /* AbortSessionIntergrationTest.swift in Sources */,

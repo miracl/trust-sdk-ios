@@ -35,22 +35,6 @@ import MIRACLTrust
         return verificationUrl
     }
 
-    @objc func getJWKS(projectURL: String) -> String? {
-        let jwksExpectation = XCTestExpectation(description: "wait for JWKS")
-        nonisolated(unsafe) var jwkSet: String?
-
-        platformAPI.getJWKS(projectURL: projectURL) { jwks, error in
-            if let jwks = jwks {
-                jwkSet = jwks
-            } else if let error = error {
-                print("Error when fetching JWKS \(error)")
-            }
-            jwksExpectation.fulfill()
-        }
-        _ = XCTWaiter.wait(for: [jwksExpectation], timeout: operationTimeout)
-        return jwkSet
-    }
-
     @objc func startSession(
         projectId: String,
         projectURL: String,
@@ -108,13 +92,13 @@ import MIRACLTrust
         return qrCode
     }
 
-    @objc func verifySignature(
+    func verifySignature(
         signingResult: SigningResult,
         serviceAccountToken: String,
         projectId: String,
         projectURL: String
-    ) -> Bool {
-        nonisolated(unsafe) var verifiedSignature = false
+    ) -> VerifySigningResponse? {
+        nonisolated(unsafe) var verifySigningResponse: VerifySigningResponse?
         let expectation = XCTestExpectation(description: "Waiting for signature verification")
 
         platformAPI.verifySignature(
@@ -123,23 +107,23 @@ import MIRACLTrust
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
-        ) { isVerified, _ in
-            verifiedSignature = isVerified
+        ) { signingResponse, _ in
+            verifySigningResponse = signingResponse
             expectation.fulfill()
         }
         _ = XCTWaiter.wait(for: [expectation], timeout: operationTimeout)
 
-        return verifiedSignature
+        return verifySigningResponse
     }
 
-    @objc func verifySignature(
+    func verifySignature(
         signature: Signature,
         timestamp: Date,
         serviceAccountToken: String,
         projectId: String,
         projectURL: String
-    ) -> Bool {
-        nonisolated(unsafe) var verifiedSignature = false
+    ) -> VerifySigningResponse? {
+        nonisolated(unsafe) var verifySigningResponse: VerifySigningResponse?
         let expectation = XCTestExpectation(description: "Waiting for signature verification")
 
         platformAPI.verifySignature(
@@ -148,13 +132,13 @@ import MIRACLTrust
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL
-        ) { isVerified, _ in
-            verifiedSignature = isVerified
+        ) { signingResponse, _ in
+            verifySigningResponse = signingResponse
             expectation.fulfill()
         }
         _ = XCTWaiter.wait(for: [expectation], timeout: operationTimeout)
 
-        return verifiedSignature
+        return verifySigningResponse
     }
 
     func getVerificationURL(
