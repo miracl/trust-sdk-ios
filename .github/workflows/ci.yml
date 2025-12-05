@@ -1,9 +1,7 @@
 name: "Build MIRACL Trust iOS SDK"
 
 on:
-  push:
-    branches:
-      - '*'
+  - pull_request
 
 jobs:
   lint:
