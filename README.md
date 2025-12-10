@@ -7,6 +7,7 @@ The MIRACL Trust iOS SDK provides the following functionalities:
 - [Authentication](#authentication)
 - [Signing](#signing)
 - [QuickCode](#quickcode)
+- [User Management](#user-management)
 
 ## System Requirements
 
@@ -642,6 +643,90 @@ Objective-C:
      } completionHandler:^(QuickCode * _Nullable quickCode , NSError * _Nullable error) {
         // Get the QuickCode object or handle the error appropriately.
      }];
+```
+
+### User Management
+
+The MIRACL Trust iOS SDK provides several methods for managing users registered
+on a device. These operations allow you to retrieve user information or delete
+previously registered users.
+
+#### Get a registered user
+
+To retrieve a specific registered user by their User ID, use the
+[getUser(by:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getuser%28by:%29)
+method:
+
+Swift:
+
+```swift
+let user = MIRACLTrust.getInstance().getUser(by: userId)
+if let user = user {
+    // User exists.
+} else {
+    // No user registered with this User ID.
+}
+```
+
+Objective-C:
+
+```objc
+User *user = [[MIRACLTrust getInstance] getUserBy:userId];
+if (user != nil) {
+    // User exists.
+} else {
+    // No user registered with this User ID.
+}
+```
+
+#### Get all registered users
+
+To obtain the list of all users registered on а device, access the
+[users](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/users)
+property:
+
+Swift:
+
+```swift
+let users = MIRACLTrust.getInstance().users
+// Handle list of registered users.
+```
+
+Objective-C:
+
+```objc
+NSArray<User *> *users = [MIRACLTrust.getInstance users];
+// Handle list of registered users.
+```
+
+#### Delete a registered user
+
+To delete a previously registered user from a device, call the
+[delete(user:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/delete%28user:%29)
+method:
+
+Swift:
+
+```swift
+do {
+    try MIRACLTrust.getInstance().delete(user: user)
+    // User deleted successfully.
+} catch {
+    // Cannot delete the user due to an error.
+}
+```
+
+Objective-C:
+
+```objc
+NSError *error = nil;
+[[MIRACLTrust getInstance] deleteWithUser:user error:&error];
+
+if (error == nil) {
+    // User deleted successfully.
+} else {
+    // Cannot delete the user due to an error.
+}
 ```
 
 ## FAQ
