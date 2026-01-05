@@ -130,7 +130,8 @@ method as early as possible in the application lifecycle and avoid using the
 [getInstance](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getinstance())
 method before that; otherwise assertion will be triggered.
 
-`deviceName` is an identifier that can help find the device on the MIRACL Trust Portal.
+`deviceName` is an identifier that can help find the device on
+the MIRACL Trust Portal.
 For `iOS`, the MIRACL Trust SDK provides a `UIDevice.modelName` extension that
 returns the actual model name of the device (e.g iPhone 16 Pro Max). This
 extension value can be passed to the [Configuration.Builder](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/configuration/builder)
