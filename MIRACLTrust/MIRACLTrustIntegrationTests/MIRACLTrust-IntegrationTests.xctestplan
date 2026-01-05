@@ -1,0 +1,68 @@
+{
+  "configurations" : [
+    {
+      "id" : "C8E2B5E4-0D61-4811-A707-5772B95A4678",
+      "name" : "Prod",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "projectIdCUV",
+        "value" : "$(TEST_CUV_PROJECT_ID)"
+      },
+      {
+        "key" : "projectURLCUV",
+        "value" : "$(TEST_CUV_PROJECT_URL)"
+      },
+      {
+        "key" : "serviceAccountTokenCUV",
+        "value" : "$(TEST_CUV_SERVICE_ACCOUNT_TOKEN)"
+      },
+      {
+        "key" : "projectIdDV",
+        "value" : "$(TEST_DV_PROJECT_ID)"
+      },
+      {
+        "key" : "projectURLDV",
+        "value" : "$(TEST_DV_PROJECT_URL)"
+      },
+      {
+        "key" : "projectIdECV",
+        "value" : "$(TEST_ECV_PROJECT_ID)"
+      },
+      {
+        "key" : "projectURLECV",
+        "value" : "$(TEST_ECV_PROJECT_URL)"
+      },
+      {
+        "key" : "gmailCredentials",
+        "value" : "$(GMAIL_CREDENTIALS)"
+      },
+      {
+        "key" : "gmailToken",
+        "value" : "$(GMAIL_TOKEN)"
+      }
+    ],
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:MIRACLTrust.xcodeproj",
+      "identifier" : "6D685E47247E7AC3000AEDAC",
+      "name" : "MIRACLTrustIntegrationTests"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:MIRACLTrust.xcodeproj",
+        "identifier" : "6D685E47247E7AC3000AEDAC",
+        "name" : "MIRACLTrustIntegrationTests"
+      }
+    }
+  ],
+  "version" : 1
+}

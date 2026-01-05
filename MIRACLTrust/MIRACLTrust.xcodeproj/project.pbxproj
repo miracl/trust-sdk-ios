@@ -439,6 +439,7 @@
 		6D99D77F27058A98000FC833 /* SessionDetailsFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailsFetcherTests.swift; sourceTree = "<group>"; };
 		6D9B3C9F266651AF00D0CF1E /* MockUserStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserStorage.swift; sourceTree = "<group>"; };
 		6D9D2A642630054700055B93 /* JWTGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTGeneratorTests.swift; sourceTree = "<group>"; };
+		6DA4F2602F0BD12600F61552 /* MIRACLTrust-IntegrationTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MIRACLTrust-IntegrationTests.xctestplan"; sourceTree = "<group>"; };
 		6DA788C7283659E200A3D0BD /* AuthenticationSessionDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationSessionDetails.swift; sourceTree = "<group>"; };
 		6DA992DE24AC6D03002F6AA2 /* MIRACLTrust-Test-Host-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MIRACLTrust-Test-Host-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DA992E024AC6D03002F6AA2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -821,6 +822,7 @@
 		6D685E49247E7AC3000AEDAC /* MIRACLTrustIntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
+				6DA4F2602F0BD12600F61552 /* MIRACLTrust-IntegrationTests.xctestplan */,
 				6DA992F724AC9265002F6AA2 /* Helpers */,
 				6DA992F624AC9258002F6AA2 /* Cases */,
 				6D685E4C247E7AC3000AEDAC /* Info.plist */,
