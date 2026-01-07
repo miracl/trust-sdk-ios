@@ -446,7 +446,7 @@ class AuthenticatorTests: XCTestCase {
             XCTAssertNotNil(authenticationResponse)
             XCTAssertNil(error)
 
-            XCTAssertEqual(storage.all().count, 1)
+            XCTAssertEqual(try? storage.all().count, 1)
 
             do {
                 let currentUser = try XCTUnwrap(storage.all().first)

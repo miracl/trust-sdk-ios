@@ -40,7 +40,9 @@ struct Verificator: Sendable {
         DispatchQueue.global(qos: .default).async {
             logOperation(operation: LoggingConstants.verificationStarted)
 
-            let mpinId = userStorage.getUser(by: userId, projectId: projectId)?.mpinId.hex
+            let userDTO = try? userStorage.getUser(by: userId, projectId: projectId)
+
+            let mpinId = userDTO?.mpinId.hex
             let sessionIdentifier = sessionType.getSessionIdentifier()
 
             miraclAPI.verifyUser(

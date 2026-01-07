@@ -1,8 +1,14 @@
 @testable import MIRACLTrust
 
+enum MockUserStorageError: Error {
+    case testError
+}
+
 class MockUserStorage: UserStorage, @unchecked Sendable {
     var authenticationUsersMockArray = [UserDTO]()
-    var deletionResult = true
+    var getUserThrowsError = false
+    var getUsersThrowsError = false
+    var deleteUserThrowsError = false
 
     func loadStorage() throws {}
 
@@ -11,6 +17,10 @@ class MockUserStorage: UserStorage, @unchecked Sendable {
     }
 
     func delete(user: UserDTO) throws {
+        if deleteUserThrowsError {
+            throw MockUserStorageError.testError
+        }
+
         if let index = authenticationUsersMockArray.firstIndex(where: { currentUser in
             user.userId == currentUser.userId &&
                 user.projectId == currentUser.projectId
@@ -28,12 +38,20 @@ class MockUserStorage: UserStorage, @unchecked Sendable {
         }
     }
 
-    func all() -> [UserDTO] {
-        authenticationUsersMockArray
+    func all() throws -> [UserDTO] {
+        if getUsersThrowsError {
+            throw MockUserStorageError.testError
+        }
+
+        return authenticationUsersMockArray
     }
 
-    func getUser(by userId: String, projectId: String) -> UserDTO? {
-        authenticationUsersMockArray.filter { user in
+    func getUser(by userId: String, projectId: String) throws -> UserDTO? {
+        if getUserThrowsError {
+            throw MockUserStorageError.testError
+        }
+
+        return authenticationUsersMockArray.filter { user in
             user.userId == userId && user.projectId == projectId
         }.first
     }

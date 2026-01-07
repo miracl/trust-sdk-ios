@@ -178,134 +178,126 @@ final class SQLiteUserStorage: NSObject, UserStorage {
         )
     }
 
-    func all() -> [UserDTO] {
+    func all() throws -> [UserDTO] {
         let selectAllUsers = """
             SELECT * FROM User
         """
 
-        do {
-            var users = [UserDTO]()
-            try sqliteHelper.select(
-                statement: selectAllUsers,
-                bindingsBlock: nil,
-                bindResultBlock: { statement in
-                    let userId = String(cString: sqlite3_column_text(statement, 0))
-                    let projectId = String(cString: sqlite3_column_text(statement, 1))
+        var users = [UserDTO]()
+        try sqliteHelper.select(
+            statement: selectAllUsers,
+            bindingsBlock: nil,
+            bindResultBlock: { statement in
+                let userId = String(cString: sqlite3_column_text(statement, 0))
+                let projectId = String(cString: sqlite3_column_text(statement, 1))
 
-                    let isRevoked = Int(sqlite3_column_int(statement, 2))
-                    let revoked = Bool(truncating: isRevoked as NSNumber)
+                let isRevoked = Int(sqlite3_column_int(statement, 2))
+                let revoked = Bool(truncating: isRevoked as NSNumber)
 
-                    let dtas = String(cString: sqlite3_column_text(statement, 3))
+                let dtas = String(cString: sqlite3_column_text(statement, 3))
 
-                    var mpinId = Data()
-                    if let pointer = sqlite3_column_blob(statement, 4) {
-                        let size = sqlite3_column_bytes(statement, 4)
-                        let data = Data(bytes: pointer, count: Int(size))
+                var mpinId = Data()
+                if let pointer = sqlite3_column_blob(statement, 4) {
+                    let size = sqlite3_column_bytes(statement, 4)
+                    let data = Data(bytes: pointer, count: Int(size))
 
-                        mpinId = data
-                    }
-
-                    var token = Data()
-                    if let pointer = sqlite3_column_blob(statement, 5) {
-                        let size = sqlite3_column_bytes(statement, 5)
-                        let data = Data(bytes: pointer, count: Int(size))
-
-                        token = data
-                    }
-
-                    let pinLength = Int(sqlite3_column_int(statement, 6))
-
-                    var publicKey: Data?
-                    if let pointer = sqlite3_column_blob(statement, 7) {
-                        let size = sqlite3_column_bytes(statement, 7)
-                        let data = Data(bytes: pointer, count: Int(size))
-
-                        publicKey = data
-                    }
-
-                    let iteratedUser = UserDTO(
-                        userId: userId,
-                        projectId: projectId,
-                        revoked: revoked,
-                        pinLength: pinLength,
-                        mpinId: mpinId,
-                        token: token,
-                        dtas: dtas,
-                        publicKey: publicKey
-                    )
-                    users.append(iteratedUser)
+                    mpinId = data
                 }
-            )
-            return users
-        } catch {
-            return []
-        }
+
+                var token = Data()
+                if let pointer = sqlite3_column_blob(statement, 5) {
+                    let size = sqlite3_column_bytes(statement, 5)
+                    let data = Data(bytes: pointer, count: Int(size))
+
+                    token = data
+                }
+
+                let pinLength = Int(sqlite3_column_int(statement, 6))
+
+                var publicKey: Data?
+                if let pointer = sqlite3_column_blob(statement, 7) {
+                    let size = sqlite3_column_bytes(statement, 7)
+                    let data = Data(bytes: pointer, count: Int(size))
+
+                    publicKey = data
+                }
+
+                let iteratedUser = UserDTO(
+                    userId: userId,
+                    projectId: projectId,
+                    revoked: revoked,
+                    pinLength: pinLength,
+                    mpinId: mpinId,
+                    token: token,
+                    dtas: dtas,
+                    publicKey: publicKey
+                )
+                users.append(iteratedUser)
+            }
+        )
+        return users
     }
 
-    func getUser(by userId: String, projectId: String) -> UserDTO? {
+    func getUser(by userId: String, projectId: String) throws -> UserDTO? {
         let selectUserByUserIdAndProjectId = """
             SELECT * FROM User WHERE userId = ? AND projectId = ?
         """
 
-        do {
-            var user: UserDTO?
-            try sqliteHelper.select(
-                statement: selectUserByUserIdAndProjectId,
-                bindingsBlock: { statement in
-                    let userId = userId as NSString
-                    sqlite3_bind_text(statement, 1, userId.utf8String, -1, nil)
+        var user: UserDTO?
+        try sqliteHelper.select(
+            statement: selectUserByUserIdAndProjectId,
+            bindingsBlock: { statement in
+                let userId = userId as NSString
+                sqlite3_bind_text(statement, 1, userId.utf8String, -1, nil)
 
-                    let projectId = projectId as NSString
-                    sqlite3_bind_text(statement, 2, projectId.utf8String, -1, nil)
-                }, bindResultBlock: { statement in
-                    let userId = String(cString: sqlite3_column_text(statement, 0))
-                    let projectId = String(cString: sqlite3_column_text(statement, 1))
+                let projectId = projectId as NSString
+                sqlite3_bind_text(statement, 2, projectId.utf8String, -1, nil)
+            }, bindResultBlock: { statement in
+                let userId = String(cString: sqlite3_column_text(statement, 0))
+                let projectId = String(cString: sqlite3_column_text(statement, 1))
 
-                    let isRevoked = Int(sqlite3_column_int(statement, 2))
-                    let revoked = Bool(truncating: isRevoked as NSNumber)
+                let isRevoked = Int(sqlite3_column_int(statement, 2))
+                let revoked = Bool(truncating: isRevoked as NSNumber)
 
-                    let dtas = String(cString: sqlite3_column_text(statement, 3))
+                let dtas = String(cString: sqlite3_column_text(statement, 3))
 
-                    var mpinId = Data()
-                    if let pointer = sqlite3_column_blob(statement, 4) {
-                        let size = sqlite3_column_bytes(statement, 4)
-                        let data = Data(bytes: pointer, count: Int(size))
+                var mpinId = Data()
+                if let pointer = sqlite3_column_blob(statement, 4) {
+                    let size = sqlite3_column_bytes(statement, 4)
+                    let data = Data(bytes: pointer, count: Int(size))
 
-                        mpinId = data
-                    }
-
-                    var token = Data()
-                    if let pointer = sqlite3_column_blob(statement, 5) {
-                        let size = sqlite3_column_bytes(statement, 5)
-                        let data = Data(bytes: pointer, count: Int(size))
-
-                        token = data
-                    }
-
-                    let pinLength = Int(sqlite3_column_int(statement, 6))
-
-                    var publicKey: Data?
-                    if let pointer = sqlite3_column_blob(statement, 7) {
-                        let size = sqlite3_column_bytes(statement, 7)
-                        let data = Data(bytes: pointer, count: Int(size))
-
-                        publicKey = data
-                    }
-                    user = UserDTO(
-                        userId: userId,
-                        projectId: projectId,
-                        revoked: revoked,
-                        pinLength: pinLength,
-                        mpinId: mpinId,
-                        token: token,
-                        dtas: dtas,
-                        publicKey: publicKey
-                    )
+                    mpinId = data
                 }
-            )
-            return user
-        } catch {
-            return nil
-        }
+
+                var token = Data()
+                if let pointer = sqlite3_column_blob(statement, 5) {
+                    let size = sqlite3_column_bytes(statement, 5)
+                    let data = Data(bytes: pointer, count: Int(size))
+
+                    token = data
+                }
+
+                let pinLength = Int(sqlite3_column_int(statement, 6))
+
+                var publicKey: Data?
+                if let pointer = sqlite3_column_blob(statement, 7) {
+                    let size = sqlite3_column_bytes(statement, 7)
+                    let data = Data(bytes: pointer, count: Int(size))
+
+                    publicKey = data
+                }
+                user = UserDTO(
+                    userId: userId,
+                    projectId: projectId,
+                    revoked: revoked,
+                    pinLength: pinLength,
+                    mpinId: mpinId,
+                    token: token,
+                    dtas: dtas,
+                    publicKey: publicKey
+                )
+            }
+        )
+        return user
     }
 }

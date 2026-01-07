@@ -290,7 +290,7 @@ final class Registrator: Sendable {
                 publicKey: publicKey
             )
 
-            if userStorage.getUser(
+            if try userStorage.getUser(
                 by: userId,
                 projectId: projectId
             ) != nil {

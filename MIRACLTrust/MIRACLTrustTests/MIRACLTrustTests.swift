@@ -1031,10 +1031,145 @@ class MIRACLTrustTests: XCTestCase {
         XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
     }
 
-    func testGetAllUsers() throws {
+    func testGetUsers() throws {
         let userDTO = createUserDTO()
         try mockUserStorage.add(user: userDTO)
         XCTAssertTrue(MIRACLTrust.getInstance().users.count == 1)
+    }
+
+    func testGetUsersAsync() throws {
+        let userDTO = createUserDTO()
+        try mockUserStorage.add(user: userDTO)
+        let expectation = XCTestExpectation(description: "Get all users asychrounisly")
+
+        MIRACLTrust.getInstance().getUsers { users, error in
+            XCTAssertEqual(users?.count, 1)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation])
+    }
+
+    func testGetUsersError() throws {
+        let userDTO = createUserDTO()
+        mockUserStorage.getUsersThrowsError = true
+        try mockUserStorage.add(user: userDTO)
+        let expectation = XCTestExpectation(description: "Get all users for error")
+
+        MIRACLTrust.getInstance().getUsers { users, error in
+            XCTAssertNil(users)
+            XCTAssertNotNil(error)
+
+            assertError(current: error, expected: MockUserStorageError.testError)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation])
+    }
+
+    func testGetUserAsync() throws {
+        let userDTO = createUserDTO()
+        try mockUserStorage.add(user: userDTO)
+
+        let expectation = XCTestExpectation(description: "Wait for user")
+        let userId = randomString
+        MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+            do {
+                XCTAssertNil(error)
+                let user = try XCTUnwrap(user)
+
+                XCTAssertEqual(user.userId, userDTO.userId)
+                XCTAssertEqual(user.projectId, userDTO.projectId)
+                XCTAssertEqual(user.revoked, userDTO.revoked)
+                XCTAssertEqual(user.pinLength, userDTO.pinLength)
+                XCTAssertEqual(user.mpinId, userDTO.mpinId)
+                XCTAssertEqual(user.token, userDTO.token)
+                XCTAssertEqual(user.dtas, userDTO.dtas)
+                XCTAssertEqual(user.publicKey, userDTO.publicKey)
+
+                expectation.fulfill()
+            } catch {
+                XCTFail("Error when getting user asynchronously = \(error)")
+            }
+        }
+
+        wait(for: [expectation])
+    }
+
+    func testGetNotExisitingUserAsync() throws {
+        projectId = randomString
+        let userDTO = createUserDTO()
+
+        try mockUserStorage.add(user: userDTO)
+
+        let expectation = XCTestExpectation(description: "Wait for user")
+        let userId = randomString
+
+        MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+            XCTAssertNil(user)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation])
+    }
+
+    func testGetUserReturnsError() throws {
+        let userDTO = createUserDTO()
+
+        mockUserStorage.getUserThrowsError = true
+        try mockUserStorage.add(user: userDTO)
+
+        let expectation = XCTestExpectation(description: "Wait for user")
+        let userId = randomString
+
+        MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+            XCTAssertNil(user)
+            XCTAssertNotNil(error)
+            assertError(current: error, expected: MockUserStorageError.testError)
+
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation])
+    }
+
+    func testDeleteUserAsync() throws {
+        let userDTO = createUserDTO()
+        try mockUserStorage.add(user: userDTO)
+
+        let expectation = XCTestExpectation(description: "Wait for user")
+        let userId = randomString
+
+        let user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: userId))
+
+        MIRACLTrust.getInstance().delete(user: user) { isDeleted, error in
+            XCTAssertTrue(isDeleted)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        wait(for: [expectation])
+
+        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
+    }
+
+    func testDeleteUserThrowsErrorAsync() throws {
+        mockUserStorage.deleteUserThrowsError = true
+
+        let userDTO = createUserDTO()
+        let expectation = XCTestExpectation(description: "Wait for user")
+
+        let user = try XCTUnwrap(userDTO.toUser())
+
+        MIRACLTrust.getInstance().delete(user: user) { isDeleted, error in
+            XCTAssertFalse(isDeleted)
+            assertError(current: error, expected: MockUserStorageError.testError)
+            expectation.fulfill()
+        }
+        wait(for: [expectation])
+
+        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
     }
 
     // MARK: Private

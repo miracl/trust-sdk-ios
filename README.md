@@ -655,79 +655,91 @@ previously registered users.
 #### Get a registered user
 
 To retrieve a specific registered user by their User ID, use the
-[getUser(by:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getuser%28by:%29)
+[getUser(userId:completionHandler)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getuser%28userid:completionhandler:%29)
 method:
 
 Swift:
 
 ```swift
-let user = MIRACLTrust.getInstance().getUser(by: userId)
-if let user = user {
-    // User exists.
-} else {
-    // No user registered with this User ID.
-}
+MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+    if let user {
+        // User exists.
+    } if let error {
+        // Cannot retrieve the user due to an error.
+    } else {
+        // No user registered with this User ID.
+    }
+} 
 ```
 
 Objective-C:
 
 ```objc
-User *user = [[MIRACLTrust getInstance] getUserBy:userId];
-if (user != nil) {
-    // User exists.
-} else {
-    // No user registered with this User ID.
-}
+[[MIRACLTrust getInstance] 
+    getUserWithUserId: userId 
+    completionHandler:^(User * user, NSError *error) {
+        if (user != nil) {
+            // User exists.
+        } else if (error != nil) {
+            // Cannot retrieve the user due to an error.
+        } else {
+            // No user registered with this User ID.
+        }
+    }];
 ```
 
 #### Get all registered users
 
 To obtain the list of all users registered on а device, access the
-[users](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/users)
-property:
-
-Swift:
-
-```swift
-let users = MIRACLTrust.getInstance().users
-// Handle list of registered users.
-```
-
-Objective-C:
-
-```objc
-NSArray<User *> *users = [MIRACLTrust.getInstance users];
-// Handle list of registered users.
-```
-
-#### Delete a registered user
-
-To delete a previously registered user from a device, call the
-[delete(user:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/delete%28user:%29)
+[getUsers(completionHandler:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getUsers)
 method:
 
 Swift:
 
 ```swift
-do {
-    try MIRACLTrust.getInstance().delete(user: user)
-    // User deleted successfully.
-} catch {
-    // Cannot delete the user due to an error.
+MIRACLTrust.getInstance().getUsers { users, error in 
+    // Handle registered users.
 }
 ```
 
 Objective-C:
 
 ```objc
-NSError *error = nil;
-[[MIRACLTrust getInstance] deleteWithUser:user error:&error];
+[[MIRACLTrust getInstance] getUsersWithCompletionHandler:^(NSArray<User *> * users, NSError * error) {
+    // Handle registered users.
+}];
+```
 
-if (error == nil) {
-    // User deleted successfully.
-} else {
-    // Cannot delete the user due to an error.
+#### Delete a registered user
+
+To delete a previously registered user from a device, call the
+[delete(user:completionHandler:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/miracltrust/delete%28user:completionhandler:%29)
+method:
+
+Swift:
+
+```swift
+MIRACLTrust.getInstance().delete(user: user) { isDeleted, error in
+    if isDeleted {
+         // User deleted successfully.
+    } else if let error {
+        // Cannot delete the user due to an error.
+    }
 }
+```
+
+Objective-C:
+
+```objc
+[[MIRACLTrust getInstance] 
+    deleteWithUser: user 
+    completionHandler:^(BOOL isDeleted, NSError * error) {
+        if (isDeleted) {
+            // User deleted successfully.
+        } else if (error != nil) {
+            // Cannot delete the user due to an error.
+        }
+    }];
 ```
 
 ## FAQ

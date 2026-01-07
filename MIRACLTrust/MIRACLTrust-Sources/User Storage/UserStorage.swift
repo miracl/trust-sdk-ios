@@ -21,11 +21,11 @@ public protocol UserStorage: Sendable {
     func update(user: UserDTO) throws
 
     /// Get all users written in the storage.
-    func all() -> [UserDTO]
+    func all() throws -> [UserDTO]
 
     /// Get User object by its user id and project id. If User isn't present in the storage this method returns nil.
     /// - Parameters:
     ///   - userId: a user id to be checked in the storage.
     ///   - projectId: a project id to be checked in the storage.
-    func getUser(by userId: String, projectId: String) -> UserDTO?
+    func getUser(by userId: String, projectId: String) throws -> UserDTO?
 }

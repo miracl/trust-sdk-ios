@@ -232,6 +232,50 @@ public typealias CrossDeviceSessionCompletionHandler = @MainActor @Sendable (Cro
 /// handler can also be passed safely across concurrency domains.
 public typealias CrossDeviceSessionAborterCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
 
+/// A completion handler executed when the
+/// ``MIRACLTrust/MIRACLTrust/getUser(userId:completionHandler:)``
+/// method returns its result.
+///
+/// ## Closure Parameters
+/// 1. The retrieved ``User `` object if found in the storage, `nil` if the
+///   operation failed or if the ``User`` object isn't found in the storage.
+/// 2. An optional error describing why the user retrieval operation failed. This value
+///   is typically `nil` when the first parameter is non-`nil`.
+///
+/// > Note: The closure is always invoked on the main actor, making it safe to update
+/// user interface elements directly. Because it is marked @Sendable, the
+/// handler can also be passed safely across concurrency domains.
+///
+public typealias GetUserCompletionHandler = @MainActor @Sendable (User?, Error?) -> Void
+
+/// A completion handler executed when the
+/// ``MIRACLTrust/MIRACLTrust/delete(user:completionHandler:)``
+/// method returns its result.
+///
+/// ## Closure Parameters
+/// 1. A Boolean value indicating whether the user was deleted successfully.
+/// 2. An optional error describing why the deletion operation failed. This value
+///    is typically `nil` when the first parameter is `true`.
+///
+/// > Note: The closure is always invoked on the main actor, making it safe to update
+/// user interface elements directly. Because it is marked @Sendable, the
+/// handler can also be passed safely across concurrency domains.
+public typealias DeleteUserCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
+
+/// A completion handler executed when the
+/// ``MIRACLTrust/MIRACLTrust/getUsers(completionHandler:)``
+/// method returns its result.
+///
+/// ## Closure Parameters
+/// 1. An array of already registered users. It is empty when there are no registered users.
+/// 2. An optional error describing why the operation failed. This value
+///    is typically `nil` when the first parameter is non-`nil`.
+///
+/// > Note: The closure is always invoked on the main actor, making it safe to update
+/// user interface elements directly. Because it is marked @Sendable, the
+/// handler can also be passed safely across concurrency domains.
+public typealias GetUsersCompletionHandler = @MainActor @Sendable ([User]?, Error?) -> Void
+
 public let MIRACL_API_URL = "https://api.mpin.io"
 
 // MARK: Private
