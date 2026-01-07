@@ -289,11 +289,22 @@
     dict = [self.registration registerUserWithId:self.userId
                                  activationToken:self.activationToken];
     
-    User *user = [[MIRACLTrust getInstance] getUserBy:self.userId];
-    
     XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
+    
+    __block User *user = [[MIRACLTrust getInstance] getUserBy:self.userId];
     XCTAssertFalse([user isEqual:[NSNull null]]);
-    if (user != nil){
+    
+    XCTestExpectation *waitForUser= [[XCTestExpectation alloc] initWithDescription:@"Wait for Async User Retrieval"];
+    [[MIRACLTrust getInstance] getUserWithUserId:self.userId completionHandler:^(User * returnedUser, NSError* error) {
+        user = returnedUser;
+        [waitForUser fulfill];
+    }];
+    
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[waitForUser]
+                                                    timeout:10.0];
+    XCTAssertFalse([user isEqual:[NSNull null]]);
+    
+    if (user != nil && result == XCTWaiterResultCompleted){
         dict = [self.authentication authenticateUser:user
                                               qrCode:self.qrCodeURL];
         
@@ -402,13 +413,47 @@
         XCTAssertEqual(dict[@"jwt"], [NSNull null]);
         NSError *revokedError = (NSError *)dict[@"error"];
         XCTAssertEqualObjects(revokedError.description, @"MIRACLTrust.AuthenticationError.revoked");
-        
+  
         NSError *deletionError;
         [[MIRACLTrust getInstance] deleteWithUser:user error:&deletionError];
         
         if (deletionError != nil) {
             XCTFail(@"Deletion of user has failed");
             return;
+        }
+        
+        NSString *anotherUserId = [[NSUUID UUID] UUIDString];
+        verificationURL = [self.api getVerificaitonURLWithServiceAccountToken:serviceAccountToken
+                                                                           projectId:projectId
+                                                                          projectURL:projectURL
+                                                                              userId:anotherUserId
+                                                                            accessId:self.session.accessId
+                                                                          expiration:nil];
+        dict = [self.getActivationTokenCompatiblityCase getActivationTokenFrom:verificationURL];
+        self.activationToken = dict[@"activationToken"];
+        
+        dict = [self.registration registerUserWithId:anotherUserId
+                                     activationToken:self.activationToken];
+        
+        XCTestExpectation *expectationForAllUsers = [[XCTestExpectation alloc] initWithDescription:@"Wait for getting all users"];
+        [[MIRACLTrust getInstance] getUsersWithCompletionHandler:^(NSArray<User *> * users, NSError * error) {
+            XCTAssertEqual(users.count, 1);
+            XCTAssertNil(error);
+        }];
+        [expectationForAllUsers fulfill];
+        
+        __block User *anotherUser = [[MIRACLTrust getInstance] getUserBy:anotherUserId];
+        XCTestExpectation *expectationForDeletion = [[XCTestExpectation alloc] initWithDescription:@"Wait for another user deletion"];
+        [[MIRACLTrust getInstance] deleteWithUser:anotherUser completionHandler:^(BOOL isDeleted, NSError * error) {
+            XCTAssertTrue(isDeleted);
+            XCTAssertNil(error);
+            [expectationForDeletion fulfill];
+        }];
+        
+        XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectationForDeletion]
+                                                        timeout:10.0];
+        if(result != XCTWaiterResultCompleted) {
+            XCTFail(@"Cannot delete user asynchrouniusly");
         }
     }
 }

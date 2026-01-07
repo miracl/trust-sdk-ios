@@ -5,9 +5,16 @@ import Foundation
 @objc open class MIRACLTrust: NSObject {
     // MARK: Public properties
 
+    /// Retrieves the collection of all users from the ``UserStorage`` implementation.
+    ///
+    /// - Note: If the storage operation fails or throws an error, this property silently catches the exception and returns an empty array (`[]`).
     @objc public var users: [User] {
-        userStorage.all().map {
-            $0.toUser()
+        do {
+            return try userStorage.all().map {
+                $0.toUser()
+            }
+        } catch {
+            return []
         }
     }
 
@@ -869,20 +876,99 @@ import Foundation
 
     // MARK: Getting single user
 
-    /// Get a registered user.
+    /// Retrieves a registered user synchronously.
+    ///
     /// - Parameters:
-    ///   - userId: id of the user. Can be email or any other string.
-    /// - Returns: User object from the database. Returns nil if there is no such object in the storage.
+    ///   - userId: an identifier of the user (e.g. email address).
+    /// - Returns: The ``User`` object if found; otherwise `nil` (e.g., if the user does not exist or a storage error occurs).
     @objc public func getUser(by userId: String) -> User? {
-        userStorage.getUser(by: userId, projectId: projectId)?.toUser()
+        try? userStorage.getUser(by: userId, projectId: projectId)?.toUser()
+    }
+
+    /// Retrieves a registered user asynchronously.
+    ///
+    /// - Parameters:
+    ///   - userId: an identifier of the user (e.g. email address).
+    ///   - completionHandler: The ``GetUserCompletionHandler`` closure to execute when the request completes.
+    @objc public func getUser(
+        userId: String,
+        completionHandler: @escaping GetUserCompletionHandler
+    ) {
+        let storage = userStorage
+        let projectId = projectId
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let user = try storage.getUser(by: userId, projectId: projectId)
+                DispatchQueue.main.async {
+                    completionHandler(user?.toUser(), nil)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completionHandler(nil, error)
+                }
+            }
+        }
+    }
+
+    // MARK: Getting all registered users
+
+    /// Retrieves a list of all registered users asynchronously.
+    ///
+    /// - Parameter completionHandler: The ``GetUsersCompletionHandler`` closure to execute when the request completes.
+    @objc public func getUsers(completionHandler: @escaping GetUsersCompletionHandler) {
+        let storage = userStorage
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let allUsers = try storage.all().map { userDTO in
+                    userDTO.toUser()
+                }
+
+                DispatchQueue.main.async {
+                    completionHandler(allUsers, nil)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completionHandler(nil, error)
+                }
+            }
+        }
     }
 
     // MARK: Identities Removal
 
-    /// Delete a registered user.
-    /// - Parameter user: object that needs to be deleted.
+    /// Deletes a registered user synchronously.
+    ///
+    /// - Parameter user: The ``User`` object to delete.
     @objc public func delete(user: User) throws {
         try userStorage.delete(user: user.toUserDTO())
+    }
+
+    /// Deletes a registered user asynchronously.
+    ///
+    /// - Parameters:
+    ///   - user: The ``User`` object to delete.
+    ///   - completionHandler: The ``DeleteUserCompletionHandler`` closure to execute when the request completes.
+    @objc public func delete(
+        user: User,
+        completionHandler: @escaping DeleteUserCompletionHandler
+    ) {
+        let storage = userStorage
+        let completionHandler = completionHandler
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                try storage.delete(user: user.toUserDTO())
+
+                DispatchQueue.main.async {
+                    completionHandler(true, nil)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completionHandler(false, error)
+                }
+            }
+        }
     }
 
     // MARK: Private methods

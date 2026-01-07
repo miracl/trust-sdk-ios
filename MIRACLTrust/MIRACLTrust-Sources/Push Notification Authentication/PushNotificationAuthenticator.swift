@@ -39,14 +39,6 @@ struct PushNotificationAuthenticator: Sendable {
             return
         }
 
-        guard let user = userStorage.getUser(by: userId, projectId: projectId)?.toUser() else {
-            callCompletionHandler(
-                authenticated: false,
-                error: AuthenticationError.userNotFound
-            )
-            return
-        }
-
         guard let qrCode = payload["qrURL"] as? String,
               let urlComponents = URLComponents(string: qrCode),
               let accessId = urlComponents.fragment, !accessId.isEmpty else {
@@ -58,6 +50,14 @@ struct PushNotificationAuthenticator: Sendable {
         }
 
         do {
+            guard let user = try userStorage.getUser(by: userId, projectId: projectId)?.toUser() else {
+                callCompletionHandler(
+                    authenticated: false,
+                    error: AuthenticationError.userNotFound
+                )
+                return
+            }
+
             if var authenticator = authenticator {
                 authenticator.completionHandler = authenticationResult
                 authenticator.authenticate()
