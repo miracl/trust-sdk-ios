@@ -66,32 +66,6 @@ import MIRACLTrust
         return session
     }
 
-    @objc func startSigningSession(
-        projectID: String,
-        projectURL: String,
-        userID: String,
-        hash: String,
-        description: String
-    ) -> String? {
-        let sessionExpectation = XCTestExpectation(description: "Wait for getting Signing Session")
-        nonisolated(unsafe) var qrCode: String?
-
-        platformAPI.startSigningSession(
-            projectID: projectID,
-            projectURL: projectURL,
-            userID: userID,
-            hash: hash,
-            description: description
-        ) { signingSession, _ in
-            qrCode = signingSession?.qrURL
-            sessionExpectation.fulfill()
-        }
-
-        _ = XCTWaiter.wait(for: [sessionExpectation], timeout: operationTimeout)
-
-        return qrCode
-    }
-
     func verifySignature(
         signingResult: SigningResult,
         serviceAccountToken: String,

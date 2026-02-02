@@ -9,7 +9,6 @@ class SigningIntegrationTests: XCTestCase {
     var authentication = QRAuthenticationTestCase()
     var getActivationToken = GetActivationTokenTestCase()
     var signing = SigningTestCase()
-    var signingSessionDetails = GetSigningSessionDetailsTestCase()
     var crossDeviceSession = GetCrossDeviceSessionTestCase()
 
     var session: StartSessionResult?
@@ -108,50 +107,6 @@ class SigningIntegrationTests: XCTestCase {
 
         let unwrappedSigningResult = try XCTUnwrap(signingResult)
         XCTAssertEqual(messageHash.hex, unwrappedSigningResult.signature.signatureHash)
-
-        let verifySigningResponse = try XCTUnwrap(
-            api.verifySignature(
-                signingResult: unwrappedSigningResult,
-                serviceAccountToken: serviceAccountToken,
-                projectId: projectId,
-                projectURL: projectURL
-            )
-        )
-
-        let jwks = try String(contentsOf: XCTUnwrap(URL(string: "\(projectURL)/dvs/jwks")))
-        let signers = JWTSigners()
-        try signers.use(jwksJSON: jwks)
-        let payload = try signers.verify(verifySigningResponse.certificate, as: SignatureCertificateJWTPayload.self)
-
-        XCTAssertEqual(messageHash.hex, payload.hash)
-    }
-
-    func testSigningCorrectnessWithSessionDetails() throws {
-        let hash = messageHash.hex
-        let qrCode = try XCTUnwrap(
-            api.startSigningSession(
-                projectID: projectId,
-                projectURL: projectURL,
-                userID: userId,
-                hash: hash,
-                description: "Test transaction"
-            )
-        )
-
-        var (signingSessionDetails, _) = signingSessionDetails.getSigningSessionDetails(qrCode: qrCode)
-        signingSessionDetails = try XCTUnwrap(signingSessionDetails)
-
-        let (signingResult, error) = try signing.signMessage(
-            message: messageHash,
-            user: XCTUnwrap(registeredSigningUser),
-            signingSessionDetails: signingSessionDetails
-        )
-
-        XCTAssertNotNil(signingResult)
-        XCTAssertNil(error)
-
-        let unwrappedSigningResult = try XCTUnwrap(signingResult)
-        XCTAssertEqual(hash, unwrappedSigningResult.signature.signatureHash)
 
         let verifySigningResponse = try XCTUnwrap(
             api.verifySignature(
@@ -393,60 +348,7 @@ class SigningIntegrationTests: XCTestCase {
         )
     }
 
-    func testSigningWithInvalidSessionDetails() throws {
-        let sessionDetails = createRandomSigningSessionDetails()
-
-        let expectedError = SigningError.invalidSigningSession
-
-        let (signingResult, error) = try signing.signMessage(
-            message: messageHash,
-            user: XCTUnwrap(registeredSigningUser),
-            signingSessionDetails: sessionDetails
-        )
-
-        XCTAssertNil(signingResult)
-        assertError(current: error, expected: expectedError)
-    }
-
-    func testSigningWithEmptySessionDetails() throws {
-        let sessionDetails = createRandomSigningSessionDetails(sessionId: "")
-
-        let expectedError = SigningError.invalidSigningSessionDetails
-
-        let (signingResult, error) = try signing.signMessage(
-            message: messageHash,
-            user: XCTUnwrap(registeredSigningUser),
-            signingSessionDetails: sessionDetails
-        )
-
-        XCTAssertNil(signingResult)
-        assertError(current: error, expected: expectedError)
-    }
-
     // MARK: Private
-
-    private func createRandomSigningSessionDetails(
-        sessionId: String = UUID().uuidString
-    ) -> SigningSessionDetails {
-        SigningSessionDetails(
-            userId: UUID().uuidString,
-            projectName: UUID().uuidString,
-            projectLogoURL: UUID().uuidString,
-            projectId: UUID().uuidString,
-            pinLength: 4,
-            verificationMethod: .standardEmail,
-            verificationURL: UUID().uuidString,
-            verificationCustomText: UUID().uuidString,
-            identityTypeLabel: UUID().uuidString,
-            quickCodeEnabled: Bool.random(),
-            identityType: .alphanumeric,
-            sessionId: sessionId,
-            signingHash: UUID().uuidString,
-            signingDescription: UUID().uuidString,
-            status: .active,
-            expireTime: Date()
-        )
-    }
 
     private func createRandomUser(publicKey: Data? = Data([1, 2, 3])) -> User {
         User(

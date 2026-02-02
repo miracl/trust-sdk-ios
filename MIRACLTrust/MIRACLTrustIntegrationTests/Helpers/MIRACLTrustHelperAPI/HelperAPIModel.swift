@@ -64,22 +64,3 @@ struct SessionRequestBody: Codable {
 struct EmptyRequestBody: Codable {}
 
 struct EmptyResponse: Codable {}
-
-@objc public final class SigningSession: NSObject, Sendable {
-    public let qrURL: String
-
-    public init(qrURL: String) {
-        self.qrURL = qrURL
-    }
-}
-
-struct SigningSessionResponse: Codable {
-    var qrURL: String
-}
-
-struct SigningSessionRequestBody: Codable {
-    var projectID: String
-    var userID: String
-    var hash: String
-    var description: String
-}

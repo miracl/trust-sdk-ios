@@ -81,25 +81,6 @@ class MIRACLTrustTests: XCTestCase {
         sessionDetailResponse.identityType = "email"
         sessionDetailResponse.quickCodeEnabled = true
 
-        let signingSessionDetailsResponse = SigningSessionDetailsResponse(
-            userID: randomString,
-            signingHash: randomString,
-            signingDescription: randomString,
-            status: "active",
-            expireTime: currentDate,
-            projectId: randomString,
-            projectName: randomString,
-            projectLogoURL: randomString,
-            verificationMethod: "standardEmail",
-            verificationURL: randomString,
-            verificationCustomText: randomString,
-            identityType: "email",
-            identityTypeLabel: randomString,
-            pinLength: 4,
-            enableRegistrationCode: randomBool
-        )
-
-        mockAPI.signingSessionDetailsResponse = signingSessionDetailsResponse
         mockAPI.sessionDetailsResponse = sessionDetailResponse
         mockAPI.pass1Response = pass1Response
         mockAPI.pass2Response = pass2Response
@@ -111,11 +92,6 @@ class MIRACLTrustTests: XCTestCase {
         mockAPI.verificationResponse = VerificationRequestResponse(backoff: backoff, method: "link")
         mockAPI.verificationConfirmationResponse = verificationConfirmationResponse
         mockAPI.sessionAborterResultCall = .success
-        mockAPI.signingSessionAborterResultCall = .success
-
-        mockAPI.signingSessionCompleterError = nil
-        mockAPI.signingSessionCompleterResultCall = .success
-        mockAPI.signingSessionCompleterResponse = SigningSessionCompleterResponse(status: "signed")
 
         mockAPI.verificationResponse = VerificationRequestResponse(backoff: backoff, method: "link")
         mockAPI.verificationResultCall = .success
@@ -733,120 +709,6 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [completionHandlerExpectation], timeout: 20.0)
     }
 
-    func testQRSigningSession() {
-        let sessionId = "b227d0850d4280b98c5124a14aec84bf"
-        let qrCode = "https://mobile.int.miracl.net/dvs#\(sessionId)"
-
-        let completionHandlerExpectation = XCTestExpectation(description: "qrsigningsession")
-
-        let randomString = randomString
-        let randomBool = randomBool
-        let currentDate = currentDate
-
-        MIRACLTrust.getInstance().getSigningSessionDetailsFromQRCode(qrCode: qrCode) { signingSessionDetails, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            XCTAssertNil(error)
-            XCTAssertNotNil(signingSessionDetails)
-
-            do {
-                let unwrappedSessionDetails = try XCTUnwrap(signingSessionDetails)
-                XCTAssertEqual(unwrappedSessionDetails.userId, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.signingHash, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.signingDescription, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.status, SigningSessionStatus.active)
-                XCTAssertEqual(unwrappedSessionDetails.projectId, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.projectName, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.projectLogoURL, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.verificationMethod, VerificationMethod.standardEmail)
-                XCTAssertEqual(unwrappedSessionDetails.verificationURL, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.verificationCustomText, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.identityType, IdentityType.email)
-                XCTAssertEqual(unwrappedSessionDetails.identityTypeLabel, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.pinLength, 4)
-                XCTAssertEqual(unwrappedSessionDetails.quickCodeEnabled, randomBool)
-                XCTAssertEqual(unwrappedSessionDetails.expireTime, Date(timeIntervalSince1970: TimeInterval(currentDate)))
-            } catch {
-                XCTFail("No signingSessionDetails object")
-            }
-            completionHandlerExpectation.fulfill()
-        }
-
-        wait(for: [completionHandlerExpectation], timeout: 20.0)
-    }
-
-    func testQRSigningSessionForError() {
-        let sessionId = ""
-        let qrCode = "https://mobile.int.miracl.net/dvs#\(sessionId)"
-
-        let completionHandlerExpectation = XCTestExpectation(description: "qrsigningsession - fail")
-
-        MIRACLTrust.getInstance().getSigningSessionDetailsFromQRCode(qrCode: qrCode) { signingSessionDetails, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            XCTAssertNil(signingSessionDetails)
-            assertError(current: error, expected: SigningSessionError.invalidQRCode)
-            completionHandlerExpectation.fulfill()
-        }
-
-        wait(for: [completionHandlerExpectation], timeout: 20.0)
-    }
-
-    func testUniversalLinkURLSigningSession() throws {
-        let sessionId = "b227d0850d4280b98c5124a14aec84bf"
-        let qrCode = try XCTUnwrap(URL(string: "https://mobile.int.miracl.net/dvs#\(sessionId)"))
-
-        let completionHandlerExpectation = XCTestExpectation(description: "universallinksigningsession")
-
-        let randomString = randomString
-        let randomBool = randomBool
-        let currentDate = currentDate
-
-        MIRACLTrust.getInstance().getSigningSessionDetailsFromUniversalLinkURL(universalLinkURL: qrCode) { signingSessionDetails, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            XCTAssertNil(error)
-            XCTAssertNotNil(signingSessionDetails)
-
-            do {
-                let unwrappedSessionDetails = try XCTUnwrap(signingSessionDetails)
-                XCTAssertEqual(unwrappedSessionDetails.userId, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.signingHash, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.signingDescription, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.status, SigningSessionStatus.active)
-                XCTAssertEqual(unwrappedSessionDetails.projectId, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.projectName, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.projectLogoURL, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.verificationMethod, VerificationMethod.standardEmail)
-                XCTAssertEqual(unwrappedSessionDetails.verificationURL,
-                               randomString)
-                XCTAssertEqual(unwrappedSessionDetails.verificationCustomText, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.identityType, IdentityType.email)
-                XCTAssertEqual(unwrappedSessionDetails.identityTypeLabel, randomString)
-                XCTAssertEqual(unwrappedSessionDetails.pinLength, 4)
-                XCTAssertEqual(unwrappedSessionDetails.quickCodeEnabled, randomBool)
-                XCTAssertEqual(unwrappedSessionDetails.expireTime, Date(timeIntervalSince1970: TimeInterval(currentDate)))
-            } catch {
-                XCTFail("No signingSessionDetails object")
-            }
-            completionHandlerExpectation.fulfill()
-        }
-
-        wait(for: [completionHandlerExpectation], timeout: 20.0)
-    }
-
-    func testUniversalLinkURLSigningSessionForError() throws {
-        let sessionId = ""
-        let qrCode = try XCTUnwrap(URL(string: "https://mobile.int.miracl.net/dvs#\(sessionId)"))
-
-        let completionHandlerExpectation = XCTestExpectation(description: "universallinksigningsession - fail")
-
-        MIRACLTrust.getInstance().getSigningSessionDetailsFromUniversalLinkURL(universalLinkURL: qrCode) { signingSessionDetails, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            XCTAssertNil(signingSessionDetails)
-            assertError(current: error, expected: SigningSessionError.invalidUniversalLinkURL)
-            completionHandlerExpectation.fulfill()
-        }
-        wait(for: [completionHandlerExpectation], timeout: 20.0)
-    }
-
     func testAbortAuthenticationSession() {
         let sessionDetails = createSessionDetails()
 
@@ -873,36 +735,6 @@ class MIRACLTrustTests: XCTestCase {
             assertError(current: error, expected: AuthenticationSessionError.invalidAuthenticationSessionDetails)
             completionHandlerExpectation.fulfill()
         }
-        wait(for: [completionHandlerExpectation], timeout: 20.0)
-    }
-
-    func testAbortSigningSession() {
-        let sessionDetails = createSigningSessionDetails()
-
-        let completionHandlerExpectation = XCTestExpectation(description: "abortsigningsession")
-
-        MIRACLTrust.getInstance().abortSigningSession(signingSessionDetails: sessionDetails) { aborted, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            XCTAssertTrue(aborted)
-            XCTAssertNil(error)
-
-            completionHandlerExpectation.fulfill()
-        }
-
-        wait(for: [completionHandlerExpectation], timeout: 20.0)
-    }
-
-    func testAbortSigningSessionError() {
-        let sessionDetails = createSigningSessionDetails(sessionId: "")
-
-        let completionHandlerExpectation = XCTestExpectation(description: "abortsigningsession - fail")
-        MIRACLTrust.getInstance().abortSigningSession(signingSessionDetails: sessionDetails) { aborted, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            XCTAssertFalse(aborted)
-            assertError(current: error, expected: SigningSessionError.invalidSigningSessionDetails)
-            completionHandlerExpectation.fulfill()
-        }
-
         wait(for: [completionHandlerExpectation], timeout: 20.0)
     }
 
@@ -946,52 +778,6 @@ class MIRACLTrustTests: XCTestCase {
             XCTAssertEqual(Thread.current, Thread.main)
             assertError(current: error, expected: SigningError.emptyMessageHash)
             XCTAssertNil(signatureResult)
-            completionHandlerExpectation.fulfill()
-        }
-
-        wait(for: [completionHandlerExpectation], timeout: 20.0)
-    }
-
-    func testSignSigningSessionDetails() throws {
-        let message = try XCTUnwrap(UUID().uuidString.data(using: .utf8))
-        let user = createUser()
-        let signingSessionDetails = createSigningSessionDetails()
-
-        let pinHandlerExpectation = XCTestExpectation(description: "sign - pinhandler")
-        let completionHandlerExpectation = XCTestExpectation(description: "sign")
-
-        MIRACLTrust.getInstance()._sign(
-            message: message,
-            user: user,
-            signingSessionDetails: signingSessionDetails
-        ) { processPinHandler in
-            processPinHandler("1234")
-            pinHandlerExpectation.fulfill()
-        } completionHandler: { signature, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            XCTAssertNil(error)
-            XCTAssertNotNil(signature)
-            completionHandlerExpectation.fulfill()
-        }
-
-        wait(for: [pinHandlerExpectation, completionHandlerExpectation], timeout: 20.0)
-    }
-
-    func testSignErrorSigningSessionDetails() throws {
-        let message = Data()
-        let signingSessionDetails = createSigningSessionDetails()
-        let completionHandlerExpectation = XCTestExpectation(description: "sign - fail")
-
-        try MIRACLTrust.getInstance()._sign(
-            message: message,
-            user: XCTUnwrap(user),
-            signingSessionDetails: signingSessionDetails
-        ) { processPinHandler in
-            processPinHandler("1234")
-        } completionHandler: { signature, error in
-            XCTAssertEqual(Thread.current, Thread.main)
-            assertError(current: error, expected: SigningError.emptyMessageHash)
-            XCTAssertNil(signature)
             completionHandlerExpectation.fulfill()
         }
 
@@ -1216,27 +1002,6 @@ class MIRACLTrustTests: XCTestCase {
             quickCodeEnabled: true,
             identityType: .email,
             accessId: accessId
-        )
-    }
-
-    private func createSigningSessionDetails(sessionId: String = "b227d0850d4280b98c5124a14aec84bf") -> SigningSessionDetails {
-        SigningSessionDetails(
-            userId: UUID().uuidString,
-            projectName: UUID().uuidString,
-            projectLogoURL: UUID().uuidString,
-            projectId: UUID().uuidString,
-            pinLength: 4,
-            verificationMethod: .standardEmail,
-            verificationURL: UUID().uuidString,
-            verificationCustomText: UUID().uuidString,
-            identityTypeLabel: UUID().uuidString,
-            quickCodeEnabled: true,
-            identityType: .email,
-            sessionId: sessionId,
-            signingHash: UUID().uuidString,
-            signingDescription: UUID().uuidString,
-            status: .signed,
-            expireTime: Date()
         )
     }
 

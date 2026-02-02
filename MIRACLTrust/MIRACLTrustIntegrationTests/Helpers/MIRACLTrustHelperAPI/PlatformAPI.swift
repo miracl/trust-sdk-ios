@@ -107,39 +107,6 @@ import MIRACLTrust
         }
     }
 
-    @objc public func startSigningSession(
-        projectID: String,
-        projectURL: String,
-        userID: String,
-        hash: String,
-        description: String,
-        completionHandler: @escaping @Sendable (SigningSession?, Error?) -> Void
-    ) {
-        guard let url = URL(string: projectURL) else {
-            return
-        }
-
-        guard let request = URLRequest.signingSessionRequest(
-            url: url,
-            projectID: projectID,
-            userID: userID,
-            hash: hash,
-            description: description
-        ) else {
-            return
-        }
-
-        requestExecutor.executeHTTPRequest(request: request) { (result: Result<SigningSessionResponse?, HelperAPIError>) in
-            switch result {
-            case let .success(success):
-                let result = SigningSession(qrURL: success?.qrURL ?? "")
-                completionHandler(result, nil)
-            case let .failure(failure):
-                completionHandler(nil, failure)
-            }
-        }
-    }
-
     func verifySignature(
         for signature: Signature,
         timestamp: Date,

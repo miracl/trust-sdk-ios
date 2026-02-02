@@ -4,7 +4,7 @@ import XCTest
 class AuthenticatorTests: XCTestCase {
     var user = createUser()
 
-    var accessId = NSUUID().uuidString
+    var accessId: String? = NSUUID().uuidString
     var storage = MockUserStorage()
     var deviceName = NSUUID().uuidString
     var crypto = AuthenticatorTests.createValidMockCrypto()
@@ -49,6 +49,15 @@ class AuthenticatorTests: XCTestCase {
     // MARK: Tests
 
     func testAuthentication() throws {
+        try authenticate(completionHandler: { authenticationResponse, error in
+            XCTAssertNotNil(authenticationResponse)
+            XCTAssertNil(error)
+        })
+    }
+
+    func testAuthenticationWithEmptySessionIdentifier() throws {
+        accessId = nil
+
         try authenticate(completionHandler: { authenticationResponse, error in
             XCTAssertNotNil(authenticationResponse)
             XCTAssertNil(error)
@@ -494,7 +503,7 @@ class AuthenticatorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Wait for Authentication.")
         let authenticator = try Authenticator(
             user: user,
-            sessionType: .legacy(accessId: accessId),
+            sessionIdentifier: accessId,
             crypto: crypto,
             api: api,
             scope: scope,

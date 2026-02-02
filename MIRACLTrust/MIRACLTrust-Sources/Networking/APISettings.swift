@@ -9,8 +9,6 @@ struct APISettings: Sendable {
     let verificationURL: URL
     let verificationConfirmationURL: URL
     let codeStatusURL: URL
-    let dvsSessionURL: URL
-    let dvsSessionDetailsURL: URL
     let verificationQuickCodeURL: URL
 
     init(platformURL: URL) {
@@ -21,8 +19,6 @@ struct APISettings: Sendable {
         verificationURL = APISettings.createAPISettingsURL(platformURL: platformURL, path: "/verification/email")!
         verificationConfirmationURL = APISettings.createAPISettingsURL(platformURL: platformURL, path: "/verification/confirmation")!
         codeStatusURL = APISettings.createAPISettingsURL(platformURL: platformURL, path: "/rps/v2/codeStatus")!
-        dvsSessionURL = APISettings.createAPISettingsURL(platformURL: platformURL, path: "/dvs/session")!
-        dvsSessionDetailsURL = APISettings.createAPISettingsURL(platformURL: platformURL, path: "/dvs/session/details")!
         verificationQuickCodeURL = APISettings.createAPISettingsURL(platformURL: platformURL, path: "/verification/quickcode")!
     }
 

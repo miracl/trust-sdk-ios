@@ -60,7 +60,7 @@ struct QRAuthenticator: Sendable {
 
             let authenticator = try Authenticator(
                 user: user,
-                sessionType: .legacy(accessId: accessId),
+                sessionIdentifier: accessId,
                 crypto: crypto,
                 deviceName: deviceName,
                 api: miraclAPI,

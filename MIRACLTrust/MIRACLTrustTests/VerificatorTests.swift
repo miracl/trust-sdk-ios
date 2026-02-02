@@ -17,7 +17,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            sessionType: .noSession,
+            sessionIdentifier: nil,
             miraclAPI: api,
             completionHandler: { verified, error in
                 XCTAssertNotNil(verified)
@@ -49,7 +49,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            sessionType: .legacy(accessId: invalidAccessId),
+            sessionIdentifier: invalidAccessId,
             miraclAPI: api,
             completionHandler: { _, _ in
             }
@@ -70,7 +70,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            sessionType: .noSession,
+            sessionIdentifier: nil,
             miraclAPI: api,
             completionHandler: { _, _ in
             }
@@ -94,7 +94,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            sessionType: .noSession,
+            sessionIdentifier: nil,
             miraclAPI: api,
             completionHandler: { response, error in
                 XCTAssertNil(response)
@@ -127,7 +127,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            sessionType: .noSession,
+            sessionIdentifier: nil,
             miraclAPI: api,
             completionHandler: { response, error in
                 XCTAssertNil(response)
@@ -158,7 +158,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            sessionType: .noSession,
+            sessionIdentifier: nil,
             miraclAPI: api,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)
@@ -191,7 +191,7 @@ class VerificatorTests: XCTestCase {
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
-            sessionType: .noSession,
+            sessionIdentifier: nil,
             miraclAPI: api,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)

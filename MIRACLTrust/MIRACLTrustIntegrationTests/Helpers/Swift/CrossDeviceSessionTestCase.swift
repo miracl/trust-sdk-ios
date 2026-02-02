@@ -3,8 +3,8 @@ import XCTest
 
 class GetCrossDeviceSessionTestCase: XCTest {
     func getCrossDeviceSession(qrCode: String) -> (CrossDeviceSession?, Error?) {
-        let getSigningSessionDetailsExpectation = XCTestExpectation(
-            description: "Get Signing Session Details from qrCode"
+        let crossDeviceSessionExpectation = XCTestExpectation(
+            description: "Get Cross Device Session from qrCode"
         )
 
         nonisolated(unsafe) var crossDeviceSession: CrossDeviceSession?
@@ -12,16 +12,16 @@ class GetCrossDeviceSessionTestCase: XCTest {
         MIRACLTrust.getInstance()._getCrossDeviceSessionFromQRCode(qrCode: qrCode) { session, error in
             crossDeviceSession = session
             returnedError = error
-            getSigningSessionDetailsExpectation.fulfill()
+            crossDeviceSessionExpectation.fulfill()
         }
 
-        _ = XCTWaiter.wait(for: [getSigningSessionDetailsExpectation], timeout: operationTimeout)
+        _ = XCTWaiter.wait(for: [crossDeviceSessionExpectation], timeout: operationTimeout)
         return (crossDeviceSession, returnedError)
     }
 
     func getCrossDeviceSession(universalLinkURL: URL) -> (CrossDeviceSession?, Error?) {
-        let getSigningSessionDetailsExpectation = XCTestExpectation(
-            description: "Get Signing Session Details from qrCode"
+        let crossDeviceSessionExpectation = XCTestExpectation(
+            description: "Get Cross Device Session from qrCode"
         )
 
         nonisolated(unsafe) var crossDeviceSession: CrossDeviceSession?
@@ -29,16 +29,16 @@ class GetCrossDeviceSessionTestCase: XCTest {
         MIRACLTrust.getInstance()._getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: universalLinkURL) { session, error in
             crossDeviceSession = session
             returnedError = error
-            getSigningSessionDetailsExpectation.fulfill()
+            crossDeviceSessionExpectation.fulfill()
         }
 
-        _ = XCTWaiter.wait(for: [getSigningSessionDetailsExpectation], timeout: operationTimeout)
+        _ = XCTWaiter.wait(for: [crossDeviceSessionExpectation], timeout: operationTimeout)
         return (crossDeviceSession, returnedError)
     }
 
     func getCrossDeviceSession(pushNotificationPayload: [AnyHashable: Any]) -> (CrossDeviceSession?, Error?) {
-        let getSigningSessionDetailsExpectation = XCTestExpectation(
-            description: "Get Signing Session Details from qrCode"
+        let crossDeviceSessionExpectation = XCTestExpectation(
+            description: "Get Cross Device Session from qrCode"
         )
 
         nonisolated(unsafe) var crossDeviceSession: CrossDeviceSession?
@@ -46,10 +46,10 @@ class GetCrossDeviceSessionTestCase: XCTest {
         MIRACLTrust.getInstance()._getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: pushNotificationPayload) { session, error in
             crossDeviceSession = session
             returnedError = error
-            getSigningSessionDetailsExpectation.fulfill()
+            crossDeviceSessionExpectation.fulfill()
         }
 
-        _ = XCTWaiter.wait(for: [getSigningSessionDetailsExpectation], timeout: operationTimeout)
+        _ = XCTWaiter.wait(for: [crossDeviceSessionExpectation], timeout: operationTimeout)
         return (crossDeviceSession, returnedError)
     }
 }

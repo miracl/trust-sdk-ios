@@ -67,18 +67,6 @@ struct MockAPI: APIBlueprint {
     var sessionAborterResponse = [String: String]()
     var sessionAborterResultCall: APICallResult = .failed
 
-    var signingSessionDetailsError: Error?
-    var signingSessionDetailsResponse: SigningSessionDetailsResponse?
-    var signingSessionDetailsResultCall: APICallResult = .failed
-
-    var signingSessionCompleterError: Error?
-    var signingSessionCompleterResponse: SigningSessionCompleterResponse?
-    var signingSessionCompleterResultCall: APICallResult = .failed
-
-    var signingSessionAborterError: Error?
-    var signingSessionAborterResponse: [String: String]?
-    var signingSessionAborterResultCall: APICallResult = .failed
-
     var verificationQuickCodeError: Error?
     var verificationQuickCodeResponse: VerificationQuickCodeResponse?
     var verificationQuickCodeResultCall: APICallResult = .failed
@@ -217,31 +205,6 @@ struct MockAPI: APIBlueprint {
         completionHandler(sessionAborterResultCall, sessionAborterResponse, sessionAborterError)
     }
 
-    func getSigningSessionDetails(
-        accessId _: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SigningSessionDetailsResponse>
-    ) {
-        completionHandler(
-            signingSessionDetailsResultCall,
-            signingSessionDetailsResponse,
-            signingSessionDetailsError
-        )
-    }
-
-    func updateSigningSession(
-        identifier _: String,
-        signature _: Signature,
-        timestamp _: Date,
-        completionHandler:
-        @escaping APIRequestCompletionHandler<SigningSessionCompleterResponse>
-    ) {
-        completionHandler(
-            signingSessionCompleterResultCall,
-            signingSessionCompleterResponse,
-            signingSessionCompleterError
-        )
-    }
-
     func confirmVerificationRequest(
         userId _: String,
         code _: String,
@@ -251,17 +214,6 @@ struct MockAPI: APIBlueprint {
             verificationConfirmationResultCall,
             verificationConfirmationResponse,
             verificationConfirmationError
-        )
-    }
-
-    func abortSigningSession(
-        sessionId _: String,
-        completionHandler: @escaping APIRequestCompletionHandler<[String: String]>
-    ) {
-        completionHandler(
-            signingSessionAborterResultCall,
-            signingSessionAborterResponse,
-            signingSessionAborterError
         )
     }
 

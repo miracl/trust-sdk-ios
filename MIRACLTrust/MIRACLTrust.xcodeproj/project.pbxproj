@@ -15,8 +15,6 @@
 		6D18B18D26F899E40069C9AD /* UniversalLinkAuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D18B18C26F899E40069C9AD /* UniversalLinkAuthenticatorTests.swift */; };
 		6D18B19226F8B3950069C9AD /* PushNotificationAuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D18B19126F8B3950069C9AD /* PushNotificationAuthenticatorTests.swift */; };
 		6D1B6061254BF0AD00ADB27D /* SigningCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D1B6060254BF0AD00ADB27D /* SigningCompatibilityCase.m */; };
-		6D21606E2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D21606C2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.h */; };
-		6D21606F2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D21606D2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.m */; };
 		6D22F0E02B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D22F0DE2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.h */; };
 		6D22F0E12B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D22F0DF2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m */; };
 		6D25C44A25D6853F00E878C9 /* JWTAuthenticationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D25C44925D6853F00E878C9 /* JWTAuthenticationTestCase.swift */; };
@@ -30,11 +28,6 @@
 		6D3567532D3E5EC100DD0A60 /* APIBlueprint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3567522D3E5EBC00DD0A60 /* APIBlueprint.swift */; };
 		6D3626CE256E874300993AD3 /* VerificationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3626CD256E874300993AD3 /* VerificationTestCase.swift */; };
 		6D36273B256FAE2600993AD3 /* VerificatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D36273A256FAE2600993AD3 /* VerificatorTests.swift */; };
-		6D390ADD2AF3C7ED009DC101 /* SigningSessionAborterRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D390ADC2AF3C7ED009DC101 /* SigningSessionAborterRequestBody.swift */; };
-		6D3DD7712B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D3DD76F2B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.h */; };
-		6D3DD7722B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D3DD7702B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.m */; };
-		6D3DD7752B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D3DD7732B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h */; };
-		6D3DD7762B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D3DD7742B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m */; };
 		6D4167A02E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D41679F2E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift */; };
 		6D4167A32E435C61002E59EA /* CrossDeviceSessionCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4167A22E435C5B002E59EA /* CrossDeviceSessionCase.swift */; };
 		6D4167A52E435C78002E59EA /* CrossDeviceSessionAuthenticationCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4167A42E435C6E002E59EA /* CrossDeviceSessionAuthenticationCase.swift */; };
@@ -43,13 +36,11 @@
 		6D42DDAC2412799C00EFA78A /* MockAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42DDAB2412799C00EFA78A /* MockAPI.swift */; };
 		6D43A0E729F120A600E0939A /* ClientErrorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43A0E629F120A600E0939A /* ClientErrorData.swift */; };
 		6D444BED2A1C9BED00FD0329 /* APIRequestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D444BEC2A1C9BED00FD0329 /* APIRequestError.swift */; };
-		6D446AB2283633E900CB42E5 /* SigningSessionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D446AB1283633E900CB42E5 /* SigningSessionStatus.swift */; };
 		6D476D97264A9E5E001B541C /* MIRACLTrust_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 6DC4695125B9B4840099866C /* MIRACLTrust_iOS.h */; };
 		6D476D98264A9E5E001B541C /* MIRACLTrust.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D184FFF23E038E8008E85E5 /* MIRACLTrust.h */; };
 		6D476D9B264AADE5001B541C /* MIRACLTrust_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 6DC4695125B9B4840099866C /* MIRACLTrust_iOS.h */; };
 		6D476D9D264AAE4B001B541C /* MIRACLTrust.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D184FFF23E038E8008E85E5 /* MIRACLTrust.h */; };
 		6D49C10F2448497900C48178 /* SQLiteUserStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D49C10E2448497900C48178 /* SQLiteUserStorageTests.swift */; };
-		6D4A68C0282E3D790074CE18 /* SigningSessionDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4A68BF282E3D790074CE18 /* SigningSessionDetails.swift */; };
 		6D4AFF2D262D9C9D0099429B /* libamcl_core.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D10E0D5262727E8000B7846 /* libamcl_core.xcframework */; };
 		6D4AFF2E262D9C9D0099429B /* libamcl_curve_BN254CX.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D10E0EE262729A3000B7846 /* libamcl_curve_BN254CX.xcframework */; };
 		6D4AFF2F262D9C9D0099429B /* libamcl_mpin_BN254CX.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D10E0ED262729A3000B7846 /* libamcl_mpin_BN254CX.xcframework */; };
@@ -73,10 +64,6 @@
 		6D6B94B82E46141600BC7A60 /* CrossDeviceSessionAbortCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94B72E46140D00BC7A60 /* CrossDeviceSessionAbortCase.swift */; };
 		6D6B94BD2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94BC2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m */; };
 		6D6B94BE2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D6B94BB2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h */; };
-		6D6D9A0A282BE7E700316755 /* SigningSessionDetailsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D9A09282BE7E700316755 /* SigningSessionDetailsFetcher.swift */; };
-		6D6D9A0C282BEB9800316755 /* SigningSessionDetailsRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D9A0B282BEB9800316755 /* SigningSessionDetailsRequestBody.swift */; };
-		6D6D9A0E282BF39700316755 /* SigningSessionDetailsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D9A0D282BF39700316755 /* SigningSessionDetailsResponse.swift */; };
-		6D6D9A10282BF94600316755 /* SigningSessionDetailsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D9A0F282BF94600316755 /* SigningSessionDetailsTest.swift */; };
 		6D6EBBAB24D29D2600E1B72D /* MockAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6EBBAA24D29D2600E1B72D /* MockAuthenticator.swift */; };
 		6D70EF602B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D70EF5E2B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.h */; };
 		6D70EF612B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D70EF5F2B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.m */; };
@@ -88,7 +75,6 @@
 		6D7258B22A1F8B410029751B /* АuthenticationSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7258B12A1F8B410029751B /* АuthenticationSessionError.swift */; };
 		6D72642E2EC640E1004D7BE2 /* DefaultLocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D72642D2EC640DB004D7BE2 /* DefaultLocalizedError.swift */; };
 		6D771BC8264BA98000949D52 /* MIRACLTrust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D771BC7264BA98000949D52 /* MIRACLTrust.swift */; };
-		6D7FB42E28366E5100538495 /* SigningSessionDetailsFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7FB42D28366E5100538495 /* SigningSessionDetailsFetcherTest.swift */; };
 		6D8BDD9428EAC36E00374797 /* ActivationTokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8BDD9328EAC36E00374797 /* ActivationTokenResponse.swift */; };
 		6D8E8D8125ED09D30084B6FE /* JWTAuthenticationCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E8D8025ED09D30084B6FE /* JWTAuthenticationCompatibilityCase.m */; };
 		6D8E8DAA25ED30C20084B6FE /* QuickCodeCompatibilityCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E8DA925ED30C20084B6FE /* QuickCodeCompatibilityCode.m */; };
@@ -99,7 +85,6 @@
 		6D91ABDC26FDF7E700EE28CF /* SessionDetailIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D91ABDB26FDF7E700EE28CF /* SessionDetailIntegrationTests.swift */; };
 		6D953FBE24055B0000F22138 /* APIRequestExecutorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D953FBD24055B0000F22138 /* APIRequestExecutorTests.swift */; };
 		6D954C3324D82F77002A237F /* SignerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D954C3224D82F77002A237F /* SignerTests.swift */; };
-		6D97E52C2E4A09B600A48235 /* SessionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D97E52B2E4A09B300A48235 /* SessionType.swift */; };
 		6D98312325D5318100C829B7 /* JWTGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D98312225D5318100C829B7 /* JWTGenerator.swift */; };
 		6D98313C25D6787A00C829B7 /* AuthenticationIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D98313B25D6787A00C829B7 /* AuthenticationIntegrationTests.swift */; };
 		6D999B5F2431C99F002CA45D /* AuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D999B5E2431C99F002CA45D /* AuthenticatorTests.swift */; };
@@ -196,12 +181,9 @@
 		6DC89F632E2FDBE900683AFB /* CrossDeviceSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC89F622E2FDBE400683AFB /* CrossDeviceSessionError.swift */; };
 		6DC987222E5332D200E1EDAB /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC987212E5332CF00E1EDAB /* UserDTO.swift */; };
 		6DC987342E54C3CB00E1EDAB /* CrossDeviceSessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */; };
-		6DCDC7542834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCDC7532834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift */; };
 		6DCFDD4224AA0CEC00CED02F /* RegistrationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCFDD4124AA0CEC00CED02F /* RegistrationTestCase.swift */; };
 		6DCFDD4424AA0E7D00CED02F /* QRAuthenticationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCFDD4324AA0E7D00CED02F /* QRAuthenticationTestCase.swift */; };
 		6DD1778624B4A08C006CBF4C /* DBFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD1778524B4A08C006CBF4C /* DBFileHelper.swift */; };
-		6DD64B6228326B7D0056A9DA /* SigningSessionCompleterResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD64B6128326B7D0056A9DA /* SigningSessionCompleterResponse.swift */; };
-		6DD64B6428326BE90056A9DA /* SigningSessionUpdaterRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD64B6328326BE90056A9DA /* SigningSessionUpdaterRequestBody.swift */; };
 		6DDB73612E61BDC600F32D2F /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDB73602E61BDBF00F32D2F /* TestConstants.swift */; };
 		6DDC22A8270AD0F7003A2DE8 /* AbortSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDC22A7270AD0F7003A2DE8 /* AbortSessionTests.swift */; };
 		6DDEB14B2705F23900C3313D /* AuthenticationSessionAborter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDEB14A2705F23900C3313D /* AuthenticationSessionAborter.swift */; };
@@ -232,11 +214,6 @@
 		6DF2D3FB26A019BC004CAD54 /* SQLiteMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3FA26A019BC004CAD54 /* SQLiteMigration.swift */; };
 		6DF2D3FD26A01F21004CAD54 /* SQLiteMigration0to1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3FC26A01F21004CAD54 /* SQLiteMigration0to1.swift */; };
 		6DF2D3FF26A06BEC004CAD54 /* SQLMigrationFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3FE26A06BEC004CAD54 /* SQLMigrationFactory.swift */; };
-		6DF322182A1F95A5003C8939 /* SigningSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF322172A1F95A5003C8939 /* SigningSessionError.swift */; };
-		6DF34CC92AF51B4100836442 /* SigningSessionAborter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF34CC82AF51B4100836442 /* SigningSessionAborter.swift */; };
-		6DF34CCD2AF5249A00836442 /* SigningSessionAborterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF34CCC2AF5249A00836442 /* SigningSessionAborterTest.swift */; };
-		6DF34CCF2AF5306300836442 /* SigningSessionAborterTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF34CCE2AF5306300836442 /* SigningSessionAborterTestCase.swift */; };
-		6DF34CD12AF5328F00836442 /* AbortSigningSessionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF34CD02AF5328F00836442 /* AbortSigningSessionTest.swift */; };
 		6DFE8FC527EB6E380085380D /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFE8FC427EB6E380085380D /* Helpers.swift */; };
 		6DFEC8CE26E1049100E8F682 /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */; };
 		83695C1C2C9734AA00411EAA /* EmailVerificationMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */; };
@@ -329,8 +306,6 @@
 		6D18B19126F8B3950069C9AD /* PushNotificationAuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationAuthenticatorTests.swift; sourceTree = "<group>"; };
 		6D1B605F254BF0AD00ADB27D /* SigningCompatibilityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SigningCompatibilityCase.h; sourceTree = "<group>"; };
 		6D1B6060254BF0AD00ADB27D /* SigningCompatibilityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SigningCompatibilityCase.m; sourceTree = "<group>"; };
-		6D21606C2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QRCodeSigningSessionDetailsCompatiblityCase.h; sourceTree = "<group>"; };
-		6D21606D2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRCodeSigningSessionDetailsCompatiblityCase.m; sourceTree = "<group>"; };
 		6D22F0DE2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortAuthenticationSessionCompatibilityCase.h; sourceTree = "<group>"; };
 		6D22F0DF2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AbortAuthenticationSessionCompatibilityCase.m; sourceTree = "<group>"; };
 		6D25C44925D6853F00E878C9 /* JWTAuthenticationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTAuthenticationTestCase.swift; sourceTree = "<group>"; };
@@ -345,12 +320,7 @@
 		6D3626CD256E874300993AD3 /* VerificationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationTestCase.swift; sourceTree = "<group>"; };
 		6D362715256F9AD100993AD3 /* VerificationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationError.swift; sourceTree = "<group>"; };
 		6D36273A256FAE2600993AD3 /* VerificatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificatorTests.swift; sourceTree = "<group>"; };
-		6D390ADC2AF3C7ED009DC101 /* SigningSessionAborterRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionAborterRequestBody.swift; sourceTree = "<group>"; };
 		6D3C2D13257A4B08005961C9 /* ActivationTokenError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationTokenError.swift; sourceTree = "<group>"; };
-		6D3DD76F2B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UniversalLinkURLSigningSessionDetailsCompatiblityCase.h; sourceTree = "<group>"; };
-		6D3DD7702B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UniversalLinkURLSigningSessionDetailsCompatiblityCase.m; sourceTree = "<group>"; };
-		6D3DD7732B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortSigningSessionCompatibilityCase.h; sourceTree = "<group>"; };
-		6D3DD7742B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AbortSigningSessionCompatibilityCase.m; sourceTree = "<group>"; };
 		6D3DDA56255530C800A0CD94 /* OSLog+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OSLog+Helper.swift"; sourceTree = "<group>"; };
 		6D41679F2E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAuthenticationIntegrationTest.swift; sourceTree = "<group>"; };
 		6D4167A22E435C5B002E59EA /* CrossDeviceSessionCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionCase.swift; sourceTree = "<group>"; };
@@ -363,9 +333,7 @@
 		6D42DDB22416236E00EFA78A /* ClientSecretResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSecretResponse.swift; sourceTree = "<group>"; };
 		6D43A0E629F120A600E0939A /* ClientErrorData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientErrorData.swift; sourceTree = "<group>"; };
 		6D444BEC2A1C9BED00FD0329 /* APIRequestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequestError.swift; sourceTree = "<group>"; };
-		6D446AB1283633E900CB42E5 /* SigningSessionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionStatus.swift; sourceTree = "<group>"; };
 		6D49C10E2448497900C48178 /* SQLiteUserStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteUserStorageTests.swift; sourceTree = "<group>"; };
-		6D4A68BF282E3D790074CE18 /* SigningSessionDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetails.swift; sourceTree = "<group>"; };
 		6D4C1B172BC4120400A7C756 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6D4C74EF2A4C548C0099A574 /* VerificationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationResponse.swift; sourceTree = "<group>"; };
 		6D4D59B5256526160021E12D /* LogCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogCategory.swift; sourceTree = "<group>"; };
@@ -398,10 +366,6 @@
 		6D6B94BB2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrossDeviceSessionCompatiblityCase.h; sourceTree = "<group>"; };
 		6D6B94BC2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CrossDeviceSessionCompatiblityCase.m; sourceTree = "<group>"; };
 		6D6C6B562564F9CB000BA52B /* LoggingConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingConstants.swift; sourceTree = "<group>"; };
-		6D6D9A09282BE7E700316755 /* SigningSessionDetailsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetailsFetcher.swift; sourceTree = "<group>"; };
-		6D6D9A0B282BEB9800316755 /* SigningSessionDetailsRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetailsRequestBody.swift; sourceTree = "<group>"; };
-		6D6D9A0D282BF39700316755 /* SigningSessionDetailsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetailsResponse.swift; sourceTree = "<group>"; };
-		6D6D9A0F282BF94600316755 /* SigningSessionDetailsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetailsTest.swift; sourceTree = "<group>"; };
 		6D6EBBAA24D29D2600E1B72D /* MockAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthenticator.swift; sourceTree = "<group>"; };
 		6D70EF5E2B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QRCodeAuthenticationSessionDetailsCompatiblityCase.h; sourceTree = "<group>"; };
 		6D70EF5F2B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRCodeAuthenticationSessionDetailsCompatiblityCase.m; sourceTree = "<group>"; };
@@ -414,7 +378,6 @@
 		6D72642D2EC640DB004D7BE2 /* DefaultLocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLocalizedError.swift; sourceTree = "<group>"; };
 		6D73E819243B033600E41329 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		6D771BC7264BA98000949D52 /* MIRACLTrust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIRACLTrust.swift; sourceTree = "<group>"; };
-		6D7FB42D28366E5100538495 /* SigningSessionDetailsFetcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionDetailsFetcherTest.swift; sourceTree = "<group>"; };
 		6D86ADBF23FEABF300A6BCE6 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		6D86ADC123FEABF700A6BCE6 /* APIRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
 		6D86ADC623FEDF2800A6BCE6 /* ConfigurationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationError.swift; sourceTree = "<group>"; };
@@ -432,7 +395,6 @@
 		6D953FB92403DD4900F22138 /* APIRequestExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequestExecutor.swift; sourceTree = "<group>"; };
 		6D953FBD24055B0000F22138 /* APIRequestExecutorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequestExecutorTests.swift; sourceTree = "<group>"; };
 		6D954C3224D82F77002A237F /* SignerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignerTests.swift; path = Helpers/SignerTests.swift; sourceTree = "<group>"; };
-		6D97E52B2E4A09B300A48235 /* SessionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionType.swift; sourceTree = "<group>"; };
 		6D98312225D5318100C829B7 /* JWTGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTGenerator.swift; sourceTree = "<group>"; };
 		6D98313B25D6787A00C829B7 /* AuthenticationIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationIntegrationTests.swift; sourceTree = "<group>"; };
 		6D999B5E2431C99F002CA45D /* AuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorTests.swift; sourceTree = "<group>"; };
@@ -508,12 +470,9 @@
 		6DC89F622E2FDBE400683AFB /* CrossDeviceSessionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionError.swift; sourceTree = "<group>"; };
 		6DC987212E5332CF00E1EDAB /* UserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 		6DC987332E54C3C400E1EDAB /* CrossDeviceSessionTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionTestCase.swift; sourceTree = "<group>"; };
-		6DCDC7532834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetSigningSessionDetailsTestCase.swift; sourceTree = "<group>"; };
 		6DCFDD4124AA0CEC00CED02F /* RegistrationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationTestCase.swift; sourceTree = "<group>"; };
 		6DCFDD4324AA0E7D00CED02F /* QRAuthenticationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRAuthenticationTestCase.swift; sourceTree = "<group>"; };
 		6DD1778524B4A08C006CBF4C /* DBFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBFileHelper.swift; sourceTree = "<group>"; };
-		6DD64B6128326B7D0056A9DA /* SigningSessionCompleterResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionCompleterResponse.swift; sourceTree = "<group>"; };
-		6DD64B6328326BE90056A9DA /* SigningSessionUpdaterRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionUpdaterRequestBody.swift; sourceTree = "<group>"; };
 		6DDB209729E3F45100B809DF /* bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bridge.h; sourceTree = "<group>"; };
 		6DDB209829E3F45100B809DF /* bridge.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bridge.c; sourceTree = "<group>"; };
 		6DDB73602E61BDBF00F32D2F /* TestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
@@ -549,11 +508,6 @@
 		6DF2D3FA26A019BC004CAD54 /* SQLiteMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteMigration.swift; sourceTree = "<group>"; };
 		6DF2D3FC26A01F21004CAD54 /* SQLiteMigration0to1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteMigration0to1.swift; sourceTree = "<group>"; };
 		6DF2D3FE26A06BEC004CAD54 /* SQLMigrationFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLMigrationFactory.swift; sourceTree = "<group>"; };
-		6DF322172A1F95A5003C8939 /* SigningSessionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionError.swift; sourceTree = "<group>"; };
-		6DF34CC82AF51B4100836442 /* SigningSessionAborter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionAborter.swift; sourceTree = "<group>"; };
-		6DF34CCC2AF5249A00836442 /* SigningSessionAborterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionAborterTest.swift; sourceTree = "<group>"; };
-		6DF34CCE2AF5306300836442 /* SigningSessionAborterTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningSessionAborterTestCase.swift; sourceTree = "<group>"; };
-		6DF34CD02AF5328F00836442 /* AbortSigningSessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbortSigningSessionTest.swift; sourceTree = "<group>"; };
 		6DFE8FC427EB6E380085380D /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
 		83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailVerificationMethod.swift; sourceTree = "<group>"; };
@@ -684,9 +638,7 @@
 				6D18B19126F8B3950069C9AD /* PushNotificationAuthenticatorTests.swift */,
 				6D99D77F27058A98000FC833 /* SessionDetailsFetcherTests.swift */,
 				6DDC22A7270AD0F7003A2DE8 /* AbortSessionTests.swift */,
-				6D7FB42D28366E5100538495 /* SigningSessionDetailsFetcherTest.swift */,
 				6D52C6F928489955005066D1 /* VerificationConfirmationHandlerTest.swift */,
-				6DF34CCC2AF5249A00836442 /* SigningSessionAborterTest.swift */,
 				6D663D752E322EFA004B1D53 /* CrossDeviceSessionFetcherTest.swift */,
 				6D663D772E33775D004B1D53 /* CrossDeviceSessionAborterTest.swift */,
 				6D663D792E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift */,
@@ -748,23 +700,6 @@
 				6D4167A42E435C6E002E59EA /* CrossDeviceSessionAuthenticationCase.swift */,
 			);
 			path = Async;
-			sourceTree = "<group>";
-		};
-		6D446AB5283639AB00CB42E5 /* Signing Session Management */ = {
-			isa = PBXGroup;
-			children = (
-				6D6D9A09282BE7E700316755 /* SigningSessionDetailsFetcher.swift */,
-				6D6D9A0B282BEB9800316755 /* SigningSessionDetailsRequestBody.swift */,
-				6D6D9A0D282BF39700316755 /* SigningSessionDetailsResponse.swift */,
-				6D4A68BF282E3D790074CE18 /* SigningSessionDetails.swift */,
-				6DD64B6128326B7D0056A9DA /* SigningSessionCompleterResponse.swift */,
-				6DD64B6328326BE90056A9DA /* SigningSessionUpdaterRequestBody.swift */,
-				6D446AB1283633E900CB42E5 /* SigningSessionStatus.swift */,
-				6DF322172A1F95A5003C8939 /* SigningSessionError.swift */,
-				6D390ADC2AF3C7ED009DC101 /* SigningSessionAborterRequestBody.swift */,
-				6DF34CC82AF51B4100836442 /* SigningSessionAborter.swift */,
-			);
-			path = "Signing Session Management";
 			sourceTree = "<group>";
 		};
 		6D49C1092446EE9B00C48178 /* User Storage */ = {
@@ -902,7 +837,6 @@
 			children = (
 				6D72642D2EC640DB004D7BE2 /* DefaultLocalizedError.swift */,
 				6D56E98D2E745B1100A261E2 /* PinController.swift */,
-				6D97E52B2E4A09B300A48235 /* SessionType.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1050,8 +984,6 @@
 				6D91ABDB26FDF7E700EE28CF /* SessionDetailIntegrationTests.swift */,
 				6D98313B25D6787A00C829B7 /* AuthenticationIntegrationTests.swift */,
 				6DDEB15027070C2B00C3313D /* AbortSessionIntergrationTest.swift */,
-				6D6D9A0F282BF94600316755 /* SigningSessionDetailsTest.swift */,
-				6DF34CD02AF5328F00836442 /* AbortSigningSessionTest.swift */,
 				6D41679F2E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift */,
 				6D2E4F182E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift */,
 				6D6B94B52E460A6400BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift */,
@@ -1074,8 +1006,6 @@
 				6D91ABD926FDF4C000EE28CF /* SessionDetailsTestCase.swift */,
 				6DDEB14E2706F2CB00C3313D /* AbortSessionTestCase.swift */,
 				6D13651527EC95C0003783CE /* GetActivationTokenTestCase.swift */,
-				6DCDC7532834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift */,
-				6DF34CCE2AF5306300836442 /* SigningSessionAborterTestCase.swift */,
 			);
 			path = Swift;
 			sourceTree = "<group>";
@@ -1097,10 +1027,6 @@
 				6D1B6060254BF0AD00ADB27D /* SigningCompatibilityCase.m */,
 				6D8E8DA825ED30C20084B6FE /* QuickCodeCompatibilityCode.h */,
 				6D8E8DA925ED30C20084B6FE /* QuickCodeCompatibilityCode.m */,
-				6D21606C2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.h */,
-				6D21606D2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.m */,
-				6D3DD76F2B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.h */,
-				6D3DD7702B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.m */,
 				6D70EF5E2B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.h */,
 				6D70EF5F2B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.m */,
 				6D70EF622B0F8E5E004AE28A /* UniversalLinkURLAuthenticationSessionDetailsCompatiblityCase.h */,
@@ -1109,8 +1035,6 @@
 				6D70EF672B0F8E84004AE28A /* PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase.m */,
 				6D22F0DE2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.h */,
 				6D22F0DF2B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m */,
-				6D3DD7732B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h */,
-				6D3DD7742B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m */,
 				FA6357522CFDBA7600464840 /* GetActivationTokenCompatiblityCase.h */,
 				FA6357532CFDBA7600464840 /* GetActivationTokenCompatiblityCase.m */,
 				6D6B94BB2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h */,
@@ -1145,7 +1069,6 @@
 				6D97E52A2E4A09AA00A48235 /* Helpers */,
 				6D2E4F0F2E2E62C70001B5A7 /* Cross Device Session */,
 				6DA788C9283659FD00A3D0BD /* Session Management */,
-				6D446AB5283639AB00CB42E5 /* Signing Session Management */,
 				6D91ABD226FDE11000EE28CF /* Authentication Session Management */,
 				6DB4208126F4CFC800B68AB4 /* Universal Link Authentication */,
 				6DB4208026F4CFB000B68AB4 /* Push Notification Authentication */,
@@ -1237,11 +1160,8 @@
 				6D70EF682B0F8E84004AE28A /* PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase.h in Headers */,
 				FA6357542CFDBA7600464840 /* GetActivationTokenCompatiblityCase.h in Headers */,
 				6D6B94BE2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h in Headers */,
-				6D21606E2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.h in Headers */,
 				6D22F0E02B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.h in Headers */,
 				6D70EF602B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.h in Headers */,
-				6D3DD7712B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.h in Headers */,
-				6D3DD7752B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1486,9 +1406,7 @@
 				6DB04A36241FD0010017F8C8 /* MockCrypto.swift in Sources */,
 				6D99D78027058A99000FC833 /* SessionDetailsFetcherTests.swift in Sources */,
 				6D953FBE24055B0000F22138 /* APIRequestExecutorTests.swift in Sources */,
-				6DF34CCD2AF5249A00836442 /* SigningSessionAborterTest.swift in Sources */,
 				6DFEC8CE26E1049100E8F682 /* MockURLSession.swift in Sources */,
-				6D7FB42E28366E5100538495 /* SigningSessionDetailsFetcherTest.swift in Sources */,
 				6D18B18926F85CDE0069C9AD /* QRAuthenticatorTests.swift in Sources */,
 				6DE651812B064DDF006A7029 /* ConfigurationTests.swift in Sources */,
 				6D9B3CA0266651AF00D0CF1E /* MockUserStorage.swift in Sources */,
@@ -1501,7 +1419,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA6357552CFDBA7600464840 /* GetActivationTokenCompatiblityCase.m in Sources */,
-				6D3DD7762B10DB1700F4B3D3 /* AbortSigningSessionCompatibilityCase.m in Sources */,
 				83BD3EFB2CC902F000D4E47F /* GmailServiceWrapper.swift in Sources */,
 				6D26142C24AB1B7C004F0B54 /* Constants.swift in Sources */,
 				6D2E4F192E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift in Sources */,
@@ -1519,7 +1436,6 @@
 				6DEC21DF26F37BE60099C836 /* UniversalLinkAuthIntegrationTests.swift in Sources */,
 				6DE60F5A2704638E008781C7 /* UpdateProjectSettingsIntegrationTests.swift in Sources */,
 				6DB7797624ADF42000FA5219 /* RegistrationCompatibilityCase.m in Sources */,
-				6DF34CD12AF5328F00836442 /* AbortSigningSessionTest.swift in Sources */,
 				6DCFDD4424AA0E7D00CED02F /* QRAuthenticationTestCase.swift in Sources */,
 				6D8E8DAA25ED30C20084B6FE /* QuickCodeCompatibilityCode.m in Sources */,
 				6DEC21DB26F3502E0099C836 /* PushNotificationAuthenticationCompatibilityCase.m in Sources */,
@@ -1527,8 +1443,6 @@
 				FAE467E62CF9E15E00754F5C /* HelperAPIModel.swift in Sources */,
 				6D70EF692B0F8E84004AE28A /* PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase.m in Sources */,
 				6D8E8D8125ED09D30084B6FE /* JWTAuthenticationCompatibilityCase.m in Sources */,
-				6DCDC7542834EC22006974F6 /* GetSigningSessionDetailsTestCase.swift in Sources */,
-				6D3DD7722B10D32100F4B3D3 /* UniversalLinkURLSigningSessionDetailsCompatiblityCase.m in Sources */,
 				6DD1778624B4A08C006CBF4C /* DBFileHelper.swift in Sources */,
 				6D13651A27F34544003783CE /* RegistrationIntegrationTest.swift in Sources */,
 				FAE467EC2CF9E16E00754F5C /* GmailService.swift in Sources */,
@@ -1539,8 +1453,6 @@
 				FAE467ED2CF9E16E00754F5C /* Credentials.swift in Sources */,
 				6D13651627EC95C0003783CE /* GetActivationTokenTestCase.swift in Sources */,
 				6D685E54247E7E0E000AEDAC /* PlatformAPIWrapper.swift in Sources */,
-				6D21606F2AF4F63400BB3634 /* QRCodeSigningSessionDetailsCompatiblityCase.m in Sources */,
-				6D6D9A10282BF94600316755 /* SigningSessionDetailsTest.swift in Sources */,
 				6D4167A92E435E6F002E59EA /* ActivationTokenAsyncCase.swift in Sources */,
 				6D3626CE256E874300993AD3 /* VerificationTestCase.swift in Sources */,
 				6D685E4B247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift in Sources */,
@@ -1561,7 +1473,6 @@
 				6DEC21DD26F37BD20099C836 /* PushNotificationsIntegrationTest.swift in Sources */,
 				6D4167A02E433BEA002E59EA /* CrossDeviceSessionAuthenticationIntegrationTest.swift in Sources */,
 				6D91ABDC26FDF7E700EE28CF /* SessionDetailIntegrationTests.swift in Sources */,
-				6DF34CCF2AF5306300836442 /* SigningSessionAborterTestCase.swift in Sources */,
 				6D6B94B62E460A6D00BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift in Sources */,
 				FAE467E52CF9E15E00754F5C /* URLRequest+Extensions.swift in Sources */,
 				6DEC21E126F472CC0099C836 /* PushNotificationsAuthenticationTestCase.swift in Sources */,
@@ -1622,12 +1533,8 @@
 				6DC4696725B9B7FC0099866C /* Configuration.swift in Sources */,
 				6DC46A2025B9BAE40099866C /* Signature.swift in Sources */,
 				6DC46A9425B9BB2B0099866C /* APISettings.swift in Sources */,
-				6D446AB2283633E900CB42E5 /* SigningSessionStatus.swift in Sources */,
-				6DD64B6228326B7D0056A9DA /* SigningSessionCompleterResponse.swift in Sources */,
 				6DC4697E25B9B9770099866C /* User.swift in Sources */,
 				6DC46A7B25B9BB210099866C /* StringProtocol+Helpers.swift in Sources */,
-				6D390ADD2AF3C7ED009DC101 /* SigningSessionAborterRequestBody.swift in Sources */,
-				6DD64B6428326BE90056A9DA /* SigningSessionUpdaterRequestBody.swift in Sources */,
 				6DC46A9325B9BB2B0099866C /* EmptyRequestBody.swift in Sources */,
 				6DC46A9025B9BB2B0099866C /* APIRequestExecutor.swift in Sources */,
 				6DB4580D269C17DB00C4FEFA /* SQLiteHelper.swift in Sources */,
@@ -1637,7 +1544,6 @@
 				6D91ABD626FDE62C00EE28CF /* AuthenticationSessionDetailsResponse.swift in Sources */,
 				6D444BED2A1C9BED00FD0329 /* APIRequestError.swift in Sources */,
 				6DC46A0625B9BAD40099866C /* LoggingConstants.swift in Sources */,
-				6D6D9A0C282BEB9800316755 /* SigningSessionDetailsRequestBody.swift in Sources */,
 				6DC46A5225B9BAFD0099866C /* ActivationTokenError.swift in Sources */,
 				6DC987222E5332D200E1EDAB /* UserDTO.swift in Sources */,
 				6D291E962E55F8CD00C6AD80 /* DefaultUserStorageOptions.swift in Sources */,
@@ -1645,7 +1551,6 @@
 				6DDFB53A29EFDCCE00B981FB /* FallbackRequestErrorResponse.swift in Sources */,
 				6DC46A7D25B9BB210099866C /* UIDevice+Helpers.swift in Sources */,
 				6D5D1C8C2D9EC41C004BDA7B /* SigningResult.swift in Sources */,
-				6DF34CC92AF51B4100836442 /* SigningSessionAborter.swift in Sources */,
 				6D91ABD426FDE1C900EE28CF /* AuthenticationSessionDetailsFetcher.swift in Sources */,
 				6DEE19CE25CA7A2E0086D64A /* QuickCodeGenerator.swift in Sources */,
 				6DED0DAB2AA0D56C008875C6 /* SQLiteMigration2to3.swift in Sources */,
@@ -1666,17 +1571,13 @@
 				6DC46A0B25B9BAD40099866C /* LogCategory.swift in Sources */,
 				6DC46A6825B9BB080099866C /* RegistrationRequestBody.swift in Sources */,
 				6D56E98E2E745B1600A261E2 /* PinController.swift in Sources */,
-				6DF322182A1F95A5003C8939 /* SigningSessionError.swift in Sources */,
 				6D72642E2EC640E1004D7BE2 /* DefaultLocalizedError.swift in Sources */,
 				6DDEB14B2705F23900C3313D /* AuthenticationSessionAborter.swift in Sources */,
 				6DC46A3725B9BAF20099866C /* Pass1RequestBody.swift in Sources */,
 				6DC46A8F25B9BB2B0099866C /* APIError.swift in Sources */,
-				6D6D9A0E282BF39700316755 /* SigningSessionDetailsResponse.swift in Sources */,
 				6D5573C42A8A4B79001AFD23 /* APIErrorResponse.swift in Sources */,
 				6DC46A0825B9BAD40099866C /* DefaultLogger.swift in Sources */,
-				6D6D9A0A282BE7E700316755 /* SigningSessionDetailsFetcher.swift in Sources */,
 				6DC46A7C25B9BB210099866C /* OSLog+Helper.swift in Sources */,
-				6D4A68C0282E3D790074CE18 /* SigningSessionDetails.swift in Sources */,
 				6DC46A5325B9BAFD0099866C /* VerificationError.swift in Sources */,
 				6DC46A4E25B9BAFD0099866C /* VerificationRequestBody.swift in Sources */,
 				6DC4699F25B9B9890099866C /* sqlite3.c in Sources */,
@@ -1689,7 +1590,6 @@
 				6DC46A6625B9BB080099866C /* RegistrationResponse.swift in Sources */,
 				6DC46A6725B9BB080099866C /* Registrator.swift in Sources */,
 				6DC46A3825B9BAF20099866C /* AuthenticateResponse.swift in Sources */,
-				6D97E52C2E4A09B600A48235 /* SessionType.swift in Sources */,
 				6DC46A2425B9BAE40099866C /* SigningError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

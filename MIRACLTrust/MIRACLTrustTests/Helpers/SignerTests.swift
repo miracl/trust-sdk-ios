@@ -11,14 +11,12 @@ class SignerTests: XCTestCase {
     var authenticator: MockAuthenticator?
     var storage = MockUserStorage()
     var mockAPI = MockAPI()
-    var signingSessionDetails: SigningSessionDetails?
-    var sessionType: SessionType = .noSession
-    var randomString = UUID().uuidString
+    var sessionIdentifier: String?
 
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        randomString = UUID().uuidString
+        sessionIdentifier = nil
         let configuration = try Configuration
             .Builder(
                 projectId: NSUUID().uuidString,
@@ -61,39 +59,8 @@ class SignerTests: XCTestCase {
         }
     }
 
-    func testSignerForLegacySession() throws {
-        sessionType = .legacy(accessId: randomString)
-
-        mockAPI.signingSessionCompleterError = nil
-        mockAPI.signingSessionCompleterResponse = SigningSessionCompleterResponse(status: "signed")
-        mockAPI.signingSessionCompleterResultCall = .success
-
-        try testSigning { signatureResult, error in
-            XCTAssertNil(error)
-            do {
-                let signatureResult = try XCTUnwrap(signatureResult)
-                let publicKey = try XCTUnwrap(self.signingUser.publicKey)
-
-                XCTAssertEqual(signatureResult.signature.mpinId, self.signingUser.mpinId.hex)
-                XCTAssertEqual(signatureResult.signature.U, Data([19, 20, 21]).hex)
-                XCTAssertEqual(signatureResult.signature.V, Data([4, 5, 6]).hex)
-                XCTAssertEqual(signatureResult.signature.publicKey, publicKey.hex)
-                XCTAssertEqual(signatureResult.signature.dtas, self.signingUser.dtas)
-                XCTAssertEqual(signatureResult.signature.signatureHash, self.hashData.hex)
-                XCTAssertNotNil(signatureResult.timestamp)
-
-            } catch {
-                XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
-            }
-        }
-    }
-
-    func testSignerForCrossDeviceSession() throws {
-        sessionType = .crossDevice(sessionId: randomString)
-
-        mockAPI.updateCrossDeviceSessionError = nil
-        mockAPI.updateCrossDeviceSessionResponse = [:]
-        mockAPI.signingSessionCompleterResultCall = .success
+    func testSignerForNonEmptySessionIdentifier() throws {
+        sessionIdentifier = UUID().uuidString
 
         try testSigning { signatureResult, error in
             XCTAssertNil(error)
@@ -259,79 +226,18 @@ class SignerTests: XCTestCase {
     func testSignerForJsonEncodingError() throws {}
 
     func testSignerForCompleteCrossDeviceSessionRequest() throws {
-        sessionType = .crossDevice(sessionId: randomString)
+        sessionIdentifier = UUID().uuidString
+
         let wrappedError = APIError.executionError("Something went wrong", nil)
         let expectedError = SigningError.signingFail(wrappedError)
 
         mockAPI.updateCrossDeviceSessionError = wrappedError
         mockAPI.updateCrossDeviceSessionResponse = nil
-        mockAPI.signingSessionCompleterResultCall = .failed
 
         try testSigning { signatureResult, error in
             XCTAssertNil(signatureResult)
             XCTAssertTrue(error is SigningError)
             XCTAssertEqual(error as? SigningError, expectedError)
-        }
-    }
-
-    func testSignerWithClientError() throws {
-        sessionType = .legacy(accessId: randomString)
-
-        let expectedError = SigningError.invalidSigningSession
-
-        mockAPI.signingSessionCompleterError = apiClientError(
-            with: INVALID_REQUEST_PARAMETERS,
-            context: ["params": "id"]
-        )
-        mockAPI.signingSessionCompleterResponse = nil
-        mockAPI.signingSessionCompleterResultCall = .success
-
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            assertError(current: error, expected: expectedError)
-        }
-    }
-
-    func testSignerForLegacySessionError() throws {
-        sessionType = .legacy(accessId: randomString)
-        let expectedError = SigningError.invalidSigningSession
-
-        mockAPI.signingSessionCompleterError = nil
-        mockAPI.signingSessionCompleterResponse = SigningSessionCompleterResponse(status: "active")
-        mockAPI.signingSessionCompleterResultCall = .success
-
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            assertError(current: error, expected: expectedError)
-        }
-    }
-
-    func testSignerForLegacySessionWrappedError() throws {
-        sessionType = .legacy(accessId: randomString)
-        let wrappedError = APIError.executionError("Something went wrong", nil)
-        let expectedError = SigningError.signingFail(wrappedError)
-
-        mockAPI.signingSessionCompleterError = wrappedError
-        mockAPI.signingSessionCompleterResponse = nil
-        mockAPI.signingSessionCompleterResultCall = .failed
-
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            assertError(current: error, expected: expectedError)
-        }
-    }
-
-    func testSignerWithSigingSessionDetailsNilResponse() throws {
-        sessionType = .legacy(accessId: randomString)
-        mockAPI.signingSessionCompleterError = nil
-        mockAPI.signingSessionCompleterResponse = nil
-        mockAPI.signingSessionCompleterResultCall = .failed
-
-        let expectedError = SigningError.signingFail(nil)
-
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            assertError(current: error, expected: expectedError)
         }
     }
 
@@ -345,7 +251,7 @@ class SignerTests: XCTestCase {
 
         XCTAssertThrowsError(try Signer(
             messageHash: Data(),
-            sessionType: sessionType,
+            sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
             crypto: crypto,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
@@ -377,7 +283,7 @@ class SignerTests: XCTestCase {
 
         XCTAssertThrowsError(try Signer(
             messageHash: Data(),
-            sessionType: sessionType,
+            sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
             crypto: crypto,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
@@ -408,7 +314,7 @@ class SignerTests: XCTestCase {
 
         XCTAssertThrowsError(try Signer(
             messageHash: hashData,
-            sessionType: sessionType,
+            sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
             crypto: crypto,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
@@ -428,7 +334,7 @@ class SignerTests: XCTestCase {
 
         XCTAssertThrowsError(try Signer(
             messageHash: Data(),
-            sessionType: sessionType,
+            sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
             crypto: crypto,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
@@ -452,7 +358,7 @@ class SignerTests: XCTestCase {
 
             var signer = try Signer(
                 messageHash: hashData,
-                sessionType: sessionType,
+                sessionIdentifier: sessionIdentifier,
                 user: XCTUnwrap(signingUser),
                 miraclAPI: mockAPI,
                 crypto: crypto,

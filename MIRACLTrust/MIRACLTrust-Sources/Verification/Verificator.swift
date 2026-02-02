@@ -7,7 +7,7 @@ struct Verificator: Sendable {
     let userId: String
     let projectId: String
     let deviceName: String
-    let sessionType: SessionType
+    let sessionIdentifier: String?
     let completionHandler: VerificationCompletionHandler
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
@@ -16,14 +16,14 @@ struct Verificator: Sendable {
     init(userId: String,
          projectId: String,
          deviceName: String,
-         sessionType: SessionType,
+         sessionIdentifier: String?,
          miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
          userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
          logger: Logger = MIRACLTrust.getInstance().logger,
          completionHandler: @escaping VerificationCompletionHandler) throws {
         self.userId = userId
         self.projectId = projectId
-        self.sessionType = sessionType
+        self.sessionIdentifier = sessionIdentifier
         self.deviceName =
             deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
         self.miraclAPI = miraclAPI
@@ -43,7 +43,6 @@ struct Verificator: Sendable {
             let userDTO = try? userStorage.getUser(by: userId, projectId: projectId)
 
             let mpinId = userDTO?.mpinId.hex
-            let sessionIdentifier = sessionType.getSessionIdentifier()
 
             miraclAPI.verifyUser(
                 projectId: projectId,
@@ -86,7 +85,7 @@ struct Verificator: Sendable {
     }
 
     private func validateInput() throws {
-        if case let .legacy(accessId) = sessionType, accessId.isEmpty {
+        if let sessionIdentifier, sessionIdentifier.isEmpty {
             throw VerificationError.invalidSessionDetails
         }
 

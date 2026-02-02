@@ -7,8 +7,7 @@
 
 -(NSDictionary *)signWithMessage:(NSData *)message
                        timestamp:(NSDate *)timestamp
-                     signingUser:(User *)user
-           signingSessionDetails:(SigningSessionDetails *) signingSessionDetails;
+                     signingUser:(User *)user;
 
 @end
 

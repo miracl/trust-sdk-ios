@@ -161,17 +161,17 @@ import Foundation
         completionHandler: @escaping VerificationCompletionHandler
     ) {
         do {
-            var sessionType = SessionType.noSession
+            var sessionIdentifier: String?
 
             if let authenticationSessionDetails {
-                sessionType = .legacy(accessId: authenticationSessionDetails.accessId)
+                sessionIdentifier = authenticationSessionDetails.accessId
             }
 
             let verificator = try Verificator(
                 userId: userId,
                 projectId: projectId,
                 deviceName: deviceName,
-                sessionType: sessionType,
+                sessionIdentifier: sessionIdentifier,
                 miraclAPI: miraclAPI,
                 completionHandler: completionHandler
             )
@@ -198,17 +198,17 @@ import Foundation
         completionHandler: @escaping VerificationCompletionHandler
     ) {
         do {
-            var sessionType = SessionType.noSession
+            var sessionIdentifier: String?
 
             if let crossDeviceSession {
-                sessionType = .crossDevice(sessionId: crossDeviceSession.sessionId)
+                sessionIdentifier = crossDeviceSession.sessionId
             }
 
             let verificator = try Verificator(
                 userId: userId,
                 projectId: projectId,
                 deviceName: deviceName,
-                sessionType: sessionType,
+                sessionIdentifier: sessionIdentifier,
                 miraclAPI: miraclAPI,
                 completionHandler: completionHandler
             )
@@ -475,7 +475,11 @@ import Foundation
             deviceName: deviceName,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
-                completionHandler(isAuthenticated, error)
+                if let error, case AuthenticationError.invalidAuthenticationSession = error {
+                    completionHandler(isAuthenticated, AuthenticationError.invalidCrossDeviceSession)
+                } else {
+                    completionHandler(isAuthenticated, error)
+                }
             }
         )
 
@@ -699,86 +703,6 @@ import Foundation
         }
     }
 
-    // MARK: Signing Session management
-
-    /// Get `signing` session details from MIRACL's platform based on session identifier.
-    ///
-    /// Use this method to get signing session details for application that tries to sign against MIRACL Platform with the usage of QR Code.
-    ///
-    /// - Parameters:
-    ///   - qrCode: a string read from the QR code.
-    ///   - completionHandler: a closure called when the session details are fetched.It can contain a newly fetched `signing` session details optional object
-    ///   and an optional error object.
-    @objc(getSigningSessionDetailsFromQRcode:completionHandler:)
-    public func getSigningSessionDetailsFromQRCode(
-        qrCode: String,
-        completionHandler: @escaping SigningSessionDetailsCompletionHandler
-    ) {
-        do {
-            let fetcher = try SigningSessionDetailsFetcher(
-                qrCode: qrCode,
-                miraclAPI: miraclAPI,
-                completionHandler: completionHandler
-            )
-            fetcher.fetch()
-        } catch {
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
-    }
-
-    /// Get `signing` session details from MIRACL's platform based on session identifier.
-    ///
-    /// Use this method to get signing session details for application that tries to sign against MIRACL Platform with the usage of Universal Link URL.
-    ///
-    /// - Parameters:
-    ///   - universalLinkURL: universal link for signing.
-    ///   - completionHandler: a closure called when the session details are fetched.It can contain a newly fetched `signing` session details optional object
-    ///   and an optional error object.
-    ///
-    @objc(getSigningSessionDetailsFromUniversalLinkURL:completionHandler:)
-    public func getSigningSessionDetailsFromUniversalLinkURL(
-        universalLinkURL: URL,
-        completionHandler: @escaping SigningSessionDetailsCompletionHandler
-    ) {
-        do {
-            let fetcher = try SigningSessionDetailsFetcher(
-                universalLinkURL: universalLinkURL,
-                miraclAPI: miraclAPI,
-                completionHandler: completionHandler
-            )
-            fetcher.fetch()
-        } catch {
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
-    }
-
-    /// Cancel the signing session by its `SigningSessionDetails` object
-    /// - Parameters:
-    ///   - signingSessionDetails: details for signing session, that is in progress.
-    ///   - completionHandler: a closure called when the signing session is aborted. It can contain a boolean flag representing the result of the abortion and an optional error object.
-    @objc(abortSigningSession:completionHandler:)
-    public func abortSigningSession(
-        signingSessionDetails: SigningSessionDetails,
-        completionHandler: @escaping SigningSessionAborterCompletionHandler
-    ) {
-        do {
-            let aborter = try SigningSessionAborter(
-                sessionId: signingSessionDetails.sessionId,
-                completionHandler: completionHandler
-            )
-
-            aborter.abort()
-        } catch {
-            DispatchQueue.main.async {
-                completionHandler(false, error)
-            }
-        }
-    }
-
     // MARK: Signing
 
     /// Create a cryptographic signature of a given document.
@@ -796,38 +720,13 @@ import Foundation
         do {
             let signer = try Signer(
                 messageHash: message,
-                sessionType: .noSession,
+                sessionIdentifier: nil,
                 user: user,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
             ) { signature, error in
                 completionHandler(signature, error)
             }
 
-            signer.sign()
-        } catch {
-            logError(error: error, category: .signing)
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
-    }
-
-    @objc public func _sign(
-        message: Data,
-        user: User,
-        signingSessionDetails: SigningSessionDetails,
-        didRequestSigningPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping SigningCompletionHandler
-    ) {
-        do {
-            let signer = try Signer(
-                messageHash: message,
-                sessionType: .legacy(accessId: signingSessionDetails.sessionId),
-                user: user,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signature, error in
-                completionHandler(signature, error)
-            }
             signer.sign()
         } catch {
             logError(error: error, category: .signing)
@@ -853,7 +752,7 @@ import Foundation
         do {
             let signer = try Signer(
                 messageHash: Data(hexString: crossDeviceSession.signingHash),
-                sessionType: .crossDevice(sessionId: crossDeviceSession.sessionId),
+                sessionIdentifier: crossDeviceSession.sessionId,
                 user: user,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
             ) { signinResult, error in
