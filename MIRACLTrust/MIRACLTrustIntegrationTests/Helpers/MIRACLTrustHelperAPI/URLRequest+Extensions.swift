@@ -168,43 +168,6 @@ extension URLRequest {
         return request
     }
 
-    static func signingSessionRequest(
-        url: URL,
-        projectID: String,
-        userID: String,
-        hash: String,
-        description: String
-    ) -> URLRequest? {
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-
-        components.path = "/dvs/session"
-
-        guard let url = components.url else {
-            return nil
-        }
-
-        var request = URLRequest(url: url)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-
-        let requestBody = SigningSessionRequestBody(
-            projectID: projectID,
-            userID: userID,
-            hash: hash,
-            description: description
-        )
-
-        do {
-            request.httpBody = try JSONEncoder().encode(requestBody)
-        } catch {
-            return nil
-        }
-
-        return request
-    }
-
     static func accessRequest(
         url: URL,
         webOTT: String

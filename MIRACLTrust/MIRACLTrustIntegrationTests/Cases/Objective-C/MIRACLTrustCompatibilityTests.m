@@ -6,13 +6,10 @@
 #import "QuickCodeCompatibilityCode.h"
 #import "UniversalLinkAuthenticationCompatibilityCase.h"
 #import "PushNotificationAuthenticationCompatibilityCase.h"
-#import "QRCodeSigningSessionDetailsCompatiblityCase.h"
 #import "QRCodeAuthenticationSessionDetailsCompatiblityCase.h"
 #import "UniversalLinkURLAuthenticationSessionDetailsCompatiblityCase.h"
 #import "PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase.h"
 #import "AbortAuthenticationSessionCompatibilityCase.h"
-#import "UniversalLinkURLSigningSessionDetailsCompatiblityCase.h"
-#import "AbortSigningSessionCompatibilityCase.h"
 #import "GetActivationTokenCompatiblityCase.h"
 #import "CrossDeviceSessionCompatiblityCase.h"
 #import <MIRACLTrustIntegrationTests-Swift.h>
@@ -26,13 +23,10 @@
 @property (nonatomic,strong) JWTAuthenticationCompatibilityCase *jwtAuthentication;
 @property (nonatomic,strong) UniversalLinkAuthenticationCompatibilityCase *universalLinkAuthentication;
 @property (nonatomic,strong) PushNotificationAuthenticationCompatibilityCase *pushNotificationAuthentication;
-@property (nonatomic, strong) QRCodeSigningSessionDetailsCompatiblityCase *signingSessionDetailsCompatiblityCase;
 @property (nonatomic, strong) QRCodeAuthenticationSessionDetailsCompatiblityCase *qrCodeAuthenticationSessionDetailsCompatiblityCase;
 @property (nonatomic, strong) UniversalLinkURLAuthenticationSessionDetailsCompatiblityCase *universalLinkURLAuthenticationSessionDetailsCompatiblityCase;
 @property (nonatomic, strong) PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase *pushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase;
 @property (nonatomic, strong) AbortAuthenticationSessionCompatibilityCase *abortAuthenticationSessionCompatibilityCase;
-@property (nonatomic, strong) UniversalLinkURLSigningSessionDetailsCompatiblityCase *universalLinkURLSigningSessionDetailsCompatiblityCase;
-@property (nonatomic, strong) AbortSigningSessionCompatibilityCase *abortSigningSessionCompatibilityCase;
 @property (nonatomic, strong) GetActivationTokenCompatiblityCase *getActivationTokenCompatiblityCase;
 @property (nonatomic, strong) CrossDeviceSessionCompatiblityCase *getCrossDeviceSessionCompatibilityCase;
 
@@ -77,13 +71,10 @@
     self.quickCode = [[QuickCodeCompatibilityCode alloc] init];
     self.quickCode.pinCode = self.randomNumber;
     
-    self.signingSessionDetailsCompatiblityCase = [[QRCodeSigningSessionDetailsCompatiblityCase alloc] init];
     self.qrCodeAuthenticationSessionDetailsCompatiblityCase = [[QRCodeAuthenticationSessionDetailsCompatiblityCase alloc] init];
     self.universalLinkURLAuthenticationSessionDetailsCompatiblityCase = [[UniversalLinkURLAuthenticationSessionDetailsCompatiblityCase alloc] init];
     self.pushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase = [[PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase alloc] init];
     self.abortAuthenticationSessionCompatibilityCase = [[AbortAuthenticationSessionCompatibilityCase alloc] init];
-    self.universalLinkURLSigningSessionDetailsCompatiblityCase = [[UniversalLinkURLSigningSessionDetailsCompatiblityCase alloc] init];
-    self.abortSigningSessionCompatibilityCase = [[AbortSigningSessionCompatibilityCase alloc] init];
     self.getActivationTokenCompatiblityCase = [[GetActivationTokenCompatiblityCase alloc] init];
     self.getCrossDeviceSessionCompatibilityCase = [[CrossDeviceSessionCompatiblityCase alloc] init];
 }
@@ -318,45 +309,13 @@
             NSString *message = [[NSUUID UUID] UUIDString];
             NSData *messageHash = [self messageHash:message];
             
-            NSString *signingQRCode = [self.api startSigningSessionWithProjectID:projectId
-                                                                      projectURL:projectURL
-                                                                          userID:user.userId
-                                                                            hash:message
-                                                                     description:@"Test Transaction"];
-            
-            dict = [self.signingSessionDetailsCompatiblityCase getSiginingSessionDetails:signingQRCode];
-            XCTAssertNotNil(dict[@"signingSessionDetails"]);
-            XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
-            
-            NSURL *signingUniversalLinkURL = [NSURL URLWithString:signingQRCode];
-            dict = [self.universalLinkURLSigningSessionDetailsCompatiblityCase getSiginingSessionDetails:signingUniversalLinkURL];
-            XCTAssertNotNil(dict[@"signingSessionDetails"]);
-            XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
-            
-            SigningSessionDetails *signingSessionDetails = (SigningSessionDetails *) dict[@"signingSessionDetails"];
             NSDate *date = [NSDate date];
             dict = [self.signing signWithMessage:messageHash
                                        timestamp:date
-                                     signingUser:user
-                           signingSessionDetails:dict[@"signingSessionDetails"]];
+                                     signingUser:user];
             
             XCTAssertNotNil(dict[@"signature"]);
             XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
-            
-            dict = [self.signing signWithMessage:messageHash
-                                       timestamp:date
-                                     signingUser:user
-                           signingSessionDetails:nil];
-            
-            XCTAssertNotNil(dict[@"signature"]);
-            XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
-            
-            
-            dict = [self.abortSigningSessionCompatibilityCase abortSigningSession:signingSessionDetails];
-            
-            XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
-            NSNumber *isAborted = dict[@"isAborted"];
-            XCTAssertTrue([isAborted boolValue]);
         } else {
             XCTFail("Error in authentication.");
         }

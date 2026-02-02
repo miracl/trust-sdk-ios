@@ -78,23 +78,6 @@ protocol APIBlueprint: Sendable {
         completionHandler: @escaping APIRequestCompletionHandler<[String: String]>
     )
 
-    func getSigningSessionDetails(
-        accessId: String,
-        completionHandler: @escaping APIRequestCompletionHandler<SigningSessionDetailsResponse>
-    )
-
-    func updateSigningSession(
-        identifier: String,
-        signature: Signature,
-        timestamp: Date,
-        completionHandler: @escaping APIRequestCompletionHandler<SigningSessionCompleterResponse>
-    )
-
-    func abortSigningSession(
-        sessionId: String,
-        completionHandler: @escaping APIRequestCompletionHandler<[String: String]>
-    )
-
     func quickCodeVerificationRequest(
         projectId: String,
         jwt: String,

@@ -174,39 +174,6 @@ public typealias AuthenticationSessionDetailsCompletionHandler = @MainActor @Sen
 /// handler can also be passed safely across concurrency domains.
 public typealias AuthenticationSessionAborterCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
 
-/// A completion handler executed when either
-/// ``MIRACLTrust/MIRACLTrust/getSigningSessionDetailsFromQRCode(qrCode:completionHandler:)``
-/// or
-/// ``MIRACLTrust/MIRACLTrust/getSigningSessionDetailsFromUniversalLinkURL(universalLinkURL:completionHandler:)``
-/// returns its result.
-///
-/// ## Closure Parameters
-/// 1. The newly created ``SigningSessionDetails``, or `nil` if the
-///   operation failed.
-/// 2. An optional error describing why the operation failed. This value
-///   is `nil` when `details` is non-`nil`.
-///
-/// > Note: The closure is always invoked on the main actor, making it safe to update
-/// user interface elements directly. Because it is marked @Sendable, the
-/// handler can also be passed safely across concurrency domains.
-public typealias SigningSessionDetailsCompletionHandler = @MainActor @Sendable (SigningSessionDetails?, Error?) -> Void
-
-/// A completion handler executed when the
-/// ``MIRACLTrust/MIRACLTrust/abortSigningSession(signingSessionDetails:completionHandler:)``
-/// method returns its result.
-///
-///
-/// ## Closure Parameters
-/// 1. A Boolean value indicating whether the session was aborted successfully
-///    (true if the session terminated cleanly).
-/// 2. An optional error describing why the abort operation failed. This value
-///    is typically `nil` when the first parameter is `true`.
-///
-/// > Note: The closure is always invoked on the main actor, making it safe to update
-/// user interface elements directly. Because it is marked @Sendable, the
-/// handler can also be passed safely across concurrency domains.
-public typealias SigningSessionAborterCompletionHandler = @MainActor @Sendable (Bool, Error?) -> Void
-
 /// A completion handler executed when the operation to create a ``CrossDeviceSession`` has finished.
 ///
 /// ## Closure Parameters
@@ -284,3 +251,5 @@ typealias AuthenticateCompletionHandler = @MainActor @Sendable (AuthenticateResp
 typealias APIRequestCompletionHandler<T> = @Sendable (APICallResult, T?, Error?) -> Void
 
 let REDACTED_STRING = "<REDACTED>"
+
+let INVALID_REQUEST_PARAMETERS = "INVALID_REQUEST_PARAMETERS"

@@ -8,14 +8,14 @@ struct Signer: Sendable {
     let crypto: CryptoBlueprint
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
-    let sessionType: SessionType
+    let sessionIdentifier: String?
     let logger: Logger
 
     var authenticator: AuthenticatorBlueprint?
 
     init(
         messageHash: Data,
-        sessionType: SessionType,
+        sessionIdentifier: String?,
         user: User,
         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
@@ -26,7 +26,7 @@ struct Signer: Sendable {
     ) throws {
         self.messageHash = messageHash
         self.user = user
-        self.sessionType = sessionType
+        self.sessionIdentifier = sessionIdentifier
         self.didRequestSigningPinHandler = didRequestSigningPinHandler
         self.crypto = crypto
         self.completionHandler = completionHandler
@@ -80,7 +80,7 @@ struct Signer: Sendable {
             do {
                 let authenticator = try Authenticator(
                     user: user,
-                    sessionType: .noSession,
+                    sessionIdentifier: nil,
                     crypto: crypto,
                     api: MIRACLTrust.getInstance().miraclAPI,
                     scope: ["dvs-auth"],
@@ -164,20 +164,13 @@ struct Signer: Sendable {
             timestamp: timestamp
         )
 
-        switch sessionType {
-        case let .crossDevice(sessionId):
+        if let sessionIdentifier {
             completeCrossDeviceSession(
-                sessionId: sessionId,
+                sessionId: sessionIdentifier,
                 signature: signature,
                 timestamp: timestamp
             )
-        case let .legacy(sessionId):
-            completeSigningSession(
-                sessionId: sessionId,
-                signature: signature,
-                timestamp: timestamp
-            )
-        case .noSession:
+        } else {
             logger.info(
                 message: LoggingConstants.finished,
                 category: .signing
@@ -214,58 +207,6 @@ struct Signer: Sendable {
         }
     }
 
-    private func completeSigningSession(
-        sessionId: String,
-        signature: Signature,
-        timestamp: Date
-    ) {
-        miraclAPI.updateSigningSession(
-            identifier: sessionId,
-            signature: signature,
-            timestamp: timestamp
-        ) { _, responseObject, error in
-            if let error {
-                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_REQUEST_PARAMETERS, let context = clientErrorData.context, context["params"] == "id" {
-                    callCompletionHandler(
-                        error: SigningError.invalidSigningSession
-                    )
-                    return
-                }
-
-                callCompletionHandler(
-                    error: SigningError.signingFail(error)
-                )
-                return
-            }
-
-            guard let responseObject = responseObject else {
-                callCompletionHandler(
-                    error: SigningError.signingFail(nil)
-                )
-                return
-            }
-
-            let status = SigningSessionStatus.signingSessionStatus(
-                from: responseObject.status
-            )
-
-            switch status {
-            case .active:
-                callCompletionHandler(
-                    error: SigningError.invalidSigningSession
-                )
-            case .signed:
-                logger.info(
-                    message: LoggingConstants.finished,
-                    category: .signing
-                )
-
-                let signingResult = SigningResult(signature: signature, timestamp: timestamp)
-                callCompletionHandler(signingResult: signingResult)
-            }
-        }
-    }
-
     private func callCompletionHandler(
         signingResult: SigningResult? = nil,
         error: Error? = nil
@@ -297,10 +238,6 @@ struct Signer: Sendable {
 
         if let publicKey = user.publicKey, publicKey.isEmpty {
             throw SigningError.emptyPublicKey
-        }
-
-        if case let .legacy(accessId) = sessionType, accessId.isEmpty {
-            throw SigningError.invalidSigningSessionDetails
         }
     }
 

@@ -56,7 +56,7 @@ struct CrossDeviceSessionAuthenticator: Sendable {
 
             let authenticator = try Authenticator(
                 user: user,
-                sessionType: .crossDevice(sessionId: crossDeviceSession.sessionId),
+                sessionIdentifier: crossDeviceSession.sessionId,
                 crypto: crypto,
                 deviceName: deviceName,
                 api: miraclAPI,
