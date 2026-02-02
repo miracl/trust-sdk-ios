@@ -152,7 +152,7 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
     }
 
-    func testSendVerificationEmailWithCrossDeviceSession() throws {
+    func testSendVerificationEmailWithCrossDeviceSession() {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail with cross device session")
         let crossDeviceSession = createCrossDeviceSession()
 
@@ -166,7 +166,7 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [completionHandlerExpectation], timeout: 20.0)
     }
 
-    func testSendVerificationEmailWithAuthenticationSessionDetails() throws {
+    func testSendVerificationEmailWithAuthenticationSessionDetails() {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail with authentication session")
         let authenticationSessionDetails = createSessionDetails()
 
@@ -180,7 +180,7 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [completionHandlerExpectation], timeout: 20.0)
     }
 
-    func testSendVerificationEmailWithoutCrossDeviceSession() throws {
+    func testSendVerificationEmailWithoutCrossDeviceSession() {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail without cross device session")
 
         MIRACLTrust.getInstance()._sendVerificationEmail(userId: randomString) { response, error in
@@ -240,7 +240,7 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
     }
 
-    func testGetActivationTokenWithVerificationCode() throws {
+    func testGetActivationTokenWithVerificationCode() {
         let userId = "alice@miracl.com"
         let code = "af1cc549573718409de44d8bf2e67a06"
         let expectation = XCTestExpectation(description: "testGetActivationTokenWithVerificationCode")
@@ -273,7 +273,7 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
     }
 
-    func testGetActivationTokenWithVerificationCodeValidationError() throws {
+    func testGetActivationTokenWithVerificationCodeValidationError() {
         let userId = ""
         let code = "af1cc549573718409de44d8bf2e67a06"
         let expectation = XCTestExpectation(description: "getActivationToken - fail")
@@ -342,7 +342,7 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
     }
 
-    func testAuthenticate() throws {
+    func testAuthenticate() {
         let pinHandlerExpectation = XCTestExpectation(description: "authenticate")
         let completionHandlerExpectation = XCTestExpectation(description: "authenticate - pinhandler")
 
@@ -693,7 +693,7 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [completionHandlerExpectation], timeout: 20.0)
     }
 
-    func testPushAuthenticationSessionDetailsError() throws {
+    func testPushAuthenticationSessionDetailsError() {
         let accessId = ""
         let payload = ["qrURL": "https://mcl.mpin.io#\(accessId)"]
 

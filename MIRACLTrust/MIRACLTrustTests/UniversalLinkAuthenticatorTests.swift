@@ -42,7 +42,7 @@ class UniversalLinkAuthenticatorTests: XCTestCase {
     }
 
     func testAuthenticationMissingFragment() throws {
-        universalLinkURL = URL(string: "https://mcl.mpin.io#")!
+        universalLinkURL = try XCTUnwrap(URL(string: "https://mcl.mpin.io#"))
         try testUniversalLinkURLAuthentication { result, error in
             XCTAssertFalse(result)
             assertError(current: error, expected: AuthenticationError.invalidUniversalLink)

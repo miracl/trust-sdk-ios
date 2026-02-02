@@ -11,7 +11,7 @@ import Foundation
     /// Identifier of the project in the MIRACL Trust platform.
     public let projectId: String
 
-    // Provides information if the user is revoked or not.
+    /// Provides information if the user is revoked or not.
     public let revoked: Bool
 
     /// The number of the digits the identity PIN should be.

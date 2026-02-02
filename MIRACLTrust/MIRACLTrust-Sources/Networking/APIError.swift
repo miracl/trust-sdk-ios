@@ -1,6 +1,6 @@
 import Foundation
 
-// An enumeration that describes network issues.
+/// An enumeration that describes network issues.
 public enum APIError: Error, DefaultLocalizedError {
     /// The request response is a server error (5xx).
     case apiServerError(statusCode: Int, message: String?, requestURL: URL?)
@@ -11,7 +11,7 @@ public enum APIError: Error, DefaultLocalizedError {
     /// JSON received as a response is invalid.
     case apiMalformedJSON(Error?, URL?)
 
-    // Error while executing HTTP request.
+    /// Error while executing HTTP request.
     case executionError(String, URL?)
 }
 

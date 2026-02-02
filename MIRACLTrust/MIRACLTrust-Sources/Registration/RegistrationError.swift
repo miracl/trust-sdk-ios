@@ -5,7 +5,7 @@ public enum RegistrationError: Error, DefaultLocalizedError {
     /// Empty user ID.
     case emptyUserId
 
-    // Empty activation token.
+    /// Empty activation token.
     case emptyActivationToken
 
     /// Invalid activation token.

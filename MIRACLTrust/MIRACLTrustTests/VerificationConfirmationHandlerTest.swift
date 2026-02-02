@@ -56,7 +56,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
 
     func testEmptyActivationCode() throws {
         activationCode = ""
-        verificationURL = URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)")!
+        verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)"))
 
         XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyVerificationCode)
@@ -64,7 +64,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
     }
 
     func testMissingActivationCode() throws {
-        verificationURL = URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)")!
+        verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)"))
         XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyVerificationCode)
         }
@@ -72,7 +72,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
 
     func testInvalidUserId() throws {
         userId = ""
-        verificationURL = URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)")!
+        verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)"))
 
         XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyUserId)
@@ -80,7 +80,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
     }
 
     func testMissingUserId() throws {
-        verificationURL = URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth")!
+        verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth"))
 
         XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyUserId)

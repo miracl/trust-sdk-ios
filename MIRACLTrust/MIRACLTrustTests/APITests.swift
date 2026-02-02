@@ -85,7 +85,8 @@ class APITests: XCTestCase {
                     "secretUrls" : [ \(secretUrlsString)],
                     "verificationType" : "PV"
                 }
-            """.utf8)
+            """.utf8
+        )
 
         api.registerUser(
             userId: randomString,

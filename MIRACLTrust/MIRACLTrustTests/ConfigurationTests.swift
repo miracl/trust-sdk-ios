@@ -48,8 +48,7 @@ final class ConfigurationTests: XCTestCase {
         XCTAssertThrowsError(try Configuration.Builder(
             projectId: projectId,
             projectURL: projectURL
-        ).build()
-        ) { error in
+        ).build()) { error in
             XCTAssertTrue(error is ConfigurationError)
             XCTAssertEqual(error as? ConfigurationError, ConfigurationError.emptyProjectId)
         }

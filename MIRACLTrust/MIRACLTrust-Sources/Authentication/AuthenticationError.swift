@@ -17,7 +17,7 @@ public enum AuthenticationError: Error, DefaultLocalizedError {
     /// Could not find the session identifier in the Universal Link.
     case invalidUniversalLink
 
-    // Authentication failed.
+    /// Authentication failed.
     case authenticationFail(Error?)
 
     /// The user is revoked because of too many unsuccessful authentication attempts or has not been used in a substantial amount of time. The device needs to be re-registered.

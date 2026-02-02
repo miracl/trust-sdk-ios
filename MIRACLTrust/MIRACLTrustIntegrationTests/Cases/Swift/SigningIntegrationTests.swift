@@ -1,8 +1,7 @@
 import CryptoKit
 import JWTKit
-import XCTest
-
 @testable import MIRACLTrust
+import XCTest
 
 class SigningIntegrationTests: XCTestCase {
     var registration = RegistrationTestCase()
@@ -152,7 +151,7 @@ class SigningIntegrationTests: XCTestCase {
             webOTT: session.webOTT
         )
         let sessionStatusResultResponse = try XCTUnwrap(sessionStatusResult.signature.fromBase64())
-        let signature = try JSONDecoder().decode(Signature.self, from: sessionStatusResultResponse.data(using: .utf8)!)
+        let signature = try JSONDecoder().decode(Signature.self, from: XCTUnwrap(sessionStatusResultResponse.data(using: .utf8)))
         XCTAssertEqual(crossDeviceSessionUnwrap.signingHash, signature.signatureHash)
 
         let timeInterval = TimeInterval(signature.timestamp)

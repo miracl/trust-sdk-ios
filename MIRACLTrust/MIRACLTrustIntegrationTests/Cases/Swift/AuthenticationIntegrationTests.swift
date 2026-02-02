@@ -90,7 +90,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         let jwks = try String(contentsOf: XCTUnwrap(URL(string: "\(projectURL)/.well-known/jwks")))
         let signers = JWTSigners()
         try signers.use(jwksJSON: jwks)
-        let payload = try signers.verify(jwt!, as: AuthenticationJWTPayload.self)
+        let payload = try signers.verify(XCTUnwrap(jwt), as: AuthenticationJWTPayload.self)
 
         XCTAssertEqual(payload.sub.value, userId)
         XCTAssertTrue(payload.aud.value.contains(projectId))

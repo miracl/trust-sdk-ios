@@ -12,7 +12,7 @@ struct CrossDeviceSessionAuthenticationCase {
             pinProcessor(pinCode)
         }
 
-        let isAuthenticated: Bool = try await withCheckedThrowingContinuation { continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             MIRACLTrust.getInstance()._authenticate(user: user, crossDeviceSession: crossDeviceSession, didRequestPinHandler: pinHandler, completionHandler: { isAuthenticated, error in
                 if let error {
                     continuation.resume(throwing: error)
@@ -22,7 +22,5 @@ struct CrossDeviceSessionAuthenticationCase {
                 continuation.resume(returning: isAuthenticated)
             })
         }
-
-        return isAuthenticated
     }
 }

@@ -78,8 +78,7 @@ class SQLiteMigration2to3: SQLiteMigration {
 
     private func getErrorMessage() -> String? {
         if let errorPointer = sqlite3_errmsg(sqliteHelper.database) {
-            let errorMessage = String(cString: errorPointer)
-            return errorMessage
+            return String(cString: errorPointer)
         }
 
         return nil

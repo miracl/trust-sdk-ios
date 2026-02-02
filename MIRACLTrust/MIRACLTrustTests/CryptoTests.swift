@@ -54,7 +54,7 @@ class CryptoTests: XCTestCase {
         XCTAssertFalse(unwrappedResult.isEmpty)
     }
 
-    func testClientPass2ForError() throws {
+    func testClientPass2ForError() {
         let (_, x, _, _) = crypto.clientPass1(
             mpinId: mpinId,
             token: token,

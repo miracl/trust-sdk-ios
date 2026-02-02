@@ -1,6 +1,5 @@
-import XCTest
-
 @testable import MIRACLTrust
+import XCTest
 
 class JWTGeneratorTests: XCTestCase {
     var user = createValidUser()
@@ -66,7 +65,7 @@ class JWTGeneratorTests: XCTestCase {
         }
     }
 
-    func testFailedJWTGenerationEmptyIdentity() throws {
+    func testFailedJWTGenerationEmptyIdentity() {
         authenticator = nil
         user = JWTGeneratorTests.createValidUser(mpinId: Data(), token: Data())
 
@@ -85,7 +84,7 @@ class JWTGeneratorTests: XCTestCase {
         }
     }
 
-    // Helper functions
+    /// Helper functions
     private func testJWTGenerator(
         testCompletionHandler: @escaping JWTCompletionHandler
     ) {
@@ -110,7 +109,7 @@ class JWTGeneratorTests: XCTestCase {
         mpinId: Data = Data([1, 2, 3]),
         token: Data = Data([3, 2, 1])
     ) -> User {
-        let user = User(
+        User(
             userId: "example@example.com",
             projectId: UUID().uuidString,
             revoked: false,
@@ -120,7 +119,6 @@ class JWTGeneratorTests: XCTestCase {
             dtas: "dtas",
             publicKey: nil
         )
-        return user
     }
 
     func mockAuthenticator() throws -> MockAuthenticator {

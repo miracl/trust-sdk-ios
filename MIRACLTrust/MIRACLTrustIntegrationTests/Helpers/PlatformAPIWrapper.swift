@@ -1,6 +1,5 @@
-import XCTest
-
 import MIRACLTrust
+import XCTest
 
 @objc class PlatformAPIWrapper: NSObject {
     let platformAPI = PlatformAPI()
@@ -123,7 +122,7 @@ import MIRACLTrust
         accessId: String? = nil,
         expiration: Date? = nil
     ) async throws -> URL {
-        let url: URL = try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             platformAPI.getVerificationURL(
                 serviceAccountToken: serviceAccountToken,
                 projectId: projectId,
@@ -139,7 +138,6 @@ import MIRACLTrust
                 }
             }
         }
-        return url
     }
 
     func getAsyncAccessId(
@@ -149,7 +147,7 @@ import MIRACLTrust
         hash: String? = nil,
         description: String? = nil
     ) async throws -> StartSessionResult {
-        let session: StartSessionResult = try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             platformAPI.getAccessId(
                 projectURL: projectURL,
                 projectId: projectId,
@@ -164,28 +162,23 @@ import MIRACLTrust
                 }
             }
         }
-
-        return session
     }
 
     func getSessionStatus(
         projectURL: String,
         webOTT: String
     ) async throws -> SessionStatusResponse {
-        let sessionStatusResponse: SessionStatusResponse =
-            try await withCheckedThrowingContinuation { continuation in
-                platformAPI.accessRequest(
-                    projectURL: projectURL,
-                    webOTT: webOTT
-                ) { response, error in
-                    if let response {
-                        continuation.resume(returning: response)
-                    } else if let error {
-                        continuation.resume(throwing: error)
-                    }
+        try await withCheckedThrowingContinuation { continuation in
+            platformAPI.accessRequest(
+                projectURL: projectURL,
+                webOTT: webOTT
+            ) { response, error in
+                if let response {
+                    continuation.resume(returning: response)
+                } else if let error {
+                    continuation.resume(throwing: error)
                 }
             }
-
-        return sessionStatusResponse
+        }
     }
 }
