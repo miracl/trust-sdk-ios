@@ -82,7 +82,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     }
 
     @Test("Tests failed authentication with invalid session id", .timeLimit(.minutes(1)))
-    func authenticationFailedWithWrongSessionId() async throws {
+    func authenticationFailedWithWrongSessionId() async {
         let crossDeviceSession = createCrossDeviceSessionObject()
 
         let desiredError = AuthenticationError.invalidCrossDeviceSession
@@ -115,7 +115,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     }
 
     @Test("Tests failed authentication for invalid pin (e.g `abcde`)", .timeLimit(.minutes(1)))
-    mutating func failedAuthenticationWithInvalidPin() async throws {
+    mutating func failedAuthenticationWithInvalidPin() async {
         authenticationTestCase.pinCode = UUID().uuidString
 
         let desiredError = AuthenticationError.invalidPin
@@ -130,7 +130,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     }
 
     @Test("Tests failed authentication for wrong pin", .timeLimit(.minutes(1)))
-    mutating func failedAuthenticationWithWrongPin() async throws {
+    mutating func failedAuthenticationWithWrongPin() async {
         authenticationTestCase.pinCode = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin()
 
         let desiredError = AuthenticationError.unsuccessfulAuthentication
@@ -145,7 +145,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     }
 
     @Test("Tests failed authentication for longer pin. 6 instead of 4", .timeLimit(.minutes(1)))
-    mutating func failedAuthenticationWithLongerPin() async throws {
+    mutating func failedAuthenticationWithLongerPin() async {
         authenticationTestCase.pinCode = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin(length: 6)
 
         let desiredError = AuthenticationError.invalidPin
@@ -160,7 +160,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     }
 
     @Test("Tests failed authentication for longer pin. 3 instead of 4", .timeLimit(.minutes(1)))
-    mutating func failedAuthenticationWithShorterPin() async throws {
+    mutating func failedAuthenticationWithShorterPin() async {
         authenticationTestCase.pinCode = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin(length: 3)
 
         let desiredError = AuthenticationError.invalidPin
@@ -175,7 +175,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     }
 
     @Test("Tests failed authentication for nil pin.", .timeLimit(.minutes(1)))
-    mutating func failedAuthenticationWithNilPin() async throws {
+    mutating func failedAuthenticationWithNilPin() async {
         authenticationTestCase.pinCode = nil
 
         let desiredError = AuthenticationError.pinCancelled

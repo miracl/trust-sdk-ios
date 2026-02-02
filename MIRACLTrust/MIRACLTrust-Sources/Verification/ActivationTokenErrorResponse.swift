@@ -6,13 +6,13 @@ import Foundation
 /// - Tag: classes-ActivationTokenErrorResponse
 @objcMembers
 @objc public final class ActivationTokenErrorResponse: NSObject, Sendable {
-    // Identifier of the project against which the verification is performed.
+    /// Identifier of the project against which the verification is performed.
     public let projectId: String
 
-    // Identifier of the user for which the verification is performed.
+    /// Identifier of the user for which the verification is performed.
     public let userId: String
 
-    // Identifier of the session from which the verification started.
+    /// Identifier of the session from which the verification started.
     public let accessId: String?
 
     init(projectId: String, userId: String, accessId: String?) {

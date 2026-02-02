@@ -175,7 +175,8 @@ class QuickCodeGeneratorTests: XCTestCase {
 
     func testForUnknownCode() throws {
         let returnedError = AuthenticationError.authenticationFail(
-            apiClientError(with: "EXAMPLE_CODE"))
+            apiClientError(with: "EXAMPLE_CODE")
+        )
         authenticator?.response = nil
         authenticator?.error = returnedError
 

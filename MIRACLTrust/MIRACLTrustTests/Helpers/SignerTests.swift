@@ -223,7 +223,7 @@ class SignerTests: XCTestCase {
         }
     }
 
-    func testSignerForJsonEncodingError() throws {}
+    func testSignerForJsonEncodingError() {}
 
     func testSignerForCompleteCrossDeviceSessionRequest() throws {
         sessionIdentifier = UUID().uuidString
@@ -406,8 +406,7 @@ class SignerTests: XCTestCase {
     class func messageHash() -> Data {
         let messageData = Data("Some nice string".utf8)
         let iterator = SHA256.hash(data: messageData).makeIterator()
-        let data = Data(iterator)
-        return data
+        return Data(iterator)
     }
 
     func mockAuthenticator() -> MockAuthenticator {

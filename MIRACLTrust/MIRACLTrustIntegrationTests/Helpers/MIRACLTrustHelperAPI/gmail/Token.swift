@@ -1,4 +1,4 @@
-// Structure for `token.json`
+/// Structure for `token.json`
 struct Token: Codable {
     let accessToken: String
     let refreshToken: String?

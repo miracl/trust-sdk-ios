@@ -303,8 +303,7 @@ final class SQLiteHelper: @unchecked Sendable {
 
     private func getErrorMessage() -> String? {
         if let errorPointer = sqlite3_errmsg(database) {
-            let errorMessage = String(cString: errorPointer)
-            return errorMessage
+            return String(cString: errorPointer)
         }
         return nil
     }

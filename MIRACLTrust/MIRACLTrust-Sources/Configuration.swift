@@ -22,7 +22,7 @@ import Foundation
     /// Logging enabled. This value is used only in the default message writer implementation, otherwise is ignored.
     var loggingLevel: LoggingLevel
 
-    // Additional information that will be sent via `X-MIRACL-CLIENT` HTTP header.
+    /// Additional information that will be sent via `X-MIRACL-CLIENT` HTTP header.
     var applicationInfo: String?
 
     /// Type of the storage that could be configured.

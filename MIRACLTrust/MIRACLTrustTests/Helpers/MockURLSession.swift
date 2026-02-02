@@ -31,8 +31,6 @@ class URLSessionMock: URLSession, @unchecked Sendable {
             completionHandler(data, response, error)
         }
 
-        let taskCast = task as URLSessionDataTask
-
-        return taskCast
+        return task as URLSessionDataTask
     }
 }

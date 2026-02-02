@@ -18,7 +18,7 @@ struct ActivationTokenAsyncCase {
             accessId: accessId
         )
 
-        let activationToken: String = try await withCheckedThrowingContinuation { continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { response, error in
                 if let response {
                     continuation.resume(returning: response.activationToken)
@@ -27,7 +27,5 @@ struct ActivationTokenAsyncCase {
                 }
             }
         }
-
-        return activationToken
     }
 }

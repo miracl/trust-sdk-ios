@@ -45,7 +45,7 @@ class SessionDetailsFetcherTests: XCTestCase {
         try MIRACLTrust.configure(with: configuration)
     }
 
-    func testGetSessionDetailsQRCode() throws {
+    func testGetSessionDetailsQRCode() {
         let randomString = randomString
         let accessId = accessId
         let randomPin = randomPin
@@ -56,7 +56,7 @@ class SessionDetailsFetcherTests: XCTestCase {
         }
     }
 
-    func testGetSessionDetailsUniversalLinkURL() throws {
+    func testGetSessionDetailsUniversalLinkURL() {
         let randomString = randomString
         let accessId = accessId
         let randomPin = randomPin
@@ -67,7 +67,7 @@ class SessionDetailsFetcherTests: XCTestCase {
         }
     }
 
-    func testGetSessionDetailsPayload() throws {
+    func testGetSessionDetailsPayload() {
         let randomString = randomString
         let accessId = accessId
         let randomPin = randomPin

@@ -1,6 +1,5 @@
-import XCTest
-
 @testable import MIRACLTrust
+import XCTest
 
 class VerificationIntegrationTests: XCTestCase {
     let projectURLDV = ProcessInfo.processInfo.environment["projectURLDV"]!
@@ -133,8 +132,8 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (user, registrationError) = registrationTestCase.registerUser(
-            userId: extendedMailAddress, activationToken: activationTokenResponse!.activationToken
+        let (user, registrationError) = try registrationTestCase.registerUser(
+            userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
         XCTAssertNotNil(user)
@@ -149,7 +148,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         XCTAssertNil(error)
         XCTAssertNotNil(verificationResponse)
-        XCTAssertEqual(verificationResponse!.method, EmailVerificationMethod.link)
+        XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.link)
     }
 
     func testBackoffError() throws {
@@ -324,8 +323,8 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (user, registrationError) = registrationTestCase.registerUser(
-            userId: extendedMailAddress, activationToken: activationTokenResponse!.activationToken
+        let (user, registrationError) = try registrationTestCase.registerUser(
+            userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
         XCTAssertNotNil(user)
@@ -340,7 +339,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         XCTAssertNil(error)
         XCTAssertNotNil(verificationResponse)
-        XCTAssertEqual(verificationResponse!.method, EmailVerificationMethod.code)
+        XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.code)
     }
 
     func testEmailCodeVerificationWithoutMpinId() async throws {
@@ -370,14 +369,14 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (user, registrationError) = registrationTestCase.registerUser(
-            userId: extendedMailAddress, activationToken: activationTokenResponse!.activationToken
+        let (user, registrationError) = try registrationTestCase.registerUser(
+            userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
         XCTAssertNotNil(user)
         XCTAssertNil(registrationError)
 
-        try MIRACLTrust.getInstance().delete(user: user!)
+        try MIRACLTrust.getInstance().delete(user: XCTUnwrap(user))
 
         // Prevent verification request backoff
         sleep(5)
@@ -388,7 +387,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         XCTAssertNil(error)
         XCTAssertNotNil(verificationResponse)
-        XCTAssertEqual(verificationResponse!.method, EmailVerificationMethod.link)
+        XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.link)
     }
 
     func testEmailCodeVerificationWithRevokedMpinId() async throws {
@@ -417,8 +416,8 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (regUser, registrationError) = registrationTestCase.registerUser(
-            userId: extendedMailAddress, activationToken: activationTokenResponse!.activationToken
+        let (regUser, registrationError) = try registrationTestCase.registerUser(
+            userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
         XCTAssertNotNil(regUser)
@@ -449,7 +448,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         XCTAssertNil(error)
         XCTAssertNotNil(verificationResponse)
-        XCTAssertEqual(verificationResponse!.method, EmailVerificationMethod.code)
+        XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.code)
     }
 
     func testCustomVerification() throws {

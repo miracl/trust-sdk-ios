@@ -14,7 +14,7 @@ class UpdateProjectSettingsIntegrationTests: XCTestCase {
     }
 
     func testUpdateProjectSettings() throws {
-        let expectedProjectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
+        let expectedProjectId = try XCTUnwrap(ProcessInfo.processInfo.environment["projectIdCUV"])
 
         try MIRACLTrust.getInstance()
             .updateProjectSettings(
@@ -55,7 +55,7 @@ class UpdateProjectSettingsIntegrationTests: XCTestCase {
     }
 
     func testSetProjectId() throws {
-        let expectedProjectId = ProcessInfo.processInfo.environment["projectIdCUV"]!
+        let expectedProjectId = try XCTUnwrap(ProcessInfo.processInfo.environment["projectIdCUV"])
 
         try MIRACLTrust.getInstance().setProjectId(projectId: expectedProjectId)
 

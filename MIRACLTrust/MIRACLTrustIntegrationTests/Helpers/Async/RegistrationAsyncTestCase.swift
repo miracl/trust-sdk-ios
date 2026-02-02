@@ -12,7 +12,7 @@ struct RegistrationAsyncTestCase {
             pinProcessor(pinCode)
         }
 
-        let user: User = try await withCheckedThrowingContinuation { continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             MIRACLTrust.getInstance().register(
                 for: userId,
                 activationToken: activationToken,
@@ -25,7 +25,5 @@ struct RegistrationAsyncTestCase {
                 }
             }
         }
-
-        return user
     }
 }

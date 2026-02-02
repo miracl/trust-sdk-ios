@@ -82,7 +82,7 @@ class AbortSessionIntegrationTests: XCTestCase {
         XCTAssertNil(error)
     }
 
-    func testAbortSessionEmptyAccessId() throws {
+    func testAbortSessionEmptyAccessId() {
         let sessionDetails = createAuthenticationSessionDetails(accessId: "")
 
         let (sessionAborted, error) = abortSessionTestCase.abortSession(

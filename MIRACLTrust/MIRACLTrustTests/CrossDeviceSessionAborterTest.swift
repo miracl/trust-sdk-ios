@@ -75,7 +75,7 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         }
     }
 
-    func testAbortCrossDeviceSession() throws {
+    func testAbortCrossDeviceSession() {
         let expectedError = CrossDeviceSessionError.invalidCrossDeviceSession
 
         api.sessionAborterResultCall = .failed

@@ -45,7 +45,7 @@ struct CrossDeviceSessionIntegrationTest {
     }
 
     @Test("Get cross device session for invalid QR Code", .timeLimit(.minutes(1)))
-    func getCrossDeviceSessionForInvalidQRCode() async throws {
+    func getCrossDeviceSessionForInvalidQRCode() async {
         let qrCode = "https://mcl.mpin.io#InvalidAccessId"
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
             try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
@@ -62,7 +62,7 @@ struct CrossDeviceSessionIntegrationTest {
     }
 
     @Test("Get cross device session for empty QR Code", .timeLimit(.minutes(1)))
-    func getCrossDeviceSessionForEmptyQRCode() async throws {
+    func getCrossDeviceSessionForEmptyQRCode() async {
         let qrCode = ""
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
             try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
@@ -137,7 +137,7 @@ struct CrossDeviceSessionIntegrationTest {
     }
 
     @Test("Get cross device session from push notification payload but missing required entry", .timeLimit(.minutes(1)))
-    func getCrossDeviceSessionsFromPushNotificationsPayloadMissingPayloadEntry() async throws {
+    func getCrossDeviceSessionsFromPushNotificationsPayloadMissingPayloadEntry() async {
         let payload = [AnyHashable: Any]()
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
             try await crossDeviceSessionCase.getCrossDeviceSessionForPushNotificationPayload(payload: payload)
@@ -147,7 +147,7 @@ struct CrossDeviceSessionIntegrationTest {
     }
 
     @Test("Get cross device session from push notifications payload but invalid URL", .timeLimit(.minutes(1)))
-    func getCrossDeviceSessionsFromPushNotificationsPayloadInvalidURL() async throws {
+    func getCrossDeviceSessionsFromPushNotificationsPayloadInvalidURL() async {
         let payload = [
             "qrURL": "InvalidURL"
         ]
@@ -160,7 +160,7 @@ struct CrossDeviceSessionIntegrationTest {
     }
 
     @Test("Get cross device session from push notifications payload but invalid URL fragment", .timeLimit(.minutes(1)))
-    func getCrossDeviceSessionsFromPushNotificationsPayloadInvalidURLFragment() async throws {
+    func getCrossDeviceSessionsFromPushNotificationsPayloadInvalidURLFragment() async {
         let payload = [
             "qrURL": "https://mcl.mpin.io#"
         ]

@@ -5,7 +5,7 @@ class APIRequestTests: XCTestCase {
     let exampleURL = URL(string: "https://example.com")!
     let logger = DefaultLogger(level: .none)
 
-    func testGetRequestCreation() {
+    func testGetRequestCreation() throws {
         let randomString = NSUUID().uuidString
         let queryParams = ["randomKey": "randomValue"]
 
@@ -21,9 +21,9 @@ class APIRequestTests: XCTestCase {
             if let urlRequest = miraclApiRequest.urlRequest() {
                 XCTAssertNotNil(urlRequest.url)
                 XCTAssertEqual(urlRequest.httpMethod, "GET")
-                XCTAssertEqual(urlRequest.url!.host, exampleURL.host)
-                XCTAssertEqual(urlRequest.url!.path, "/\(randomString)")
-                XCTAssertNotNil(urlRequest.url!.query)
+                XCTAssertEqual(urlRequest.url?.host, exampleURL.host)
+                XCTAssertEqual(urlRequest.url?.path, "/\(randomString)")
+                XCTAssertNotNil(try XCTUnwrap(urlRequest.url?.query))
             }
 
         } catch {
@@ -46,8 +46,8 @@ class APIRequestTests: XCTestCase {
             if let urlRequest = miraclApiRequest.urlRequest() {
                 XCTAssertNotNil(urlRequest.url)
                 XCTAssertEqual(urlRequest.httpMethod, "POST")
-                XCTAssertEqual(urlRequest.url!.host, exampleURL.host)
-                XCTAssertEqual(urlRequest.url!.path, "/\(randomString)")
+                XCTAssertEqual(urlRequest.url?.host, exampleURL.host)
+                XCTAssertEqual(urlRequest.url?.path, "/\(randomString)")
             }
 
         } catch {
@@ -70,8 +70,8 @@ class APIRequestTests: XCTestCase {
             if let urlRequest = miraclApiRequest.urlRequest() {
                 XCTAssertNotNil(urlRequest.url)
                 XCTAssertEqual(urlRequest.httpMethod, "PUT")
-                XCTAssertEqual(urlRequest.url!.host, exampleURL.host)
-                XCTAssertEqual(urlRequest.url!.path, "/\(randomString)")
+                XCTAssertEqual(urlRequest.url?.host, exampleURL.host)
+                XCTAssertEqual(urlRequest.url?.path, "/\(randomString)")
             }
 
         } catch {
@@ -94,8 +94,8 @@ class APIRequestTests: XCTestCase {
             if let urlRequest = miraclApiRequest.urlRequest() {
                 XCTAssertNotNil(urlRequest.url)
                 XCTAssertEqual(urlRequest.httpMethod, "DELETE")
-                XCTAssertEqual(urlRequest.url!.host, exampleURL.host)
-                XCTAssertEqual(urlRequest.url!.path, "/\(randomString)")
+                XCTAssertEqual(urlRequest.url?.host, exampleURL.host)
+                XCTAssertEqual(urlRequest.url?.path, "/\(randomString)")
             }
 
         } catch {

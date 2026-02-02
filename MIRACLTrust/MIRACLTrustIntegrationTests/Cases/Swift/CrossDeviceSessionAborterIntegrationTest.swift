@@ -34,7 +34,7 @@ struct CrossDeviceSessionAborterIntegrationTest {
     }
 
     @Test("Abort cross device session for empty access id", .timeLimit(.minutes(1)))
-    func abortCrossDeviceSessionEmptyAccessId() async throws {
+    func abortCrossDeviceSessionEmptyAccessId() async {
         let session = createCrossDeviceSessionObject(sessionId: "")
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
             try await abortCrossDeviceSessionCase.abortCrossDeviceSession(session)
