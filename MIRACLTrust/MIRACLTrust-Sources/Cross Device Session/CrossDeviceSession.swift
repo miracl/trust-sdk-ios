@@ -1,9 +1,9 @@
 import Foundation
 
-/// An object representing details for an operation (authentication or signing)  started on another device.
+/// An object representing the details of an operation (authentication or signing) started on another device.
 @objcMembers
 @objc public final class CrossDeviceSession: NSObject, Sendable {
-    /// User ID entered by the user when session is started.
+    /// User ID entered by the user when the session is started.
     public let userId: String
 
     /// Project ID setting for the application in MIRACL Trust platform.

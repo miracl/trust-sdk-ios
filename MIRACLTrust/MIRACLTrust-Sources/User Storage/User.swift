@@ -1,20 +1,20 @@
 import CommonCrypto
 import Foundation
 
-/// Representing user in the MIRACL platform.
-/// This user is having authentication and signing identities.
+/// Representing a user in the MIRACL Trust platform.
+/// This user has authentication and signing identities.
 @objcMembers
 @objc public final class User: NSObject, Sendable {
-    /// Identifier of the user (e.g email address)
+    /// Identifier of the user (e.g email address).
     public let userId: String
 
     /// Identifier of the project in the MIRACL Trust platform.
     public let projectId: String
 
-    /// Provides information if the user is revoked or not.
+    /// Provides information on whether the user has been revoked or not.
     public let revoked: Bool
 
-    /// The number of the digits the identity PIN should be.
+    /// The PIN's number of digits.
     public let pinLength: Int
 
     /// Actual representation of the identity.
@@ -23,7 +23,7 @@ import Foundation
     /// The second factor of the authentication.
     let token: Data
 
-    /// Base64 encoded URL-s of DTA-s.
+    /// Base64-encoded URLs of the DTAs.
     let dtas: String
 
     /// The public part of the signing key.
@@ -49,7 +49,7 @@ import Foundation
         self.publicKey = publicKey
     }
 
-    /// Hex encoded SHA256 representation of the mpinId property.
+    /// Hex-encoded SHA256 representation of the `mpinId` property.
     public var hashedMpinId: String {
         var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
 
@@ -60,8 +60,8 @@ import Foundation
         return Data(hash).hex
     }
 
-    /// Check whether one of the `dtas`, `mpinId` or `token` properties has a value.
-    /// - Returns: whether one of the dtas, mpinId  or token properties has a value.
+    /// Check whether any of the `dtas`, `mpinId` or `token` properties has a value.
+    /// - Returns: whether any of the `dtas`, `mpinId` or `token` properties has a value.
     func emptyUser() -> Bool {
         dtas.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
             mpinId.isEmpty ||

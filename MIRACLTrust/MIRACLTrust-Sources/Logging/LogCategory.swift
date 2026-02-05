@@ -1,42 +1,42 @@
-/// Enums describing what are categories for logging into the SDK.
+/// An enumeration of the categories for logging into the SDK.
 @objc public enum LogCategory: Int {
-    /// Logging into `configuration` category.
+    /// Logging into the `configuration` category.
     case configuration
 
-    /// Logging into `networking` category.
+    /// Logging into the `networking` category.
     case networking
 
-    /// Logging into `crypto` category.
+    /// Logging into the `crypto` category.
     case crypto
 
-    /// Logging into `registration` category.
+    /// Logging into the `registration` category.
     case registration
 
-    /// Logging into `authentication` category.
+    /// Logging into the `authentication` category.
     case authentication
 
-    /// Logging into `signing` category.
+    /// Logging into the `signing` category.
     case signing
 
-    /// Logging into `signing registration` category.
+    /// Logging into the `signing registration` category.
     case signingRegistration
 
-    /// Logging into `verification` category.
+    /// Logging into the `verification` category.
     case verification
 
-    /// Logging into `verification` category.
+    /// Logging into the `verification` category.
     case verificationConfirmation
 
-    /// Logging into `storage` category.
+    /// Logging into the `storage` category.
     case storage
 
-    /// Logging into `Session Management` category.
+    /// Logging into the `Session Management` category.
     case sessionManagement
 
-    /// Logging into `JWT Generation` category.
+    /// Logging into the `JWT Generation` category.
     case jwtGeneration
 
-    /// Logging into `QuickCode` category.
+    /// Logging into the `QuickCode` category.
     case quickCode
 
     /// Describing category as string.

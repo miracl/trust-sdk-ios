@@ -1,6 +1,6 @@
 import Foundation
 
-///  An enumeration that describes issues with the authentication session management.
+///  An enumeration describing issues with the authentication session management.
 public enum AuthenticationSessionError: Error, DefaultLocalizedError {
     /// Could not find the session identifier in the Universal Link URL.
     case invalidUniversalLinkURL
@@ -11,7 +11,7 @@ public enum AuthenticationSessionError: Error, DefaultLocalizedError {
     /// Could not find the session identifier in the push notification payload.
     case invalidPushNotificationPayload
 
-    /// The session identifier in SessionDetails is empty or blank.
+    /// The session identifier in `SessionDetails` is empty or blank.
     case invalidAuthenticationSessionDetails
 
     /// Fetching the authentication session details failed.

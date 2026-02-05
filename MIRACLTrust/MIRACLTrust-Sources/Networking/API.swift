@@ -5,7 +5,7 @@ enum APICallResult: Int {
     case failed
 }
 
-/// Execute networking requests against MIRACL platform
+/// Execute networking requests against the MIRACL Trust platform
 /// - Tag: API
 struct API: APIBlueprint {
     let clientSettings: APISettings
@@ -182,10 +182,10 @@ struct API: APIBlueprint {
 
     /// Sending request for verifying user identity.
     /// - Parameters:
-    ///   - projectId: id of the project
-    ///   - userId: id of the user.
-    ///   - deviceName: a device identifier used to recognise device in the portal.
-    ///   - accessId: a session identifier used to get information from web session.
+    ///   - projectId: ID of the project
+    ///   - userId: ID of the user.
+    ///   - deviceName: a device identifier used for recognising the device in the Portal.
+    ///   - accessId: a session identifier used for obtaining information from the web session.
     ///   - mpinId: user's mpinId if it is already registered.
     ///   - completionHandler: completion handler.
     /// - Tag: API-_FUNC_verifyuserfordevicenameaccessidcompletionhandler
@@ -220,9 +220,9 @@ struct API: APIBlueprint {
         }
     }
 
-    /// Sending request for confirming user identity verification.
+    /// Sending request for confirming user verification.
     /// - Parameters:
-    ///   - userId: id of the user.
+    ///   - userId: ID of the user.
     ///   - code: activation code.
     ///   - completionHandler: completion handler.
     /// - Tag: API-_FUNC_confirmverificationrequestuseridcodecompletionhandler

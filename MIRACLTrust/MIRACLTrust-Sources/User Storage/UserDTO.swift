@@ -7,19 +7,19 @@ import Foundation
 /// - warning: This object contains sensitive data.
 /// Implementers must ensure secure storage (e.g., encryption at rest).
 public final class UserDTO: NSObject, Sendable {
-    /// The identifier of the user, which is unique within the scope of a project. Could be email, username, etc.
+    /// The identifier of the user, which is unique within the scope of a project (e.g., email, username, etc.).
     public let userId: String
 
-    /// The identifier of the project this user belongs to.
+    /// The identifier of the project to which the user belongs.
     public let projectId: String
 
     /// The revocation status of the user.
     public let revoked: Bool
 
-    /// The user's PIN's number of digits.
+    /// The number of digits of the user's PIN.
     public let pinLength: Int
 
-    /// The identifier of this user registration in the MIRACL Trust Platform.
+    /// The identifier of this user registration in the MIRACL Trust platform.
     public let mpinId: Data
 
     /// A secure user token.

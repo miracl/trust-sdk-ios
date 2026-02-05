@@ -1,17 +1,17 @@
 import Foundation
 
-/// An enumeration that describes QuickCode issues.
+/// An enumeration describing QuickCode issues.
 public enum QuickCodeError: Error, DefaultLocalizedError {
-    /// The user is revoked because of too many unsuccessful authentication attempts or has not been used in a substantial amount of time. The device needs to be re-registered.
+    /// The user was revoked due to too many failed authentication attempts or prolonged inactivity. The device must be re-registered.
     case revoked
 
     /// The authentication was not successful.
     case unsuccessfulAuthentication
 
-    /// Pin not entered.
+    /// PIN code was not entered.
     case pinCancelled
 
-    /// Pin code includes invalid symbols or pin length does not match.
+    /// PIN code contains invalid symbols or PIN length does not match.
     case invalidPin
 
     /// QuickCode generation failed.

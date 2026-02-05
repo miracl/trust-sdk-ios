@@ -1,11 +1,11 @@
 import Foundation
 
-/// An enumeration that describes issues with the cross-device session management.
+/// An enumeration describing issues with the cross-device session management.
 public enum CrossDeviceSessionError: Error, DefaultLocalizedError {
     /// Could not find the session identifier in the Universal Link URL.
     case invalidUniversalLinkURL
 
-    /// Could not find the  session identifier in the QR code.
+    /// Could not find the session identifier in the QR code.
     case invalidQRCode
 
     /// Could not find the session identifier in the push notification payload.

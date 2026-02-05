@@ -1,6 +1,6 @@
 import Foundation
 
-/// An enumeration that describes authentication issues.
+/// An enumeration describing authentication issues.
 public enum AuthenticationError: Error, DefaultLocalizedError {
     /// User object passed for authentication is not valid.
     case invalidUserData
@@ -11,7 +11,7 @@ public enum AuthenticationError: Error, DefaultLocalizedError {
     /// Could not find a valid projectID, qrURL, or userID in the push notification payload.
     case invalidPushNotificationPayload
 
-    /// There isn't a registered user for the provided user ID and project in the push notification payload.
+    /// There is no registered user for the provided User ID and project in the push notification payload.
     case userNotFound
 
     /// Could not find the session identifier in the Universal Link.
@@ -20,7 +20,7 @@ public enum AuthenticationError: Error, DefaultLocalizedError {
     /// Authentication failed.
     case authenticationFail(Error?)
 
-    /// The user is revoked because of too many unsuccessful authentication attempts or has not been used in a substantial amount of time. The device needs to be re-registered.
+    /// The user was revoked due to too many failed authentication attempts or prolonged inactivity. The device must be re-registered.
     case revoked
 
     /// Invalid or expired authentication session.
@@ -29,10 +29,10 @@ public enum AuthenticationError: Error, DefaultLocalizedError {
     /// The authentication was not successful.
     case unsuccessfulAuthentication
 
-    /// Pin not entered.
+    /// PIN code was not entered.
     case pinCancelled
 
-    /// Pin code includes invalid symbols or pin length does not match.
+    /// PIN code contains invalid symbols or PIN length does not match.
     case invalidPin
 
     /// Invalid or expired cross-device session.
