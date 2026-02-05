@@ -1,4 +1,4 @@
-/// Enum describing on what level messages will be logged or logging will be turned off.
+/// An enumeration describing on what levels messages will be logged or logging will be turned off.
 /// - Tag: enums-LoggingLevel
 @objc public enum LoggingLevel: Int, Comparable, Sendable {
     /// Logging is not allowed.

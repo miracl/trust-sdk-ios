@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: Public
 
-/// A callback used to allow the application using the MIRACLTrust iOS SDK
+/// A callback that allows the application using the MIRACL Trust iOS SDK
 /// to pass the PIN to the SDK.
 ///
 /// ## Closure Parameters
@@ -28,7 +28,7 @@ public typealias PinRequestHandler = @MainActor @Sendable (@escaping ProcessPinH
 /// method returns its result.
 ///
 /// ## Closure Parameters
-/// 1. The newly created ``User`` object or `nil` if the
+/// 1. The newly created ``User`` object, or `nil` if the
 ///   operation failed.
 /// 2. An optional error describing why the operation failed. This value
 ///   is `nil` when the first parameter is non-`nil`.
@@ -60,7 +60,7 @@ public typealias AuthenticationCompletionHandler = @MainActor @Sendable (Bool, E
 /// method returns its result.
 ///
 /// ## Closure Parameters
-/// 1. The newly created ``SigningResult`` object or `nil` if the
+/// 1. The newly created ``SigningResult`` object, or `nil` if the
 ///   operation failed.
 /// 2. An optional error describing why the operation failed. This value
 ///   is `nil` when the first parameter is non-`nil`.
@@ -89,7 +89,7 @@ public typealias CrossDeviceSigningCompletionHandler = @MainActor @Sendable (Boo
 /// method returns its result.
 ///
 /// ## Closure Parameters
-/// 1. The newly created ``VerificationResponse`` object or `nil` if the
+/// 1. The newly created ``VerificationResponse`` object, or `nil` if the
 ///   operation failed.
 /// 2. An optional error describing why the operation failed. This value
 ///   is `nil` when the first parameter is non-`nil`.
@@ -104,7 +104,7 @@ public typealias VerificationCompletionHandler = @MainActor @Sendable (Verificat
 /// methods returns its results.
 ///
 /// ## Closure Parameters
-/// 1. The newly created ``ActivationTokenResponse`` object or `nil` if the
+/// 1. The newly created ``ActivationTokenResponse`` object, or `nil` if the
 ///   operation failed.
 /// 2. An optional error describing why the operation failed. This value
 ///   is `nil` when the first parameter is non-`nil`.
@@ -118,7 +118,7 @@ public typealias ActivationTokenCompletionHandler = @MainActor @Sendable (Activa
 /// method returns its result.
 ///
 /// ## Closure Parameters
-/// 1. The newly created ``QuickCode`` object or `nil` if the
+/// 1. The newly created ``QuickCode`` object, or `nil` if the
 ///   operation failed.
 /// 2. An optional error describing why the operation failed. This value
 ///   is `nil` when the first parameter is non-`nil`.
@@ -178,8 +178,8 @@ public typealias AuthenticationSessionAborterCompletionHandler = @MainActor @Sen
 ///
 /// ## Closure Parameters
 /// 1. The newly created ``CrossDeviceSession``, or `nil` if creation failed.
-/// 2. An optional error describing why the ``CrossDeviceSession`` isn't created. This value
-///   is typically nil when the first parameter is not `nil`.
+/// 2. An optional error describing why the ``CrossDeviceSession`` was not created. This value
+///   is typically `nil` when the first parameter is not `nil`.
 ///
 /// > Note: The closure is always invoked on the main actor, making it safe to update
 /// user interface elements directly. Because it is marked @Sendable, the
@@ -192,7 +192,7 @@ public typealias CrossDeviceSessionCompletionHandler = @MainActor @Sendable (Cro
 /// 1. A Boolean value indicating whether the session was aborted successfully
 ///    (true if the session terminated cleanly).
 /// 2. An optional error describing why the abort operation failed. This value
-///    is typically nil when the first parameter is `true`.
+///    is typically `nil` when the first parameter is `true`.
 ///
 /// > Note: The closure is always invoked on the main actor, making it safe to update
 /// user interface elements directly. Because it is marked `@Sendable`, the
@@ -204,8 +204,8 @@ public typealias CrossDeviceSessionAborterCompletionHandler = @MainActor @Sendab
 /// method returns its result.
 ///
 /// ## Closure Parameters
-/// 1. The retrieved ``User `` object if found in the storage, `nil` if the
-///   operation failed or if the ``User`` object isn't found in the storage.
+/// 1. The retrieved ``User`` object if found in the storage, `nil` if the
+///   operation failed or if the ``User`` object was not found in the storage.
 /// 2. An optional error describing why the user retrieval operation failed. This value
 ///   is typically `nil` when the first parameter is non-`nil`.
 ///

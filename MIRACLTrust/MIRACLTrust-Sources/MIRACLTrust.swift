@@ -75,7 +75,7 @@ import Foundation
 
     // MARK: SDK Configuration
 
-    /// Getting singleton instance of the MIRACLTrust class.
+    /// Gets a singleton instance of the MIRACLTrust class.
     /// - Returns: singleton instance of the MIRACLTrust class.
     @objc public class func getInstance() -> MIRACLTrust {
         sharedQueue.sync {
@@ -84,9 +84,9 @@ import Foundation
         }
     }
 
-    /// Configure SDK with values issued by MIRACL and stored in the ``Configuration`` object.
-    /// It is recommended to be called right after the application is launched.
-    /// - Parameter configuration:object storing configurations of the SDK.
+    /// Configures the SDK with values issued by MIRACL Trust and stored in the ``Configuration`` object.
+    /// Call this method immediately after the application is launched.
+    /// - Parameter configuration: an object storing configurations of the SDK.
     @objc public class func configure(with configuration: Configuration) throws {
         try sharedQueue.sync {
             precondition(configuration.projectId != nil, "MIRACLTrust SDK: Project ID is missing. Pass a valid Project ID to Configuration.Builder.")
@@ -141,9 +141,9 @@ import Foundation
         }
     }
 
-    /// Configure a new project ID when the SDK have to work with a different project.
+    /// Configures a new Project ID when the SDK has to work with a different project.
     /// - Parameters:
-    ///   - projectId: `Project ID` setting for the MIRACL Platform that needs to be updated.
+    ///   - projectId: `Project ID` setting for the MIRACL Trust platform that needs to be updated.
     @objc public func setProjectId(
         projectId: String
     ) throws {
@@ -154,9 +154,9 @@ import Foundation
         self.projectId = projectId
     }
 
-    /// Configures new project settings when the SDK have to work with a different project.
+    /// Configures new project settings when the SDK has to work with a different project.
     /// - Parameters:
-    ///   - projectId: The unique identifier for your MIRACL Trust project.
+    ///   - projectId: The unique identifier of the MIRACL Trust project.
     ///   - projectURL: MIRACL Trust Project URL that is used for communication with the MIRACL Trust API.
     @objc public func updateProjectSettings(
         projectId: String,
@@ -180,10 +180,10 @@ import Foundation
 
     // MARK: Verification
 
-    /// Sending email for user id verification.
+    /// Sends an email for User ID verification.
     /// - Parameters:
-    ///  - userId: identifier of the user identity. To verify identity this identifier needs to be valid email address.
-    ///  - authenticationSessionDetails: details for an authentication session.
+    ///  - userId: an identifier of the user. Must be a valid email address.
+    ///  - authenticationSessionDetails: details for the authentication session.
     ///  - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
     @objc public func sendVerificationEmail(
         userId: String,
@@ -217,11 +217,11 @@ import Foundation
         }
     }
 
-    /// Default method to verify user identity against the MIRACL Trust platform. In the
-    /// current implementation it is done by sending an email message.
+    /// Default method for verifying the User ID with the MIRACL Trust platform.
+    /// Currently, verification is performed by sending an email.
     ///
     /// - Parameters:
-    ///   - userId: identifier of the user identity. To verify identity this identifier needs to be valid email address.
+    ///   - userId: an identifier of the user. Must be a valid email address.
     ///   - crossDeviceSession: the session from which the verification is started.
     ///   - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
     @objc public func _sendVerificationEmail(
@@ -256,7 +256,7 @@ import Foundation
         }
     }
 
-    /// The method confirms user verification and as a result, an activation token is obtained. This activation token should be used in the registration process.
+    /// Confirms user verification and as a result, an activation token is obtained. This activation token should be used in the registration process.
     /// - Parameters:
     ///   - verificationURL: a verification URL received as part of the verification process.
     ///   - completionHandler: a closure called when the verification has been confirmed. It can contain an optional ActivationTokenResponse object and an optional error object.
@@ -281,10 +281,10 @@ import Foundation
         }
     }
 
-    /// The method confirms user verification and as a result, an activation token is obtained. This activation token should be used in the registration process.
+    /// Confirms user verification and as a result, an activation token is obtained. This activation token should be used in the registration process.
     /// - Parameters:
-    ///   - userId: identifier of the user.
-    ///   - code: the verification code sent to the user email.
+    ///   - userId: an identifier of the user.
+    ///   - code: the verification code sent to the user's email address.
     ///   - completionHandler: a closure called when the verification has been confirmed. It can contain an optional ActivationTokenResponse object and an optional error object.
     @objc public func getActivationToken(
         userId: String,
@@ -309,11 +309,11 @@ import Foundation
         }
     }
 
-    /// Generate [QuickCode](https://miracl.com/resources/docs/guides/built-in-user-verification/quickcode/) for a registered user.
+    /// Generates a [QuickCode](https://miracl.com/resources/docs/guides/built-in-user-verification/quickcode/) for a registered user.
     /// - Parameters:
-    ///   - user: the user to generate `QuickCode` for.
-    ///   - didRequestPinHandler: a closure called when the PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
-    ///   - completionHandler: a closure called when the `QuickCode` has been generated. It can contain a generated QuickCode object or an optional error object.
+    ///   - user: the user for whom to generate a `QuickCode`.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
+    ///   - completionHandler: a closure called when the `QuickCode` is generated. It can contain either a generated QuickCode object or an optional error object.
     @objc public func generateQuickCode(
         user: User,
         didRequestPinHandler: @escaping PinRequestHandler,
@@ -335,14 +335,14 @@ import Foundation
 
     // MARK: User Registration
 
-    /// Creates a new identity in the MIRACL platform.
+    /// Registers a new user for a given MIRACLTrust Project to the MIRACLTrust platform.
     /// - Parameters:
-    ///   - userId: an identifier of the user (e.g email address).
-    ///   - activationToken: a token obtained during the user verification process indicating that the user has been already verified.
-    ///   - pushNotificationsToken: current device push notifications token. This is used when push notifications for authentication
-    ///   are enabled in the platform.
-    ///   - didRequestPinHandler: a closure called when the PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
-    ///   - completionHandler: a closure called when creating a new identity has finished. It can contain an error object or the User where both of them are optional objects.
+    ///   - userId: an identifier of the user.
+    ///   - activationToken: a token obtained during the user verification process indicating that the user has already been verified.
+    ///   - pushNotificationsToken: the current device's push notifications token. This is used when push notifications for authentication
+    ///   are enabled on the platform.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
+    ///   - completionHandler: a closure called when a new user is created. It can contain either an error object or the user, both optional.
     @objc public func register(
         for userId: String,
         activationToken: String,
@@ -378,18 +378,18 @@ import Foundation
 
     // MARK: Authentication
 
-    /// Authenticate identity to the MIRACL Trust platform by generating a
+    /// Generates a signed
     /// [JWT](https://datatracker.ietf.org/doc/html/rfc7519)
-    /// authentication token.
+    /// that serves as a proof of identity for the MIRACL Trust platform.
     ///
     /// Use this method to authenticate within your application.
     ///
-    /// After the JWT authentication token is generated, it needs to be sent to the application
+    /// After the JWT authentication token is generated, it must be sent to the application
     /// server for [verification](https://miracl.com/resources/docs/guides/authentication/jwt-verification/).
     ///
     /// - Parameters:
-    ///   - user: object that keeps an authentication identity in it.
-    ///   - didRequestPinHandler: a closure called when the PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
+    ///   - user: the user to be authenticated.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
     ///   - completionHandler: a closure called when the JWT is generated. It can contain an optional JWT token or an optional error object.
     @objc(authenticateWithUser:didRequestPinHandler:completionHandler:)
     public func authenticate(
@@ -412,15 +412,15 @@ import Foundation
         jwtGenerator.generate()
     }
 
-    /// Authenticates identity in the MIRACL platform.
+    /// Authenticates identity in the MIRACL Trust platform.
     ///
     /// Use this method to authenticate another device or application with the usage of QR Code
-    /// presented on MIRACL login page.
+    /// presented on the MIRACL Trust login page.
     /// - Parameters:
-    ///   - user: object that keeps an authentication identity in it.
+    ///   - user: the user to be authenticated.
     ///   - qrCode: a string read from the QR code.
-    ///   - didRequestPinHandler: a closure called when the PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
-    ///   - completionHandler: a closure called when the identity is authenticated. It can contain a boolean flag representing the result of the authentication or an optional error object.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
+    ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
     @objc(authenticateWithUser:qrCode:didRequestPinHandler:completionHandler:)
     public func authenticateWithQRCode(
         user: User,
@@ -445,14 +445,14 @@ import Foundation
         qrAuthentication.authenticate()
     }
 
-    /// Authenticates identity in the MIRACL platform.
+    /// Authenticates the user in the MIRACL Trust platform.
     ///
-    /// Use this method when you want to authenticate another device or application with the usage of Push
-    /// notifications sent by a MIRACL platform.
+    /// Use this method when you want to authenticate another device or application using push
+    /// notifications sent by the MIRACL Trust platform.
     /// - Parameters:
-    ///   - payload: payload dictionary received from push notification.
-    ///   - didRequestPinHandler: a closure called when the PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
-    ///   - completionHandler: a closure called when the identity is authenticated. It can contain a boolean flag representing the result of the authentication or an optional error object.
+    ///   - payload: a dictionary received from the push notification.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
+    ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
     @objc(authenticateWithPushNotificationPayload:didRequestPinHandler:completionHandler:)
     public func authenticateWithPushNotificationPayload(
         payload: [AnyHashable: Any],
@@ -473,15 +473,15 @@ import Foundation
         payloadAuthentication.authenticate(with: payload)
     }
 
-    /// Authenticates identity in the MIRACL platform.
+    /// Authenticates the user in the MIRACL Trust platform.
     ///
-    /// Use this method to authenticate another device or application with the usage of
-    /// Universal Link created by a MIRACL platform.
+    /// Use this method to authenticate another device or application using a
+    /// Universal Link created by the MIRACL Trust platform.
     /// - Parameters:
-    ///   - user: object that keeps an authentication identity in it.
+    ///   - user: the user to be authenticated.
     ///   - universalLinkURL: universal link for authentication.
-    ///   - didRequestPinHandler: a closure called when the PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
-    ///   - completionHandler: a closure called when the identity is authenticated. It can contain a boolean flag representing the result of the authentication or an optional error object.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
+    ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
     @objc(authenticateWithUser:universalLinkURL:didRequestPinHandler:completionHandler:)
     public func authenticateWithUniversalLinkURL(
         user: User,
@@ -505,15 +505,15 @@ import Foundation
         universalLinkAuthenticator.authenticate()
     }
 
-    /// Authenticates identity in the MIRACL Trust platform.
+    /// Authenticates the user in the MIRACL Trust platform.
     ///
-    /// Use this method to authenticate another device or application with the usage of  ``CrossDeviceSession``.
+    /// Use this method to authenticate another device or application using ``CrossDeviceSession``.
     ///
     /// - Parameters:
-    ///   - user: the user to authenticate with.
+    ///   - user: the user to be authenticated.
     ///   - crossDeviceSession: details for the authentication operation.
-    ///   - didRequestPinHandler: a closure called when the PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
-    ///   - completionHandler: a closure called when the identity is authenticated. It can contain a boolean flag representing the result of the authentication or an optional error object.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
+    ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
     @objc public func _authenticate(
         user: User,
         crossDeviceSession: CrossDeviceSession,
@@ -543,11 +543,11 @@ import Foundation
 
     // MARK: Cross Device Session
 
-    /// Get ``CrossDeviceSession`` for a QR Code.
+    /// Gets ``CrossDeviceSession`` for a QR code.
     ///
     /// - Parameters:
     ///   - qrCode: a string read from the QR code.
-    ///   - completionHandler: a closure called when the ``CrossDeviceSession``  is fetched. It can contain a ``CrossDeviceSession`` optional object
+    ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is fetched. It can contain a ``CrossDeviceSession`` optional object
     ///   and an optional error object.
     @objc public func _getCrossDeviceSessionFromQRCode(
         qrCode: String,
@@ -570,11 +570,11 @@ import Foundation
         }
     }
 
-    /// Get ``CrossDeviceSession`` for an Universal Link.
+    /// Gets ``CrossDeviceSession`` for a universal link.
     ///
     /// - Parameters:
     ///   - universalLinkURL: universal link for authentication.
-    ///   - completionHandler: a closure called when the ``CrossDeviceSession``  is fetched. It can contain a ``CrossDeviceSession`` optional object
+    ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is fetched. It can contain a ``CrossDeviceSession`` optional object
     ///   and an optional error object.
     @objc public func _getCrossDeviceSessionFromUniversalLinkURL(
         universalLinkURL: URL,
@@ -597,10 +597,10 @@ import Foundation
         }
     }
 
-    /// Get ``CrossDeviceSession`` for an Universal Link.
+    /// Gets ``CrossDeviceSession`` for a push notification.
     ///
     /// - Parameters:
-    ///   - pushNotificationPayload: payload dictionary received from push notification.
+    ///   - pushNotificationPayload: a dictionary received from the push notification.
     ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is fetched. It can contain a ``CrossDeviceSession`` optional object
     ///   and an optional error object.
     @objc public func _getCrossDeviceSessionFromPushNotificationPayload(
@@ -624,11 +624,11 @@ import Foundation
         }
     }
 
-    /// Cancel the ``CrossDeviceSession``.
+    /// Cancels the ``CrossDeviceSession``.
     ///
     /// - Parameters:
-    ///   - crossDeviceSession: the session to cancel.
-    ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is aborted. It can contain a boolean flag representing the result of the abortion and an optional error object.
+    ///   - crossDeviceSession: the session to be cancelled.
+    ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is aborted. It can contain a Boolean flag representing the abortion result and an optional error object.
     @objc public func _abortCrossDeviceSession(
         _ crossDeviceSession: CrossDeviceSession,
         completionHandler: @escaping @Sendable (Bool, Error?) -> Void
@@ -651,14 +651,14 @@ import Foundation
 
     // MARK: Authentication Session management
 
-    /// Get `authentication` session details from MIRACL's platform based on session identifier.
+    /// Gets `authentication` session details from the MIRACL Trust platform based on the session identifier.
     ///
-    /// Use this method to get session details for application that tries to authenticate
-    /// against MIRACL Platform with the help of QR Code.
+    /// Use this method to retrieve authentication session details for an application that tries to authenticate
+    /// with the MIRACL Trust platform using a QR Code.
     ///
     /// - Parameters:
     ///   - qrCode: a string read from the QR code.
-    ///   - completionHandler: a closure called when the authentication session details are fetched.It can contain a newly fetched authentication session details optional object
+    ///   - completionHandler: a closure called when the authentication session details are fetched. It can contain a newly fetched authentication session details optional object
     ///   and an optional error object.
     @objc(getAuthenticationSessionDetailsFromQRCode:completionHandler:)
     public func getAuthenticationSessionDetailsFromQRCode(
@@ -680,14 +680,14 @@ import Foundation
         }
     }
 
-    /// Get `authentication` session details from MIRACL's platform based on session identifier.
+    /// Gets `authentication` session details from the MIRACL Trust platform based on the session identifier.
     ///
-    /// Use this method to get authentication session details for application that tries to authenticate
-    /// against MIRACL Platform with the help of Universal Link URL.
+    /// Use this method to retrieve authentication session details for an application that tries to authenticate
+    /// with the MIRACL Trust platform using a Universal Link URL.
     ///
     /// - Parameters:
-    ///   - universalLinkURL: universal link for authentication.
-    ///   - completionHandler: a closure called when the authentication session details are fetched.It can contain a newly fetched authentication session details optional object
+    ///   - universalLinkURL: a universal link for authentication.
+    ///   - completionHandler: a closure called when the authentication session details are fetched. It can contain a newly fetched authentication session details optional object
     ///   and an optional error object.
     ///
     @objc(getAuthenticationSessionDetailsFromUniversalLinkURL:completionHandler:)
@@ -710,14 +710,14 @@ import Foundation
         }
     }
 
-    /// Get `authentication` session details from MIRACL's platform based on session identifier.
+    /// Gets `authentication` session details from the MIRACL Trust platform based on the session identifier.
     ///
-    /// Use this method to get authentication session details for application that tries to authenticate
-    /// against MIRACL Platform with the help of push notifications payload
+    /// Use this method to retrieve authentication session details for an application that tries to authenticate
+    /// with the MIRACL Trust platform using a push notifications payload.
     ///
     /// - Parameters:
-    ///   - pushNotificationPayload: payload dictionary received from push notification.
-    ///   - completionHandler: a closure called when the authentication session details are fetched.It can contain a newly fetched authentication session details optional object
+    ///   - pushNotificationPayload: a dictionary received from the push notification.
+    ///   - completionHandler: a closure called when the authentication session details are fetched. It can contain a newly fetched authentication session details optional object
     ///   and an optional error object.
     @objc(getAuthenticationSessionDetailsFromPushNotificationPayload:completionHandler:)
     public func getAuthenticationSessionDetailsFromPushNotificationPayload(
@@ -739,10 +739,11 @@ import Foundation
         }
     }
 
-    /// Cancel the authentication session by its `SessionDetails` object
+    /// Cancels the authentication session by its `SessionDetails` object.
+    ///
     /// - Parameters:
-    ///   - authenticationSessionDetails: details for authentication session, that is in progress.
-    ///   - completionHandler: a closure called when the authentication session is aborted. It can contain a boolean flag representing the result of the abortion and an optional error object.
+    ///   - authenticationSessionDetails: details for the authentication session that is in progress.
+    ///   - completionHandler: a closure called when the authentication session is aborted. It can contain a Boolean flag representing the abortion result and an optional error object.
     @objc(abortAuthenticationSession:completionHandler:)
     public func abortAuthenticationSession(
         authenticationSessionDetails: AuthenticationSessionDetails,
@@ -765,11 +766,12 @@ import Foundation
 
     // MARK: Signing
 
-    /// Create a cryptographic signature of a given document.
+    /// Creates a cryptographic signature of a given document.
+    ///
     /// - Parameters:
     ///   - message: the hash of a given document.
-    ///   - user: an already registered user with signing identity.
-    ///   - didRequestSigningPinHandler: a closure called when the signing identity PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
+    ///   - user: a registered user with a signing User ID.
+    ///   - didRequestSigningPinHandler: a closure called when the SDK requests a signing User ID's PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user finishes their action.
     ///   - completionHandler: a closure called when the signing has completed. It can contain a newly created ``SigningResult`` object and an optional error object.
     @objc public func sign(
         message: Data,
@@ -805,9 +807,9 @@ import Foundation
     ///
     /// - Parameters:
     ///   - crossDeviceSession: details for the signing operation.
-    ///   - user: an user to sign with.
-    ///   - didRequestSigningPinHandler: a closure called when the signing identity PIN code is needed from the SDK. It can be used to show UI for entering the PIN code. Its parameter is another closure that is mandatory to be called after the user finishes their action.
-    ///   - completionHandler: a closure called when the signing has completed. It can contain a boolean flag and an optional error object.
+    ///   - user: a registered user with a signing User ID.
+    ///   - didRequestSigningPinHandler: a closure called when the SDK requests the signing User ID's PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user finishes their action.
+    ///   - completionHandler: a closure called when the signing has completed. It can contain a Boolean flag and an optional error object.
     @objc public func _sign(
         crossDeviceSession: CrossDeviceSession,
         user: User,
@@ -848,8 +850,8 @@ import Foundation
     /// Retrieves a registered user synchronously.
     ///
     /// - Parameters:
-    ///   - userId: an identifier of the user (e.g. email address).
-    /// - Returns: The ``User`` object if found; otherwise `nil` (e.g., if the user does not exist or a storage error occurs).
+    ///   - userId: an identifier of the user.
+    /// - Returns: The the ``User`` object if found; otherwise, `nil` (for example, if the user does not exist or a storage error occurs).
     @objc public func getUser(by userId: String) -> User? {
         try? userStorage.getUser(by: userId, projectId: projectId)?.toUser()
     }
@@ -857,8 +859,8 @@ import Foundation
     /// Retrieves a registered user asynchronously.
     ///
     /// - Parameters:
-    ///   - userId: an identifier of the user (e.g. email address).
-    ///   - completionHandler: The ``GetUserCompletionHandler`` closure to execute when the request completes.
+    ///   - userId: an identifier of the user.
+    ///   - completionHandler: The ``GetUserCompletionHandler`` closure to be executed when the request completes.
     @objc public func getUser(
         userId: String,
         completionHandler: @escaping GetUserCompletionHandler
@@ -884,7 +886,7 @@ import Foundation
 
     /// Retrieves a list of all registered users asynchronously.
     ///
-    /// - Parameter completionHandler: The ``GetUsersCompletionHandler`` closure to execute when the request completes.
+    /// - Parameter completionHandler: The ``GetUsersCompletionHandler`` closure to be executed when the request completes.
     @objc public func getUsers(completionHandler: @escaping GetUsersCompletionHandler) {
         let storage = userStorage
         DispatchQueue.global(qos: .userInitiated).async {
@@ -946,7 +948,7 @@ import Foundation
 
     /// Deletes a registered user synchronously.
     ///
-    /// - Parameter user: The ``User`` object to delete.
+    /// - Parameter user: The ``User`` object to be deleted.
     @objc public func delete(user: User) throws {
         try userStorage.delete(user: user.toUserDTO())
     }
@@ -954,8 +956,8 @@ import Foundation
     /// Deletes a registered user asynchronously.
     ///
     /// - Parameters:
-    ///   - user: The ``User`` object to delete.
-    ///   - completionHandler: The ``DeleteUserCompletionHandler`` closure to execute when the request completes.
+    ///   - user: The ``User`` object to be deleted.
+    ///   - completionHandler: The ``DeleteUserCompletionHandler`` closure to be executed when the request completes.
     @objc public func delete(
         user: User,
         completionHandler: @escaping DeleteUserCompletionHandler

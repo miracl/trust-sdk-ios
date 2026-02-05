@@ -1,8 +1,8 @@
 import Foundation
 
-/// An enumeration that describes registration issues.
+/// An enumeration describing registration issues.
 public enum RegistrationError: Error, DefaultLocalizedError {
-    /// Empty user ID.
+    /// Empty User ID.
     case emptyUserId
 
     /// Empty activation token.
@@ -17,10 +17,10 @@ public enum RegistrationError: Error, DefaultLocalizedError {
     /// Curve returned by the platform is unsupported by this version of the SDK.
     case unsupportedEllipticCurve
 
-    /// Pin not entered.
+    /// PIN code was not entered.
     case pinCancelled
 
-    /// Pin code includes invalid symbols or pin length does not match.
+    /// PIN code contains invalid symbols or PIN length does not match.
     case invalidPin
 
     /// The registration was started for a different project.

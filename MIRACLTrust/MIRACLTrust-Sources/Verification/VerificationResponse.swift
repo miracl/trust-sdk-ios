@@ -1,12 +1,12 @@
 import Foundation
 
-/// The response returned from ``MIRACLTrust/MIRACLTrust/sendVerificationEmail(userId:authenticationSessionDetails:completionHandler:)``.
+/// The response returned by ``MIRACLTrust/MIRACLTrust/sendVerificationEmail(userId:authenticationSessionDetails:completionHandler:)``.
 @objcMembers
 public final class VerificationResponse: NSObject, Sendable {
-    /// Unix timestamp before a new verification email could be sent for the same user ID.
+    /// Unix timestamp before a new verification email could be sent for the same User ID.
     public let backoff: Int64
 
-    /// Indicates the method of the verification.
+    /// Indicates the method of verification.
     public let method: EmailVerificationMethod
 
     init(backoff: Int64, method: EmailVerificationMethod) {

@@ -1,14 +1,14 @@
 import Foundation
 
-/// An enumeration that describes issues with verification confirmation.
+/// An enumeration describing issues with verification confirmation.
 public enum ActivationTokenError: Error, DefaultLocalizedError {
-    /// Empty user ID in the universal link.
+    /// Empty User ID in the universal link.
     case emptyUserId
 
     /// Empty verification code in the universal link.
     case emptyVerificationCode
 
-    /// Invalid or expired activation code. There may be ``ActivationTokenErrorResponse`` in the error.
+    /// Invalid or expired activation code. The error may contain an ``ActivationTokenErrorResponse``.
     case unsuccessfulVerification(activationTokenErrorResponse: ActivationTokenErrorResponse?)
 
     /// The request for fetching the activation token failed.

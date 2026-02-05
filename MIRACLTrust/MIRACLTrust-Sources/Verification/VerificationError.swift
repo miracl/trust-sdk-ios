@@ -1,11 +1,11 @@
 import Foundation
 
-/// An enumeration that describes verification issues.
+/// An enumeration describing verification issues.
 public enum VerificationError: Error, DefaultLocalizedError {
-    /// Empty user ID.
+    /// Empty User ID.
     case emptyUserId
 
-    /// The session identifier in SessionDetails is empty or blank.
+    /// The session identifier in `SessionDetails` is empty or blank.
     case invalidSessionDetails
 
     /// Verification failed.
@@ -13,7 +13,7 @@ public enum VerificationError: Error, DefaultLocalizedError {
 
     /// Too many verification requests. Wait for the `backoff` period.
     /// - Parameters:
-    ///     - backoff: Unix timestamp before a new verification email could be sent for the same user ID.
+    ///     - backoff: Unix timestamp before a new verification email can be sent for the same User ID.
     case requestBackoff(backoff: Int64)
 }
 

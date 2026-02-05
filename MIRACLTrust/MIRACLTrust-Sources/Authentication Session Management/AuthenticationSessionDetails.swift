@@ -1,6 +1,6 @@
 import Foundation
 
-/// Object representing details from incoming authentication session.
+/// An object representing details from the incoming authentication session.
 @objcMembers
 @objc public final class AuthenticationSessionDetails: NSObject, SessionDetails, Sendable {
     public let userId: String
