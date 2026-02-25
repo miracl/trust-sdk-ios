@@ -30,16 +30,7 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
         randomString = UUID().uuidString
         crossDeviceSession = CrossDeviceSession(
             userId: "",
-            projectName: randomString,
-            projectLogoURL: randomString,
             projectId: randomString,
-            pinLength: 4,
-            verificationMethod: .standardEmail,
-            verificationURL: randomString,
-            verificationCustomText: randomString,
-            identityTypeLabel: randomString,
-            quickCodeEnabled: true,
-            identityType: .alphanumeric,
             sessionId: randomString,
             sessionDescription: "",
             signingHash: randomString

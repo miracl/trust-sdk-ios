@@ -6,35 +6,8 @@ import Foundation
     /// User ID entered by the user when session is started.
     public let userId: String
 
-    /// Name of the project in MIRACL Trust platform.
-    public let projectName: String
-
-    /// URL of the project logo.
-    public let projectLogoURL: String
-
     /// Project ID setting for the application in MIRACL Trust platform.
     public let projectId: String
-
-    /// PIN length that needs to be entered from the user.
-    public let pinLength: Int
-
-    /// Indicates method of user verification.
-    public let verificationMethod: VerificationMethod
-
-    /// URL for verification in case of custom verification method.
-    public let verificationURL: String
-
-    /// Custom text specified in the MIRACL Trust portal for the custom verification.
-    public let verificationCustomText: String
-
-    /// Label of the identity which will be used for identity verification.
-    public let identityTypeLabel: String
-
-    /// Indicates whether [QuickCode](https://miracl.com/resources/docs/guides/built-in-user-verification/quickcode/) is enabled for the project or not.
-    public let quickCodeEnabled: Bool
-
-    /// Identity type which will be used for identity verification.
-    public let identityType: IdentityType
 
     /// Identifier of the session.
     public let sessionId: String
@@ -47,37 +20,19 @@ import Foundation
 
     public init(
         userId: String,
-        projectName: String,
-        projectLogoURL: String,
         projectId: String,
-        pinLength: Int,
-        verificationMethod: VerificationMethod,
-        verificationURL: String,
-        verificationCustomText: String,
-        identityTypeLabel: String,
-        quickCodeEnabled: Bool,
-        identityType: IdentityType,
         sessionId: String,
         sessionDescription: String,
         signingHash: String
     ) {
         self.userId = userId
-        self.projectName = projectName
-        self.projectLogoURL = projectLogoURL
         self.projectId = projectId
-        self.pinLength = pinLength
-        self.verificationMethod = verificationMethod
-        self.verificationURL = verificationURL
-        self.verificationCustomText = verificationCustomText
-        self.identityTypeLabel = identityTypeLabel
-        self.quickCodeEnabled = quickCodeEnabled
-        self.identityType = identityType
         self.sessionId = sessionId
         self.sessionDescription = sessionDescription
         self.signingHash = signingHash
     }
 
     override public var description: String {
-        "CrossDeviceSession(userId: \(userId), projectName: \(projectName), projectLogoURL: \(projectLogoURL), projectId: \(projectId), pinLength: \(pinLength), verificationMethod: \(verificationMethod), verificationURL: \(verificationURL), verificationCustomText: \(verificationCustomText), identityTypeLabel: \(identityTypeLabel),  quickCodeEnabled: \(quickCodeEnabled), identityType: \(identityType), sessionId: \(sessionId), sessionDescription: \(sessionDescription), signingHash: \(signingHash))"
+        "CrossDeviceSession(userId: \(userId), projectId: \(projectId), sessionId: \(sessionId), sessionDescription: \(sessionDescription), signingHash: \(signingHash))"
     }
 }

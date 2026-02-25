@@ -10,7 +10,6 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
     var payload = [AnyHashable: Any]()
     var api = MockAPI()
     var randomString = UUID().uuidString
-    var randomPin = Int.random(in: 1 ... 6)
 
     var crossDeviceSessionResponse: CrossDeviceSessionResponse!
 
@@ -26,15 +25,6 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         crossDeviceSessionResponse = CrossDeviceSessionResponse(
             prerollId: randomString,
             projectId: randomString,
-            projectName: randomString,
-            projectLogoURL: randomString,
-            pinLength: randomPin,
-            verificationMethod: "fullCustom",
-            verificationURL: randomString,
-            verificationCustomText: randomString,
-            identityTypeLabel: randomString,
-            identityType: "email",
-            quickCodeEnabled: true,
             signingHash: randomString,
             sessionDescription: randomString
         )
@@ -55,31 +45,28 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
 
     func testGetCrossDeviceSessionFromQRCode() {
         let sessionId = sessionId
-        let randomPin = randomPin
 
         getCrossDeviceSessionFromQrCode { details, error in
             XCTAssertNil(error)
-            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId, randomPinLength: randomPin)
+            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
         }
     }
 
     func testGetSessionDetailsUniversalLinkURL() {
         let sessionId = sessionId
-        let randomPin = randomPin
 
         getCrossDeviceSessionFromUniversalLinkURL { details, error in
             XCTAssertNil(error)
-            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId, randomPinLength: randomPin)
+            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
         }
     }
 
     func testGetSessionDetailsPayload() {
         let sessionId = sessionId
-        let randomPin = randomPin
 
         getCrossDeviceSessionFromPayload { details, error in
             XCTAssertNil(error)
-            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId, randomPinLength: randomPin)
+            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
         }
     }
 
@@ -230,24 +217,16 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
 
     private func assertSessionDetails(
         crossDeviceSession: CrossDeviceSession?,
-        sessionId: String,
-        randomPinLength: Int
+        sessionId: String
     ) {
         do {
             let fetchedDetails = try XCTUnwrap(crossDeviceSession)
 
             XCTAssertEqual(fetchedDetails.userId, randomString)
             XCTAssertEqual(fetchedDetails.projectId, randomString)
-            XCTAssertEqual(fetchedDetails.projectName, randomString)
-            XCTAssertEqual(fetchedDetails.projectLogoURL, randomString)
             XCTAssertEqual(fetchedDetails.sessionId, sessionId)
-            XCTAssertEqual(fetchedDetails.pinLength, randomPinLength)
-            XCTAssertEqual(fetchedDetails.verificationMethod, .fullCustom)
-            XCTAssertEqual(fetchedDetails.verificationURL, randomString)
-            XCTAssertEqual(fetchedDetails.identityTypeLabel, randomString)
-            XCTAssertEqual(fetchedDetails.verificationCustomText, randomString)
-            XCTAssertEqual(fetchedDetails.identityType, IdentityType.email)
-            XCTAssertEqual(fetchedDetails.quickCodeEnabled, true)
+            XCTAssertEqual(fetchedDetails.sessionDescription, randomString)
+            XCTAssertEqual(fetchedDetails.signingHash, randomString)
 
         } catch {
             XCTFail("Get session detail failed")

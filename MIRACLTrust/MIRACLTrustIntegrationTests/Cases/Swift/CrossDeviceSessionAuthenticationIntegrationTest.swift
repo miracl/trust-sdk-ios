@@ -205,16 +205,7 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     ) -> CrossDeviceSession {
         CrossDeviceSession(
             userId: UUID().uuidString,
-            projectName: UUID().uuidString,
-            projectLogoURL: UUID().uuidString,
             projectId: UUID().uuidString,
-            pinLength: 4,
-            verificationMethod: .standardEmail,
-            verificationURL: UUID().uuidString,
-            verificationCustomText: UUID().uuidString,
-            identityTypeLabel: UUID().uuidString,
-            quickCodeEnabled: true,
-            identityType: .email,
             sessionId: sessionId,
             sessionDescription: "",
             signingHash: ""
