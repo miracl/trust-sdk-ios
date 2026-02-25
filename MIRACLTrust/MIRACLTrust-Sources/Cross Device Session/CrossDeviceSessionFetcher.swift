@@ -62,16 +62,7 @@ final class CrossDeviceSessionFetcher: Sendable {
 
             let crossDeviceSession = CrossDeviceSession(
                 userId: response.prerollId,
-                projectName: response.projectName,
-                projectLogoURL: response.projectLogoURL,
                 projectId: response.projectId,
-                pinLength: response.pinLength,
-                verificationMethod: VerificationMethod.verificationMethodFromString(response.verificationMethod),
-                verificationURL: response.verificationURL,
-                verificationCustomText: response.verificationCustomText,
-                identityTypeLabel: response.identityTypeLabel,
-                quickCodeEnabled: response.quickCodeEnabled,
-                identityType: IdentityType.identityTypeFromString(response.identityType),
                 sessionId: self.sessionId,
                 sessionDescription: response.sessionDescription,
                 signingHash: response.signingHash

@@ -1008,16 +1008,7 @@ class MIRACLTrustTests: XCTestCase {
     private func createCrossDeviceSession() -> CrossDeviceSession {
         CrossDeviceSession(
             userId: UUID().uuidString,
-            projectName: UUID().uuidString,
-            projectLogoURL: UUID().uuidString,
             projectId: UUID().uuidString,
-            pinLength: 4,
-            verificationMethod: .standardEmail,
-            verificationURL: UUID().uuidString,
-            verificationCustomText: UUID().uuidString,
-            identityTypeLabel: UUID().uuidString,
-            quickCodeEnabled: true,
-            identityType: .alphanumeric,
             sessionId: UUID().uuidString,
             sessionDescription: "",
             signingHash: ""
