@@ -380,15 +380,21 @@ class RegistratorTests: XCTestCase {
         mockAPI.clientSecretResponsesManager.clientSecret1RetryResponse = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
         mockAPI.clientSecretResponsesManager.clientSecret1RetryError = nil
 
+        let userId = userId
+        let dtas = dtas
+        let mpinId = mpinId
+        let hashOfMpinId = hashOfMpinId
+        let clientToken = clientToken
+
         try register(completionHandler: { user, error in
             do {
                 let user = try XCTUnwrap(user)
 
-                XCTAssertEqual(user.userId, self.userId)
-                XCTAssertEqual(user.dtas, self.dtas)
-                XCTAssertEqual(user.token, self.clientToken)
-                XCTAssertEqual(user.mpinId, Data(hexString: self.mpinId))
-                XCTAssertEqual(user.hashedMpinId, self.hashOfMpinId)
+                XCTAssertEqual(user.userId, userId)
+                XCTAssertEqual(user.dtas, dtas)
+                XCTAssertEqual(user.token, clientToken)
+                XCTAssertEqual(user.mpinId, Data(hexString: mpinId))
+                XCTAssertEqual(user.hashedMpinId, hashOfMpinId)
             } catch {
                 XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
             }
@@ -412,15 +418,21 @@ class RegistratorTests: XCTestCase {
         mockAPI.clientSecretResponsesManager.clientSecret2RetryResponse = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
         mockAPI.clientSecretResponsesManager.clientSecret2RetryError = nil
 
+        let userId = userId
+        let dtas = dtas
+        let mpinId = mpinId
+        let hashOfMpinId = hashOfMpinId
+        let clientToken = clientToken
+
         try register(completionHandler: { user, error in
             do {
                 let user = try XCTUnwrap(user)
 
-                XCTAssertEqual(user.userId, self.userId)
-                XCTAssertEqual(user.dtas, self.dtas)
-                XCTAssertEqual(user.token, self.clientToken)
-                XCTAssertEqual(user.mpinId, Data(hexString: self.mpinId))
-                XCTAssertEqual(user.hashedMpinId, self.hashOfMpinId)
+                XCTAssertEqual(user.userId, userId)
+                XCTAssertEqual(user.dtas, dtas)
+                XCTAssertEqual(user.token, clientToken)
+                XCTAssertEqual(user.mpinId, Data(hexString: mpinId))
+                XCTAssertEqual(user.hashedMpinId, hashOfMpinId)
             } catch {
                 XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
             }

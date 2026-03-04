@@ -1,10 +1,10 @@
 @testable import MIRACLTrust
 import XCTest
 
-private class ExampleJSONObject: NSObject, Codable {
-    var firstExampleProperty: String
-    var secondExampleProperty: String
-    var numberValue: Int
+private final class ExampleJSONObject: NSObject, Codable, Sendable {
+    let firstExampleProperty: String
+    let secondExampleProperty: String
+    let numberValue: Int
 }
 
 private enum APIRequestExecutorSampleError: Error {

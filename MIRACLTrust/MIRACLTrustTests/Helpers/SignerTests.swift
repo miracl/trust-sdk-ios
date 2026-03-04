@@ -39,18 +39,20 @@ class SignerTests: XCTestCase {
     }
 
     func testSignerForNoSession() throws {
+        let signingUser = signingUser
+        let hashData = hashData
         try testSigning { signatureResult, error in
             XCTAssertNil(error)
             do {
                 let signatureResult = try XCTUnwrap(signatureResult)
-                let publicKey = try XCTUnwrap(self.signingUser.publicKey)
+                let publicKey = try XCTUnwrap(signingUser.publicKey)
 
-                XCTAssertEqual(signatureResult.signature.mpinId, self.signingUser.mpinId.hex)
+                XCTAssertEqual(signatureResult.signature.mpinId, signingUser.mpinId.hex)
                 XCTAssertEqual(signatureResult.signature.U, Data([19, 20, 21]).hex)
                 XCTAssertEqual(signatureResult.signature.V, Data([4, 5, 6]).hex)
                 XCTAssertEqual(signatureResult.signature.publicKey, publicKey.hex)
-                XCTAssertEqual(signatureResult.signature.dtas, self.signingUser.dtas)
-                XCTAssertEqual(signatureResult.signature.signatureHash, self.hashData.hex)
+                XCTAssertEqual(signatureResult.signature.dtas, signingUser.dtas)
+                XCTAssertEqual(signatureResult.signature.signatureHash, hashData.hex)
                 XCTAssertNotNil(signatureResult.timestamp)
 
             } catch {
@@ -61,19 +63,21 @@ class SignerTests: XCTestCase {
 
     func testSignerForNonEmptySessionIdentifier() throws {
         sessionIdentifier = UUID().uuidString
+        let signingUser = signingUser
+        let hashData = hashData
 
         try testSigning { signatureResult, error in
             XCTAssertNil(error)
             do {
                 let signatureResult = try XCTUnwrap(signatureResult)
-                let publicKey = try XCTUnwrap(self.signingUser.publicKey)
+                let publicKey = try XCTUnwrap(signingUser.publicKey)
 
-                XCTAssertEqual(signatureResult.signature.mpinId, self.signingUser.mpinId.hex)
+                XCTAssertEqual(signatureResult.signature.mpinId, signingUser.mpinId.hex)
                 XCTAssertEqual(signatureResult.signature.U, Data([19, 20, 21]).hex)
                 XCTAssertEqual(signatureResult.signature.V, Data([4, 5, 6]).hex)
                 XCTAssertEqual(signatureResult.signature.publicKey, publicKey.hex)
-                XCTAssertEqual(signatureResult.signature.dtas, self.signingUser.dtas)
-                XCTAssertEqual(signatureResult.signature.signatureHash, self.hashData.hex)
+                XCTAssertEqual(signatureResult.signature.dtas, signingUser.dtas)
+                XCTAssertEqual(signatureResult.signature.signatureHash, hashData.hex)
                 XCTAssertNotNil(signatureResult.timestamp)
 
             } catch {

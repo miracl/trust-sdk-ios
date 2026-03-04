@@ -38,15 +38,15 @@ struct SessionStatusRequestBody: Codable {
     var webOTT: String
 }
 
-public struct SessionStatusResponse: Codable {
+public struct SessionStatusResponse: Codable, Sendable {
     var status: String
     var signature: String
 }
 
 @objcMembers
-@objc public class StartSessionResult: NSObject, Codable {
-    public var accessId: String
-    public var webOTT: String
+@objc public final class StartSessionResult: NSObject, Codable, Sendable {
+    public let accessId: String
+    public let webOTT: String
 
     init(accessId: String, webOTT: String) {
         self.accessId = accessId

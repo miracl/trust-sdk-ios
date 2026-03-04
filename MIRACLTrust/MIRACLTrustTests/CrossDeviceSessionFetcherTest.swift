@@ -43,6 +43,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         try MIRACLTrust.configure(with: configuration)
     }
 
+    @MainActor
     func testGetCrossDeviceSessionFromQRCode() {
         let sessionId = sessionId
 
@@ -52,6 +53,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         }
     }
 
+    @MainActor
     func testGetSessionDetailsUniversalLinkURL() {
         let sessionId = sessionId
 
@@ -61,6 +63,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         }
     }
 
+    @MainActor
     func testGetSessionDetailsPayload() {
         let sessionId = sessionId
 
