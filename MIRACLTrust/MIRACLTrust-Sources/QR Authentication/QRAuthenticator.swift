@@ -1,6 +1,6 @@
 import Foundation
 
-struct QRAuthenticator: Sendable {
+struct QRAuthenticator {
     let user: User
     let qrCode: String
     let miraclAPI: APIBlueprint

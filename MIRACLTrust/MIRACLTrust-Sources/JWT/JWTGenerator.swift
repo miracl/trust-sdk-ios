@@ -1,6 +1,6 @@
 import Foundation
 
-struct JWTGenerator: Sendable {
+struct JWTGenerator {
     let user: User
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage

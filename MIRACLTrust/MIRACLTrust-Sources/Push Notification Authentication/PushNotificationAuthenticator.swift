@@ -1,6 +1,6 @@
 import Foundation
 
-struct PushNotificationAuthenticator: Sendable {
+struct PushNotificationAuthenticator {
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
     let crypto: CryptoBlueprint

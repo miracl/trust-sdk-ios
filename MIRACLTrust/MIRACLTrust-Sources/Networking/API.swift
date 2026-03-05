@@ -7,7 +7,7 @@ enum APICallResult: Int {
 
 /// Execute networking requests against MIRACL platform
 /// - Tag: API
-struct API: Sendable, APIBlueprint {
+struct API: APIBlueprint {
     let clientSettings: APISettings
     let baseURL: URL
 

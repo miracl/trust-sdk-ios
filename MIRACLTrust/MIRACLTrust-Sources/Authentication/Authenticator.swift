@@ -12,7 +12,7 @@ let UNSUCCESSFUL_AUTHENTICATION = "UNSUCCESSFUL_AUTHENTICATION"
 let INVALID_AUTH_SESSION = "INVALID_AUTH_SESSION"
 let INVALID_AUTHENTICATION_SESSION = "INVALID_AUTHENTICATION_SESSION"
 
-struct Authenticator: Sendable, AuthenticatorBlueprint {
+struct Authenticator: AuthenticatorBlueprint {
     let user: User
     let didRequestPinHandler: PinRequestHandler
     let sessionIdentifier: String?

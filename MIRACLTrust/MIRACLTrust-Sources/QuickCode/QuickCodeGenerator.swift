@@ -1,6 +1,6 @@
 import Foundation
 
-struct QuickCodeGenerator: Sendable {
+struct QuickCodeGenerator {
     let user: User
     let completionHandler: QuickCodeCompletionHandler
     let didRequestPinHandler: PinRequestHandler

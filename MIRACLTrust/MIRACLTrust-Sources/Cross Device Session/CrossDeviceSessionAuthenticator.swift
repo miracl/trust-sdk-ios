@@ -1,6 +1,6 @@
 import Foundation
 
-struct CrossDeviceSessionAuthenticator: Sendable {
+struct CrossDeviceSessionAuthenticator {
     let user: User
     let crossDeviceSession: CrossDeviceSession
     let miraclAPI: APIBlueprint

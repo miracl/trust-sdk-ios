@@ -1,6 +1,6 @@
 import Foundation
 
-struct APIRequestExecutor: Sendable {
+struct APIRequestExecutor {
     var urlSession: URLSession
     let logger: Logger
 

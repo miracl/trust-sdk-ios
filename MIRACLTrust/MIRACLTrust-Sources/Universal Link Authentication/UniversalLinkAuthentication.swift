@@ -1,6 +1,6 @@
 import Foundation
 
-struct UniversalLinkAuthenticator: Sendable {
+struct UniversalLinkAuthenticator {
     let user: User
     let universalLinkURL: URL
     let miraclAPI: APIBlueprint
