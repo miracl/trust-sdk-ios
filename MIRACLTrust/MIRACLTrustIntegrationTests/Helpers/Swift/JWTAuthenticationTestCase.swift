@@ -6,30 +6,20 @@ class JWTAuthenticationTestCase: XCTestCase {
 
     func generateJWT(
         user: User
-    ) -> (String?, Error?) {
-        let waitForJWT = XCTestExpectation(description: "wait for JWT generation")
-
-        nonisolated(unsafe) var returnedJWT: String?
-        nonisolated(unsafe) var returnedError: Error?
-
+    ) async -> (String?, Error?) {
         let pinCode = pinCode
-
-        MIRACLTrust.getInstance().authenticate(
-            user: user,
-            didRequestPinHandler: { pinHandler in
-                pinHandler(pinCode)
-            }, completionHandler: { jwt, error in
-                returnedJWT = jwt
-                returnedError = error
-                waitForJWT.fulfill()
-            }
-        )
-
-        let result = XCTWaiter.wait(for: [waitForJWT], timeout: operationTimeout)
-        if result != .completed {
-            XCTFail("Something wrong happened")
+        let pinHandler: PinRequestHandler = { pinProcessor in
+            pinProcessor(pinCode)
         }
 
-        return (returnedJWT, returnedError)
+        return await withCheckedContinuation { continuation in
+            MIRACLTrust.getInstance().authenticate(
+                user: user,
+                didRequestPinHandler: pinHandler,
+                completionHandler: { jwt, error in
+                    continuation.resume(returning: (jwt, error))
+                }
+            )
+        }
     }
 }

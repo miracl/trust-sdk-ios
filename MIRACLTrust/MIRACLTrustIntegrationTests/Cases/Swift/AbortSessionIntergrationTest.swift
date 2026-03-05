@@ -23,7 +23,7 @@ class AbortSessionIntegrationTests: XCTestCase {
         databaseName: testDBName
     )
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         userId = "global@example.com"
 
         registrationTestCase = RegistrationTestCase()
@@ -37,7 +37,7 @@ class AbortSessionIntegrationTests: XCTestCase {
 
         let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: platformURLCUV))
 
-        let (response, _) = getActivationToken.getActivationToken(
+        let (response, _) = await getActivationToken.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: platformURLCUV,
@@ -47,12 +47,12 @@ class AbortSessionIntegrationTests: XCTestCase {
 
         activationToken = try XCTUnwrap(response?.activationToken)
 
-        _ = registrationTestCase.registerUser(
+        _ = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
 
-        let (details, _) = sessionDetailsTestCase.getSessionDetails(qrCode: "https://mcl.mpin.io#\(session.accessId)")
+        let (details, _) = await sessionDetailsTestCase.getSessionDetails(qrCode: "https://mcl.mpin.io#\(session.accessId)")
 
         sessionDetails = try XCTUnwrap(details)
     }
@@ -73,8 +73,8 @@ class AbortSessionIntegrationTests: XCTestCase {
         }
     }
 
-    func testAbortSession() throws {
-        let (sessionAborted, error) = try abortSessionTestCase.abortSession(
+    func testAbortSession() async throws {
+        let (sessionAborted, error) = try await abortSessionTestCase.abortSession(
             sessionDetails: XCTUnwrap(sessionDetails)
         )
 
@@ -82,10 +82,10 @@ class AbortSessionIntegrationTests: XCTestCase {
         XCTAssertNil(error)
     }
 
-    func testAbortSessionEmptyAccessId() {
+    func testAbortSessionEmptyAccessId() async {
         let sessionDetails = createAuthenticationSessionDetails(accessId: "")
 
-        let (sessionAborted, error) = abortSessionTestCase.abortSession(
+        let (sessionAborted, error) = await abortSessionTestCase.abortSession(
             sessionDetails: sessionDetails
         )
 

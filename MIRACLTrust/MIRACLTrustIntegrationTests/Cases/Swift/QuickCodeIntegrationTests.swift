@@ -23,8 +23,8 @@ class QuickCodeIntegrationTests: XCTestCase {
     let randomPIN = String(Int32.random(in: 1000 ..< 9999))
     let api = PlatformAPIWrapper()
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
 
         registrationTestCase = RegistrationTestCase()
         registrationTestCase.pinCode = randomPIN
@@ -43,7 +43,7 @@ class QuickCodeIntegrationTests: XCTestCase {
 
         authenticationTestCase.pinCode = randomPIN
 
-        let (response, _) = getActivationToken.getActivationToken(
+        let (response, _) = await getActivationToken.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
@@ -70,22 +70,22 @@ class QuickCodeIntegrationTests: XCTestCase {
         }
     }
 
-    func testSuccessfulQuickCodeGeneration() throws {
+    func testSuccessfulQuickCodeGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        let (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
         XCTAssertNil(quickCodeError)
         XCTAssertNotNil(quickCode)
     }
 
-    func testFailedQuickCodeGenerationEmptyIdentity() throws {
+    func testFailedQuickCodeGenerationEmptyIdentity() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let emptyUser = createRandomUser(
@@ -94,15 +94,15 @@ class QuickCodeIntegrationTests: XCTestCase {
             dtas: ""
         )
 
-        let (quickCode, quickCodeError) = quickCodeTestCase.generateQuickCode(user: emptyUser)
+        let (quickCode, quickCodeError) = await quickCodeTestCase.generateQuickCode(user: emptyUser)
 
         XCTAssertNil(quickCode)
         assertError(current: quickCodeError, expected: QuickCodeError.generationFail(AuthenticationError.invalidUserData))
     }
 
-    func testFailedQuickCodeGenerationDifferentPIN() throws {
+    func testFailedQuickCodeGenerationDifferentPIN() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -118,7 +118,7 @@ class QuickCodeIntegrationTests: XCTestCase {
 
         quickCodeTestCase.authenticationPinCode = differentPin
 
-        let (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        let (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
 
         XCTAssertNil(quickCode)
         assertError(
@@ -127,10 +127,10 @@ class QuickCodeIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedQuickCodeShorterPINGeneration() throws {
+    func testFailedQuickCodeShorterPINGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -138,7 +138,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         quickCodeTestCase.authenticationPinCode = String(Int32.random(in: 100 ..< 999))
-        let (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        let (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
         XCTAssertNil(quickCode)
 
         assertError(
@@ -147,10 +147,10 @@ class QuickCodeIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedQuickCodeLongerPINGeneration() throws {
+    func testFailedQuickCodeLongerPINGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -158,7 +158,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         quickCodeTestCase.authenticationPinCode = String(Int32.random(in: 100_000 ..< 999_999))
-        let (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        let (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
         XCTAssertNil(quickCode)
 
         assertError(
@@ -167,10 +167,10 @@ class QuickCodeIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedQuickCodeNilPINGeneration() throws {
+    func testFailedQuickCodeNilPINGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -178,7 +178,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         quickCodeTestCase.authenticationPinCode = nil
-        let (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        let (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
         XCTAssertNil(quickCode)
         assertError(
             current: quickCodeError,
@@ -186,10 +186,10 @@ class QuickCodeIntegrationTests: XCTestCase {
         )
     }
 
-    func testUnsuccessfulAuthenticationQuickCodeGeneration() throws {
+    func testUnsuccessfulAuthenticationQuickCodeGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -205,7 +205,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         quickCodeTestCase.authenticationPinCode = differentPin
 
         // First try
-        var (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        var (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
         XCTAssertNil(quickCode)
         assertError(
             current: quickCodeError,
@@ -213,7 +213,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         )
 
         // Second try
-        (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
         XCTAssertNil(quickCode)
         assertError(
             current: quickCodeError,
@@ -221,7 +221,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         )
 
         // Third try. QuickCode generation should return an error that indicates for revoked identity.
-        (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
         XCTAssertNil(quickCode)
         assertError(
             current: quickCodeError,
@@ -231,7 +231,7 @@ class QuickCodeIntegrationTests: XCTestCase {
         // After three unsuccessful tries, the user is blocked and cannot authenticate anymore.
         let session = try XCTUnwrap(session)
         let qrCode = "https://mcl.mpin.io/mobile-login/#\(session.accessId)"
-        let (authenticationResult, authenticationError) = try authenticationTestCase.authenticateUser(
+        let (authenticationResult, authenticationError) = try await authenticationTestCase.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )

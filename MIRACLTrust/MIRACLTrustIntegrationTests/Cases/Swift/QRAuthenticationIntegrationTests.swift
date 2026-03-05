@@ -23,8 +23,8 @@ class QRAuthenticationIntegrationTests: XCTestCase {
     let randomPIN = String(Int32.random(in: 1000 ..< 9999))
     let api = PlatformAPIWrapper()
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
         registration = RegistrationTestCase()
         registration.pinCode = randomPIN
 
@@ -42,7 +42,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (response, _) = getActivationToken.getActivationToken(
+        let (response, _) = await getActivationToken.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
@@ -69,17 +69,17 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         }
     }
 
-    func testSuccessfulAuthentication() throws {
+    func testSuccessfulAuthentication() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -87,17 +87,17 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNil(authError)
     }
 
-    func testFailedAuthenticationWithEmptyAccessId() throws {
+    func testFailedAuthenticationWithEmptyAccessId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: ""
         )
@@ -109,10 +109,10 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedAuthenticationWithInvalidAccessId() throws {
+    func testFailedAuthenticationWithInvalidAccessId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -120,7 +120,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         qrCode = "https://mcl.mpin.io/mobile-login/#invalidAccessId"
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -128,10 +128,10 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.invalidAuthenticationSession)
     }
 
-    func testSuccessfulAuthenticationWithDifferentAccessId() throws {
+    func testSuccessfulAuthenticationWithDifferentAccessId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -140,7 +140,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
 
         let differentAccessId = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURL)).accessId
         qrCode = "https://mcl.mpin.io/mobile-login/#\(differentAccessId)"
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -149,10 +149,10 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNil(authError)
     }
 
-    func testFailedAuthenticationWithInvalidPin() throws {
+    func testFailedAuthenticationWithInvalidPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -160,7 +160,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = "InvalidPin"
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -173,10 +173,10 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedAuthenticationWithDifferentPin() throws {
+    func testFailedAuthenticationWithDifferentPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -191,7 +191,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         }
 
         authentication.pinCode = differentPin
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -200,10 +200,10 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.unsuccessfulAuthentication)
     }
 
-    func testFailedAuthenticationWithLongerPin() throws {
+    func testFailedAuthenticationWithLongerPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -212,7 +212,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = String(Int32.random(in: 100_000 ..< 999_999))
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -221,10 +221,10 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.invalidPin)
     }
 
-    func testFailedAuthenticationWithShorterPin() throws {
+    func testFailedAuthenticationWithShorterPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -233,7 +233,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = String(Int32.random(in: 100 ..< 999))
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -242,10 +242,10 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.invalidPin)
     }
 
-    func testFailedAuthenticationWithNilPin() throws {
+    func testFailedAuthenticationWithNilPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -254,7 +254,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = nil
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -263,7 +263,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.pinCancelled)
     }
 
-    func testFailedAuthenticationWithEmptyIdentity() throws {
+    func testFailedAuthenticationWithEmptyIdentity() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let emptyUser = createRandomUser(
@@ -272,7 +272,7 @@ class QRAuthenticationIntegrationTests: XCTestCase {
             dtas: ""
         )
 
-        let (isAuthenticated, authError) = authentication.authenticateUser(
+        let (isAuthenticated, authError) = await authentication.authenticateUser(
             user: emptyUser,
             qrCode: qrCode
         )

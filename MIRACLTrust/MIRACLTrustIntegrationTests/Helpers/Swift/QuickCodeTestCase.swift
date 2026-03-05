@@ -4,30 +4,20 @@ import XCTest
 class QuickCodeTestCase: XCTestCase {
     var authenticationPinCode: String? = ""
 
-    func generateQuickCode(user: User) -> (QuickCode?, Error?) {
-        let waitForQuickCode = XCTestExpectation(description: "wait for QuickCode")
-
-        nonisolated(unsafe) var returnedQuickCode: QuickCode?
-        nonisolated(unsafe) var returnedError: Error?
-
+    func generateQuickCode(user: User) async -> (QuickCode?, Error?) {
         let pinCode = authenticationPinCode
-        MIRACLTrust.getInstance().generateQuickCode(
-            user: user,
-            didRequestPinHandler: { pinHandler in
-                pinHandler(pinCode)
-            }, completionHandler: { quickCode, error in
-                returnedQuickCode = quickCode
-                returnedError = error
-
-                waitForQuickCode.fulfill()
-            }
-        )
-
-        let result = XCTWaiter.wait(for: [waitForQuickCode], timeout: operationTimeout)
-        if result != .completed {
-            XCTFail("Something wrong happened")
+        let pinHandler: PinRequestHandler = { pinProcessor in
+            pinProcessor(pinCode)
         }
 
-        return (returnedQuickCode, returnedError)
+        return await withCheckedContinuation { continuation in
+            MIRACLTrust.getInstance().generateQuickCode(
+                user: user,
+                didRequestPinHandler: pinHandler,
+                completionHandler: { quickCode, error in
+                    continuation.resume(returning: (quickCode, error))
+                }
+            )
+        }
     }
 }

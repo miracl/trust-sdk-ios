@@ -24,7 +24,9 @@ class AuthenticationIntegrationTests: XCTestCase {
     let randomPIN = String(Int32.random(in: 1000 ..< 9999))
     let api = PlatformAPIWrapper()
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        try await super.setUp()
+
         registration = RegistrationTestCase()
         registration.pinCode = randomPIN
 
@@ -42,7 +44,7 @@ class AuthenticationIntegrationTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (response, _) = getActivationToken.getActivationToken(
+        let (response, _) = await getActivationToken.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
@@ -71,17 +73,17 @@ class AuthenticationIntegrationTests: XCTestCase {
         }
     }
 
-    func testSuccessfulJWTGeneration() throws {
+    func testSuccessfulJWTGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let (jwt, jwtError) = try jwtAuthenticationTestCase.generateJWT(
+        let (jwt, jwtError) = try await jwtAuthenticationTestCase.generateJWT(
             user: XCTUnwrap(user)
         )
         XCTAssertNil(jwtError)
@@ -96,7 +98,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         XCTAssertTrue(payload.aud.value.contains(projectId))
     }
 
-    func testFailedJWTGenerationEmptyIdentity() throws {
+    func testFailedJWTGenerationEmptyIdentity() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let emptyUser = createRandomUser(
@@ -105,7 +107,7 @@ class AuthenticationIntegrationTests: XCTestCase {
             dtas: ""
         )
 
-        let (jwt, jwtError) = jwtAuthenticationTestCase.generateJWT(
+        let (jwt, jwtError) = await jwtAuthenticationTestCase.generateJWT(
             user: emptyUser
         )
 
@@ -113,10 +115,10 @@ class AuthenticationIntegrationTests: XCTestCase {
         assertError(current: jwtError, expected: AuthenticationError.invalidUserData)
     }
 
-    func testFailedJWTGenerationDifferentPIN() throws {
+    func testFailedJWTGenerationDifferentPIN() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -132,7 +134,7 @@ class AuthenticationIntegrationTests: XCTestCase {
 
         jwtAuthenticationTestCase.pinCode = differentPin
 
-        let (jwt, jwtError) = try jwtAuthenticationTestCase.generateJWT(
+        let (jwt, jwtError) = try await jwtAuthenticationTestCase.generateJWT(
             user: XCTUnwrap(user)
         )
 
@@ -140,10 +142,10 @@ class AuthenticationIntegrationTests: XCTestCase {
         assertError(current: jwtError, expected: AuthenticationError.unsuccessfulAuthentication)
     }
 
-    func testFailedJWTShorterPINGeneration() throws {
+    func testFailedJWTShorterPINGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -151,7 +153,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         jwtAuthenticationTestCase.pinCode = String(Int32.random(in: 100 ..< 999))
-        let (jwtCode, jwtError) = try jwtAuthenticationTestCase.generateJWT(
+        let (jwtCode, jwtError) = try await jwtAuthenticationTestCase.generateJWT(
             user: XCTUnwrap(user)
         )
 
@@ -159,10 +161,10 @@ class AuthenticationIntegrationTests: XCTestCase {
         assertError(current: jwtError, expected: AuthenticationError.invalidPin)
     }
 
-    func testFailedJWTLongerPINGeneration() throws {
+    func testFailedJWTLongerPINGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -170,7 +172,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         jwtAuthenticationTestCase.pinCode = String(Int32.random(in: 100_000 ..< 999_999))
-        let (jwt, jwtError) = try jwtAuthenticationTestCase.generateJWT(
+        let (jwt, jwtError) = try await jwtAuthenticationTestCase.generateJWT(
             user: XCTUnwrap(user)
         )
         XCTAssertNil(jwt)
@@ -180,10 +182,10 @@ class AuthenticationIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedJWTNilPINGeneration() throws {
+    func testFailedJWTNilPINGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -191,7 +193,7 @@ class AuthenticationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
 
         jwtAuthenticationTestCase.pinCode = nil
-        let (jwt, jwtError) = try jwtAuthenticationTestCase.generateJWT(
+        let (jwt, jwtError) = try await jwtAuthenticationTestCase.generateJWT(
             user: XCTUnwrap(user)
         )
         XCTAssertNil(jwt)
@@ -201,10 +203,10 @@ class AuthenticationIntegrationTests: XCTestCase {
         )
     }
 
-    func testRevokedIdentityJWTGeneration() throws {
+    func testRevokedIdentityJWTGeneration() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -220,24 +222,24 @@ class AuthenticationIntegrationTests: XCTestCase {
         jwtAuthenticationTestCase.pinCode = differentPin
 
         // First try
-        var (jwtCode, jwtError) = try jwtAuthenticationTestCase.generateJWT(user: XCTUnwrap(user))
+        var (jwtCode, jwtError) = try await jwtAuthenticationTestCase.generateJWT(user: XCTUnwrap(user))
         XCTAssertNil(jwtCode)
         assertError(current: jwtError, expected: AuthenticationError.unsuccessfulAuthentication)
 
         // Second try
-        (jwtCode, jwtError) = try jwtAuthenticationTestCase.generateJWT(user: XCTUnwrap(user))
+        (jwtCode, jwtError) = try await jwtAuthenticationTestCase.generateJWT(user: XCTUnwrap(user))
         XCTAssertNil(jwtCode)
         assertError(current: jwtError, expected: AuthenticationError.unsuccessfulAuthentication)
 
         // Third try. JWT generation should return an error that indicates for revoked identity.
-        (jwtCode, jwtError) = try jwtAuthenticationTestCase.generateJWT(user: XCTUnwrap(user))
+        (jwtCode, jwtError) = try await jwtAuthenticationTestCase.generateJWT(user: XCTUnwrap(user))
         XCTAssertNil(jwtCode)
         assertError(current: jwtError, expected: AuthenticationError.revoked)
 
         // After three unsuccessful tries, the user is blocked and cannot authenticate anymore.
         let session = try XCTUnwrap(session)
         let qrCode = "https://mcl.mpin.io/mobile-login/#\(session.accessId)"
-        let (authenticationResult, authenticationError) = try authentication.authenticateUser(
+        let (authenticationResult, authenticationError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )

@@ -7,29 +7,16 @@ class RegistrationTestCase {
     func registerUser(
         userId: String,
         activationToken: String
-    ) -> (User?, Error?) {
+    ) async -> (User?, Error?) {
         let pinCode = pinCode
         let pinHandler: PinRequestHandler = { pinProcessor in
             pinProcessor(pinCode)
         }
 
-        let waitForUser = XCTestExpectation(description: "wait for User")
-        nonisolated(unsafe) var returnedUser: User?
-        nonisolated(unsafe) var returnedError: Error?
-
-        MIRACLTrust.getInstance().register(
-            for: userId,
-            activationToken: activationToken,
-            didRequestPinHandler: pinHandler
-        ) { user, error in
-            returnedUser = user
-            returnedError = error
-            waitForUser.fulfill()
+        return await withCheckedContinuation { continuation in
+            MIRACLTrust.getInstance().register(for: userId, activationToken: activationToken, didRequestPinHandler: pinHandler) { user, error in
+                continuation.resume(returning: (user, error))
+            }
         }
-        let waitResult = XCTWaiter.wait(for: [waitForUser], timeout: 30)
-        if waitResult != .completed {
-            XCTFail("Failed expectation")
-        }
-        return (returnedUser, returnedError)
     }
 }
