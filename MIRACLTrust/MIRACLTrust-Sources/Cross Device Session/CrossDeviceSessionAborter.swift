@@ -1,6 +1,6 @@
 import Foundation
 
-struct CrossDeviceSessionAborter: Sendable {
+struct CrossDeviceSessionAborter {
     let sessionId: String
     let miraclAPI: APIBlueprint
     let completionHandler: CrossDeviceSessionAborterCompletionHandler

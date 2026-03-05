@@ -11,7 +11,7 @@ enum CryptoSupportedEllipticCurves: String {
 }
 
 /// Object - Oriented wrapper for AMCL crypto library.
-struct Crypto: CryptoBlueprint, Sendable {
+struct Crypto: CryptoBlueprint {
     private let mPinHashTypeBN254CX = Int32(32)
     private let defaultOctetSize = 65
     private let xOctetSize = 32

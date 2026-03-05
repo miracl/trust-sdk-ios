@@ -3,7 +3,7 @@ import Foundation
 let INVALID_VERIFICATION_CODE = "INVALID_VERIFICATION_CODE"
 let UNSUCCESSFUL_VERIFICATION = "UNSUCCESSFUL_VERIFICATION"
 
-struct VerificationConfirmationHandler: Sendable {
+struct VerificationConfirmationHandler {
     let miraclAPI: APIBlueprint
     let completionHandler: ActivationTokenCompletionHandler
     let activationCode: String?

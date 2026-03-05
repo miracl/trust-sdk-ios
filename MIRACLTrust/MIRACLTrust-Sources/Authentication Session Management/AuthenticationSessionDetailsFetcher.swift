@@ -1,6 +1,6 @@
 import Foundation
 
-struct AuthenticationSessionDetailsFetcher: Sendable {
+struct AuthenticationSessionDetailsFetcher {
     let accessId: String
     let miraclAPI: APIBlueprint
     let completionHandler: AuthenticationSessionDetailsCompletionHandler

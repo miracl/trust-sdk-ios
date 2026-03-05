@@ -1,6 +1,6 @@
 import Foundation
 
-struct AuthenticationSessionAborter: Sendable {
+struct AuthenticationSessionAborter {
     let accessId: String
     let miraclAPI: APIBlueprint
     let completionHandler: AuthenticationSessionAborterCompletionHandler

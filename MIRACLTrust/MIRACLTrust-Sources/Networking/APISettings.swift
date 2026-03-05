@@ -1,7 +1,7 @@
 import Foundation
 
 /// URLs used to make a call to given MIRACL endpoints. This class is initialised when the [API] class instance is created from the response taken from the client settings.
-struct APISettings: Sendable {
+struct APISettings {
     let registrationURL: URL
     let authenticateURL: URL
     let pass1URL: URL

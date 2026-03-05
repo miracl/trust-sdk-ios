@@ -3,7 +3,7 @@ import Foundation
 let BACKOFF_ERROR = "BACKOFF_ERROR"
 let REQUEST_BACKOFF = "REQUEST_BACKOFF"
 
-struct Verificator: Sendable {
+struct Verificator {
     let userId: String
     let projectId: String
     let deviceName: String

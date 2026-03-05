@@ -1,6 +1,6 @@
 import Foundation
 
-struct Signer: Sendable {
+struct Signer {
     let messageHash: Data
     let user: User
     let didRequestSigningPinHandler: PinRequestHandler
