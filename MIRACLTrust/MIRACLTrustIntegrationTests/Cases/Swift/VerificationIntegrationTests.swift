@@ -40,7 +40,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        let (verified, error) = verificationTestCase.sendVerificationEmail(
+        let (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -57,7 +57,7 @@ class VerificationIntegrationTests: XCTestCase {
         }.first)
         XCTAssertEqual(userIdItem.value, extendedMailAddress)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             verificationURL: XCTUnwrap(verificationURL)
         )
 
@@ -78,7 +78,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        let (verified, error) = verificationTestCase.sendVerificationEmailForCrossDeviceSession(
+        let (verified, error) = await verificationTestCase.sendVerificationEmailForCrossDeviceSession(
             userId: extendedMailAddress
         )
 
@@ -95,7 +95,7 @@ class VerificationIntegrationTests: XCTestCase {
         }.first)
         XCTAssertEqual(userIdItem.value, extendedMailAddress)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             verificationURL: XCTUnwrap(verificationURL)
         )
 
@@ -114,7 +114,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        var (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        var (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -124,7 +124,7 @@ class VerificationIntegrationTests: XCTestCase {
         let verificationURLResult = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
         let verifcationURL = try XCTUnwrap(verificationURLResult)
 
-        let (activationTokenResponse, activationTokenError) = activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = await activationTokenTestCase.getActivationToken(
             verificationURL: verifcationURL
         )
 
@@ -132,7 +132,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (user, registrationError) = try registrationTestCase.registerUser(
+        let (user, registrationError) = try await registrationTestCase.registerUser(
             userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
@@ -142,7 +142,7 @@ class VerificationIntegrationTests: XCTestCase {
         // Prevent verification request backoff
         sleep(5)
 
-        (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -151,7 +151,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.link)
     }
 
-    func testBackoffError() throws {
+    func testBackoffError() async throws {
         let mailAddress = "int@miracl.com"
 
         configuration = try Configuration
@@ -160,14 +160,14 @@ class VerificationIntegrationTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        var (verified, error) = verificationTestCase.sendVerificationEmail(
+        var (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: mailAddress
         )
 
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
-        (verified, error) = verificationTestCase.sendVerificationEmail(
+        (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: mailAddress
         )
 
@@ -181,7 +181,7 @@ class VerificationIntegrationTests: XCTestCase {
         }
     }
 
-    func testInvalidUserId() throws {
+    func testInvalidUserId() async throws {
         let mailAddress = ""
 
         configuration = try Configuration
@@ -190,7 +190,7 @@ class VerificationIntegrationTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (verified, error) = verificationTestCase.sendVerificationEmail(
+        let (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: mailAddress
         )
 
@@ -211,12 +211,12 @@ class VerificationIntegrationTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (sessionDetails, sessionDetailsError) = sessionDetailsTestCase.getSessionDetails(qrCode: qrCode)
+        let (sessionDetails, sessionDetailsError) = await sessionDetailsTestCase.getSessionDetails(qrCode: qrCode)
         XCTAssertNil(sessionDetailsError)
         XCTAssertNotNil(sessionDetails)
 
         let timestamp = Date()
-        let (verified, error) = verificationTestCase.sendVerificationEmail(
+        let (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress,
             authenticationSessionDetails: sessionDetails
         )
@@ -225,7 +225,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         let verificationURL = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             verificationURL: XCTUnwrap(verificationURL)
         )
 
@@ -248,7 +248,7 @@ class VerificationIntegrationTests: XCTestCase {
         let crossDeviceSession = try await crossDeviceSessionTestCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
 
         let timestamp = Date()
-        let (verified, error) = verificationTestCase.sendVerificationEmailForCrossDeviceSession(
+        let (verified, error) = await verificationTestCase.sendVerificationEmailForCrossDeviceSession(
             userId: extendedMailAddress,
             crossDeviceSession: crossDeviceSession
         )
@@ -257,7 +257,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         let verificationURL = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             verificationURL: XCTUnwrap(verificationURL)
         )
 
@@ -277,7 +277,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        let (verified, error) = verificationTestCase.sendVerificationEmail(
+        let (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -286,7 +286,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
         )
 
@@ -304,7 +304,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        var (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        var (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -315,7 +315,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
         )
 
@@ -323,7 +323,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (user, registrationError) = try registrationTestCase.registerUser(
+        let (user, registrationError) = try await registrationTestCase.registerUser(
             userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
@@ -333,7 +333,7 @@ class VerificationIntegrationTests: XCTestCase {
         // Prevent verification request backoff
         sleep(5)
 
-        (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -352,7 +352,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        var (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        var (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -361,7 +361,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
         )
 
@@ -369,7 +369,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (user, registrationError) = try registrationTestCase.registerUser(
+        let (user, registrationError) = try await registrationTestCase.registerUser(
             userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
@@ -381,7 +381,7 @@ class VerificationIntegrationTests: XCTestCase {
         // Prevent verification request backoff
         sleep(5)
 
-        (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -400,7 +400,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        var (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        var (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -408,7 +408,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(error)
 
         let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
         )
 
@@ -416,7 +416,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (regUser, registrationError) = try registrationTestCase.registerUser(
+        let (regUser, registrationError) = try await registrationTestCase.registerUser(
             userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
 
@@ -427,22 +427,22 @@ class VerificationIntegrationTests: XCTestCase {
 
         let authenticationTestCase = JWTAuthenticationTestCase()
         authenticationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        var (jwt, authError) = authenticationTestCase.generateJWT(user: user)
+        var (jwt, authError) = await authenticationTestCase.generateJWT(user: user)
         XCTAssertNotNil(authError)
         XCTAssertNil(jwt)
 
-        (jwt, authError) = authenticationTestCase.generateJWT(user: user)
+        (jwt, authError) = await authenticationTestCase.generateJWT(user: user)
         XCTAssertNotNil(authError)
         XCTAssertNil(jwt)
 
-        (jwt, authError) = authenticationTestCase.generateJWT(user: user)
+        (jwt, authError) = await authenticationTestCase.generateJWT(user: user)
         assertError(current: authError, expected: AuthenticationError.revoked)
         XCTAssertNil(jwt)
 
         user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: extendedMailAddress))
         XCTAssertEqual(user.revoked, true)
 
-        (verificationResponse, error) = verificationTestCase.sendVerificationEmail(
+        (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -451,7 +451,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.code)
     }
 
-    func testCustomVerification() throws {
+    func testCustomVerification() async throws {
         let mailAddress = "int@miracl.com"
         let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
 
@@ -482,7 +482,7 @@ class VerificationIntegrationTests: XCTestCase {
         }.first)
         XCTAssertEqual(userIdItem.value, mailAddress)
 
-        let (activationTokenResponse, activationTokenError) = try activationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             verificationURL: XCTUnwrap(verificationURL)
         )
 
@@ -492,7 +492,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertEqual(activationTokenResponse?.accessId, session.accessId)
     }
 
-    func testExpiredActivationCode() throws {
+    func testExpiredActivationCode() async throws {
         let mailAddress = "int@miracl.com"
         let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
 
@@ -518,7 +518,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         sleep(UInt32(expirationInSeconds + 1))
 
-        let (tokenResponse, tokenError) = activationTokenTestCase.getActivationToken(verificationURL: verificationURL)
+        let (tokenResponse, tokenError) = await activationTokenTestCase.getActivationToken(verificationURL: verificationURL)
         XCTAssertNil(tokenResponse)
 
         if let confirmationError = tokenError as? ActivationTokenError, case let ActivationTokenError.unsuccessfulVerification(activationTokenErrorResponse: response) = confirmationError {
@@ -531,7 +531,7 @@ class VerificationIntegrationTests: XCTestCase {
         }
     }
 
-    func testInvalidActivationCode() throws {
+    func testInvalidActivationCode() async throws {
         let mailAddress = "int@miracl.com"
 
         configuration = try Configuration
@@ -564,7 +564,7 @@ class VerificationIntegrationTests: XCTestCase {
         verificationURLComponents.queryItems = updatedQueryParams
 
         let updatedURL = try XCTUnwrap(verificationURLComponents.url)
-        let (tokenResponse, tokenError) = activationTokenTestCase.getActivationToken(verificationURL: updatedURL)
+        let (tokenResponse, tokenError) = await activationTokenTestCase.getActivationToken(verificationURL: updatedURL)
 
         XCTAssertNil(tokenResponse)
         XCTAssertNotNil(tokenError)

@@ -24,8 +24,8 @@ class PushNotificationsIntegrationTest: XCTestCase {
     let randomPIN = String(Int32.random(in: 1000 ..< 9999))
     let api = PlatformAPIWrapper()
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
 
         registration = RegistrationTestCase()
         registration.pinCode = randomPIN
@@ -49,7 +49,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (response, _) = getActivationToken.getActivationToken(
+        let (response, _) = await getActivationToken.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
@@ -76,17 +76,17 @@ class PushNotificationsIntegrationTest: XCTestCase {
         }
     }
 
-    func testSuccessfulAuthentication() throws {
+    func testSuccessfulAuthentication() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -94,10 +94,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNil(authError)
     }
 
-    func testFailedAuthenticationWithEmptyAccessId() throws {
+    func testFailedAuthenticationWithEmptyAccessId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -110,7 +110,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             "qrURL": ""
         ]
 
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -122,10 +122,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         )
     }
 
-    func testFailedAuthenticationCannotFetchUser() throws {
+    func testFailedAuthenticationCannotFetchUser() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -138,7 +138,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             "qrURL": qrURL
         ]
 
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -150,10 +150,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         )
     }
 
-    func testFailedAuthenticationWithEmptyProjectId() throws {
+    func testFailedAuthenticationWithEmptyProjectId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -166,7 +166,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             "qrURL": qrURL
         ]
 
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -178,10 +178,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         )
     }
 
-    func testFailedAuthenticationWithEmptyUserId() throws {
+    func testFailedAuthenticationWithEmptyUserId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -194,7 +194,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             "qrURL": qrURL
         ]
 
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -206,10 +206,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         )
     }
 
-    func testFailedAuthenticationWithInvalidAccessId() throws {
+    func testFailedAuthenticationWithInvalidAccessId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -222,7 +222,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             "projectID": projectId,
             "qrURL": qrURL
         ]
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -230,10 +230,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.invalidAuthenticationSession)
     }
 
-    func testSuccessfulAuthenticationWithDifferentAccessId() throws {
+    func testSuccessfulAuthenticationWithDifferentAccessId() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -247,7 +247,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
             "projectID": projectId,
             "qrURL": qrURL
         ]
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -256,10 +256,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNil(authError)
     }
 
-    func testFailedAuthenticationWithInvalidPin() throws {
+    func testFailedAuthenticationWithInvalidPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -267,7 +267,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = "InvalidPin"
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -280,10 +280,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         )
     }
 
-    func testFailedAuthenticationWithDifferentPin() throws {
+    func testFailedAuthenticationWithDifferentPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -298,7 +298,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
         }
 
         authentication.pinCode = differentPin
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -307,10 +307,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.unsuccessfulAuthentication)
     }
 
-    func testFailedAuthenticationWithLongerPin() throws {
+    func testFailedAuthenticationWithLongerPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -319,7 +319,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = String(Int32.random(in: 100_000 ..< 999_999))
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -328,10 +328,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.invalidPin)
     }
 
-    func testFailedAuthenticationWithShorterPin() throws {
+    func testFailedAuthenticationWithShorterPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -340,7 +340,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = String(Int32.random(in: 100 ..< 999))
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )
@@ -349,10 +349,10 @@ class PushNotificationsIntegrationTest: XCTestCase {
         assertError(current: authError, expected: AuthenticationError.invalidPin)
     }
 
-    func testFailedAuthenticationWithNilPin() throws {
+    func testFailedAuthenticationWithNilPin() async throws {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -361,7 +361,7 @@ class PushNotificationsIntegrationTest: XCTestCase {
         XCTAssertNotNil(user)
 
         authentication.pinCode = nil
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             pushPayload: payload
         )

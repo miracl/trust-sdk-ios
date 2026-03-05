@@ -10,59 +10,33 @@ class GetActivationTokenTestCase: XCTest {
         projectURL: String,
         userId: String,
         accessId: String? = nil
-    ) -> (ActivationTokenResponse?, Error?) {
-        let waitForToken = XCTestExpectation(description: "wait for activation Token")
-        nonisolated(unsafe) var returnedActivationTokenResponse: ActivationTokenResponse?
-        nonisolated(unsafe) var returnedError: Error?
+    ) async -> (ActivationTokenResponse?, Error?) {
+        do {
+            let verificationURL = try await api.getVerificationURL(serviceAccountToken: serviceAccountToken, projectId: projectId, projectURL: projectURL, userId: userId, accessId: accessId)
 
-        let verificationURL = api.getVerificaitonURL(
-            serviceAccountToken: serviceAccountToken,
-            projectId: projectId,
-            projectURL: projectURL,
-            userId: userId,
-            accessId: accessId
-        )
-
-        MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL!) { activationTokenResponse, error in
-            returnedActivationTokenResponse = activationTokenResponse
-            returnedError = error
-
-            waitForToken.fulfill()
+            return await withCheckedContinuation { continuation in
+                MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { activationTokenResponse, error in
+                    continuation.resume(returning: (activationTokenResponse, error))
+                }
+            }
+        } catch {
+            return (nil, error)
         }
-
-        _ = XCTWaiter.wait(for: [waitForToken], timeout: operationTimeout)
-        return (returnedActivationTokenResponse, returnedError)
     }
 
-    func getActivationToken(verificationURL: URL) -> (ActivationTokenResponse?, Error?) {
-        let waitForToken = XCTestExpectation(description: "wait for activation Token")
-        nonisolated(unsafe) var returnedActivationTokenResponse: ActivationTokenResponse?
-        nonisolated(unsafe) var returnedError: Error?
-
-        MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { activationTokenResponse, error in
-            returnedActivationTokenResponse = activationTokenResponse
-            returnedError = error
-
-            waitForToken.fulfill()
+    func getActivationToken(verificationURL: URL) async -> (ActivationTokenResponse?, Error?) {
+        await withCheckedContinuation { continuation in
+            MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { activationTokenResponse, error in
+                continuation.resume(returning: (activationTokenResponse, error))
+            }
         }
-
-        _ = XCTWaiter.wait(for: [waitForToken], timeout: operationTimeout)
-        return (returnedActivationTokenResponse, returnedError)
     }
 
-    func getActivationToken(userId: String, code: String) -> (ActivationTokenResponse?, Error?) {
-        let waitForToken = XCTestExpectation(description: "wait for activation Token")
-        nonisolated(unsafe) var returnedActivationTokenResponse: ActivationTokenResponse?
-        nonisolated(unsafe) var returnedError: Error?
-
-        MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code) { activationTokenResponse, error in
-            returnedActivationTokenResponse = activationTokenResponse
-            returnedError = error
-
-            waitForToken.fulfill()
+    func getActivationToken(userId: String, code: String) async -> (ActivationTokenResponse?, Error?) {
+        await withCheckedContinuation { continuation in
+            MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code) { activationTokenResponse, error in
+                continuation.resume(returning: (activationTokenResponse, error))
+            }
         }
-
-        _ = XCTWaiter.wait(for: [waitForToken], timeout: operationTimeout)
-        return (returnedActivationTokenResponse, returnedError)
     }
 }

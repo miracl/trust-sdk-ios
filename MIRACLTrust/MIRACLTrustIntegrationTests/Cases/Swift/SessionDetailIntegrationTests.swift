@@ -30,8 +30,8 @@ class SessionDetailIntegrationTests: XCTestCase {
 
     // MARK: Get Session details from QR code
 
-    func testGetSessionDetailsQRCode() throws {
-        let (details, error) = testCase.getSessionDetails(qrCode: qrCode)
+    func testGetSessionDetailsQRCode() async throws {
+        let (details, error) = await testCase.getSessionDetails(qrCode: qrCode)
         XCTAssertNil(error)
         XCTAssertNotNil(details)
 
@@ -39,11 +39,11 @@ class SessionDetailIntegrationTests: XCTestCase {
         XCTAssertEqual(expandedDetails.projectId, projectId)
     }
 
-    func testGetSessionDetailForDifferentProject() throws {
+    func testGetSessionDetailForDifferentProject() async throws {
         let session = try XCTUnwrap(api.startSession(projectId: expectedProjectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io#\(session.accessId)"
 
-        let (details, error) = testCase.getSessionDetails(qrCode: qrCode)
+        let (details, error) = await testCase.getSessionDetails(qrCode: qrCode)
         XCTAssertNil(error)
 
         XCTAssertNotNil(details)
@@ -51,10 +51,10 @@ class SessionDetailIntegrationTests: XCTestCase {
         XCTAssertEqual(expandedDetails.projectId, expectedProjectId)
     }
 
-    func testGetSessionDetailForInvalidQRCode() {
+    func testGetSessionDetailForInvalidQRCode() async {
         qrCode = "https://mcl.mpin.io#InvalidAccessId"
 
-        let (details, error) = testCase.getSessionDetails(qrCode: qrCode)
+        let (details, error) = await testCase.getSessionDetails(qrCode: qrCode)
         XCTAssertNil(details)
 
         // There is a bug on a platform.
@@ -68,17 +68,17 @@ class SessionDetailIntegrationTests: XCTestCase {
         XCTAssertTrue(isJsonError)
     }
 
-    func testGetSessionDetailForEmptyQRCode() {
-        let (details, error) = testCase.getSessionDetails(qrCode: "")
+    func testGetSessionDetailForEmptyQRCode() async {
+        let (details, error) = await testCase.getSessionDetails(qrCode: "")
         XCTAssertNil(details)
         assertError(current: error, expected: AuthenticationSessionError.invalidQRCode)
     }
 
     // MARK: Get Session details from universal link URL
 
-    func testGetSessionDetailsUniversalLinkURL() throws {
+    func testGetSessionDetailsUniversalLinkURL() async throws {
         let universalLinkURL = try XCTUnwrap(universalLinkURL)
-        let (details, error) = testCase.getSessionDetails(universalLinkURL: universalLinkURL)
+        let (details, error) = await testCase.getSessionDetails(universalLinkURL: universalLinkURL)
         XCTAssertNil(error)
         XCTAssertNotNil(details)
 
@@ -86,12 +86,12 @@ class SessionDetailIntegrationTests: XCTestCase {
         XCTAssertEqual(expandedDetails.projectId, projectId)
     }
 
-    func testGetSessionDetailsUniversalLinkURLForDifferentProject() throws {
+    func testGetSessionDetailsUniversalLinkURLForDifferentProject() async throws {
         let session = try XCTUnwrap(api.startSession(projectId: expectedProjectId, projectURL: projectURL))
         qrCode = "https://mcl.mpin.io#\(session.accessId)"
         let universalLinkURL = try XCTUnwrap(URL(string: qrCode))
 
-        let (details, error) = testCase.getSessionDetails(universalLinkURL: universalLinkURL)
+        let (details, error) = await testCase.getSessionDetails(universalLinkURL: universalLinkURL)
         XCTAssertNil(error)
 
         XCTAssertNotNil(details)
@@ -99,19 +99,19 @@ class SessionDetailIntegrationTests: XCTestCase {
         XCTAssertEqual(expandedDetails.projectId, expectedProjectId)
     }
 
-    func testGetSessionDetailsForMissingURLFragment() throws {
+    func testGetSessionDetailsForMissingURLFragment() async throws {
         qrCode = "https://mcl.mpin.io"
         let universalLinkURL = try XCTUnwrap(URL(string: qrCode))
 
-        let (details, error) = testCase.getSessionDetails(universalLinkURL: universalLinkURL)
+        let (details, error) = await testCase.getSessionDetails(universalLinkURL: universalLinkURL)
         XCTAssertNil(details)
         assertError(current: error, expected: AuthenticationSessionError.invalidUniversalLinkURL)
     }
 
     // MARK: Get Session details from push notifications payload
 
-    func testGetSessionDetailsFromPushNotificationsPayload() throws {
-        let (details, error) = testCase.getSessionDetails(payload: pushNotificationsPayload)
+    func testGetSessionDetailsFromPushNotificationsPayload() async throws {
+        let (details, error) = await testCase.getSessionDetails(payload: pushNotificationsPayload)
         XCTAssertNil(error)
         XCTAssertNotNil(details)
 
@@ -119,30 +119,30 @@ class SessionDetailIntegrationTests: XCTestCase {
         XCTAssertEqual(expandedDetails.projectId, projectId)
     }
 
-    func testGetSessionDetailsFromPushNotificationsPayloadMissingPayloadEntry() {
+    func testGetSessionDetailsFromPushNotificationsPayloadMissingPayloadEntry() async {
         pushNotificationsPayload = [AnyHashable: Any]()
 
-        let (details, error) = testCase.getSessionDetails(payload: pushNotificationsPayload)
+        let (details, error) = await testCase.getSessionDetails(payload: pushNotificationsPayload)
         XCTAssertNil(details)
         assertError(current: error, expected: AuthenticationSessionError.invalidPushNotificationPayload)
     }
 
-    func testGetSessionDetailsFromPushNotificationsPayloadInvalidURL() {
+    func testGetSessionDetailsFromPushNotificationsPayloadInvalidURL() async {
         pushNotificationsPayload = [
             "qrURL": "InvalidURL"
         ]
 
-        let (details, error) = testCase.getSessionDetails(payload: pushNotificationsPayload)
+        let (details, error) = await testCase.getSessionDetails(payload: pushNotificationsPayload)
         XCTAssertNil(details)
         assertError(current: error, expected: AuthenticationSessionError.invalidPushNotificationPayload)
     }
 
-    func testGetSessionDetailsFromPushNotificationsPayloadInvalidURLFragment() {
+    func testGetSessionDetailsFromPushNotificationsPayloadInvalidURLFragment() async {
         pushNotificationsPayload = [
             "qrURL": "https://mcl.mpin.io#"
         ]
 
-        let (details, error) = testCase.getSessionDetails(payload: pushNotificationsPayload)
+        let (details, error) = await testCase.getSessionDetails(payload: pushNotificationsPayload)
         XCTAssertNil(details)
         assertError(current: error, expected: AuthenticationSessionError.invalidPushNotificationPayload)
     }

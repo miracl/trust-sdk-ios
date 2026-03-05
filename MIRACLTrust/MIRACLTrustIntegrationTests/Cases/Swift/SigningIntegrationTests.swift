@@ -34,8 +34,8 @@ class SigningIntegrationTests: XCTestCase {
     let anotherRandomSigningPIN = String(Int32.random(in: 1000 ..< 9999))
     let api = PlatformAPIWrapper()
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
 
         registration = RegistrationTestCase()
         registration.pinCode = randomPIN
@@ -55,7 +55,7 @@ class SigningIntegrationTests: XCTestCase {
             .build()
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (response, _) = getActivationToken.getActivationToken(
+        let (response, _) = await getActivationToken.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
             projectURL: projectURL,
@@ -64,7 +64,7 @@ class SigningIntegrationTests: XCTestCase {
 
         activationToken = try XCTUnwrap(response?.activationToken)
 
-        let (user, regError) = registration.registerUser(
+        let (user, regError) = await registration.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -72,7 +72,7 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(regError)
 
         let qrCode = "https://mcl.mpin.io/mobile-login/#\(session.accessId)"
-        let (isAuthenticated, authError) = try authentication.authenticateUser(
+        let (isAuthenticated, authError) = try await authentication.authenticateUser(
             user: XCTUnwrap(user),
             qrCode: qrCode
         )
@@ -96,8 +96,8 @@ class SigningIntegrationTests: XCTestCase {
         }
     }
 
-    func testSigningCorrectness() throws {
-        let (signingResult, error) = try signing.signMessage(
+    func testSigningCorrectness() async throws {
+        let (signingResult, error) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -135,10 +135,10 @@ class SigningIntegrationTests: XCTestCase {
             )
         )
         let qrCode = "tcb.miracl.app/mobile/sign#\(session.accessId)"
-        let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(qrCode: qrCode)
+        let (crossDeviceSession, _) = await crossDeviceSession.getCrossDeviceSession(qrCode: qrCode)
 
         let crossDeviceSessionUnwrap = try XCTUnwrap(crossDeviceSession)
-        let (signingResult, error) = try signing.signMessage(
+        let (signingResult, error) = try await signing.signMessage(
             crossDeviceSession: crossDeviceSessionUnwrap,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -175,14 +175,14 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertEqual(signature.signatureHash, payload.hash)
     }
 
-    func testSigningCorrectnessWithCrossDeviceSessionForUniversalLink() throws {
+    func testSigningCorrectnessWithCrossDeviceSessionForUniversalLink() async throws {
         let sessionId = try XCTUnwrap(
             api.startSession(projectId: projectId, projectURL: projectURL, userId: userId, hash: messageToSign, description: UUID().uuidString)
         ).accessId
         let universalLinkURL = try XCTUnwrap(URL(string: "https://mcl.mpin.io/mobile/sign#\(sessionId)"))
-        let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(universalLinkURL: universalLinkURL)
+        let (crossDeviceSession, _) = await crossDeviceSession.getCrossDeviceSession(universalLinkURL: universalLinkURL)
 
-        let (signingResult, error) = try signing.signMessage(
+        let (signingResult, error) = try await signing.signMessage(
             crossDeviceSession: XCTUnwrap(crossDeviceSession),
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -191,15 +191,15 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(error)
     }
 
-    func testSigningCorrectnessWithCrossDeviceSessionForPayload() throws {
+    func testSigningCorrectnessWithCrossDeviceSessionForPayload() async throws {
         let sessionId = try XCTUnwrap(
             api.startSession(projectId: projectId, projectURL: projectURL, userId: userId, hash: messageToSign, description: UUID().uuidString)
         ).accessId
         let payload = ["qrURL": "https://mcl.mpin.io/mobile/sign#\(sessionId)"]
 
-        let (crossDeviceSession, _) = crossDeviceSession.getCrossDeviceSession(pushNotificationPayload: payload)
+        let (crossDeviceSession, _) = await crossDeviceSession.getCrossDeviceSession(pushNotificationPayload: payload)
 
-        let (signingResult, error) = try signing.signMessage(
+        let (signingResult, error) = try await signing.signMessage(
             crossDeviceSession: XCTUnwrap(crossDeviceSession),
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -208,14 +208,14 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(error)
     }
 
-    func testSigningCorrectnessSHA384() throws {
+    func testSigningCorrectnessSHA384() async throws {
         guard let messageData = messageToSign.data(using: .utf8) else {
             XCTFail("Cannot create data from message.")
             return
         }
 
         let messageHash = SHA384.hash(data: messageData).data
-        let (signingResult, error) = try signing.signMessage(
+        let (signingResult, error) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -242,10 +242,10 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertEqual(messageHash.hex, payload.hash)
     }
 
-    func testSigningEmptyMessageHash() throws {
+    func testSigningEmptyMessageHash() async throws {
         let messageHash = Data()
 
-        let (signingResult, signingSigningError) = try signing.signMessage(
+        let (signingResult, signingSigningError) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -257,14 +257,14 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertEqual(signingSigningError as? SigningError, SigningError.emptyMessageHash)
     }
 
-    func testSigningWrongPinAuthentication() throws {
+    func testSigningWrongPinAuthentication() async throws {
         var differentPinCode = String(Int32.random(in: 1000 ..< 9999))
         if signing.signingPinCode == differentPinCode {
             differentPinCode = String(Int32.random(in: 1000 ..< 9999))
         }
         signing.signingPinCode = differentPinCode
 
-        let (signingResult, signingError) = try signing.signMessage(
+        let (signingResult, signingError) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -274,7 +274,7 @@ class SigningIntegrationTests: XCTestCase {
         assertError(current: signingError, expected: SigningError.unsuccessfulAuthentication)
     }
 
-    func testSigningInvalidPinAuthentication() throws {
+    func testSigningInvalidPinAuthentication() async throws {
         signing.signingPinCode = NSUUID().uuidString
 
         guard let messageData = messageToSign.data(using: .utf8) else {
@@ -284,7 +284,7 @@ class SigningIntegrationTests: XCTestCase {
 
         let messageHash = SHA256.hash(data: messageData).data
 
-        let (signingResult, signingSigningError) = try signing.signMessage(
+        let (signingResult, signingSigningError) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -294,7 +294,7 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertEqual(signingSigningError as? SigningError, SigningError.invalidPin)
     }
 
-    func testSigningInvalidPublicKey() throws {
+    func testSigningInvalidPublicKey() async throws {
         let registeredSigningUser = createRandomUser(publicKey: Data())
 
         try storage.update(user: registeredSigningUser.toUserDTO())
@@ -306,7 +306,7 @@ class SigningIntegrationTests: XCTestCase {
 
         let messageHash = SHA256.hash(data: messageData).data
 
-        let (signingResult, signingSigningError) = signing.signMessage(
+        let (signingResult, signingSigningError) = await signing.signMessage(
             message: messageHash,
             user: registeredSigningUser
         )
@@ -316,10 +316,10 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertEqual(signingSigningError as? SigningError, SigningError.emptyPublicKey)
     }
 
-    func testSigningRevokedUserErrorAfterThreeFailedAttempts() throws {
+    func testSigningRevokedUserErrorAfterThreeFailedAttempts() async throws {
         signing.signingPinCode = anotherRandomSigningPIN
 
-        var (signingResult, error) = try signing.signMessage(
+        var (signingResult, error) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -327,7 +327,7 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(signingResult)
         XCTAssertNotNil(error)
 
-        (signingResult, error) = try signing.signMessage(
+        (signingResult, error) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )
@@ -335,7 +335,7 @@ class SigningIntegrationTests: XCTestCase {
         XCTAssertNil(signingResult)
         XCTAssertNotNil(error)
 
-        (signingResult, error) = try signing.signMessage(
+        (signingResult, error) = try await signing.signMessage(
             message: messageHash,
             user: XCTUnwrap(registeredSigningUser)
         )

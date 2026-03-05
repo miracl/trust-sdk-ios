@@ -30,8 +30,8 @@ class RegistrationIntegrationTests: XCTestCase {
     var configuration: Configuration?
     var activationToken = ""
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
+        try await super.setUp()
 
         configuration = try Configuration
             .Builder(projectId: projectIdPV, projectURL: projectURL)
@@ -43,7 +43,7 @@ class RegistrationIntegrationTests: XCTestCase {
         quickCodeTestCase.authenticationPinCode = randomPin
         authenticationTestCase.pinCode = anotherRandomPin
 
-        let (response, _) = getActivationTokenTestCase.getActivationToken(
+        let (response, _) = await getActivationTokenTestCase.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
@@ -73,20 +73,20 @@ class RegistrationIntegrationTests: XCTestCase {
             .updateProjectSettings(projectId: projectIdDV, projectURL: projectURLDV)
 
         let timestamp = Date()
-        let (verified, error) = verificationTestCase.sendVerificationEmail(userId: currentUserId)
+        let (verified, error) = await verificationTestCase.sendVerificationEmail(userId: currentUserId)
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
         let verificationURL = try await gmailService.getVerificationURL(receiver: currentUserId, timestamp: timestamp)
         let unwrappedVerificationURL = try XCTUnwrap(verificationURL)
 
-        let (token, tokenError) = getActivationTokenTestCase.getActivationToken(verificationURL: unwrappedVerificationURL)
+        let (token, tokenError) = await getActivationTokenTestCase.getActivationToken(verificationURL: unwrappedVerificationURL)
 
         XCTAssertNil(tokenError)
         XCTAssertNotNil(token)
 
         let activationToken = try XCTUnwrap(token)
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: currentUserId,
             activationToken: activationToken.activationToken
         )
@@ -94,7 +94,7 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
     }
 
-    func testSuccessfulRegistrationCustomVerification() throws {
+    func testSuccessfulRegistrationCustomVerification() async throws {
         let verificationURLString = api.getVerificaitonURL(
             serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
@@ -103,13 +103,13 @@ class RegistrationIntegrationTests: XCTestCase {
         )
 
         let verificationURL = try XCTUnwrap(verificationURLString)
-        let (token, tokenError) = getActivationTokenTestCase.getActivationToken(verificationURL: verificationURL)
+        let (token, tokenError) = await getActivationTokenTestCase.getActivationToken(verificationURL: verificationURL)
 
         XCTAssertNil(tokenError)
         XCTAssertNotNil(token)
 
         let activationToken = try XCTUnwrap(token)
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken.activationToken
         )
@@ -117,8 +117,8 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
     }
 
-    func testSuccessfulRegistrationPluggableVerification() {
-        let (user, regError) = registrationTestCase.registerUser(
+    func testSuccessfulRegistrationPluggableVerification() async {
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -126,8 +126,8 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
     }
 
-    func testSuccessfulRegistrationQuickCode() throws {
-        var (user, regError) = registrationTestCase.registerUser(
+    func testSuccessfulRegistrationQuickCode() async throws {
+        var (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -135,12 +135,12 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNil(regError)
         XCTAssertNotNil(user)
 
-        let (quickCode, quickCodeError) = try quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
+        let (quickCode, quickCodeError) = try await quickCodeTestCase.generateQuickCode(user: XCTUnwrap(user))
 
         XCTAssertNil(quickCodeError)
         XCTAssertNotNil(quickCode)
 
-        let (activationTokenResponse, activationTokenError) = try getActivationTokenTestCase.getActivationToken(
+        let (activationTokenResponse, activationTokenError) = try await getActivationTokenTestCase.getActivationToken(
             userId: XCTUnwrap(user?.userId),
             code: XCTUnwrap(quickCode?.code)
         )
@@ -148,7 +148,7 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
         XCTAssertNotNil(activationTokenResponse)
 
-        (user, regError) = try registrationTestCase.registerUser(
+        (user, regError) = try await registrationTestCase.registerUser(
             userId: userId,
             activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
         )
@@ -156,10 +156,10 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
     }
 
-    func testEmptyUserIdRegistration() {
+    func testEmptyUserIdRegistration() async {
         let emptyUserId = ""
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: emptyUserId,
             activationToken: activationToken
         )
@@ -168,10 +168,10 @@ class RegistrationIntegrationTests: XCTestCase {
         assertError(current: regError, expected: RegistrationError.emptyUserId)
     }
 
-    func testEmptyActivationTokenFailedRegistration() {
+    func testEmptyActivationTokenFailedRegistration() async {
         let emptyActivationToken = ""
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: emptyActivationToken
         )
@@ -180,10 +180,10 @@ class RegistrationIntegrationTests: XCTestCase {
         assertError(current: regError, expected: RegistrationError.emptyActivationToken)
     }
 
-    func testIncorrectActivationTokenFailedRegistration() {
+    func testIncorrectActivationTokenFailedRegistration() async {
         let incorrectActivationToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6Ikg0OEJsaXRza0M5b2ZnaVdsY0Z3MzJ5QzhLZnF0X3RVWENaOGowTkxyT1k9IiwidHlwIjoiSldUIn0.eyJkZXZpY2VOYW1lIjoiaU9TIiwiZXhwIjoxNzYyMjUyMzQ0LCJpYXQiOjE3NjIyNTIyNTQsImlzcyI6Imh0dHBzOi8vYXBpLm1waW4uaW8iLCJqdGkiOiJmMDUwODNiOC0wMzM4LTQ2MDgtODAwZS0wOTAwZTdhOGFkM2YiLCJwcm9qZWN0SUQiOiJiMTg3ZThiYi0yN2FjLTQzMDAtYWQ2My1jMmUwMmU1YmJjZDMiLCJzY29wZSI6InZlcmlmaWNhdGlvbiIsInN1YiI6ImludEBtaXJhY2wuY29tIn0.5JEOwgkWYuAVQKU2oQCCnLx9NzbtvMtLIe4JRzoTa4LF-y3QM7pI-Vr2laEpR-0WZJKhRmr0ZipARYGuU-7CPFwZB2x8r6sgwHaUYb82UKWndycA3mt2svFoqRxi9WyhP-BFLYLqsBZBD74nhwdSwZwaGqUtezUSlmosgVatBjcpqUI9dNSgKfP-seeqgOKgPgVTIrJMufz7c7Nk-i6-ydfgYNsuYdFcUqnUKugtS2kbRf2Yi46aCmWl3cu1du1KR4RJtde10yfEqFNACFXO1QnX8v4Gq8lLbfGzVKHu_s1TCc4gIWbYC0N5-hg-gcTykXgwpBahiHwXhLF_Ek2ygw"
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: incorrectActivationToken
         )
@@ -192,10 +192,10 @@ class RegistrationIntegrationTests: XCTestCase {
         assertError(current: regError, expected: RegistrationError.invalidActivationToken)
     }
 
-    func testRandomActivationTokenFailedRegistration() throws {
+    func testRandomActivationTokenFailedRegistration() async throws {
         let randomActivationToken = UUID().uuidString
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: randomActivationToken
         )
@@ -212,10 +212,10 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertTrue(isErrorCorrect)
     }
 
-    func testFailedRegistrationForCancelledPIN() {
+    func testFailedRegistrationForCancelledPIN() async {
         registrationTestCase.pinCode = nil
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -227,9 +227,9 @@ class RegistrationIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedRegistrationForInvalidPIN() {
+    func testFailedRegistrationForInvalidPIN() async {
         registrationTestCase.pinCode = "InvalidPin"
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -241,10 +241,10 @@ class RegistrationIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedRegistrationForEmptyPIN() {
+    func testFailedRegistrationForEmptyPIN() async {
         registrationTestCase.pinCode = ""
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -256,11 +256,11 @@ class RegistrationIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedRegistrationForLongerPIN() {
+    func testFailedRegistrationForLongerPIN() async {
         let randomNum = Int32.random(in: 100_000_000 ..< 999_999_999)
         registrationTestCase.pinCode = String(randomNum)
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -272,11 +272,11 @@ class RegistrationIntegrationTests: XCTestCase {
         )
     }
 
-    func testFailedRegistrationForShorterPIN() {
+    func testFailedRegistrationForShorterPIN() async {
         let randomNum = Int32.random(in: 1 ..< 999)
         registrationTestCase.pinCode = String(randomNum)
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -288,8 +288,8 @@ class RegistrationIntegrationTests: XCTestCase {
         )
     }
 
-    func testRegistrationOverride() throws {
-        var (user, regError) = registrationTestCase.registerUser(
+    func testRegistrationOverride() async throws {
+        var (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -300,7 +300,7 @@ class RegistrationIntegrationTests: XCTestCase {
         let registeredUser = try XCTUnwrap(user)
         let mpinId = registeredUser.mpinId
 
-        let (response, _) = getActivationTokenTestCase.getActivationToken(
+        let (response, _) = await getActivationTokenTestCase.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
@@ -310,7 +310,7 @@ class RegistrationIntegrationTests: XCTestCase {
         activationToken = try XCTUnwrap(response?.activationToken)
 
         registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        (user, regError) = registrationTestCase.registerUser(
+        (user, regError) = await registrationTestCase.registerUser(
             userId: userId, activationToken: activationToken
         )
 
@@ -319,8 +319,8 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNotEqual(mpinId, user?.mpinId)
     }
 
-    func testRegistrationOverrideForRevokedUser() throws {
-        var (user, regError) = registrationTestCase.registerUser(
+    func testRegistrationOverrideForRevokedUser() async throws {
+        var (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
@@ -330,15 +330,15 @@ class RegistrationIntegrationTests: XCTestCase {
 
         var existingUser = try XCTUnwrap(user)
 
-        var (jwt, error) = authenticationTestCase.generateJWT(user: existingUser)
+        var (jwt, error) = await authenticationTestCase.generateJWT(user: existingUser)
         XCTAssertNotNil(error)
         XCTAssertNil(jwt)
 
-        (jwt, error) = authenticationTestCase.generateJWT(user: existingUser)
+        (jwt, error) = await authenticationTestCase.generateJWT(user: existingUser)
         XCTAssertNotNil(error)
         XCTAssertNil(jwt)
 
-        (jwt, error) = authenticationTestCase.generateJWT(user: existingUser)
+        (jwt, error) = await authenticationTestCase.generateJWT(user: existingUser)
         assertError(current: error, expected: AuthenticationError.revoked)
         XCTAssertNil(jwt)
 
@@ -353,12 +353,12 @@ class RegistrationIntegrationTests: XCTestCase {
         )
         let verificationURL = try XCTUnwrap(verificationURLString)
 
-        let (token, tokenError) = getActivationTokenTestCase.getActivationToken(verificationURL: verificationURL)
+        let (token, tokenError) = await getActivationTokenTestCase.getActivationToken(verificationURL: verificationURL)
 
         XCTAssertNil(tokenError)
         XCTAssertNotNil(token)
 
-        (user, regError) = try registrationTestCase.registerUser(
+        (user, regError) = try await registrationTestCase.registerUser(
             userId: userId,
             activationToken: XCTUnwrap(token?.activationToken)
         )
@@ -370,7 +370,7 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertEqual(existingUser.revoked, false)
     }
 
-    func testProjectMismatch() throws {
+    func testProjectMismatch() async throws {
         configuration = try Configuration
             .Builder(projectId: projectIdDV, projectURL: projectURL)
             .userStorage(userStorage: storage)
@@ -378,7 +378,7 @@ class RegistrationIntegrationTests: XCTestCase {
 
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
-        let (response, _) = getActivationTokenTestCase.getActivationToken(
+        let (response, _) = await getActivationTokenTestCase.getActivationToken(
             serviceAccountToken: serviceAccountToken,
             projectId: projectIdPV,
             projectURL: projectURL,
@@ -387,7 +387,7 @@ class RegistrationIntegrationTests: XCTestCase {
 
         activationToken = try XCTUnwrap(response?.activationToken)
 
-        let (user, regError) = registrationTestCase.registerUser(
+        let (user, regError) = await registrationTestCase.registerUser(
             userId: userId,
             activationToken: activationToken
         )
