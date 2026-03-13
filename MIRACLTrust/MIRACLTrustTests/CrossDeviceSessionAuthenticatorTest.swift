@@ -104,6 +104,11 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
         var crossDeviceSessionAuthenticator = try CrossDeviceSessionAuthenticator(
             user: XCTUnwrap(user),
             crossDeviceSession: XCTUnwrap(crossDeviceSession),
+            miraclAPI: api,
+            userStorage: storage,
+            crypto: MockCrypto(),
+            deviceName: deviceName,
+            logger: DefaultLogger(level: .none),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)

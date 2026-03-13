@@ -16,11 +16,11 @@ struct CrossDeviceSessionAuthenticator {
     init(
         user: User,
         crossDeviceSession: CrossDeviceSession,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        userStorage: UserStorage,
+        crypto: CryptoBlueprint,
+        deviceName: String,
+        logger: Logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -61,6 +61,7 @@ struct CrossDeviceSessionAuthenticator {
                 deviceName: deviceName,
                 api: miraclAPI,
                 userStorage: userStorage,
+                logger: logger,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

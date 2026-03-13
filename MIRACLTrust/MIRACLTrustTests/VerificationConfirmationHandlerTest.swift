@@ -12,6 +12,8 @@ class VerificationConfirmationHandlerTest: XCTestCase {
     var activationCode = "600d968cd4c968e08c32a12ee68a8cc9"
     var redirectURI = "https://example.com"
 
+    let logger = DefaultLogger(level: .none)
+
     override func setUpWithError() throws {
         try super.setUpWithError()
 
@@ -292,7 +294,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
     ) throws {
         let expectation = XCTestExpectation(description: "Wait for verification confirmation")
 
-        let handler = try VerificationConfirmationHandler(verificationURL: verificationURL, miraclAPI: mockAPI) { activationTokenResponse, error in
+        let handler = try VerificationConfirmationHandler(
+            verificationURL: verificationURL,
+            miraclAPI: mockAPI,
+            logger: logger
+        ) { activationTokenResponse, error in
             verificationConfirmationCompletionHandler(activationTokenResponse, error)
             expectation.fulfill()
         }

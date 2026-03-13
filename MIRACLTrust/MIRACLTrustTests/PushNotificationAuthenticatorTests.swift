@@ -189,6 +189,8 @@ class PushNotificationAuthenticatorTests: XCTestCase {
             deviceName: deviceName,
             miraclAPI: api,
             userStorage: storage,
+            crypto: MockCrypto(),
+            logger: DefaultLogger(level: .none),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)

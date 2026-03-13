@@ -117,7 +117,9 @@ class UniversalLinkAuthenticatorTests: XCTestCase {
             universalLinkURL: XCTUnwrap(universalLinkURL),
             deviceName: deviceName,
             miraclAPI: api,
+            crypto: MockCrypto(),
             userStorage: storage,
+            logger: DefaultLogger(level: .none),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)

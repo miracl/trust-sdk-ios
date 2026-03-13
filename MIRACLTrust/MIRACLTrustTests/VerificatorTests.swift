@@ -6,6 +6,9 @@ class VerificatorTests: XCTestCase {
     var deviceName = UUID().uuidString
     var projectId = UUID().uuidString
 
+    let mockUserStorage = MockUserStorage()
+    let logger = DefaultLogger(level: .none)
+
     func testSuccessfulVerification() throws {
         let backoff: Int64 = 1_688_029_968
         var api = MockAPI()
@@ -13,26 +16,28 @@ class VerificatorTests: XCTestCase {
         api.verificationError = nil
 
         let expectation = XCTestExpectation()
+
         let verificator = try Verificator(
             userId: userId,
             projectId: projectId,
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
-            completionHandler: { verified, error in
-                XCTAssertNotNil(verified)
-                XCTAssertNil(error)
+            userStorage: mockUserStorage,
+            logger: logger
+        ) { verified, error in
+            XCTAssertNotNil(verified)
+            XCTAssertNil(error)
 
-                do {
-                    let response = try XCTUnwrap(verified)
-                    XCTAssertEqual(response.backoff, backoff)
-                    XCTAssertEqual(response.method, EmailVerificationMethod.link)
-                } catch {
-                    XCTFail("Cannot unwrap Verification Response")
-                }
-                expectation.fulfill()
+            do {
+                let response = try XCTUnwrap(verified)
+                XCTAssertEqual(response.backoff, backoff)
+                XCTAssertEqual(response.method, EmailVerificationMethod.link)
+            } catch {
+                XCTFail("Cannot unwrap Verification Response")
             }
-        )
+            expectation.fulfill()
+        }
         verificator.verify()
 
         wait(for: [expectation], timeout: 20.0)
@@ -45,15 +50,18 @@ class VerificatorTests: XCTestCase {
         api.verificationResponse = VerificationRequestResponse(backoff: 0, method: "link")
         api.verificationError = nil
 
-        XCTAssertThrowsError(try Verificator(
-            userId: userId,
-            projectId: projectId,
-            deviceName: deviceName,
-            sessionIdentifier: invalidAccessId,
-            miraclAPI: api,
-            completionHandler: { _, _ in
-            }
-        )) { error in
+        XCTAssertThrowsError(
+            try Verificator(
+                userId: userId,
+                projectId: projectId,
+                deviceName: deviceName,
+                sessionIdentifier: invalidAccessId,
+                miraclAPI: api,
+                userStorage: mockUserStorage,
+                logger: logger,
+                completionHandler: { _, _ in }
+            )
+        ) { error in
             XCTAssertTrue(error is VerificationError)
             XCTAssertEqual(error as? VerificationError, VerificationError.invalidSessionDetails)
         }
@@ -66,15 +74,18 @@ class VerificatorTests: XCTestCase {
         api.verificationResponse = VerificationRequestResponse(backoff: 0, method: "link")
         api.verificationError = nil
 
-        XCTAssertThrowsError(try Verificator(
-            userId: userId,
-            projectId: projectId,
-            deviceName: deviceName,
-            sessionIdentifier: nil,
-            miraclAPI: api,
-            completionHandler: { _, _ in
-            }
-        )) { error in
+        XCTAssertThrowsError(
+            try Verificator(
+                userId: userId,
+                projectId: projectId,
+                deviceName: deviceName,
+                sessionIdentifier: nil,
+                miraclAPI: api,
+                userStorage: mockUserStorage,
+                logger: logger,
+                completionHandler: { _, _ in }
+            )
+        ) { error in
             XCTAssertTrue(error is VerificationError)
             XCTAssertEqual(error as? VerificationError, VerificationError.emptyUserId)
         }
@@ -96,6 +107,8 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
+            userStorage: mockUserStorage,
+            logger: logger,
             completionHandler: { response, error in
                 XCTAssertNil(response)
 
@@ -129,6 +142,8 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
+            userStorage: mockUserStorage,
+            logger: logger,
             completionHandler: { response, error in
                 XCTAssertNil(response)
 
@@ -160,6 +175,8 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
+            userStorage: mockUserStorage,
+            logger: logger,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)
                 XCTAssertNotNil(error)
@@ -193,6 +210,8 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
+            userStorage: mockUserStorage,
+            logger: logger,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)
                 XCTAssertNotNil(error)

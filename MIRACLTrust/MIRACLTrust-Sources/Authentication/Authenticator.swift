@@ -27,11 +27,11 @@ struct Authenticator: AuthenticatorBlueprint {
 
     init(user: User,
          sessionIdentifier: String?,
-         crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-         deviceName: String = MIRACLTrust.getInstance().deviceName,
-         api: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-         logger: Logger = MIRACLTrust.getInstance().logger,
+         crypto: CryptoBlueprint,
+         deviceName: String,
+         api: APIBlueprint,
+         userStorage: UserStorage,
+         logger: Logger,
          scope: [String] = ["oidc"],
          didRequestPinHandler: @escaping PinRequestHandler,
          completionHandler: @escaping AuthenticateCompletionHandler) throws {
@@ -281,10 +281,12 @@ struct Authenticator: AuthenticatorBlueprint {
             let registrator = try Registrator(
                 userId: user.userId,
                 activationToken: token,
+                deviceName: deviceName,
                 api: miraclAPI,
                 userStorage: userStorage,
                 projectId: user.projectId,
-                crypto: crypto
+                crypto: crypto,
+                logger: logger
             ) { processPinHandler in
                 processPinHandler(pinCode)
             } completionHandler: { updatedUser, error in
@@ -327,6 +329,7 @@ struct Authenticator: AuthenticatorBlueprint {
                 deviceName: deviceName,
                 api: miraclAPI,
                 userStorage: userStorage,
+                logger: logger,
                 scope: scope,
                 didRequestPinHandler: { pinHandler in
                     pinHandler(pinCode)

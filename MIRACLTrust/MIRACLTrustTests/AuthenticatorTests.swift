@@ -19,6 +19,8 @@ class AuthenticatorTests: XCTestCase {
         processPinHandler(String(randomNumber))
     }
 
+    let logger = DefaultLogger(level: .none)
+
     // MARK: Lifecycle
 
     override func setUp() {
@@ -501,18 +503,20 @@ class AuthenticatorTests: XCTestCase {
 
     private func authenticate(completionHandler: @escaping AuthenticateCompletionHandler) throws {
         let expectation = XCTestExpectation(description: "Wait for Authentication.")
+
         let authenticator = try Authenticator(
             user: user,
             sessionIdentifier: accessId,
             crypto: crypto,
+            deviceName: deviceName,
             api: api,
-            scope: scope,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { response, error in
-                completionHandler(response, error)
-                expectation.fulfill()
-            }
-        )
+            userStorage: storage,
+            logger: logger,
+            didRequestPinHandler: didRequestPinHandler
+        ) { response, error in
+            completionHandler(response, error)
+            expectation.fulfill()
+        }
         authenticator.authenticate()
         wait(for: [expectation], timeout: 20.0)
     }

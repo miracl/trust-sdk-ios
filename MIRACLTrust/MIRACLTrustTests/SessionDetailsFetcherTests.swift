@@ -8,6 +8,7 @@ class SessionDetailsFetcherTests: XCTestCase {
     var payload = [AnyHashable: Any]()
     var storage = MockUserStorage()
     var api = MockAPI()
+    var logger = DefaultLogger(level: .none)
 
     var randomString = UUID().uuidString
     var randomPin = Int.random(in: 1 ... 6)
@@ -85,6 +86,7 @@ class SessionDetailsFetcherTests: XCTestCase {
             try AuthenticationSessionDetailsFetcher(
                 qrCode: qrCode,
                 miraclAPI: api,
+                logger: logger,
                 completionHandler: { _, _ in }
             ),
             "Error when creating detail fetcher"
@@ -103,6 +105,7 @@ class SessionDetailsFetcherTests: XCTestCase {
             try AuthenticationSessionDetailsFetcher(
                 universalLinkURL: universalLinkURL,
                 miraclAPI: api,
+                logger: logger,
                 completionHandler: { _, _ in }
             ),
             "Error when creating detail fetcher"
@@ -121,6 +124,7 @@ class SessionDetailsFetcherTests: XCTestCase {
             try AuthenticationSessionDetailsFetcher(
                 pushNotificationsPayload: payload,
                 miraclAPI: api,
+                logger: logger,
                 completionHandler: { _, _ in }
             ),
             "Error when creating detail fetcher"
@@ -173,7 +177,8 @@ class SessionDetailsFetcherTests: XCTestCase {
         do {
             let sessionDetailsFetcher = try AuthenticationSessionDetailsFetcher(
                 qrCode: qrCode,
-                miraclAPI: api
+                miraclAPI: api,
+                logger: logger
             ) { details, error in
                 completionHandler(details, error)
                 waitForSession.fulfill()
@@ -196,7 +201,8 @@ class SessionDetailsFetcherTests: XCTestCase {
             let url = try XCTUnwrap(universalLinkURL)
             let sessionDetailsFetcher = try AuthenticationSessionDetailsFetcher(
                 universalLinkURL: url,
-                miraclAPI: api
+                miraclAPI: api,
+                logger: logger
             ) { details, error in
                 completionHandler(details, error)
                 waitForSession.fulfill()
@@ -218,7 +224,8 @@ class SessionDetailsFetcherTests: XCTestCase {
         do {
             let sessionDetailsFetcher = try AuthenticationSessionDetailsFetcher(
                 pushNotificationsPayload: payload,
-                miraclAPI: api
+                miraclAPI: api,
+                logger: logger
             ) { details, error in
                 completionHandler(details, error)
                 waitForSession.fulfill()

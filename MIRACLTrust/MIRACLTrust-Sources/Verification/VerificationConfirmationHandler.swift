@@ -12,8 +12,8 @@ struct VerificationConfirmationHandler {
 
     init(
         verificationURL: URL,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        logger: Logger,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI
@@ -34,8 +34,8 @@ struct VerificationConfirmationHandler {
     init(
         userId: String,
         activationCode: String,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        logger: Logger,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI

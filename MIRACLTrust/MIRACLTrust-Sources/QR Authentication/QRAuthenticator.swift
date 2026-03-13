@@ -16,11 +16,11 @@ struct QRAuthenticator {
     init(
         user: User,
         qrCode: String,
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        deviceName: String,
+        crypto: CryptoBlueprint,
+        miraclAPI: APIBlueprint,
+        userStorage: UserStorage,
+        logger: Logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -65,6 +65,7 @@ struct QRAuthenticator {
                 deviceName: deviceName,
                 api: miraclAPI,
                 userStorage: userStorage,
+                logger: logger,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

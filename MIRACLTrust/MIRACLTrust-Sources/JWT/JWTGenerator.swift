@@ -14,11 +14,11 @@ struct JWTGenerator {
 
     init(
         user: User,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        deviceName: String,
+        userStorage: UserStorage,
+        crypto: CryptoBlueprint,
+        logger: Logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping JWTCompletionHandler
     ) {
@@ -52,6 +52,7 @@ struct JWTGenerator {
                     deviceName: deviceName,
                     api: miraclAPI,
                     userStorage: userStorage,
+                    logger: logger,
                     scope: ["jwt"],
                     didRequestPinHandler: didRequestPinHandler,
                     completionHandler: authenticationResult

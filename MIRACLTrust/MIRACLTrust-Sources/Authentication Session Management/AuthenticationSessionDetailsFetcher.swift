@@ -8,8 +8,8 @@ struct AuthenticationSessionDetailsFetcher {
 
     init(
         qrCode: String,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        logger: Logger,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
     ) throws {
         accessId = try AuthenticationSessionDetailsFetcher.getAccessId(from: qrCode)
@@ -20,8 +20,8 @@ struct AuthenticationSessionDetailsFetcher {
 
     init(
         universalLinkURL: URL,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        logger: Logger,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
     ) throws {
         accessId = try AuthenticationSessionDetailsFetcher.getAccessId(from: universalLinkURL)
@@ -32,8 +32,8 @@ struct AuthenticationSessionDetailsFetcher {
 
     init(
         pushNotificationsPayload: [AnyHashable: Any],
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        logger: Logger,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
     ) throws {
         accessId = try AuthenticationSessionDetailsFetcher.getAccessId(from: pushNotificationsPayload)

@@ -173,6 +173,8 @@ import Foundation
                 deviceName: deviceName,
                 sessionIdentifier: sessionIdentifier,
                 miraclAPI: miraclAPI,
+                userStorage: userStorage,
+                logger: logger,
                 completionHandler: completionHandler
             )
             verificator.verify()
@@ -210,6 +212,8 @@ import Foundation
                 deviceName: deviceName,
                 sessionIdentifier: sessionIdentifier,
                 miraclAPI: miraclAPI,
+                userStorage: userStorage,
+                logger: logger,
                 completionHandler: completionHandler
             )
             verificator.verify()
@@ -234,6 +238,7 @@ import Foundation
             let handler = try VerificationConfirmationHandler(
                 verificationURL: verificationURL,
                 miraclAPI: miraclAPI,
+                logger: logger,
                 completionHandler: completionHandler
             )
             handler.handle()
@@ -261,6 +266,7 @@ import Foundation
                 userId: userId,
                 activationCode: code,
                 miraclAPI: miraclAPI,
+                logger: logger,
                 completionHandler: completionHandler
             )
             handler.handle()
@@ -285,11 +291,15 @@ import Foundation
     ) {
         let generator = QuickCodeGenerator(
             user: user,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { quickCode, error in
-                completionHandler(quickCode, error)
-            }
-        )
+            api: miraclAPI,
+            deviceName: deviceName,
+            storage: userStorage,
+            crypto: crypto,
+            logger: logger,
+            didRequestPinHandler: didRequestPinHandler
+        ) { quickCode, error in
+            completionHandler(quickCode, error)
+        }
         generator.generate()
     }
 
@@ -317,7 +327,10 @@ import Foundation
                 deviceName: deviceName,
                 pushNotificationsToken: pushNotificationsToken,
                 api: miraclAPI,
+                userStorage: userStorage,
+                projectId: projectId,
                 crypto: crypto,
+                logger: logger,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: { user, error in
                     completionHandler(user, error)
@@ -357,6 +370,10 @@ import Foundation
         let jwtGenerator = JWTGenerator(
             user: user,
             miraclAPI: miraclAPI,
+            deviceName: deviceName,
+            userStorage: userStorage,
+            crypto: crypto,
+            logger: logger,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { jwt, error in
                 completionHandler(jwt, error)
@@ -385,7 +402,10 @@ import Foundation
             user: user,
             qrCode: qrCode,
             deviceName: deviceName,
+            crypto: crypto,
+            miraclAPI: miraclAPI,
             userStorage: userStorage,
+            logger: logger,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 completionHandler(isAuthenticated, error)
@@ -413,6 +433,8 @@ import Foundation
             deviceName: deviceName,
             miraclAPI: miraclAPI,
             userStorage: userStorage,
+            crypto: crypto,
+            logger: logger,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 completionHandler(isAuthenticated, error)
@@ -442,7 +464,9 @@ import Foundation
             universalLinkURL: universalLinkURL,
             deviceName: deviceName,
             miraclAPI: miraclAPI,
+            crypto: crypto,
             userStorage: userStorage,
+            logger: logger,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 completionHandler(isAuthenticated, error)
@@ -473,6 +497,7 @@ import Foundation
             userStorage: userStorage,
             crypto: crypto,
             deviceName: deviceName,
+            logger: logger,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 if let error, case AuthenticationError.invalidAuthenticationSession = error {
@@ -580,7 +605,8 @@ import Foundation
     ) {
         do {
             let aborter = try CrossDeviceSessionAborter(
-                sessionId: crossDeviceSession.sessionId
+                sessionId: crossDeviceSession.sessionId,
+                miraclAPI: miraclAPI
             ) { result, error in
                 completionHandler(result, error)
             }
@@ -613,6 +639,7 @@ import Foundation
             let sessionDetailFetcher = try AuthenticationSessionDetailsFetcher(
                 qrCode: qrCode,
                 miraclAPI: miraclAPI,
+                logger: logger,
                 completionHandler: completionHandler
             )
             sessionDetailFetcher.fetch()
@@ -642,6 +669,7 @@ import Foundation
             let sessionDetailFetcher = try AuthenticationSessionDetailsFetcher(
                 universalLinkURL: universalLinkURL,
                 miraclAPI: miraclAPI,
+                logger: logger,
                 completionHandler: completionHandler
             )
             sessionDetailFetcher.fetch()
@@ -670,6 +698,7 @@ import Foundation
             let sessionDetailFetcher = try AuthenticationSessionDetailsFetcher(
                 pushNotificationsPayload: pushNotificationPayload,
                 miraclAPI: miraclAPI,
+                logger: logger,
                 completionHandler: completionHandler
             )
             sessionDetailFetcher.fetch()
@@ -693,6 +722,7 @@ import Foundation
             let sessionAborter = try AuthenticationSessionAborter(
                 accessId: authenticationSessionDetails.accessId,
                 miraclAPI: miraclAPI,
+                logger: logger,
                 completionHandler: completionHandler
             )
             sessionAborter.abort()
@@ -722,6 +752,11 @@ import Foundation
                 messageHash: message,
                 sessionIdentifier: nil,
                 user: user,
+                miraclAPI: miraclAPI,
+                userStorage: userStorage,
+                crypto: crypto,
+                logger: logger,
+                deviceName: deviceName,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
             ) { signature, error in
                 completionHandler(signature, error)
@@ -754,6 +789,11 @@ import Foundation
                 messageHash: Data(hexString: crossDeviceSession.signingHash),
                 sessionIdentifier: crossDeviceSession.sessionId,
                 user: user,
+                miraclAPI: miraclAPI,
+                userStorage: userStorage,
+                crypto: crypto,
+                logger: logger,
+                deviceName: deviceName,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
             ) { signinResult, error in
                 if signinResult != nil {
