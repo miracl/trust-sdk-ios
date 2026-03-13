@@ -124,8 +124,10 @@ class QRAuthenticatorTests: XCTestCase {
             user: XCTUnwrap(user),
             qrCode: qrCode,
             deviceName: deviceName,
+            crypto: MockCrypto(),
             miraclAPI: api,
             userStorage: storage,
+            logger: DefaultLogger(level: .none),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)

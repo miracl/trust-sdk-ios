@@ -7,7 +7,7 @@ struct CrossDeviceSessionAborter {
 
     init(
         sessionId: String,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
+        miraclAPI: APIBlueprint,
         completionHandler: @escaping CrossDeviceSessionAborterCompletionHandler
     ) throws {
         self.sessionId = sessionId.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -10,6 +10,10 @@ class QuickCodeGeneratorTests: XCTestCase {
     var ttlSeconds = Int.random(in: 1 ... 9999)
     var storage = MockUserStorage()
 
+    let crypto = MockCrypto()
+    let deviceName = UUID().uuidString
+    let logger = DefaultLogger(level: .none)
+
     var projectId = UUID().uuidString
     var userId = UUID().uuidString
     var user: User?
@@ -195,6 +199,10 @@ class QuickCodeGeneratorTests: XCTestCase {
         var quickCodeGenerator = try QuickCodeGenerator(
             user: XCTUnwrap(user),
             api: mockAPI,
+            deviceName: deviceName,
+            storage: storage,
+            crypto: crypto,
+            logger: logger,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { quickCode, error in
                 testCompletionHandler(quickCode, error)

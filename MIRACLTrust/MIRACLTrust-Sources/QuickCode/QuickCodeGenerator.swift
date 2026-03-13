@@ -14,11 +14,11 @@ struct QuickCodeGenerator {
 
     init(
         user: User,
-        api: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
-        storage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        api: APIBlueprint,
+        deviceName: String,
+        storage: UserStorage,
+        crypto: CryptoBlueprint,
+        logger: Logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping QuickCodeCompletionHandler
     ) {
@@ -50,6 +50,7 @@ struct QuickCodeGenerator {
                     deviceName: deviceName,
                     api: api,
                     userStorage: storage,
+                    logger: logger,
                     scope: ["reg-code"],
                     didRequestPinHandler: didRequestPinHandler,
                     completionHandler: authenticationResult

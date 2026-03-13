@@ -13,6 +13,9 @@ class SignerTests: XCTestCase {
     var mockAPI = MockAPI()
     var sessionIdentifier: String?
 
+    let logger = DefaultLogger(level: .none)
+    let deviceName = UUID().uuidString
+
     override func setUpWithError() throws {
         try super.setUpWithError()
 
@@ -257,7 +260,11 @@ class SignerTests: XCTestCase {
             messageHash: Data(),
             sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
+            miraclAPI: mockAPI,
+            userStorage: storage,
             crypto: crypto,
+            logger: logger,
+            deviceName: deviceName,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -289,7 +296,11 @@ class SignerTests: XCTestCase {
             messageHash: Data(),
             sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
+            miraclAPI: mockAPI,
+            userStorage: storage,
             crypto: crypto,
+            logger: logger,
+            deviceName: deviceName,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -320,7 +331,11 @@ class SignerTests: XCTestCase {
             messageHash: hashData,
             sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
+            miraclAPI: mockAPI,
+            userStorage: storage,
             crypto: crypto,
+            logger: logger,
+            deviceName: deviceName,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -340,7 +355,11 @@ class SignerTests: XCTestCase {
             messageHash: Data(),
             sessionIdentifier: sessionIdentifier,
             user: XCTUnwrap(signingUser),
+            miraclAPI: mockAPI,
+            userStorage: storage,
             crypto: crypto,
+            logger: logger,
+            deviceName: deviceName,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -365,7 +384,10 @@ class SignerTests: XCTestCase {
                 sessionIdentifier: sessionIdentifier,
                 user: XCTUnwrap(signingUser),
                 miraclAPI: mockAPI,
+                userStorage: storage,
                 crypto: crypto,
+                logger: logger,
+                deviceName: deviceName,
                 didRequestSigningPinHandler: didRequestSigningPinHandler,
                 completionHandler: { signature, error in
                     waitForSigningOperationFinish.fulfill()

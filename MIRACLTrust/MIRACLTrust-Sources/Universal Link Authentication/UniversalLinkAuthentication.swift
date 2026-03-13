@@ -16,11 +16,11 @@ struct UniversalLinkAuthenticator {
     init(
         user: User,
         universalLinkURL: URL,
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        deviceName: String,
+        miraclAPI: APIBlueprint,
+        crypto: CryptoBlueprint,
+        userStorage: UserStorage,
+        logger: Logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -65,6 +65,7 @@ struct UniversalLinkAuthenticator {
                 deviceName: deviceName,
                 api: miraclAPI,
                 userStorage: userStorage,
+                logger: logger,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

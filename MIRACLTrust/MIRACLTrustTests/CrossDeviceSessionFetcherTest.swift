@@ -10,6 +10,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
     var payload = [AnyHashable: Any]()
     var api = MockAPI()
     var randomString = UUID().uuidString
+    var logger = DefaultLogger(level: .none)
 
     var crossDeviceSessionResponse: CrossDeviceSessionResponse!
 
@@ -77,7 +78,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         qrCode = "https://mcl.mpin.io"
 
         XCTAssertThrowsError(
-            try CrossDeviceSessionFetcher(qrCode: qrCode, miraclAPI: api, completionHandler: { _, _ in }),
+            try CrossDeviceSessionFetcher(qrCode: qrCode, miraclAPI: api, logger: logger, completionHandler: { _, _ in }),
             "Error when creating detail fetcher"
         ) { error in
             assertError(
@@ -91,7 +92,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         let universalLinkURL = try XCTUnwrap(URL(string: "https://mcl.mpin.io"))
 
         XCTAssertThrowsError(
-            try CrossDeviceSessionFetcher(universalLinkURL: universalLinkURL, miraclAPI: api, completionHandler: { _, _ in }),
+            try CrossDeviceSessionFetcher(universalLinkURL: universalLinkURL, miraclAPI: api, logger: logger, completionHandler: { _, _ in }),
             "Error when creating detail fetcher"
         ) { error in
             assertError(
@@ -105,7 +106,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         payload = ["qrURL": "https://mcl.mpin.io"]
 
         XCTAssertThrowsError(
-            try CrossDeviceSessionFetcher(pushNotificationPayload: payload, miraclAPI: api, completionHandler: { _, _ in }),
+            try CrossDeviceSessionFetcher(pushNotificationPayload: payload, miraclAPI: api, logger: logger, completionHandler: { _, _ in }),
             "Error when creating detail fetcher"
         ) { error in
             assertError(
@@ -156,7 +157,8 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         do {
             let crossDeviceSessionFetcher = try CrossDeviceSessionFetcher(
                 qrCode: qrCode,
-                miraclAPI: api
+                miraclAPI: api,
+                logger: logger
             ) { session, error in
                 completionHandler(session, error)
                 waitForSession.fulfill()
@@ -180,7 +182,8 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
 
             let crossDeviceSessionFetcher = try CrossDeviceSessionFetcher(
                 universalLinkURL: url,
-                miraclAPI: api
+                miraclAPI: api,
+                logger: logger
             ) { session, error in
                 completionHandler(session, error)
                 waitForSession.fulfill()
@@ -202,7 +205,8 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         do {
             let crossDeviceSessionFetcher = try CrossDeviceSessionFetcher(
                 pushNotificationPayload: payload,
-                miraclAPI: api
+                miraclAPI: api,
+                logger: logger
             ) { session, error in
                 completionHandler(session, error)
                 waitForSession.fulfill()

@@ -17,9 +17,9 @@ struct Verificator {
          projectId: String,
          deviceName: String,
          sessionIdentifier: String?,
-         miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-         userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-         logger: Logger = MIRACLTrust.getInstance().logger,
+         miraclAPI: APIBlueprint,
+         userStorage: UserStorage,
+         logger: Logger,
          completionHandler: @escaping VerificationCompletionHandler) throws {
         self.userId = userId
         self.projectId = projectId

@@ -12,11 +12,11 @@ struct PushNotificationAuthenticator {
     var authenticator: AuthenticatorBlueprint?
 
     init(
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        deviceName: String,
+        miraclAPI: APIBlueprint,
+        userStorage: UserStorage,
+        crypto: CryptoBlueprint,
+        logger: Logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -71,6 +71,7 @@ struct PushNotificationAuthenticator {
                 deviceName: deviceName,
                 api: miraclAPI,
                 userStorage: userStorage,
+                logger: logger,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

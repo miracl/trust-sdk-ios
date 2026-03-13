@@ -93,6 +93,10 @@ class JWTGeneratorTests: XCTestCase {
         var generator = JWTGenerator(
             user: user,
             miraclAPI: api,
+            deviceName: UUID().uuidString,
+            userStorage: storage,
+            crypto: MockCrypto(),
+            logger: DefaultLogger(level: .none),
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { code, error in
                 testCompletionHandler(code, error)

@@ -9,7 +9,7 @@ final class CrossDeviceSessionFetcher: Sendable {
     init(
         qrCode: String,
         miraclAPI: APIBlueprint,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        logger: Logger,
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) throws {
         sessionId = try CrossDeviceSessionFetcher.getAccessIdFromQRCode(qrCode: qrCode)
@@ -21,7 +21,7 @@ final class CrossDeviceSessionFetcher: Sendable {
     init(
         universalLinkURL: URL,
         miraclAPI: APIBlueprint,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        logger: Logger,
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) throws {
         sessionId = try CrossDeviceSessionFetcher.getAccessId(from: universalLinkURL)
@@ -33,7 +33,7 @@ final class CrossDeviceSessionFetcher: Sendable {
     init(
         pushNotificationPayload: [AnyHashable: Any],
         miraclAPI: APIBlueprint,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        logger: Logger,
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) throws {
         sessionId = try CrossDeviceSessionFetcher.getAccessId(from: pushNotificationPayload)

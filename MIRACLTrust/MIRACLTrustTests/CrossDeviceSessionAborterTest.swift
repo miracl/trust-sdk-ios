@@ -33,6 +33,7 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         sessionId = ""
         XCTAssertThrowsError(try CrossDeviceSessionAborter(
             sessionId: sessionId,
+            miraclAPI: api,
             completionHandler: { _, _ in }
         ), "Abort session with empty sessionId") { error in
             assertError(current: error, expected: CrossDeviceSessionError.invalidCrossDeviceSession)
@@ -43,6 +44,7 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         sessionId = "\n     "
         XCTAssertThrowsError(try CrossDeviceSessionAborter(
             sessionId: sessionId,
+            miraclAPI: api,
             completionHandler: { _, _ in }
         ), "Abort session with empty sessionId") { error in
             assertError(current: error, expected: CrossDeviceSessionError.invalidCrossDeviceSession)

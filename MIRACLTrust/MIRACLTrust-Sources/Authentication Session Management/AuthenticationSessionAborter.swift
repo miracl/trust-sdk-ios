@@ -8,8 +8,8 @@ struct AuthenticationSessionAborter {
 
     init(
         accessId: String,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        logger: Logger,
         completionHandler: @escaping AuthenticationSessionAborterCompletionHandler
     ) throws {
         self.accessId = accessId.trimmingCharacters(in: .whitespacesAndNewlines)

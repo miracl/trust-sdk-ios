@@ -10,6 +10,7 @@ struct Signer {
     let userStorage: UserStorage
     let sessionIdentifier: String?
     let logger: Logger
+    let deviceName: String
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -17,10 +18,11 @@ struct Signer {
         messageHash: Data,
         sessionIdentifier: String?,
         user: User,
-        miraclAPI: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        miraclAPI: APIBlueprint,
+        userStorage: UserStorage,
+        crypto: CryptoBlueprint,
+        logger: Logger,
+        deviceName: String,
         didRequestSigningPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping SigningCompletionHandler
     ) throws {
@@ -33,6 +35,7 @@ struct Signer {
         self.miraclAPI = miraclAPI
         self.userStorage = userStorage
         self.logger = logger
+        self.deviceName = deviceName
 
         try validateInput()
     }
@@ -82,11 +85,15 @@ struct Signer {
                     user: user,
                     sessionIdentifier: nil,
                     crypto: crypto,
-                    api: MIRACLTrust.getInstance().miraclAPI,
+                    deviceName: deviceName,
+                    api: miraclAPI,
+                    userStorage: userStorage,
+                    logger: logger,
                     scope: ["dvs-auth"],
                     didRequestPinHandler: { processPinHandler in
                         processPinHandler(pinCode)
-                    }, completionHandler: { response, error in
+                    },
+                    completionHandler: { response, error in
                         handleAuthenticationResult(
                             response: response,
                             error: error,

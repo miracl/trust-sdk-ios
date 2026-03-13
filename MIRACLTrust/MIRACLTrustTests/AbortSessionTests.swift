@@ -5,6 +5,7 @@ class AbortSessionTests: XCTestCase {
     var accessId = ""
     var userId = ""
     var api = MockAPI()
+    var logger = DefaultLogger(level: .none)
 
     override func setUpWithError() throws {
         accessId = "b227d0850d4280b98c5124a14aec84bf"
@@ -33,6 +34,8 @@ class AbortSessionTests: XCTestCase {
         accessId = ""
         XCTAssertThrowsError(try AuthenticationSessionAborter(
             accessId: accessId,
+            miraclAPI: api,
+            logger: logger,
             completionHandler: { _, _ in }
         ), "Abort session with empty userId") { error in
             assertError(current: error, expected: AuthenticationSessionError.invalidAuthenticationSessionDetails)
@@ -43,6 +46,8 @@ class AbortSessionTests: XCTestCase {
         accessId = "\n     "
         XCTAssertThrowsError(try AuthenticationSessionAborter(
             accessId: accessId,
+            miraclAPI: api,
+            logger: logger,
             completionHandler: { _, _ in }
         ), "Abort session with empty userId") { error in
             assertError(current: error, expected: AuthenticationSessionError.invalidAuthenticationSessionDetails)
@@ -85,7 +90,8 @@ class AbortSessionTests: XCTestCase {
 
             let aborter = try AuthenticationSessionAborter(
                 accessId: accessId,
-                miraclAPI: api
+                miraclAPI: api,
+                logger: logger
             ) { isAborted, error in
                 completionHandler(isAborted, error)
                 expectation.fulfill()

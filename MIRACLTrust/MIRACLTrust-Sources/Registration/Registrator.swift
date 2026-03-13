@@ -20,13 +20,13 @@ final class Registrator: Sendable {
     init(
         userId: String,
         activationToken: String,
-        deviceName: String = MIRACLTrust.getInstance().deviceName,
+        deviceName: String,
         pushNotificationsToken: String? = nil,
-        api: APIBlueprint = MIRACLTrust.getInstance().miraclAPI,
-        userStorage: UserStorage = MIRACLTrust.getInstance().userStorage,
-        projectId: String = MIRACLTrust.getInstance().projectId,
-        crypto: CryptoBlueprint = MIRACLTrust.getInstance().crypto,
-        logger: Logger = MIRACLTrust.getInstance().logger,
+        api: APIBlueprint,
+        userStorage: UserStorage,
+        projectId: String,
+        crypto: CryptoBlueprint,
+        logger: Logger,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping RegistrationCompletionHandler
     ) throws {

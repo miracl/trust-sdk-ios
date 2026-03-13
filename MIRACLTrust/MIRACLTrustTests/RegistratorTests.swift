@@ -128,6 +128,8 @@ class RegistratorTests: XCTestCase {
                                              api: mockAPI,
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
+                                             crypto: MockCrypto(),
+                                             logger: DefaultLogger(level: .none),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -140,6 +142,8 @@ class RegistratorTests: XCTestCase {
                                              api: mockAPI,
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
+                                             crypto: MockCrypto(),
+                                             logger: DefaultLogger(level: .none),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -154,6 +158,8 @@ class RegistratorTests: XCTestCase {
                                              api: mockAPI,
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
+                                             crypto: MockCrypto(),
+                                             logger: DefaultLogger(level: .none),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -166,6 +172,8 @@ class RegistratorTests: XCTestCase {
                                              api: mockAPI,
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
+                                             crypto: MockCrypto(),
+                                             logger: DefaultLogger(level: .none),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -580,8 +588,12 @@ class RegistratorTests: XCTestCase {
         let registrator = try Registrator(
             userId: userId,
             activationToken: activationToken,
+            deviceName: randomString,
             api: mockAPI,
+            userStorage: storage,
+            projectId: projectId,
             crypto: crypto,
+            logger: DefaultLogger(level: .none),
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { user, error in
                 completionHandler(user, error)
