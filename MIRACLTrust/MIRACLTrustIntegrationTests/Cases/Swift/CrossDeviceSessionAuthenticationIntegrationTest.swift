@@ -1,4 +1,4 @@
-import MIRACLTrust
+@testable import MIRACLTrust
 import Testing
 
 struct CrossDeviceSessionAuthenticationIntegrationTest {
@@ -19,6 +19,11 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
     var crossDeviceSession: CrossDeviceSession
     var session: StartSessionResult
 
+    var storage = SQLiteUserStorage(
+        projectId: ProcessInfo.processInfo.environment["projectIdCUV"]!,
+        databaseName: testDBName
+    )
+
     init() async throws {
         randomPIN = CrossDeviceSessionAuthenticationIntegrationTest.makeRandomPin()
         registrationCase.pinCode = randomPIN
@@ -27,7 +32,9 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
         let configuration = try Configuration.Builder(
             projectId: projectId,
             projectURL: projectURL
-        ).build()
+        )
+        .userStorage(userStorage: storage)
+        .build()
 
         try MIRACLTrust.configure(with: configuration)
 

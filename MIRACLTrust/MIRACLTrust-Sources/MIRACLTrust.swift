@@ -31,38 +31,46 @@ import Foundation
     var logger: Logger
 
     private nonisolated(unsafe) static var shared: MIRACLTrust!
+    nonisolated(unsafe) static var configuration: Configuration?
+    nonisolated(unsafe) static var defaultUserStorage: UserStorage?
+
     private static let sharedQueue = DispatchQueue(label: "com.miracl.trust.init.queue")
 
-    private init(configuration: Configuration) {
+    private init(projectId: String, projectURL: URL, configuration: Configuration) throws {
         if let logger = configuration.logger {
             self.logger = logger
         } else {
             logger = DefaultLogger(level: configuration.loggingLevel)
         }
 
-        projectId = configuration.projectId
+        self.projectId = projectId
         deviceName = configuration.deviceName
         urlSessionConfiguration = configuration.urlSessionConfiguration
 
-        switch configuration.storageType {
-        case let .default(options):
-            userStorage = SQLiteUserStorage(
-                projectId: projectId,
-                directoryURL: options.directoryURL,
-                databaseName: options.storageName,
-                keychainAccessGroup: options.keychainAccessGroup
-            )
-        case let .custom(storage):
-            userStorage = storage
-        }
-
         miraclAPI = API(
-            baseURL: configuration.projectURL,
+            baseURL: projectURL,
             urlSessionConfiguration: configuration.urlSessionConfiguration,
             logger: logger
         )
 
         crypto = Crypto(logger: logger)
+
+        let sdkVersion = Bundle(for: MIRACLTrust.self).infoDictionary?["MIRACL_SDK_VERSION"] ?? ""
+        var miraclHeader = "MIRACL iOS SDK/\(sdkVersion)"
+        if let applicationInfo = configuration.applicationInfo {
+            miraclHeader.append(" \(applicationInfo)")
+        }
+
+        if var additionalHeaders = configuration.urlSessionConfiguration.httpAdditionalHeaders {
+            additionalHeaders["X-MIRACL-CLIENT"] = miraclHeader
+        } else {
+            configuration.urlSessionConfiguration.httpAdditionalHeaders = ["X-MIRACL-CLIENT": miraclHeader]
+        }
+
+        userStorage = try MIRACLTrust.createUserStorage(
+            storageType: configuration.storageType,
+            projectId: projectId
+        )
     }
 
     // MARK: SDK Configuration
@@ -72,8 +80,6 @@ import Foundation
     @objc public class func getInstance() -> MIRACLTrust {
         sharedQueue.sync {
             precondition(shared != nil, "MIRACLTrust SDK not initialized.Call `configure(with:)` method first.")
-            precondition(shared.sdkConfigured, "MIRACLTrust SDK is not configured.Check if configuration throws error.")
-
             return MIRACLTrust.shared
         }
     }
@@ -83,31 +89,55 @@ import Foundation
     /// - Parameter configuration:object storing configurations of the SDK.
     @objc public class func configure(with configuration: Configuration) throws {
         try sharedQueue.sync {
-            shared = MIRACLTrust(configuration: configuration)
-            shared.sdkConfigured = false
+            precondition(configuration.projectId != nil, "MIRACLTrust SDK: Project ID is missing. Pass a valid Project ID to Configuration.Builder.")
 
-            let sdkVersion = Bundle(for: MIRACLTrust.self).infoDictionary?["MIRACL_SDK_VERSION"] ?? ""
-            var miraclHeader = "MIRACL iOS SDK/\(sdkVersion)"
-            if let applicationInfo = configuration.applicationInfo {
-                miraclHeader.append(" \(applicationInfo)")
-            }
-
-            if var additionalHeaders = configuration.urlSessionConfiguration.httpAdditionalHeaders {
-                additionalHeaders["X-MIRACL-CLIENT"] = miraclHeader
-            } else {
-                configuration.urlSessionConfiguration.httpAdditionalHeaders = ["X-MIRACL-CLIENT": miraclHeader]
-            }
-
-            shared.miraclAPI = API(
-                baseURL: configuration.projectURL,
-                urlSessionConfiguration: configuration.urlSessionConfiguration,
-                logger: shared.logger
+            shared = try MIRACLTrust(
+                projectId: configuration.projectId!,
+                projectURL: configuration.projectURL,
+                configuration: configuration
             )
 
-            try shared.userStorage.loadStorage()
+            if case let StorageType.custom(storage) = configuration.storageType {
+                try storage.loadStorage()
+            }
+        }
+    }
 
-            // If this line is reached, configuration is done correctly.
-            shared.sdkConfigured = true
+    @_spi(MIRACLTrustAuthenticatorApi)
+    public static func createInstance(
+        projectId: String,
+        projectURL: String
+    ) throws -> MIRACLTrust {
+        try sharedQueue.sync {
+            precondition(!projectId.isEmpty, "MIRACLTrust SDK: Project ID cannot be empty. Pass a valid Project ID when calling createInstance().")
+            precondition(URL(string: projectURL) != nil, "MIRACLTrust SDK: Project URL is invalid. Pass a valid URL when calling createInstance().")
+
+            let projectURL = URL(string: projectURL)!
+
+            if let configuration {
+                return try MIRACLTrust(
+                    projectId: projectId,
+                    projectURL: projectURL,
+                    configuration: configuration
+                )
+            } else {
+                let configuration = try Configuration.Builder().build()
+
+                return try MIRACLTrust(
+                    projectId: projectId,
+                    projectURL: projectURL,
+                    configuration: configuration
+                )
+            }
+        }
+    }
+
+    @_spi(MIRACLTrustAuthenticatorApi)
+    public static func setDefaultConfiguration(_ configuration: Configuration) throws {
+        self.configuration = configuration
+
+        if case let StorageType.custom(storage) = configuration.storageType {
+            try storage.loadStorage()
         }
     }
 
@@ -874,6 +904,44 @@ import Foundation
         }
     }
 
+    @_spi(MIRACLTrustAuthenticatorApi)
+    public static func getUsers() -> [User] {
+        MIRACLTrust.sharedQueue.sync {
+            var userStorage: UserStorage?
+
+            if let configuration, case let StorageType.custom(customUserStorage) = configuration.storageType {
+                userStorage = customUserStorage
+            } else if let defaultUserStorage = MIRACLTrust.defaultUserStorage {
+                userStorage = defaultUserStorage
+            } else if let configuration, case let StorageType.default(options) = configuration.storageType {
+                userStorage = SQLiteUserStorage(
+                    projectId: "",
+                    directoryURL: options.directoryURL,
+                    databaseName: options.storageName,
+                    keychainAccessGroup: options.keychainAccessGroup
+                )
+                MIRACLTrust.defaultUserStorage = userStorage
+                try? userStorage?.loadStorage()
+            } else {
+                userStorage = SQLiteUserStorage(
+                    projectId: ""
+                )
+                MIRACLTrust.defaultUserStorage = userStorage
+                try? userStorage?.loadStorage()
+            }
+
+            if let userStorage {
+                do {
+                    return try userStorage.all().map { $0.toUser() }
+                } catch {
+                    return []
+                }
+            }
+
+            return []
+        }
+    }
+
     // MARK: Identities Removal
 
     /// Deletes a registered user synchronously.
@@ -924,5 +992,33 @@ import Foundation
             message: LoggingConstants.sdkNotConfigured,
             category: .configuration
         )
+    }
+
+    private class func createUserStorage(
+        storageType: StorageType,
+        projectId: String
+    ) throws -> UserStorage {
+        dispatchPrecondition(condition: .onQueue(sharedQueue))
+
+        var userStorage: UserStorage
+        switch storageType {
+        case let .default(options):
+            if let defaultUserStorage = MIRACLTrust.defaultUserStorage {
+                userStorage = defaultUserStorage
+            } else {
+                userStorage = SQLiteUserStorage(
+                    projectId: projectId,
+                    directoryURL: options.directoryURL,
+                    databaseName: options.storageName,
+                    keychainAccessGroup: options.keychainAccessGroup
+                )
+                try userStorage.loadStorage()
+                MIRACLTrust.defaultUserStorage = userStorage
+            }
+        case let .custom(storage):
+            userStorage = storage
+        }
+
+        return userStorage
     }
 }

@@ -3,7 +3,7 @@ import Foundation
 /// Object that stores configurations of the SDK with values issued by MIRACL.
 @objc public class Configuration: NSObject {
     /// Identifier of the project in the MIRACL Trust platform.
-    var projectId: String
+    var projectId: String?
 
     /// Base URL of the MIRACL platform.
     var projectURL: URL
@@ -29,7 +29,7 @@ import Foundation
     var storageType: StorageType
 
     override private init() {
-        projectId = ""
+        projectId = nil
         projectURL = URL(string: MIRACL_API_URL)!
         applicationInfo = nil
 
@@ -42,7 +42,7 @@ import Foundation
     }
 
     override public var description: String {
-        "Configuration(projectId: \(projectId), projectURL: \(projectURL), deviceName: \(deviceName), applicationInfo: \(String(describing: applicationInfo)), urlSessionConfiguration: \(urlSessionConfiguration), logger: \(String(describing: logger)), loggingLevel: \(loggingLevel), storageType: \(storageType))"
+        "Configuration(projectId: \(String(describing: projectId)), projectURL: \(projectURL), deviceName: \(deviceName), applicationInfo: \(String(describing: applicationInfo)), urlSessionConfiguration: \(urlSessionConfiguration), logger: \(String(describing: logger)), loggingLevel: \(loggingLevel), storageType: \(storageType))"
     }
 
     /// Builds ``Configuration`` objects.
@@ -75,6 +75,18 @@ import Foundation
                     configurationToBuild.deviceName = ""
                 #endif
             }
+        }
+
+        @_spi(MIRACLTrustAuthenticatorApi)
+        override public init() {
+            projectURL = MIRACL_API_URL
+            #if os(iOS)
+                configurationToBuild.deviceName = "iOS"
+            #elseif os(watchOS)
+                configurationToBuild.deviceName = "watchOS"
+            #else
+                configurationToBuild.deviceName = ""
+            #endif
         }
 
         ///  Sets ``DefaultStorageOptions``.
@@ -165,7 +177,7 @@ import Foundation
         /// - Throws: ``ConfigurationError``.
         /// - Returns: ``Configuration`` object.
         @objc public func build() throws -> Configuration {
-            if configurationToBuild.projectId.isEmpty {
+            if let projectId = configurationToBuild.projectId, projectId.isEmpty {
                 throw ConfigurationError.emptyProjectId
             }
 

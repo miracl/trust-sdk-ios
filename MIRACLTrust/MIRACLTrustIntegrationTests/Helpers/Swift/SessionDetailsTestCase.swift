@@ -1,7 +1,6 @@
 @testable import MIRACLTrust
-import XCTest
 
-class SessionDetailsTestCase: XCTestCase {
+class SessionDetailsTestCase {
     func getSessionDetails(qrCode: String) async -> (AuthenticationSessionDetails?, Error?) {
         await withCheckedContinuation { continuation in
             MIRACLTrust

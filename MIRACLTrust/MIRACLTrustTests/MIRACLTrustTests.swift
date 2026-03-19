@@ -1,4 +1,4 @@
-@testable import MIRACLTrust
+@_spi(MIRACLTrustAuthenticatorApi) @testable import MIRACLTrust
 import XCTest
 
 class MIRACLTrustTests: XCTestCase {
@@ -12,13 +12,14 @@ class MIRACLTrustTests: XCTestCase {
     private var randomBool = Bool.random()
     private var currentDate = Int64(Date().timeIntervalSince1970)
     private var user: User?
+    private var configuration: Configuration?
 
     private let backoff: Int64 = 1_688_029_968
     private let mpinId = "7b22696174223a313631373237323435332c22757365724944223a22676c6f62616c406578616d706c652e636f6d222c22634944223a2236636134636133622d623663342d343262332d386536372d336432653038616532643765222c2273616c74223a226d30756558414b4162566234425756742b5461745a51222c2276223a352c2273636f7065223a5b2261757468225d2c22647461223a5b5d2c227674223a227076227d"
     private let clientToken = Data([1, 2, 3])
 
     override func setUpWithError() throws {
-        let configuration = try Configuration
+        configuration = try Configuration
             .Builder(
                 projectId: projectId,
                 projectURL: projectURL
@@ -26,7 +27,7 @@ class MIRACLTrustTests: XCTestCase {
             .userStorage(userStorage: mockUserStorage)
             .build()
 
-        try MIRACLTrust.configure(with: configuration)
+        try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         createMockAPI()
         createMockCrypto()
@@ -956,6 +957,126 @@ class MIRACLTrustTests: XCTestCase {
         wait(for: [expectation])
 
         XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
+    }
+
+    func testGetUsersStaticMethodCustomStorage() throws {
+        MIRACLTrust.defaultUserStorage = nil
+        MIRACLTrust.configuration = nil
+
+        let configuration = try Configuration
+            .Builder(
+                projectId: projectId,
+                projectURL: projectURL
+            )
+            .userStorage(userStorage: mockUserStorage)
+            .build()
+        try MIRACLTrust.setDefaultConfiguration(configuration)
+
+        let userDTO = createUserDTO()
+        try mockUserStorage.add(user: userDTO)
+
+        let users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 1)
+    }
+
+    func testGetUsersStaticMethodDefaultUserStorageCreatedWithCreateInstance() throws {
+        MIRACLTrust.defaultUserStorage = nil
+        MIRACLTrust.configuration = nil
+
+        let fileURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let path = fileURL.appendingPathComponent("miracl.sqlite").relativePath
+        let isFileExists = FileManager.default.fileExists(atPath: path)
+        if isFileExists {
+            try FileManager.default.removeItem(atPath: path)
+        }
+
+        let configuration = try Configuration
+            .Builder()
+            .build()
+        try MIRACLTrust.setDefaultConfiguration(configuration)
+        _ = try MIRACLTrust.createInstance(projectId: projectId, projectURL: projectURL)
+
+        var users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 0)
+
+        let userDTO = createUserDTO()
+        try MIRACLTrust.defaultUserStorage?.add(user: userDTO)
+
+        users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 1)
+    }
+
+    func testGetUsersStaticMethodDefaultUserStorageCreatedInMethod() throws {
+        MIRACLTrust.defaultUserStorage = nil
+        MIRACLTrust.configuration = nil
+
+        let fileURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let path = fileURL.appendingPathComponent("miracl.sqlite").relativePath
+        let isFileExists = FileManager.default.fileExists(atPath: path)
+        if isFileExists {
+            try FileManager.default.removeItem(atPath: path)
+        }
+
+        let configuration = try Configuration
+            .Builder()
+            .build()
+        try MIRACLTrust.setDefaultConfiguration(configuration)
+
+        var users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 0)
+
+        let userDTO = createUserDTO()
+        try MIRACLTrust.defaultUserStorage?.add(user: userDTO)
+
+        users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 1)
+    }
+
+    func testGetUsersStaticMethodDefaultUserStorageCreatedIfThereNoConfiguration() throws {
+        MIRACLTrust.defaultUserStorage = nil
+        MIRACLTrust.configuration = nil
+
+        let fileURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let path = fileURL.appendingPathComponent("miracl.sqlite").relativePath
+        let isFileExists = FileManager.default.fileExists(atPath: path)
+        if isFileExists {
+            try FileManager.default.removeItem(atPath: path)
+        }
+
+        var users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 0)
+
+        let userDTO = createUserDTO()
+        try MIRACLTrust.defaultUserStorage?.add(user: userDTO)
+
+        users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 1)
+    }
+
+    func testGetUsersStaticMethodThrowsError() throws {
+        MIRACLTrust.defaultUserStorage = nil
+        MIRACLTrust.configuration = nil
+
+        let fileURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let path = fileURL.appendingPathComponent("miracl.sqlite").relativePath
+        let isFileExists = FileManager.default.fileExists(atPath: path)
+        if isFileExists {
+            try FileManager.default.removeItem(atPath: path)
+        }
+
+        let configuration = try Configuration
+            .Builder(
+                projectId: projectId,
+                projectURL: projectURL
+            )
+            .userStorage(userStorage: mockUserStorage)
+            .build()
+        try MIRACLTrust.setDefaultConfiguration(configuration)
+
+        mockUserStorage.getUsersThrowsError = true
+
+        let users = MIRACLTrust.getUsers()
+        XCTAssertEqual(users.count, 0)
     }
 
     // MARK: Private
