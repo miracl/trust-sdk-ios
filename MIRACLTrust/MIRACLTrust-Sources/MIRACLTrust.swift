@@ -631,7 +631,7 @@ import Foundation
     ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is aborted. It can contain a Boolean flag representing the abortion result and an optional error object.
     @objc public func _abortCrossDeviceSession(
         _ crossDeviceSession: CrossDeviceSession,
-        completionHandler: @escaping @Sendable (Bool, Error?) -> Void
+        completionHandler: @escaping CrossDeviceSessionAborterCompletionHandler
     ) {
         do {
             let aborter = try CrossDeviceSessionAborter(
