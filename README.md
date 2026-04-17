@@ -30,7 +30,7 @@ To integrate using Apple's Swift package manager, without
 Xcode integration, add the following as a dependency to your Package.swift:
 
 ```bash
-.package(url: "https://github.com/miracl/trust-sdk-ios", .upToNextMajor(from: "1.12.0"))
+.package(url: "https://github.com/miracl/trust-sdk-ios", .upToNextMajor(from: "1.12.1"))
 ```
 
 In both cases after the package is downloaded, go to the
@@ -52,7 +52,7 @@ source 'https://github.com/CocoaPods/Specs'
 Next step is to add the MIRACLTrust iOS SDK pod to your target:
 
 ```ruby
-pod 'MIRACLTrust', '~> 1.12.0'
+pod 'MIRACLTrust', '~> 1.12.1'
 ```
 
 For more information on how to add Cocoapods sources check the [documentation](https://guides.cocoapods.org/syntax/podfile.html#source).
