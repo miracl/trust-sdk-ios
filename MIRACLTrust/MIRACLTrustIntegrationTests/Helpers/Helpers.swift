@@ -7,6 +7,11 @@ public func assertError<T: Error & Equatable>(current: Error?, expected: T) {
     XCTAssertEqual(current as? T, expected)
 }
 
+public func createMailpitUserId() -> String {
+    let baseUserId = ProcessInfo.processInfo.environment["mailpitEmailAddress"]!
+    return baseUserId.replacingOccurrences(of: "{tag}", with: UUID().uuidString.lowercased())
+}
+
 extension Date {
     static func dateWithAddedMinutes(minutes: Int) -> Date? {
         Calendar.current.date(

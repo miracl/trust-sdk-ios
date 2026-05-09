@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		6D01C62F2AA7672D0059CA91 /* SQLiteUserStorageMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D01C62E2AA7672D0059CA91 /* SQLiteUserStorageMigrationTests.swift */; };
+		6D04CE572FAF57D0000C784D /* MailpitAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D04CE562FAF57CB000C784D /* MailpitAPI.swift */; };
+		6D04CE5B2FAF5C69000C784D /* MailpitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D04CE5A2FAF5C65000C784D /* MailpitModels.swift */; };
 		6D13651627EC95C0003783CE /* GetActivationTokenTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D13651527EC95C0003783CE /* GetActivationTokenTestCase.swift */; };
 		6D13651A27F34544003783CE /* RegistrationIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D13651927F34544003783CE /* RegistrationIntegrationTest.swift */; };
 		6D18500B23E038E8008E85E5 /* MIRACLTrustTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D18500A23E038E8008E85E5 /* MIRACLTrustTests.swift */; };
@@ -112,6 +114,8 @@
 		6DB7797124ADC08F00FA5219 /* QRAuthenticationCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DB7797024ADC08F00FA5219 /* QRAuthenticationCompatibilityCase.m */; };
 		6DB7797624ADF42000FA5219 /* RegistrationCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DB7797524ADF42000FA5219 /* RegistrationCompatibilityCase.m */; };
 		6DBA72F1240FDF9E00561F89 /* RegistratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBA72F0240FDF9E00561F89 /* RegistratorTests.swift */; };
+		6DBCBAA72FAE0E6B00474ABA /* MailpitServiceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCBAA62FAE0E6000474ABA /* MailpitServiceWrapper.swift */; };
+		6DBCBAA92FAE10B500474ABA /* MailpitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCBAA82FAE10AE00474ABA /* MailpitService.swift */; };
 		6DBD1A7425D1694A002702F8 /* QuickCodeIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD1A7325D1694A002702F8 /* QuickCodeIntegrationTests.swift */; };
 		6DBD1A7D25D16AAC002702F8 /* QuickCodeTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD1A7C25D16AAC002702F8 /* QuickCodeTestCase.swift */; };
 		6DBD1A9425D16F6F002702F8 /* QuickCodeGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD1A9325D16F6F002702F8 /* QuickCodeGeneratorTests.swift */; };
@@ -219,7 +223,6 @@
 		6DFEC8CE26E1049100E8F682 /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */; };
 		83695C1C2C9734AA00411EAA /* EmailVerificationMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */; };
 		838EE9302EDECD2000042452 /* SignatureCertificateJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838EE92F2EDECD1200042452 /* SignatureCertificateJWTPayload.swift */; };
-		83BD3EFB2CC902F000D4E47F /* GmailServiceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83BD3EFA2CC902DF00D4E47F /* GmailServiceWrapper.swift */; };
 		83BD3F0B2CCA23A900D4E47F /* AuthenticationJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83BD3F0A2CCA23A500D4E47F /* AuthenticationJWTPayload.swift */; };
 		83DE9EBE2CCA320D00BD7749 /* JWTKit in Frameworks */ = {isa = PBXBuildFile; productRef = 83DE9EBD2CCA320D00BD7749 /* JWTKit */; };
 		FA5382F62D0B376D00C76DBD /* QuickCodeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5382F52D0B376D00C76DBD /* QuickCodeError.swift */; };
@@ -231,9 +234,6 @@
 		FAE467E62CF9E15E00754F5C /* HelperAPIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D13652227FB1107003783CE /* HelperAPIModel.swift */; };
 		FAE467E72CF9E15E00754F5C /* PlatformAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D13652627FB11A1003783CE /* PlatformAPI.swift */; };
 		FAE467E82CF9E15E00754F5C /* HTTPRequestExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D13652027FB10D4003783CE /* HTTPRequestExecutor.swift */; };
-		FAE467EC2CF9E16E00754F5C /* GmailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83BD3EF82CC7CDBD00D4E47F /* GmailService.swift */; };
-		FAE467ED2CF9E16E00754F5C /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DE9EB82CCA2B2D00BD7749 /* Credentials.swift */; };
-		FAE467EE2CF9E16E00754F5C /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DE9EB92CCA2B2D00BD7749 /* Token.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -284,6 +284,8 @@
 		6D01C62E2AA7672D0059CA91 /* SQLiteUserStorageMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteUserStorageMigrationTests.swift; sourceTree = "<group>"; };
 		6D02B53B24C96DF700C5A277 /* Signature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signature.swift; sourceTree = "<group>"; };
 		6D02B53D24C9818100C5A277 /* Signer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signer.swift; sourceTree = "<group>"; };
+		6D04CE562FAF57CB000C784D /* MailpitAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailpitAPI.swift; sourceTree = "<group>"; };
+		6D04CE5A2FAF5C65000C784D /* MailpitModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailpitModels.swift; sourceTree = "<group>"; };
 		6D07BEBC256D2BE100A943C4 /* Verificator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Verificator.swift; sourceTree = "<group>"; };
 		6D08C0C325652DCE006934DA /* LoggingLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingLevel.swift; sourceTree = "<group>"; };
 		6D10E0D5262727E8000B7846 /* libamcl_core.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = libamcl_core.xcframework; sourceTree = "<group>"; };
@@ -453,6 +455,8 @@
 		6DBA72F42410E5AD00561F89 /* UIDevice+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Helpers.swift"; sourceTree = "<group>"; };
 		6DBAF66125764E2C007F0364 /* VerificationConfirmationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationConfirmationResponse.swift; sourceTree = "<group>"; };
 		6DBAF66A25765FE1007F0364 /* VerificationConfirmationRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationConfirmationRequestBody.swift; sourceTree = "<group>"; };
+		6DBCBAA62FAE0E6000474ABA /* MailpitServiceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailpitServiceWrapper.swift; sourceTree = "<group>"; };
+		6DBCBAA82FAE10AE00474ABA /* MailpitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailpitService.swift; sourceTree = "<group>"; };
 		6DBD1A7325D1694A002702F8 /* QuickCodeIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCodeIntegrationTests.swift; sourceTree = "<group>"; };
 		6DBD1A7C25D16AAC002702F8 /* QuickCodeTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCodeTestCase.swift; sourceTree = "<group>"; };
 		6DBD1A9325D16F6F002702F8 /* QuickCodeGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCodeGeneratorTests.swift; sourceTree = "<group>"; };
@@ -514,11 +518,7 @@
 		6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
 		83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailVerificationMethod.swift; sourceTree = "<group>"; };
 		838EE92F2EDECD1200042452 /* SignatureCertificateJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureCertificateJWTPayload.swift; sourceTree = "<group>"; };
-		83BD3EF82CC7CDBD00D4E47F /* GmailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailService.swift; sourceTree = "<group>"; };
-		83BD3EFA2CC902DF00D4E47F /* GmailServiceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailServiceWrapper.swift; sourceTree = "<group>"; };
 		83BD3F0A2CCA23A500D4E47F /* AuthenticationJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationJWTPayload.swift; sourceTree = "<group>"; };
-		83DE9EB82CCA2B2D00BD7749 /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
-		83DE9EB92CCA2B2D00BD7749 /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		FA5382F52D0B376D00C76DBD /* QuickCodeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCodeError.swift; sourceTree = "<group>"; };
 		FA5D21152D0890CC00E3548C /* VerificationQuickCodeRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationQuickCodeRequestBody.swift; sourceTree = "<group>"; };
 		FA5D21172D08926800E3548C /* VerificationQuickCodeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationQuickCodeResponse.swift; sourceTree = "<group>"; };
@@ -894,7 +894,7 @@
 				6DD1778524B4A08C006CBF4C /* DBFileHelper.swift */,
 				6D26142B24AB1B7C004F0B54 /* Constants.swift */,
 				6D685E53247E7E0E000AEDAC /* PlatformAPIWrapper.swift */,
-				83BD3EFA2CC902DF00D4E47F /* GmailServiceWrapper.swift */,
+				6DBCBAA62FAE0E6000474ABA /* MailpitServiceWrapper.swift */,
 				6DFE8FC427EB6E380085380D /* Helpers.swift */,
 				83BD3F0A2CCA23A500D4E47F /* AuthenticationJWTPayload.swift */,
 				838EE92F2EDECD1200042452 /* SignatureCertificateJWTPayload.swift */,
@@ -1066,6 +1066,16 @@
 			path = Registration;
 			sourceTree = "<group>";
 		};
+		6DBCBAAA2FAE10C100474ABA /* mailpit */ = {
+			isa = PBXGroup;
+			children = (
+				6D04CE5A2FAF5C65000C784D /* MailpitModels.swift */,
+				6D04CE562FAF57CB000C784D /* MailpitAPI.swift */,
+				6DBCBAA82FAE10AE00474ABA /* MailpitService.swift */,
+			);
+			path = mailpit;
+			sourceTree = "<group>";
+		};
 		6DC4694925B9B0330099866C /* MIRACLTrust-Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1126,20 +1136,10 @@
 			path = QuickCode;
 			sourceTree = "<group>";
 		};
-		83DE9EBC2CCA2D7F00BD7749 /* gmail */ = {
-			isa = PBXGroup;
-			children = (
-				83DE9EB82CCA2B2D00BD7749 /* Credentials.swift */,
-				83BD3EF82CC7CDBD00D4E47F /* GmailService.swift */,
-				83DE9EB92CCA2B2D00BD7749 /* Token.swift */,
-			);
-			path = gmail;
-			sourceTree = "<group>";
-		};
 		FAE467E42CF9E14900754F5C /* MIRACLTrustHelperAPI */ = {
 			isa = PBXGroup;
 			children = (
-				83DE9EBC2CCA2D7F00BD7749 /* gmail */,
+				6DBCBAAA2FAE10C100474ABA /* mailpit */,
 				6D13652627FB11A1003783CE /* PlatformAPI.swift */,
 				6D13652027FB10D4003783CE /* HTTPRequestExecutor.swift */,
 				6D13651E27FAFEF3003783CE /* URLRequest+Extensions.swift */,
@@ -1423,7 +1423,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA6357552CFDBA7600464840 /* GetActivationTokenCompatiblityCase.m in Sources */,
-				83BD3EFB2CC902F000D4E47F /* GmailServiceWrapper.swift in Sources */,
 				6D26142C24AB1B7C004F0B54 /* Constants.swift in Sources */,
 				6D2E4F192E2E7A290001B5A7 /* CrossDeviceSessionIntegrationTest.swift in Sources */,
 				6D91ABDA26FDF4C000EE28CF /* SessionDetailsTestCase.swift in Sources */,
@@ -1433,10 +1432,10 @@
 				6DDEB15127070C2C00C3313D /* AbortSessionIntergrationTest.swift in Sources */,
 				6D70EF612B0F8E47004AE28A /* QRCodeAuthenticationSessionDetailsCompatiblityCase.m in Sources */,
 				6D6B94BD2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m in Sources */,
+				6DBCBAA92FAE10B500474ABA /* MailpitService.swift in Sources */,
 				6D22F0E12B1092BE008FE5E5 /* AbortAuthenticationSessionCompatibilityCase.m in Sources */,
 				FAE467E82CF9E15E00754F5C /* HTTPRequestExecutor.swift in Sources */,
 				6D25C44A25D6853F00E878C9 /* JWTAuthenticationTestCase.swift in Sources */,
-				FAE467EE2CF9E16E00754F5C /* Token.swift in Sources */,
 				6DEC21DF26F37BE60099C836 /* UniversalLinkAuthIntegrationTests.swift in Sources */,
 				6DE60F5A2704638E008781C7 /* UpdateProjectSettingsIntegrationTests.swift in Sources */,
 				6DB7797624ADF42000FA5219 /* RegistrationCompatibilityCase.m in Sources */,
@@ -1449,15 +1448,15 @@
 				6D8E8D8125ED09D30084B6FE /* JWTAuthenticationCompatibilityCase.m in Sources */,
 				6DD1778624B4A08C006CBF4C /* DBFileHelper.swift in Sources */,
 				6D13651A27F34544003783CE /* RegistrationIntegrationTest.swift in Sources */,
-				FAE467EC2CF9E16E00754F5C /* GmailService.swift in Sources */,
 				6DBD1A7425D1694A002702F8 /* QuickCodeIntegrationTests.swift in Sources */,
 				6DB4207C26F495A400B68AB4 /* UniversalLinkAuthenticationTestCase.swift in Sources */,
 				6DE95A4624E52BAF00BA253A /* SigningTestCase.swift in Sources */,
 				6D4167A32E435C61002E59EA /* CrossDeviceSessionCase.swift in Sources */,
-				FAE467ED2CF9E16E00754F5C /* Credentials.swift in Sources */,
 				6D13651627EC95C0003783CE /* GetActivationTokenTestCase.swift in Sources */,
 				6D685E54247E7E0E000AEDAC /* PlatformAPIWrapper.swift in Sources */,
 				6D4167A92E435E6F002E59EA /* ActivationTokenAsyncCase.swift in Sources */,
+				6D04CE572FAF57D0000C784D /* MailpitAPI.swift in Sources */,
+				6DBCBAA72FAE0E6B00474ABA /* MailpitServiceWrapper.swift in Sources */,
 				6D3626CE256E874300993AD3 /* VerificationTestCase.swift in Sources */,
 				6D685E4B247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift in Sources */,
 				6D4167A72E435D7A002E59EA /* RegistrationAsyncTestCase.swift in Sources */,
@@ -1470,6 +1469,7 @@
 				6DDEB14F2706F2CC00C3313D /* AbortSessionTestCase.swift in Sources */,
 				6DEC21D726F347B40099C836 /* UniversalLinkAuthenticationCompatibilityCase.m in Sources */,
 				6DB7797124ADC08F00FA5219 /* QRAuthenticationCompatibilityCase.m in Sources */,
+				6D04CE5B2FAF5C69000C784D /* MailpitModels.swift in Sources */,
 				6DC987342E54C3CB00E1EDAB /* CrossDeviceSessionTestCase.swift in Sources */,
 				83BD3F0B2CCA23A900D4E47F /* AuthenticationJWTPayload.swift in Sources */,
 				6D54164524E273B0003018C9 /* SigningIntegrationTests.swift in Sources */,
