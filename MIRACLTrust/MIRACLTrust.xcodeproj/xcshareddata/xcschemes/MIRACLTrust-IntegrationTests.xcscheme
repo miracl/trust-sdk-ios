@@ -52,51 +52,6 @@
          </BuildableReference>
       </MacroExpansion>
       <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "projectIdCUV"
-            value = "$(TEST_CUV_PROJECT_ID)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "projectIdDV"
-            value = "$(TEST_DV_PROJECT_ID)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "projectIdECV"
-            value = "$(TEST_ECV_PROJECT_ID)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "gmailCredentials"
-            value = "$(GMAIL_CREDENTIALS)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "gmailToken"
-            value = "$(GMAIL_TOKEN)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "projectURLCUV"
-            value = "$(TEST_CUV_PROJECT_URL)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "projectURLDV"
-            value = "$(TEST_DV_PROJECT_URL)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "projectURLECV"
-            value = "$(TEST_ECV_PROJECT_URL)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "serviceAccountTokenCUV"
-            value = "$(TEST_CUV_SERVICE_ACCOUNT_TOKEN)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
       </EnvironmentVariables>
       <CodeCoverageTargets>
          <BuildableReference

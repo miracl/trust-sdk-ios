@@ -2,7 +2,7 @@
 import XCTest
 
 class RegistrationIntegrationTests: XCTestCase {
-    let gmailService = GmailServiceTestWrapper()
+    let mailpitService = MailpitServiceWrapper()
 
     let projectURL = ProcessInfo.processInfo.environment["projectURLCUV"]!
 
@@ -66,7 +66,7 @@ class RegistrationIntegrationTests: XCTestCase {
     }
 
     func testSuccessfulRegistrationDefaultVerification() async throws {
-        let currentUserId = "int+\(UUID().uuidString)@miracl.com"
+        let currentUserId = createMailpitUserId()
 
         try MIRACLTrust
             .getInstance()
@@ -77,7 +77,7 @@ class RegistrationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
-        let verificationURL = try await gmailService.getVerificationURL(receiver: currentUserId, timestamp: timestamp)
+        let verificationURL = try await mailpitService.getVerificationURL(receiver: currentUserId, timestamp: timestamp)
         let unwrappedVerificationURL = try XCTUnwrap(verificationURL)
 
         let (token, tokenError) = await getActivationTokenTestCase.getActivationToken(verificationURL: unwrappedVerificationURL)

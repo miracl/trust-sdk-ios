@@ -197,33 +197,67 @@ extension URLRequest {
         return request
     }
 
-    static func gmailAccessTokenRequest(for credentials: Credentials, refreshToken: String) -> URLRequest? {
-        var request = URLRequest(url: URL(string: credentials.installed.tokenURI)!)
-        request.httpMethod = "POST"
+    static func mailpitSearchRequest(
+        mailpitURL: URL,
+        mailpitUser: String,
+        mailpitPass: String,
+        from: String,
+        to: String,
+        timestamp: Date
+    ) -> URLRequest? {
+        guard var urlComponents = URLComponents(url: mailpitURL, resolvingAgainstBaseURL: true) else {
+            return nil
+        }
 
-        let body = "client_id=\(credentials.installed.clientID)&client_secret=\(credentials.installed.clientSecret)&refresh_token=\(refreshToken)&grant_type=refresh_token&access_type=offline"
-        request.httpBody = body.data(using: .utf8)
-        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        urlComponents.path = "/api/v1/search"
+        urlComponents.queryItems = [
+            URLQueryItem(
+                name: "query",
+                value: "from:\(from) to:\(to) after:\(Int(timestamp.timeIntervalSince1970))"
+            )
+        ]
+
+        guard let urlWithQuery = urlComponents.url else {
+            return nil
+        }
+
+        let mailpitCredentials = "\(mailpitUser):\(mailpitPass)"
+        guard let loginData = mailpitCredentials.data(using: .utf8) else {
+            return nil
+        }
+        let base64LoginString = loginData.base64EncodedString()
+
+        var request = URLRequest(url: urlWithQuery)
+        request.httpMethod = "GET"
+        request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
 
         return request
     }
 
-    static func gmailSingleMessageRequest(messageId: String, accessToken: String) -> URLRequest? {
-        let messageEndpoint = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(messageId)?format=full"
-        var request = URLRequest(url: URL(string: messageEndpoint)!)
+    static func mailpitGetMessageRequest(
+        mailpitURL: URL,
+        mailpitUser: String,
+        mailpitPass: String,
+        id: String
+    ) -> URLRequest? {
+        guard var urlComponents = URLComponents(url: mailpitURL, resolvingAgainstBaseURL: true) else {
+            return nil
+        }
+        urlComponents.path = "/api/v1/message/\(id)"
+
+        guard let urlWithQuery = urlComponents.url else {
+            return nil
+        }
+
+        let mailpitCredentials = "\(mailpitUser):\(mailpitPass)"
+        guard let loginData = mailpitCredentials.data(using: .utf8) else {
+            return nil
+        }
+        let base64LoginString = loginData.base64EncodedString()
+
+        var request = URLRequest(url: urlWithQuery)
         request.httpMethod = "GET"
-        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-
-        return request
-    }
-
-    static func gmailGetMessageContentRequest(query: String, accessToken: String) -> URLRequest? {
-        let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
-        let listEndpoint = "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=\(encodedQuery)&maxResults=1"
-
-        var request = URLRequest(url: URL(string: listEndpoint)!)
-        request.httpMethod = "GET"
-        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
 
         return request
     }

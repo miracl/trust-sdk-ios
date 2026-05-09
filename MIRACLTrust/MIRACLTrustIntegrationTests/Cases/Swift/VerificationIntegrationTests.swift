@@ -19,7 +19,7 @@ class VerificationIntegrationTests: XCTestCase {
     let sessionDetailsTestCase = SessionDetailsTestCase()
     let crossDeviceSessionTestCase = CrossDeviceSessionCase()
     let api = PlatformAPIWrapper()
-    let gmailService = GmailServiceTestWrapper()
+    let mailpitService = MailpitServiceWrapper()
 
     var storage = SQLiteUserStorage(
         projectId: ProcessInfo.processInfo.environment["projectIdCUV"]!,
@@ -29,7 +29,7 @@ class VerificationIntegrationTests: XCTestCase {
     var configuration: Configuration?
 
     func testVerificationWithoutAuthenticationSession() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
             .Builder(
@@ -47,7 +47,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
-        let verificationResult = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
+        let verificationResult = try await mailpitService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
         let verificationURL = try XCTUnwrap(verificationResult)
 
         let queryItems = try XCTUnwrap(URLComponents(url: verificationURL, resolvingAgainstBaseURL: false)?.queryItems)
@@ -67,7 +67,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testVerificationWithoutCrossDeviceSession() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
             .Builder(
@@ -85,7 +85,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
-        let verificationResult = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
+        let verificationResult = try await mailpitService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
         let verificationURL = try XCTUnwrap(verificationResult)
 
         let queryItems = try XCTUnwrap(URLComponents(url: verificationURL, resolvingAgainstBaseURL: false)?.queryItems)
@@ -105,7 +105,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testVerificationWithMpinId() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
             .Builder(projectId: projectId, projectURL: projectURLDV)
@@ -121,7 +121,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verificationResponse)
         XCTAssertNil(error)
 
-        let verificationURLResult = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
+        let verificationURLResult = try await mailpitService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
         let verifcationURL = try XCTUnwrap(verificationURLResult)
 
         let (activationTokenResponse, activationTokenError) = await activationTokenTestCase.getActivationToken(
@@ -201,7 +201,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testVerificationWithSessionDetails() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
         let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
         let qrCode = "https://mcl.mpin.io#\(session.accessId)"
 
@@ -223,7 +223,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
-        let verificationURL = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
+        let verificationURL = try await mailpitService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
 
         let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             verificationURL: XCTUnwrap(verificationURL)
@@ -235,7 +235,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testVerificationWithCrossDeviceSessionDetails() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
         let session = try XCTUnwrap(api.startSession(projectId: projectId, projectURL: projectURLDV))
         let qrCode = "https://mcl.mpin.io#\(session.accessId)"
 
@@ -255,7 +255,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
-        let verificationURL = try await gmailService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
+        let verificationURL = try await mailpitService.getVerificationURL(receiver: extendedMailAddress, timestamp: timestamp)
 
         let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             verificationURL: XCTUnwrap(verificationURL)
@@ -267,7 +267,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testEmailCodeVerification() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
             .Builder(projectId: projectIdECV, projectURL: projectURLECV)
@@ -284,7 +284,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verified)
         XCTAssertNil(error)
 
-        let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
+        let code = try await mailpitService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
 
         let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
@@ -295,7 +295,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testEmailCodeVerificationWithMpinId() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
             .Builder(projectId: projectIdECV, projectURL: projectURLECV)
@@ -313,7 +313,7 @@ class VerificationIntegrationTests: XCTestCase {
 
         sleep(5)
 
-        let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
+        let code = try await mailpitService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
 
         let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
@@ -343,7 +343,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testEmailCodeVerificationWithoutMpinId() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
             .Builder(projectId: projectIdECV, projectURL: projectURLECV)
@@ -359,7 +359,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verificationResponse)
         XCTAssertNil(error)
 
-        let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
+        let code = try await mailpitService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
 
         let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
@@ -391,7 +391,7 @@ class VerificationIntegrationTests: XCTestCase {
     }
 
     func testEmailCodeVerificationWithRevokedMpinId() async throws {
-        let extendedMailAddress = "int+\(UUID().uuidString)@miracl.com"
+        let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
             .Builder(projectId: projectIdECV, projectURL: projectURLECV)
@@ -407,7 +407,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(verificationResponse)
         XCTAssertNil(error)
 
-        let code = try await gmailService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
+        let code = try await mailpitService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
         let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
             userId: extendedMailAddress, code: XCTUnwrap(code)
         )
