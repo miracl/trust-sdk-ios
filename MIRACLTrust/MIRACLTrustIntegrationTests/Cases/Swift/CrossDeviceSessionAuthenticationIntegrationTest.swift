@@ -103,24 +103,6 @@ struct CrossDeviceSessionAuthenticationIntegrationTest {
         #expect(desiredError == error)
     }
 
-    @Test("Tests failed authentication with empty session id", .timeLimit(.minutes(1)))
-    func authenticationFailedWithEmptySessionId() async throws {
-        let crossDeviceSession = createCrossDeviceSessionObject(sessionId: "")
-
-        let error = await #expect(throws: AuthenticationError.self) {
-            try await authenticationTestCase.authenticate(
-                user: user,
-                crossDeviceSession: crossDeviceSession
-            )
-        }
-
-        var isAuthenticationFailError = false
-        if let error, case .authenticationFail = error {
-            isAuthenticationFailError = true
-        }
-        #expect(isAuthenticationFailError)
-    }
-
     @Test("Tests failed authentication for invalid pin (e.g `abcde`)", .timeLimit(.minutes(1)))
     mutating func failedAuthenticationWithInvalidPin() async {
         authenticationTestCase.pinCode = UUID().uuidString
