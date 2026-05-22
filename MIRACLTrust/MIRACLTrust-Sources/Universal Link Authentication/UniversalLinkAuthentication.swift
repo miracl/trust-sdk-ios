@@ -10,6 +10,7 @@ struct UniversalLinkAuthenticator {
     let completionHandler: AuthenticationCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -21,6 +22,7 @@ struct UniversalLinkAuthenticator {
         crypto: CryptoBlueprint,
         userStorage: UserStorage,
         logger: Logger,
+        deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -31,6 +33,7 @@ struct UniversalLinkAuthenticator {
         self.crypto = crypto
         self.miraclAPI = miraclAPI
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
         self.didRequestPinHandler = didRequestPinHandler
         self.completionHandler = completionHandler
     }
@@ -66,6 +69,7 @@ struct UniversalLinkAuthenticator {
                 api: miraclAPI,
                 userStorage: userStorage,
                 logger: logger,
+                deviceTagManager: deviceTagManager,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

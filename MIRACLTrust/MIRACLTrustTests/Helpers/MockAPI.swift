@@ -208,6 +208,7 @@ struct MockAPI: APIBlueprint {
     func confirmVerificationRequest(
         userId _: String,
         code _: String,
+        deviceTag _: String,
         completionHandler: @escaping APIRequestCompletionHandler<VerificationConfirmationResponse>
     ) {
         completionHandler(
@@ -242,6 +243,7 @@ struct MockAPI: APIBlueprint {
         deviceName _: String,
         publicKey _: String,
         pushToken _: String?,
+        deviceTag _: String,
         completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
     ) {
         completionHandler(

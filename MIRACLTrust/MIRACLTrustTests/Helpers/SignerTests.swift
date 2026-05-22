@@ -265,6 +265,7 @@ class SignerTests: XCTestCase {
             crypto: crypto,
             logger: logger,
             deviceName: deviceName,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -301,6 +302,7 @@ class SignerTests: XCTestCase {
             crypto: crypto,
             logger: logger,
             deviceName: deviceName,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -336,6 +338,7 @@ class SignerTests: XCTestCase {
             crypto: crypto,
             logger: logger,
             deviceName: deviceName,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -360,6 +363,7 @@ class SignerTests: XCTestCase {
             crypto: crypto,
             logger: logger,
             deviceName: deviceName,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
             completionHandler: { _, _ in
             }
@@ -388,6 +392,7 @@ class SignerTests: XCTestCase {
                 crypto: crypto,
                 logger: logger,
                 deviceName: deviceName,
+                deviceTagManager: DeviceTagManager(logger: logger),
                 didRequestSigningPinHandler: didRequestSigningPinHandler,
                 completionHandler: { signature, error in
                     waitForSigningOperationFinish.fulfill()

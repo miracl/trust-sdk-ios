@@ -203,6 +203,7 @@ class QuickCodeGeneratorTests: XCTestCase {
             storage: storage,
             crypto: crypto,
             logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { quickCode, error in
                 testCompletionHandler(quickCode, error)

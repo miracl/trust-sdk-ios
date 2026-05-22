@@ -39,6 +39,9 @@
     /// Logging into the `QuickCode` category.
     case quickCode
 
+    /// Logging into the `Device Tag` category.
+    case deviceTag
+
     /// Describing category as string.
     var label: String {
         switch self {
@@ -68,6 +71,8 @@
             return "JWT Generation"
         case .quickCode:
             return "QuickCode"
+        case .deviceTag:
+            return "Device Tag"
         default:
             return ""
         }

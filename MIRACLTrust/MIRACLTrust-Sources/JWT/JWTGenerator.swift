@@ -9,6 +9,7 @@ struct JWTGenerator {
     let deviceName: String
     let crypto: CryptoBlueprint
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -19,6 +20,7 @@ struct JWTGenerator {
         userStorage: UserStorage,
         crypto: CryptoBlueprint,
         logger: Logger,
+        deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping JWTCompletionHandler
     ) {
@@ -29,6 +31,7 @@ struct JWTGenerator {
         self.userStorage = userStorage
         self.crypto = crypto
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
         self.completionHandler = completionHandler
     }
 
@@ -54,6 +57,7 @@ struct JWTGenerator {
                     userStorage: userStorage,
                     logger: logger,
                     scope: ["jwt"],
+                    deviceTagManager: deviceTagManager,
                     didRequestPinHandler: didRequestPinHandler,
                     completionHandler: authenticationResult
                 )

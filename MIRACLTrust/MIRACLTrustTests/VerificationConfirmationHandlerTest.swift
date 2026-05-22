@@ -297,6 +297,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         let handler = try VerificationConfirmationHandler(
             verificationURL: verificationURL,
             miraclAPI: mockAPI,
+            deviceTagManager: DeviceTagManager(logger: DefaultLogger(level: .none)),
             logger: logger
         ) { activationTokenResponse, error in
             verificationConfirmationCompletionHandler(activationTokenResponse, error)

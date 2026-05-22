@@ -184,13 +184,14 @@ class PushNotificationAuthenticatorTests: XCTestCase {
         testCompletionHandler: @escaping AuthenticationCompletionHandler
     ) {
         let expectation = XCTestExpectation(description: "Wait for Universal link Authentication")
-
+        let logger = DefaultLogger(level: .none)
         var pushNotificationsAuthenticator = PushNotificationAuthenticator(
             deviceName: deviceName,
             miraclAPI: api,
             userStorage: storage,
             crypto: MockCrypto(),
-            logger: DefaultLogger(level: .none),
+            logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)

@@ -4,4 +4,5 @@ struct RegistrationRequestBody: Codable {
     var activationToken: String
     var publicKey: String
     var pushToken: String?
+    var deviceTag: String
 }

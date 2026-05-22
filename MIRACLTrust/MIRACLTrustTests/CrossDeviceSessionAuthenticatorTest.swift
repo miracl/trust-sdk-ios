@@ -100,6 +100,7 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
         testCompletionHandler: @escaping AuthenticationCompletionHandler
     ) throws {
         let expectation = XCTestExpectation(description: "Wait for QR Authentication")
+        let logger = DefaultLogger(level: .none)
 
         var crossDeviceSessionAuthenticator = try CrossDeviceSessionAuthenticator(
             user: XCTUnwrap(user),
@@ -108,7 +109,8 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
             userStorage: storage,
             crypto: MockCrypto(),
             deviceName: deviceName,
-            logger: DefaultLogger(level: .none),
+            logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)

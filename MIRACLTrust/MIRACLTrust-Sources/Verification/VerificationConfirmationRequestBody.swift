@@ -1,4 +1,5 @@
-class VerificationConfirmationRequestBody: Codable {
-    var userId: String = ""
-    var code: String = ""
+struct VerificationConfirmationRequestBody: Codable {
+    var userId: String
+    var code: String
+    var deviceTag: String
 }

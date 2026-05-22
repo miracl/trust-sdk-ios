@@ -8,6 +8,7 @@ struct PushNotificationAuthenticator {
     let completionHandler: AuthenticationCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -17,6 +18,7 @@ struct PushNotificationAuthenticator {
         userStorage: UserStorage,
         crypto: CryptoBlueprint,
         logger: Logger,
+        deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -25,6 +27,7 @@ struct PushNotificationAuthenticator {
         self.crypto = crypto
         self.miraclAPI = miraclAPI
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
         self.didRequestPinHandler = didRequestPinHandler
         self.completionHandler = completionHandler
     }
@@ -72,6 +75,7 @@ struct PushNotificationAuthenticator {
                 api: miraclAPI,
                 userStorage: userStorage,
                 logger: logger,
+                deviceTagManager: deviceTagManager,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

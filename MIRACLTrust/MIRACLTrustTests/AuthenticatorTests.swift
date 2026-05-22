@@ -512,6 +512,7 @@ class AuthenticatorTests: XCTestCase {
             api: api,
             userStorage: storage,
             logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler
         ) { response, error in
             completionHandler(response, error)

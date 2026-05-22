@@ -67,4 +67,9 @@ extension OSLog {
         subsystem: subsystem,
         category: LogCategory.quickCode.label
     )
+
+    static let deviceTag = OSLog(
+        subsystem: subsystem,
+        category: LogCategory.deviceTag.label
+    )
 }
