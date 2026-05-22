@@ -112,6 +112,7 @@ class UniversalLinkAuthenticatorTests: XCTestCase {
     ) throws {
         let expectation = XCTestExpectation(description: "Wait for Universal link Authentication")
 
+        let logger = DefaultLogger(level: .none)
         var universalLinkAuthenticator = try UniversalLinkAuthenticator(
             user: XCTUnwrap(user),
             universalLinkURL: XCTUnwrap(universalLinkURL),
@@ -119,7 +120,8 @@ class UniversalLinkAuthenticatorTests: XCTestCase {
             miraclAPI: api,
             crypto: MockCrypto(),
             userStorage: storage,
-            logger: DefaultLogger(level: .none),
+            logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)

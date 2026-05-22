@@ -9,6 +9,7 @@ struct QuickCodeGenerator {
     let storage: UserStorage
     let crypto: CryptoBlueprint
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -19,6 +20,7 @@ struct QuickCodeGenerator {
         storage: UserStorage,
         crypto: CryptoBlueprint,
         logger: Logger,
+        deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping QuickCodeCompletionHandler
     ) {
@@ -28,6 +30,7 @@ struct QuickCodeGenerator {
         self.storage = storage
         self.crypto = crypto
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
         self.didRequestPinHandler = didRequestPinHandler
         self.completionHandler = completionHandler
     }
@@ -52,6 +55,7 @@ struct QuickCodeGenerator {
                     userStorage: storage,
                     logger: logger,
                     scope: ["reg-code"],
+                    deviceTagManager: deviceTagManager,
                     didRequestPinHandler: didRequestPinHandler,
                     completionHandler: authenticationResult
                 )

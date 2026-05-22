@@ -34,6 +34,7 @@ struct API: APIBlueprint {
         deviceName: String,
         publicKey: String,
         pushToken: String?,
+        deviceTag: String,
         completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
     ) {
         let registrationRequestBody = RegistrationRequestBody(
@@ -41,7 +42,8 @@ struct API: APIBlueprint {
             deviceName: deviceName,
             activationToken: activationToken,
             publicKey: publicKey,
-            pushToken: pushToken
+            pushToken: pushToken,
+            deviceTag: deviceTag
         )
 
         do {
@@ -229,11 +231,14 @@ struct API: APIBlueprint {
     func confirmVerificationRequest(
         userId: String,
         code: String,
+        deviceTag: String,
         completionHandler: @escaping APIRequestCompletionHandler<VerificationConfirmationResponse>
     ) {
-        let requestBody = VerificationConfirmationRequestBody()
-        requestBody.code = code
-        requestBody.userId = userId
+        let requestBody = VerificationConfirmationRequestBody(
+            userId: userId,
+            code: code,
+            deviceTag: deviceTag
+        )
 
         do {
             let request = try APIRequest(

@@ -10,6 +10,7 @@ struct CrossDeviceSessionAuthenticator {
     let completionHandler: AuthenticationCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -21,6 +22,7 @@ struct CrossDeviceSessionAuthenticator {
         crypto: CryptoBlueprint,
         deviceName: String,
         logger: Logger,
+        deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -32,6 +34,7 @@ struct CrossDeviceSessionAuthenticator {
         self.deviceName = deviceName
         self.completionHandler = completionHandler
         self.didRequestPinHandler = didRequestPinHandler
+        self.deviceTagManager = deviceTagManager
         self.logger = logger
     }
 
@@ -62,6 +65,7 @@ struct CrossDeviceSessionAuthenticator {
                 api: miraclAPI,
                 userStorage: userStorage,
                 logger: logger,
+                deviceTagManager: deviceTagManager,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

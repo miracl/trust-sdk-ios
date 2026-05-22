@@ -10,6 +10,7 @@ struct QRAuthenticator {
     let didRequestPinHandler: PinRequestHandler
     let crypto: CryptoBlueprint
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -21,6 +22,7 @@ struct QRAuthenticator {
         miraclAPI: APIBlueprint,
         userStorage: UserStorage,
         logger: Logger,
+        deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
@@ -32,6 +34,7 @@ struct QRAuthenticator {
         self.miraclAPI = miraclAPI
         self.didRequestPinHandler = didRequestPinHandler
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
         self.completionHandler = completionHandler
     }
 
@@ -66,6 +69,7 @@ struct QRAuthenticator {
                 api: miraclAPI,
                 userStorage: userStorage,
                 logger: logger,
+                deviceTagManager: deviceTagManager,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: authenticationResult
             )

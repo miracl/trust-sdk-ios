@@ -11,6 +11,7 @@ struct Signer {
     let sessionIdentifier: String?
     let logger: Logger
     let deviceName: String
+    let deviceTagManager: DeviceTagManager
 
     var authenticator: AuthenticatorBlueprint?
 
@@ -23,6 +24,7 @@ struct Signer {
         crypto: CryptoBlueprint,
         logger: Logger,
         deviceName: String,
+        deviceTagManager: DeviceTagManager,
         didRequestSigningPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping SigningCompletionHandler
     ) throws {
@@ -35,6 +37,7 @@ struct Signer {
         self.miraclAPI = miraclAPI
         self.userStorage = userStorage
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
         self.deviceName = deviceName
 
         try validateInput()
@@ -90,6 +93,7 @@ struct Signer {
                     userStorage: userStorage,
                     logger: logger,
                     scope: ["dvs-auth"],
+                    deviceTagManager: deviceTagManager,
                     didRequestPinHandler: { processPinHandler in
                         processPinHandler(pinCode)
                     },

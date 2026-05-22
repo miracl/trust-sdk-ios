@@ -22,6 +22,7 @@ class RegistratorTests: XCTestCase {
     var mpinId = "7b22696174223a313631373237323435332c22757365724944223a22676c6f62616c406578616d706c652e636f6d222c22634944223a2236636134636133622d623663342d343262332d386536372d336432653038616532643765222c2273616c74223a226d30756558414b4162566234425756742b5461745a51222c2276223a352c2273636f7065223a5b2261757468225d2c22647461223a5b5d2c227674223a227076227d"
     let hashOfMpinId = "d3ddd84f90ff4497df43534e0ab0813f71838f5ea92ba98705a84a0d6f593c8d"
     var randomString = NSUUID().uuidString
+    let logger = DefaultLogger(level: .none)
 
     override func setUpWithError() throws {
         crypto = RegistratorTests.mockCrypto()
@@ -129,7 +130,8 @@ class RegistratorTests: XCTestCase {
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
                                              crypto: MockCrypto(),
-                                             logger: DefaultLogger(level: .none),
+                                             logger: logger,
+                                             deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -143,7 +145,8 @@ class RegistratorTests: XCTestCase {
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
                                              crypto: MockCrypto(),
-                                             logger: DefaultLogger(level: .none),
+                                             logger: logger,
+                                             deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -159,7 +162,8 @@ class RegistratorTests: XCTestCase {
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
                                              crypto: MockCrypto(),
-                                             logger: DefaultLogger(level: .none),
+                                             logger: logger,
+                                             deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -173,7 +177,8 @@ class RegistratorTests: XCTestCase {
                                              userStorage: storage,
                                              projectId: NSUUID().uuidString,
                                              crypto: MockCrypto(),
-                                             logger: DefaultLogger(level: .none),
+                                             logger: logger,
+                                             deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
                                              completionHandler: { _, _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
@@ -593,7 +598,8 @@ class RegistratorTests: XCTestCase {
             userStorage: storage,
             projectId: projectId,
             crypto: crypto,
-            logger: DefaultLogger(level: .none),
+            logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { user, error in
                 completionHandler(user, error)

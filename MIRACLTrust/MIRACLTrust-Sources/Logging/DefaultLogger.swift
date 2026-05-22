@@ -87,6 +87,8 @@ final class DefaultLogger: Logger {
             return OSLog.jwtGeneration
         case .quickCode:
             return OSLog.quickCode
+        case .deviceTag:
+            return OSLog.deviceTag
         }
     }
 }

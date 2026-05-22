@@ -89,6 +89,7 @@ class JWTGeneratorTests: XCTestCase {
         testCompletionHandler: @escaping JWTCompletionHandler
     ) {
         let expectation = XCTestExpectation(description: "Wait for JWT.")
+        let logger = DefaultLogger(level: .none)
 
         var generator = JWTGenerator(
             user: user,
@@ -96,7 +97,8 @@ class JWTGeneratorTests: XCTestCase {
             deviceName: UUID().uuidString,
             userStorage: storage,
             crypto: MockCrypto(),
-            logger: DefaultLogger(level: .none),
+            logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { code, error in
                 testCompletionHandler(code, error)

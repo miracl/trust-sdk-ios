@@ -22,6 +22,7 @@ struct Authenticator: AuthenticatorBlueprint {
     let userStorage: UserStorage
     let deviceName: String
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     var completionHandler: AuthenticateCompletionHandler
 
@@ -33,6 +34,7 @@ struct Authenticator: AuthenticatorBlueprint {
          userStorage: UserStorage,
          logger: Logger,
          scope: [String] = ["oidc"],
+         deviceTagManager: DeviceTagManager,
          didRequestPinHandler: @escaping PinRequestHandler,
          completionHandler: @escaping AuthenticateCompletionHandler) throws {
         self.user = user
@@ -45,6 +47,7 @@ struct Authenticator: AuthenticatorBlueprint {
         self.userStorage = userStorage
         self.deviceName = deviceName
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
 
         try validateInput()
     }
@@ -286,7 +289,8 @@ struct Authenticator: AuthenticatorBlueprint {
                 userStorage: userStorage,
                 projectId: user.projectId,
                 crypto: crypto,
-                logger: logger
+                logger: logger,
+                deviceTagManager: deviceTagManager
             ) { processPinHandler in
                 processPinHandler(pinCode)
             } completionHandler: { updatedUser, error in
@@ -331,6 +335,7 @@ struct Authenticator: AuthenticatorBlueprint {
                 userStorage: userStorage,
                 logger: logger,
                 scope: scope,
+                deviceTagManager: deviceTagManager,
                 didRequestPinHandler: { pinHandler in
                     pinHandler(pinCode)
                 }, completionHandler: { updatedAuthenticationResponse, updatedAuthenticationError in

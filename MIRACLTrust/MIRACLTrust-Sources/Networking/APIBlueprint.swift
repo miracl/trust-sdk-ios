@@ -7,6 +7,7 @@ protocol APIBlueprint: Sendable {
         deviceName: String,
         publicKey: String,
         pushToken: String?,
+        deviceTag: String,
         completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
     )
 
@@ -48,6 +49,7 @@ protocol APIBlueprint: Sendable {
     func confirmVerificationRequest(
         userId: String,
         code: String,
+        deviceTag: String,
         completionHandler: @escaping APIRequestCompletionHandler<VerificationConfirmationResponse>
     )
 

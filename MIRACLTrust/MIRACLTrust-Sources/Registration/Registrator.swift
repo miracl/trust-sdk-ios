@@ -14,6 +14,7 @@ final class Registrator: Sendable {
     let projectId: String
     let userStorage: UserStorage
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     private let pinLengthRange = 4 ... 6
 
@@ -27,6 +28,7 @@ final class Registrator: Sendable {
         projectId: String,
         crypto: CryptoBlueprint,
         logger: Logger,
+        deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping RegistrationCompletionHandler
     ) throws {
@@ -43,6 +45,7 @@ final class Registrator: Sendable {
         self.projectId = projectId
         self.userStorage = userStorage
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
 
         try validateInput()
     }
@@ -76,7 +79,8 @@ final class Registrator: Sendable {
             activationToken: activationToken,
             deviceName: deviceName,
             publicKey: keyPairResult.publicKey.hex,
-            pushToken: pushNotificationsToken
+            pushToken: pushNotificationsToken,
+            deviceTag: deviceTagManager.deviceTag
         ) { _, response, error in
             if let error {
                 if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_ACTIVATION_TOKEN {

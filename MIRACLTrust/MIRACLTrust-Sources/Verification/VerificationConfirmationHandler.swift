@@ -9,10 +9,12 @@ struct VerificationConfirmationHandler {
     let activationCode: String?
     let userId: String?
     let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     init(
         verificationURL: URL,
         miraclAPI: APIBlueprint,
+        deviceTagManager: DeviceTagManager,
         logger: Logger,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) throws {
@@ -27,6 +29,7 @@ struct VerificationConfirmationHandler {
         activationCode = VerificationConfirmationHandler.getActivationCode(components: components)
         userId = VerificationConfirmationHandler.getUserId(components: components)
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
 
         try validateInput()
     }
@@ -35,6 +38,7 @@ struct VerificationConfirmationHandler {
         userId: String,
         activationCode: String,
         miraclAPI: APIBlueprint,
+        deviceTagManager: DeviceTagManager,
         logger: Logger,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) throws {
@@ -43,6 +47,7 @@ struct VerificationConfirmationHandler {
         self.activationCode = activationCode
         self.userId = userId
         self.logger = logger
+        self.deviceTagManager = deviceTagManager
 
         try validateInput()
     }
@@ -71,7 +76,8 @@ struct VerificationConfirmationHandler {
 
         miraclAPI.confirmVerificationRequest(
             userId: userId,
-            code: activationCode
+            code: activationCode,
+            deviceTag: deviceTagManager.deviceTag
         ) { apiCallResult, response, error in
             if apiCallResult == .failed, let error {
                 if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_VERIFICATION_CODE || clientErrorData.code == UNSUCCESSFUL_VERIFICATION {

@@ -29,6 +29,7 @@ import Foundation
     var urlSessionConfiguration: URLSessionConfiguration
     var sdkConfigured: Bool = false
     var logger: Logger
+    var deviceTagManager: DeviceTagManager
 
     private nonisolated(unsafe) static var shared: MIRACLTrust!
     nonisolated(unsafe) static var configuration: Configuration?
@@ -66,6 +67,8 @@ import Foundation
         } else {
             configuration.urlSessionConfiguration.httpAdditionalHeaders = ["X-MIRACL-CLIENT": miraclHeader]
         }
+
+        deviceTagManager = DeviceTagManager(logger: logger)
 
         userStorage = try MIRACLTrust.createUserStorage(
             storageType: configuration.storageType,
@@ -268,6 +271,7 @@ import Foundation
             let handler = try VerificationConfirmationHandler(
                 verificationURL: verificationURL,
                 miraclAPI: miraclAPI,
+                deviceTagManager: deviceTagManager,
                 logger: logger,
                 completionHandler: completionHandler
             )
@@ -296,6 +300,7 @@ import Foundation
                 userId: userId,
                 activationCode: code,
                 miraclAPI: miraclAPI,
+                deviceTagManager: deviceTagManager,
                 logger: logger,
                 completionHandler: completionHandler
             )
@@ -326,6 +331,7 @@ import Foundation
             storage: userStorage,
             crypto: crypto,
             logger: logger,
+            deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler
         ) { quickCode, error in
             completionHandler(quickCode, error)
@@ -361,6 +367,7 @@ import Foundation
                 projectId: projectId,
                 crypto: crypto,
                 logger: logger,
+                deviceTagManager: deviceTagManager,
                 didRequestPinHandler: didRequestPinHandler,
                 completionHandler: { user, error in
                     completionHandler(user, error)
@@ -404,6 +411,7 @@ import Foundation
             userStorage: userStorage,
             crypto: crypto,
             logger: logger,
+            deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { jwt, error in
                 completionHandler(jwt, error)
@@ -436,6 +444,7 @@ import Foundation
             miraclAPI: miraclAPI,
             userStorage: userStorage,
             logger: logger,
+            deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 completionHandler(isAuthenticated, error)
@@ -465,6 +474,7 @@ import Foundation
             userStorage: userStorage,
             crypto: crypto,
             logger: logger,
+            deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 completionHandler(isAuthenticated, error)
@@ -497,6 +507,7 @@ import Foundation
             crypto: crypto,
             userStorage: userStorage,
             logger: logger,
+            deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 completionHandler(isAuthenticated, error)
@@ -528,6 +539,7 @@ import Foundation
             crypto: crypto,
             deviceName: deviceName,
             logger: logger,
+            deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
             completionHandler: { isAuthenticated, error in
                 if let error, case AuthenticationError.invalidAuthenticationSession = error {
@@ -789,6 +801,7 @@ import Foundation
                 crypto: crypto,
                 logger: logger,
                 deviceName: deviceName,
+                deviceTagManager: deviceTagManager,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
             ) { signature, error in
                 completionHandler(signature, error)
@@ -826,6 +839,7 @@ import Foundation
                 crypto: crypto,
                 logger: logger,
                 deviceName: deviceName,
+                deviceTagManager: deviceTagManager,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
             ) { signinResult, error in
                 if signinResult != nil {

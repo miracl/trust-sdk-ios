@@ -93,7 +93,8 @@ class APITests: XCTestCase {
             activationToken: randomString,
             deviceName: randomString,
             publicKey: randomString,
-            pushToken: nil
+            pushToken: nil,
+            deviceTag: randomString
         ) { result, response, error in
             do {
                 let response = try XCTUnwrap(response)

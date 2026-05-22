@@ -62,6 +62,10 @@
 		6D6811F228880F4200313578 /* SQLiteMigration1to2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6811F128880F4200313578 /* SQLiteMigration1to2.swift */; };
 		6D685E4B247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D685E4A247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift */; };
 		6D685E54247E7E0E000AEDAC /* PlatformAPIWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D685E53247E7E0E000AEDAC /* PlatformAPIWrapper.swift */; };
+		6D6A20672FC825A600AC51E8 /* DeviceTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6A20662FC8259C00AC51E8 /* DeviceTagTests.swift */; };
+		6D6A206D2FCDBD1200AC51E8 /* FileManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6A206C2FCDBD0300AC51E8 /* FileManagerProtocol.swift */; };
+		6D6A206F2FCDBD2500AC51E8 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6A206E2FCDBD1E00AC51E8 /* FileManager+Extensions.swift */; };
+		6D6A20732FCDBD7400AC51E8 /* BackupConfigurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6A20722FCDBD7400AC51E8 /* BackupConfigurable.swift */; };
 		6D6B94B62E460A6D00BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94B52E460A6400BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift */; };
 		6D6B94B82E46141600BC7A60 /* CrossDeviceSessionAbortCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94B72E46140D00BC7A60 /* CrossDeviceSessionAbortCase.swift */; };
 		6D6B94BD2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B94BC2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.m */; };
@@ -212,6 +216,7 @@
 		6DED0DAB2AA0D56C008875C6 /* SQLiteMigration2to3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DED0DAA2AA0D56C008875C6 /* SQLiteMigration2to3.swift */; };
 		6DEE19CE25CA7A2E0086D64A /* QuickCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEE19CD25CA7A2E0086D64A /* QuickCodeGenerator.swift */; };
 		6DEE19DE25CA7AC80086D64A /* QuickCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEE19DD25CA7AC80086D64A /* QuickCode.swift */; };
+		6DEEBA332FBF123C00E2A89E /* DeviceTagManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEEBA322FBF123700E2A89E /* DeviceTagManager.swift */; };
 		6DF2D3F3269F00B5004CAD54 /* UserStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3F2269F00B5004CAD54 /* UserStorage.swift */; };
 		6DF2D3F5269F0363004CAD54 /* SQLiteUserStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3F4269F0363004CAD54 /* SQLiteUserStorage.swift */; };
 		6DF2D3F7269F03DE004CAD54 /* SQLiteUserStorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3F6269F03DE004CAD54 /* SQLiteUserStorageError.swift */; };
@@ -364,6 +369,10 @@
 		6D685E4A247E7AC3000AEDAC /* QRAuthenticationIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRAuthenticationIntegrationTests.swift; sourceTree = "<group>"; };
 		6D685E4C247E7AC3000AEDAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D685E53247E7E0E000AEDAC /* PlatformAPIWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformAPIWrapper.swift; sourceTree = "<group>"; };
+		6D6A20662FC8259C00AC51E8 /* DeviceTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTagTests.swift; sourceTree = "<group>"; };
+		6D6A206C2FCDBD0300AC51E8 /* FileManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerProtocol.swift; sourceTree = "<group>"; };
+		6D6A206E2FCDBD1E00AC51E8 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
+		6D6A20722FCDBD7400AC51E8 /* BackupConfigurable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupConfigurable.swift; sourceTree = "<group>"; };
 		6D6B94B52E460A6400BC7A60 /* CrossDeviceSessionAborterIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAborterIntegrationTest.swift; sourceTree = "<group>"; };
 		6D6B94B72E46140D00BC7A60 /* CrossDeviceSessionAbortCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossDeviceSessionAbortCase.swift; sourceTree = "<group>"; };
 		6D6B94BB2E49E9CA00BC7A60 /* CrossDeviceSessionCompatiblityCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrossDeviceSessionCompatiblityCase.h; sourceTree = "<group>"; };
@@ -507,6 +516,7 @@
 		6DED0DAA2AA0D56C008875C6 /* SQLiteMigration2to3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteMigration2to3.swift; sourceTree = "<group>"; };
 		6DEE19CD25CA7A2E0086D64A /* QuickCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCodeGenerator.swift; sourceTree = "<group>"; };
 		6DEE19DD25CA7AC80086D64A /* QuickCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCode.swift; sourceTree = "<group>"; };
+		6DEEBA322FBF123700E2A89E /* DeviceTagManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTagManager.swift; sourceTree = "<group>"; };
 		6DF2D3F2269F00B5004CAD54 /* UserStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStorage.swift; sourceTree = "<group>"; };
 		6DF2D3F4269F0363004CAD54 /* SQLiteUserStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteUserStorage.swift; sourceTree = "<group>"; };
 		6DF2D3F6269F03DE004CAD54 /* SQLiteUserStorageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteUserStorageError.swift; sourceTree = "<group>"; };
@@ -645,6 +655,7 @@
 				6D663D772E33775D004B1D53 /* CrossDeviceSessionAborterTest.swift */,
 				6D663D792E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift */,
 				6D8947782F6C339D00D1AD15 /* CreateInstanceTests.swift */,
+				6D6A20662FC8259C00AC51E8 /* DeviceTagTests.swift */,
 				6D18500C23E038E8008E85E5 /* Info.plist */,
 			);
 			path = MIRACLTrustTests;
@@ -733,6 +744,7 @@
 		6D5AFD40242230F900FBACDA /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				6D6A206E2FCDBD1E00AC51E8 /* FileManager+Extensions.swift */,
 				6DBA72F42410E5AD00561F89 /* UIDevice+Helpers.swift */,
 				6D5AFD412422315000FBACDA /* StringProtocol+Helpers.swift */,
 				6D73E819243B033600E41329 /* Data+Extensions.swift */,
@@ -838,6 +850,9 @@
 		6D97E52A2E4A09AA00A48235 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				6D6A20722FCDBD7400AC51E8 /* BackupConfigurable.swift */,
+				6D6A206C2FCDBD0300AC51E8 /* FileManagerProtocol.swift */,
+				6DEEBA322FBF123700E2A89E /* DeviceTagManager.swift */,
 				6D72642D2EC640DB004D7BE2 /* DefaultLocalizedError.swift */,
 				6D56E98D2E745B1100A261E2 /* PinController.swift */,
 			);
@@ -1398,6 +1413,7 @@
 				6DDB73612E61BDC600F32D2F /* TestConstants.swift in Sources */,
 				6DAAC0EE24002D8D00652CD1 /* APIRequestTests.swift in Sources */,
 				6D8947792F6C33A300D1AD15 /* CreateInstanceTests.swift in Sources */,
+				6D6A20672FC825A600AC51E8 /* DeviceTagTests.swift in Sources */,
 				6D49C10F2448497900C48178 /* SQLiteUserStorageTests.swift in Sources */,
 				6D6EBBAB24D29D2600E1B72D /* MockAuthenticator.swift in Sources */,
 				6D5AFD512428D35900FBACDA /* CryptoTests.swift in Sources */,
@@ -1515,11 +1531,13 @@
 				6DF2D3F3269F00B5004CAD54 /* UserStorage.swift in Sources */,
 				6DC46A5125B9BAFD0099866C /* Verificator.swift in Sources */,
 				FA5382F62D0B376D00C76DBD /* QuickCodeError.swift in Sources */,
+				6D6A206F2FCDBD2500AC51E8 /* FileManager+Extensions.swift in Sources */,
 				6DC89F632E2FDBE900683AFB /* CrossDeviceSessionError.swift in Sources */,
 				6DB4207E26F4CF8C00B68AB4 /* QRAuthenticator.swift in Sources */,
 				6DC46A5025B9BAFD0099866C /* VerificationConfirmationHandler.swift in Sources */,
 				6DC4696B25B9B7FC0099866C /* Constants.swift in Sources */,
 				6D723EDA2D396786008FA01E /* AuthenticatorBlueprint.swift in Sources */,
+				6DEEBA332FBF123C00E2A89E /* DeviceTagManager.swift in Sources */,
 				6DB708C428EF00EA001D2F8A /* ActivationTokenErrorResponse.swift in Sources */,
 				6D6811F228880F4200313578 /* SQLiteMigration1to2.swift in Sources */,
 				6DC46A9125B9BB2B0099866C /* API.swift in Sources */,
@@ -1559,6 +1577,7 @@
 				6DEE19CE25CA7A2E0086D64A /* QuickCodeGenerator.swift in Sources */,
 				6DED0DAB2AA0D56C008875C6 /* SQLiteMigration2to3.swift in Sources */,
 				6DC46A9225B9BB2B0099866C /* APIRequest.swift in Sources */,
+				6D6A206D2FCDBD1200AC51E8 /* FileManagerProtocol.swift in Sources */,
 				6D91ABD826FDE99F00EE28CF /* CodeStatusRequestBody.swift in Sources */,
 				6DC46A3525B9BAF20099866C /* AuthenticationError.swift in Sources */,
 				6DC46A4D25B9BAFD0099866C /* VerificationConfirmationResponse.swift in Sources */,
@@ -1584,6 +1603,7 @@
 				6DC46A7C25B9BB210099866C /* OSLog+Helper.swift in Sources */,
 				6DC46A5325B9BAFD0099866C /* VerificationError.swift in Sources */,
 				6DC46A4E25B9BAFD0099866C /* VerificationRequestBody.swift in Sources */,
+				6D6A20732FCDBD7400AC51E8 /* BackupConfigurable.swift in Sources */,
 				6DC4699F25B9B9890099866C /* sqlite3.c in Sources */,
 				6DC46A0A25B9BAD40099866C /* LoggingLevel.swift in Sources */,
 				6DC46A3B25B9BAF20099866C /* Pass2Response.swift in Sources */,

@@ -119,7 +119,7 @@ class QRAuthenticatorTests: XCTestCase {
         testCompletionHandler: @escaping AuthenticationCompletionHandler
     ) throws {
         let expectation = XCTestExpectation(description: "Wait for QR Authentication")
-
+        let logger = DefaultLogger(level: .none)
         var qrAuthenticator = try QRAuthenticator(
             user: XCTUnwrap(user),
             qrCode: qrCode,
@@ -127,7 +127,8 @@ class QRAuthenticatorTests: XCTestCase {
             crypto: MockCrypto(),
             miraclAPI: api,
             userStorage: storage,
-            logger: DefaultLogger(level: .none),
+            logger: logger,
+            deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler
         ) { result, error in
             testCompletionHandler(result, error)
