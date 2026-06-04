@@ -190,16 +190,16 @@ import Foundation
     ///  - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
     @objc public func sendVerificationEmail(
         userId: String,
-        authenticationSessionDetails: AuthenticationSessionDetails? = nil,
+        authenticationSessionDetails: AuthenticationSessionDetails?,
         completionHandler: @escaping VerificationCompletionHandler
     ) {
+        var sessionIdentifier: String?
+
+        if let authenticationSessionDetails {
+            sessionIdentifier = authenticationSessionDetails.accessId
+        }
+
         do {
-            var sessionIdentifier: String?
-
-            if let authenticationSessionDetails {
-                sessionIdentifier = authenticationSessionDetails.accessId
-            }
-
             let verificator = try Verificator(
                 userId: userId,
                 projectId: projectId,
@@ -229,21 +229,46 @@ import Foundation
     ///   - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
     @objc public func _sendVerificationEmail(
         userId: String,
-        crossDeviceSession: CrossDeviceSession? = nil,
+        crossDeviceSession: CrossDeviceSession,
         completionHandler: @escaping VerificationCompletionHandler
     ) {
         do {
-            var sessionIdentifier: String?
-
-            if let crossDeviceSession {
-                sessionIdentifier = crossDeviceSession.sessionId
-            }
-
             let verificator = try Verificator(
                 userId: userId,
                 projectId: projectId,
                 deviceName: deviceName,
-                sessionIdentifier: sessionIdentifier,
+                sessionIdentifier: crossDeviceSession.sessionId,
+                miraclAPI: miraclAPI,
+                userStorage: userStorage,
+                logger: logger,
+                completionHandler: completionHandler
+            )
+            verificator.verify()
+        } catch {
+            logError(error: error, category: .verification)
+
+            DispatchQueue.main.async {
+                completionHandler(nil, error)
+            }
+        }
+    }
+
+    /// Default method for verifying the User ID with the MIRACL Trust platform.
+    /// Currently, verification is performed by sending an email.
+    ///
+    /// - Parameters:
+    ///   - userId: an identifier of the user. Must be a valid email address.
+    ///   - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
+    @objc public func sendVerificationEmail(
+        userId: String,
+        completionHandler: @escaping VerificationCompletionHandler
+    ) {
+        do {
+            let verificator = try Verificator(
+                userId: userId,
+                projectId: projectId,
+                deviceName: deviceName,
+                sessionIdentifier: nil,
                 miraclAPI: miraclAPI,
                 userStorage: userStorage,
                 logger: logger,
