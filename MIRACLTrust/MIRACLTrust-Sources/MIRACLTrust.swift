@@ -335,7 +335,7 @@ import Foundation
 
     // MARK: User Registration
 
-    /// Registers a new user for a given MIRACLTrust Project to the MIRACLTrust platform.
+    /// Registers a new user for a given MIRACL Trust Project to the MIRACL Trust platform.
     /// - Parameters:
     ///   - userId: an identifier of the user.
     ///   - activationToken: a token obtained during the user verification process indicating that the user has already been verified.

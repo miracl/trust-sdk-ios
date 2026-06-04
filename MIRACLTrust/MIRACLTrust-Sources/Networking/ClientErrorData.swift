@@ -1,6 +1,6 @@
 import Foundation
 
-/// A client error representation which is returned by the MIRACL API.
+/// A client error representation which is returned by the MIRACL Trust API.
 @objcMembers
 @objc public final class ClientErrorData: NSObject, Sendable {
     /// Code of the error.
