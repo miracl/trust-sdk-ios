@@ -78,7 +78,7 @@ class VerificationIntegrationTests: XCTestCase {
         try MIRACLTrust.configure(with: XCTUnwrap(configuration))
 
         let timestamp = Date()
-        let (verified, error) = await verificationTestCase.sendVerificationEmailForCrossDeviceSession(
+        let (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress
         )
 
@@ -214,11 +214,12 @@ class VerificationIntegrationTests: XCTestCase {
         let (sessionDetails, sessionDetailsError) = await sessionDetailsTestCase.getSessionDetails(qrCode: qrCode)
         XCTAssertNil(sessionDetailsError)
         XCTAssertNotNil(sessionDetails)
+        let authenticationSessionDetails = try XCTUnwrap(sessionDetails)
 
         let timestamp = Date()
         let (verified, error) = await verificationTestCase.sendVerificationEmail(
             userId: extendedMailAddress,
-            authenticationSessionDetails: sessionDetails
+            authenticationSessionDetails: authenticationSessionDetails
         )
         XCTAssertNotNil(verified)
         XCTAssertNil(error)

@@ -4,7 +4,7 @@ import XCTest
 class VerificationTestCase {
     func sendVerificationEmail(
         userId: String,
-        authenticationSessionDetails: AuthenticationSessionDetails? = nil
+        authenticationSessionDetails: AuthenticationSessionDetails?
     ) async -> (VerificationResponse?, Error?) {
         await withCheckedContinuation { continuation in
             MIRACLTrust.getInstance().sendVerificationEmail(
@@ -18,12 +18,24 @@ class VerificationTestCase {
 
     func sendVerificationEmailForCrossDeviceSession(
         userId: String,
-        crossDeviceSession: CrossDeviceSession? = nil
+        crossDeviceSession: CrossDeviceSession
     ) async -> (VerificationResponse?, Error?) {
         await withCheckedContinuation { continuation in
             MIRACLTrust.getInstance()._sendVerificationEmail(
                 userId: userId,
                 crossDeviceSession: crossDeviceSession
+            ) { result, error in
+                continuation.resume(returning: (result, error))
+            }
+        }
+    }
+
+    func sendVerificationEmail(
+        userId: String
+    ) async -> (VerificationResponse?, Error?) {
+        await withCheckedContinuation { continuation in
+            MIRACLTrust.getInstance().sendVerificationEmail(
+                userId: userId
             ) { result, error in
                 continuation.resume(returning: (result, error))
             }
