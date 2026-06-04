@@ -1,6 +1,6 @@
 import Foundation
 
-/// URLs used to make a call to given MIRACL endpoints. This class is initialised when the [API] class instance is created from the response taken from the client settings.
+/// URLs used to make a call to given MIRACL Trust endpoints. This class is initialised when the [API] class instance is created from the response taken from the client settings.
 struct APISettings {
     let registrationURL: URL
     let authenticateURL: URL

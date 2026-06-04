@@ -103,7 +103,7 @@ Objective-C:
 ```objc
 NSString *projectId = <#Enter your Project ID#>;
 NSString *projectURL = <#Enter your Project Domain here#>;
-NSString *deviceName = <#Enter your device name here or use UIDevice.current.modelName provided by MIRACL SDK #>;
+NSString *deviceName = <#Enter your device name here or use UIDevice.current.modelName provided by MIRACL Trust SDK #>;
 
 NSError *configurationError;
 
@@ -471,7 +471,7 @@ To authenticate a user on another application, there are three options:
   ```swift
       MIRACLTrust.getInstance().authenticateWithQRCode(
           user: <#Already registered user object#>,
-          qrCode: <#QR code taken from a MIRACL page#>,
+          qrCode: <#QR code taken from a MIRACL Trust page#>,
           didRequestPinHandler: { pinProcessor in
               // Here the user provides their current User ID's PIN code.
 
@@ -487,7 +487,7 @@ To authenticate a user on another application, there are three options:
   ```objc
   [[MIRACLTrust getInstance]
       authenticateWithUser:<#Already registered user object#>
-                    qrCode:<#QR code taken from a MIRACL page#>
+                    qrCode:<#QR code taken from a MIRACL Trust page#>
       didRequestPinHandler:^(void (^ _Nonnull pinProcessor)(NSString * _Nullable)) {
           // Here the user provides their current User ID's PIN code.
 
