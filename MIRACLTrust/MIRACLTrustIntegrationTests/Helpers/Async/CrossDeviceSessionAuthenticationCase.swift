@@ -13,14 +13,18 @@ struct CrossDeviceSessionAuthenticationCase {
         }
 
         return try await withCheckedThrowingContinuation { continuation in
-            MIRACLTrust.getInstance()._authenticate(user: user, crossDeviceSession: crossDeviceSession, didRequestPinHandler: pinHandler, completionHandler: { isAuthenticated, error in
+            MIRACLTrust.getInstance().authenticateCrossDeviceSession(
+                crossDeviceSession: crossDeviceSession,
+                user: user,
+                didRequestPinHandler: pinHandler
+            ) { isAuthenticated, error in
                 if let error {
                     continuation.resume(throwing: error)
                     return
                 }
 
                 continuation.resume(returning: isAuthenticated)
-            })
+            }
         }
     }
 }

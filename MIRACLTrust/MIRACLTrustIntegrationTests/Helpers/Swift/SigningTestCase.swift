@@ -29,7 +29,7 @@ class SigningTestCase {
         }
 
         return await withCheckedContinuation { continuation in
-            MIRACLTrust.getInstance()._sign(
+            MIRACLTrust.getInstance().signCrossDeviceSession(
                 crossDeviceSession: crossDeviceSession,
                 user: user,
                 didRequestSigningPinHandler: pinHandler

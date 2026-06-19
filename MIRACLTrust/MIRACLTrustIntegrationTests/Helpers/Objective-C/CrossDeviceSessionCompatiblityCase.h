@@ -7,7 +7,10 @@
 - (NSDictionary *) getCrossDeviceSessionForUniversalLinkURL:(NSURL *)universalLinkURL;
 - (NSDictionary *) getCrossDeviceSessionForPushNotificationsPayload:(NSDictionary *)pushNotificationsPayload;
 - (NSDictionary *) abortCrossDeviceSession:(CrossDeviceSession *) crossDeviceSession;
-- (NSDictionary *) authenticateWithUser:(User *)user
-                     crossDeviceSession:(CrossDeviceSession *)crossDeviceSession
-                                 andPin:(NSString *)pinCode;
+- (NSDictionary *) authenticateCrossDeviceSession:(CrossDeviceSession *)crossDeviceSession
+                                             user:(User *) user
+                                           andPin:(NSString *)pinCode;
+-(NSDictionary *)signCrossDeviceSession:(CrossDeviceSession *) crossDeviceSession
+                                signingUser:(User *)user
+                                 andPinCode:(NSString *) pinCode;
 @end

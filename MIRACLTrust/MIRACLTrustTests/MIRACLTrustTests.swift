@@ -157,7 +157,7 @@ class MIRACLTrustTests: XCTestCase {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail with cross device session")
         let crossDeviceSession = createCrossDeviceSession()
 
-        MIRACLTrust.getInstance()._sendVerificationEmail(userId: randomString, crossDeviceSession: crossDeviceSession) { response, error in
+        MIRACLTrust.getInstance().sendVerificationEmail(userId: randomString, crossDeviceSession: crossDeviceSession) { response, error in
             XCTAssertNil(error)
             XCTAssertNotNil(response)
 
@@ -184,7 +184,7 @@ class MIRACLTrustTests: XCTestCase {
     func testSendVerificationEmailWithoutCrossDeviceSession() {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail without cross device session")
 
-        MIRACLTrust.getInstance()._sendVerificationEmail(userId: randomString) { response, error in
+        MIRACLTrust.getInstance().sendVerificationEmail(userId: randomString) { response, error in
             XCTAssertNil(error)
             XCTAssertNotNil(response)
 

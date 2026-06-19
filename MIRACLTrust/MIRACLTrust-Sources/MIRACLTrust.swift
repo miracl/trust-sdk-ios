@@ -227,7 +227,7 @@ import Foundation
     ///   - userId: an identifier of the user. Must be a valid email address.
     ///   - crossDeviceSession: the session from which the verification is started.
     ///   - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
-    @objc public func _sendVerificationEmail(
+    @objc public func sendVerificationEmail(
         userId: String,
         crossDeviceSession: CrossDeviceSession,
         completionHandler: @escaping VerificationCompletionHandler
@@ -541,43 +541,6 @@ import Foundation
         universalLinkAuthenticator.authenticate()
     }
 
-    /// Authenticates the user in the MIRACL Trust platform.
-    ///
-    /// Use this method to authenticate another device or application using ``CrossDeviceSession``.
-    ///
-    /// - Parameters:
-    ///   - user: the user to be authenticated.
-    ///   - crossDeviceSession: details for the authentication operation.
-    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
-    ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
-    @objc public func _authenticate(
-        user: User,
-        crossDeviceSession: CrossDeviceSession,
-        didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping AuthenticationCompletionHandler
-    ) {
-        let crossDeviceSessionAuthenticator = CrossDeviceSessionAuthenticator(
-            user: user,
-            crossDeviceSession: crossDeviceSession,
-            miraclAPI: miraclAPI,
-            userStorage: userStorage,
-            crypto: crypto,
-            deviceName: deviceName,
-            logger: logger,
-            deviceTagManager: deviceTagManager,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { isAuthenticated, error in
-                if let error, case AuthenticationError.invalidAuthenticationSession = error {
-                    completionHandler(isAuthenticated, AuthenticationError.invalidCrossDeviceSession)
-                } else {
-                    completionHandler(isAuthenticated, error)
-                }
-            }
-        )
-
-        crossDeviceSessionAuthenticator.authenticate()
-    }
-
     // MARK: Cross Device Session
 
     /// Gets ``CrossDeviceSession`` for a QR code.
@@ -586,7 +549,8 @@ import Foundation
     ///   - qrCode: a string read from the QR code.
     ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is fetched. It can contain a ``CrossDeviceSession`` optional object
     ///   and an optional error object.
-    @objc public func _getCrossDeviceSessionFromQRCode(
+    @objc(getCrossDeviceSessionFromQRCode:completionHandler:)
+    public func getCrossDeviceSessionFromQRCode(
         qrCode: String,
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
@@ -613,7 +577,8 @@ import Foundation
     ///   - universalLinkURL: universal link for authentication.
     ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is fetched. It can contain a ``CrossDeviceSession`` optional object
     ///   and an optional error object.
-    @objc public func _getCrossDeviceSessionFromUniversalLinkURL(
+    @objc(getCrossDeviceSessionFromUniversalLinkURL:completionHandler:)
+    public func getCrossDeviceSessionFromUniversalLinkURL(
         universalLinkURL: URL,
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
@@ -640,7 +605,8 @@ import Foundation
     ///   - pushNotificationPayload: a dictionary received from the push notification.
     ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is fetched. It can contain a ``CrossDeviceSession`` optional object
     ///   and an optional error object.
-    @objc public func _getCrossDeviceSessionFromPushNotificationPayload(
+    @objc(getCrossDeviceSessionFromPushNotificationPayload:completionHandler:)
+    public func getCrossDeviceSessionFromPushNotificationPayload(
         pushNotificationPayload: [AnyHashable: Any],
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
@@ -661,13 +627,96 @@ import Foundation
         }
     }
 
+    /// Authenticates the user in the MIRACL Trust platform.
+    ///
+    /// Use this method to authenticate another device or application using ``CrossDeviceSession``.
+    ///
+    /// - Parameters:
+    ///   - user: the user to be authenticated.
+    ///   - crossDeviceSession: details for the authentication operation.
+    ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
+    ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
+    @objc(authenticateCrossDeviceSession:user:didRequestPinHandler:completionHandler:)
+    public func authenticateCrossDeviceSession(
+        crossDeviceSession: CrossDeviceSession,
+        user: User,
+        didRequestPinHandler: @escaping PinRequestHandler,
+        completionHandler: @escaping AuthenticationCompletionHandler
+    ) {
+        let crossDeviceSessionAuthenticator = CrossDeviceSessionAuthenticator(
+            user: user,
+            crossDeviceSession: crossDeviceSession,
+            miraclAPI: miraclAPI,
+            userStorage: userStorage,
+            crypto: crypto,
+            deviceName: deviceName,
+            logger: logger,
+            deviceTagManager: deviceTagManager,
+            didRequestPinHandler: didRequestPinHandler,
+            completionHandler: { isAuthenticated, error in
+                if let error, case AuthenticationError.invalidAuthenticationSession = error {
+                    completionHandler(isAuthenticated, AuthenticationError.invalidCrossDeviceSession)
+                } else {
+                    completionHandler(isAuthenticated, error)
+                }
+            }
+        )
+
+        crossDeviceSessionAuthenticator.authenticate()
+    }
+
+    /// Generates a signature for a hash provided by the ``CrossDeviceSession`` parameter and updates the session.
+    ///
+    /// - Parameters:
+    ///   - crossDeviceSession: details for the signing operation.
+    ///   - user: a registered user with a signing User ID.
+    ///   - didRequestSigningPinHandler: a closure called when the SDK requests the signing User ID's PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user finishes their action.
+    ///   - completionHandler: a closure called when the signing has completed. It can contain a Boolean flag and an optional error object.
+    @objc(signCrossDeviceSession:user:didRequestSigningPinHandler:completionHandler:)
+    public func signCrossDeviceSession(
+        crossDeviceSession: CrossDeviceSession,
+        user: User,
+        didRequestSigningPinHandler: @escaping PinRequestHandler,
+        completionHandler: @escaping CrossDeviceSigningCompletionHandler
+    ) {
+        do {
+            let signer = try Signer(
+                messageHash: Data(hexString: crossDeviceSession.signingHash),
+                sessionIdentifier: crossDeviceSession.sessionId,
+                user: user,
+                miraclAPI: miraclAPI,
+                userStorage: userStorage,
+                crypto: crypto,
+                logger: logger,
+                deviceName: deviceName,
+                deviceTagManager: deviceTagManager,
+                didRequestSigningPinHandler: didRequestSigningPinHandler
+            ) { signinResult, error in
+                if signinResult != nil {
+                    completionHandler(true, nil)
+                } else if let error {
+                    completionHandler(false, error)
+                } else {
+                    completionHandler(false, SigningError.signingFail(nil))
+                }
+            }
+            signer.sign()
+        } catch {
+            logError(error: error, category: .signing)
+            DispatchQueue.main.async {
+                completionHandler(false, error)
+            }
+        }
+    }
+
     /// Cancels the ``CrossDeviceSession``.
     ///
     /// - Parameters:
     ///   - crossDeviceSession: the session to be cancelled.
     ///   - completionHandler: a closure called when the ``CrossDeviceSession`` is aborted. It can contain a Boolean flag representing the abortion result and an optional error object.
-    @objc public func _abortCrossDeviceSession(
-        _ crossDeviceSession: CrossDeviceSession,
+    @objc(abortCrossDeviceSession:completionHandler:)
+    public func abortCrossDeviceSession(
+        crossDeviceSession: CrossDeviceSession,
         completionHandler: @escaping CrossDeviceSessionAborterCompletionHandler
     ) {
         do {
@@ -837,49 +886,6 @@ import Foundation
             logError(error: error, category: .signing)
             DispatchQueue.main.async {
                 completionHandler(nil, error)
-            }
-        }
-    }
-
-    /// Generates a signature for a hash provided by the ``CrossDeviceSession`` parameter and updates the session.
-    ///
-    /// - Parameters:
-    ///   - crossDeviceSession: details for the signing operation.
-    ///   - user: a registered user with a signing User ID.
-    ///   - didRequestSigningPinHandler: a closure called when the SDK requests the signing User ID's PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user finishes their action.
-    ///   - completionHandler: a closure called when the signing has completed. It can contain a Boolean flag and an optional error object.
-    @objc public func _sign(
-        crossDeviceSession: CrossDeviceSession,
-        user: User,
-        didRequestSigningPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping CrossDeviceSigningCompletionHandler
-    ) {
-        do {
-            let signer = try Signer(
-                messageHash: Data(hexString: crossDeviceSession.signingHash),
-                sessionIdentifier: crossDeviceSession.sessionId,
-                user: user,
-                miraclAPI: miraclAPI,
-                userStorage: userStorage,
-                crypto: crypto,
-                logger: logger,
-                deviceName: deviceName,
-                deviceTagManager: deviceTagManager,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signinResult, error in
-                if signinResult != nil {
-                    completionHandler(true, nil)
-                } else if let error {
-                    completionHandler(false, error)
-                } else {
-                    completionHandler(false, SigningError.signingFail(nil))
-                }
-            }
-            signer.sign()
-        } catch {
-            logError(error: error, category: .signing)
-            DispatchQueue.main.async {
-                completionHandler(false, error)
             }
         }
     }

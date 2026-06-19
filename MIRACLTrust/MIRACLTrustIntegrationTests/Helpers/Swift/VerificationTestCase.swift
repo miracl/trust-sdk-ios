@@ -21,7 +21,7 @@ class VerificationTestCase {
         crossDeviceSession: CrossDeviceSession
     ) async -> (VerificationResponse?, Error?) {
         await withCheckedContinuation { continuation in
-            MIRACLTrust.getInstance()._sendVerificationEmail(
+            MIRACLTrust.getInstance().sendVerificationEmail(
                 userId: userId,
                 crossDeviceSession: crossDeviceSession
             ) { result, error in
