@@ -5,7 +5,7 @@ struct CrossDeviceSessionCase {
         qrCode: String
     ) async throws -> CrossDeviceSession {
         try await withCheckedThrowingContinuation { continuation in
-            MIRACLTrust.getInstance()._getCrossDeviceSessionFromQRCode(qrCode: qrCode) { cdSession, error in
+            MIRACLTrust.getInstance().getCrossDeviceSessionFromQRCode(qrCode: qrCode) { cdSession, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let cdSession {
@@ -19,7 +19,7 @@ struct CrossDeviceSessionCase {
         universalLinkURL: URL
     ) async throws -> CrossDeviceSession {
         try await withCheckedThrowingContinuation { continuation in
-            MIRACLTrust.getInstance()._getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: universalLinkURL) { cdSession, error in
+            MIRACLTrust.getInstance().getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: universalLinkURL) { cdSession, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let cdSession {
@@ -33,7 +33,7 @@ struct CrossDeviceSessionCase {
         payload: [AnyHashable: Any]
     ) async throws -> CrossDeviceSession {
         try await withCheckedThrowingContinuation { continuation in
-            MIRACLTrust.getInstance()._getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: payload) { cdSession, error in
+            MIRACLTrust.getInstance().getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: payload) { cdSession, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let cdSession {
