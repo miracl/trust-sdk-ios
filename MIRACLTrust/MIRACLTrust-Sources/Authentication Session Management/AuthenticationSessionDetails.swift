@@ -2,6 +2,7 @@ import Foundation
 
 /// An object representing details from the incoming authentication session.
 @objcMembers
+@available(*, deprecated, message: "Use `CrossDeviceSession` APIs instead.")
 @objc public final class AuthenticationSessionDetails: NSObject, SessionDetails, Sendable {
     public let userId: String
 

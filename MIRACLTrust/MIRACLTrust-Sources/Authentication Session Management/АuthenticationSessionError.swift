@@ -1,6 +1,7 @@
 import Foundation
 
 ///  An enumeration describing issues with the authentication session management.
+@available(*, deprecated, message: "Use CrossDeviceSession APIs instead.")
 public enum AuthenticationSessionError: Error, DefaultLocalizedError {
     /// Could not find the session identifier in the Universal Link URL.
     case invalidUniversalLinkURL

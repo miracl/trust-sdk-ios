@@ -188,6 +188,9 @@ import Foundation
     ///  - userId: an identifier of the user. Must be a valid email address.
     ///  - authenticationSessionDetails: details for the authentication session.
     ///  - completionHandler: a closure called when the verification has been completed. It can contain a verification response object or an optional error object.
+    ///
+    /// - Note: Use ``sendVerificationEmail(userId:crossDeviceSession:completionHandler:)`` instead.
+    @available(*, deprecated, message: "Use ``sendVerificationEmail(userId:crossDeviceSession:completionHandler:)`` instead")
     @objc public func sendVerificationEmail(
         userId: String,
         authenticationSessionDetails: AuthenticationSessionDetails?,
@@ -454,7 +457,10 @@ import Foundation
     ///   - qrCode: a string read from the QR code.
     ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
     ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
+    ///
+    /// - Note: Use ``authenticateCrossDeviceSession(crossDeviceSession:user:didRequestPinHandler:completionHandler:)``  instead.
     @objc(authenticateWithUser:qrCode:didRequestPinHandler:completionHandler:)
+    @available(*, deprecated, message: "Use `authenticateCrossDeviceSession(crossDeviceSession:user:didRequestPinHandler:completionHandler:)` instead.")
     public func authenticateWithQRCode(
         user: User,
         qrCode: String,
@@ -487,7 +493,10 @@ import Foundation
     ///   - payload: a dictionary received from the push notification.
     ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
     ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
+    ///
+    /// - Note: Use ``authenticateCrossDeviceSession(crossDeviceSession:user:didRequestPinHandler:completionHandler:)`` instead.
     @objc(authenticateWithPushNotificationPayload:didRequestPinHandler:completionHandler:)
+    @available(*, deprecated, message: "Use `authenticateCrossDeviceSession(crossDeviceSession:user:didRequestPinHandler:completionHandler:))` instead.")
     public func authenticateWithPushNotificationPayload(
         payload: [AnyHashable: Any],
         didRequestPinHandler: @escaping PinRequestHandler,
@@ -517,7 +526,10 @@ import Foundation
     ///   - universalLinkURL: universal link for authentication.
     ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
     ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
+    ///
+    /// - Note: Use ``authenticateCrossDeviceSession(crossDeviceSession:user:didRequestPinHandler:completionHandler:)`` instead.
     @objc(authenticateWithUser:universalLinkURL:didRequestPinHandler:completionHandler:)
+    @available(*, deprecated, message: "Use `authenticateCrossDeviceSession(crossDeviceSession:user:didRequestPinHandler:completionHandler:)` instead.")
     public func authenticateWithUniversalLinkURL(
         user: User,
         universalLinkURL: URL,
@@ -632,8 +644,8 @@ import Foundation
     /// Use this method to authenticate another device or application using ``CrossDeviceSession``.
     ///
     /// - Parameters:
-    ///   - user: the user to be authenticated.
     ///   - crossDeviceSession: details for the authentication operation.
+    ///   - user: the user to be authenticated.
     ///   - didRequestPinHandler: a closure called when the SDK requests a PIN code. It can be used to display the UI for entering the PIN code. Its parameter is another closure that must be called after the user completes the action.
     ///   - completionHandler: a closure called when the user is authenticated. It can contain a Boolean flag representing the authentication result or an optional error object.
     @objc(authenticateCrossDeviceSession:user:didRequestPinHandler:completionHandler:)
@@ -746,7 +758,10 @@ import Foundation
     ///   - qrCode: a string read from the QR code.
     ///   - completionHandler: a closure called when the authentication session details are fetched. It can contain a newly fetched authentication session details optional object
     ///   and an optional error object.
+    ///
+    /// - Note: Use ``getCrossDeviceSessionFromQRCode(qrCode:completionHandler:)`` instead.
     @objc(getAuthenticationSessionDetailsFromQRCode:completionHandler:)
+    @available(*, deprecated, message: "Use `getCrossDeviceSessionFromQRCode(qrCode:completionHandler:)` instead", renamed: "getCrossDeviceSessionFromQRCode(qrCode:completionHandler:)")
     public func getAuthenticationSessionDetailsFromQRCode(
         qrCode: String,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
@@ -776,7 +791,9 @@ import Foundation
     ///   - completionHandler: a closure called when the authentication session details are fetched. It can contain a newly fetched authentication session details optional object
     ///   and an optional error object.
     ///
+    ///  - Note: Use ``getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL:completionHandler:)`` instead.
     @objc(getAuthenticationSessionDetailsFromUniversalLinkURL:completionHandler:)
+    @available(*, deprecated, message: "Use `getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL:completionHandler:)` instead", renamed: "getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL:completionHandler:)")
     public func getAuthenticationSessionDetailsFromUniversalLinkURL(
         universalLinkURL: URL,
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
@@ -805,7 +822,10 @@ import Foundation
     ///   - pushNotificationPayload: a dictionary received from the push notification.
     ///   - completionHandler: a closure called when the authentication session details are fetched. It can contain a newly fetched authentication session details optional object
     ///   and an optional error object.
+    ///
+    /// - Note: Use ``getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload:completionHandler:)`` instead.
     @objc(getAuthenticationSessionDetailsFromPushNotificationPayload:completionHandler:)
+    @available(*, deprecated, message: "Use getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload:completionHandler:) instead.", renamed: "getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload:completionHandler:)")
     public func getAuthenticationSessionDetailsFromPushNotificationPayload(
         pushNotificationPayload: [AnyHashable: Any],
         completionHandler: @escaping AuthenticationSessionDetailsCompletionHandler
@@ -830,7 +850,9 @@ import Foundation
     /// - Parameters:
     ///   - authenticationSessionDetails: details for the authentication session that is in progress.
     ///   - completionHandler: a closure called when the authentication session is aborted. It can contain a Boolean flag representing the abortion result and an optional error object.
+    ///   - Note: Use ``abortCrossDeviceSession(_:completionHandler:)`` instead.
     @objc(abortAuthenticationSession:completionHandler:)
+    @available(*, deprecated, message: "Use `abortCrossDeviceSession(_:completionHandler:)` instead.")
     public func abortAuthenticationSession(
         authenticationSessionDetails: AuthenticationSessionDetails,
         completionHandler: @escaping AuthenticationSessionAborterCompletionHandler
