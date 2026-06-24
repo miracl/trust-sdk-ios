@@ -56,7 +56,7 @@ import Foundation
 
         crypto = Crypto(logger: logger)
 
-        let sdkVersion = Bundle(for: MIRACLTrust.self).infoDictionary?["MIRACL_SDK_VERSION"] ?? ""
+        let sdkVersion = Bundle(for: MIRACLTrust.self).infoDictionary?["MIRACL_SDK_VERSION"] ?? MIRACLTrustVersion.current
         var miraclHeader = "MIRACL iOS SDK/\(sdkVersion)"
         if let applicationInfo = configuration.applicationInfo {
             miraclHeader.append(" \(applicationInfo)")
