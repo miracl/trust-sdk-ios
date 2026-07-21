@@ -197,12 +197,14 @@ struct API: APIBlueprint {
         deviceName: String,
         accessId: String?,
         mpinId: String?,
+        deviceTag: String,
         completionHandler: @escaping APIRequestCompletionHandler<VerificationRequestResponse>
     ) {
         let requestBody = VerificationRequestBody(
             projectId: projectId,
             userId: userId,
             deviceName: deviceName,
+            deviceTag: deviceTag,
             accessId: accessId,
             mpinId: mpinId
         )

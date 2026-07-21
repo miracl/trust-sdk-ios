@@ -210,6 +210,7 @@ import Foundation
                 sessionIdentifier: sessionIdentifier,
                 miraclAPI: miraclAPI,
                 userStorage: userStorage,
+                deviceTagManager: deviceTagManager,
                 logger: logger,
                 completionHandler: completionHandler
             )
@@ -243,6 +244,7 @@ import Foundation
                 sessionIdentifier: crossDeviceSession.sessionId,
                 miraclAPI: miraclAPI,
                 userStorage: userStorage,
+                deviceTagManager: deviceTagManager,
                 logger: logger,
                 completionHandler: completionHandler
             )
@@ -274,6 +276,7 @@ import Foundation
                 sessionIdentifier: nil,
                 miraclAPI: miraclAPI,
                 userStorage: userStorage,
+                deviceTagManager: deviceTagManager,
                 logger: logger,
                 completionHandler: completionHandler
             )
