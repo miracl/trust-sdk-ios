@@ -13,7 +13,9 @@ final class DefaultLogger: Logger {
     ///   - message: message that needs to be logged.
     ///   - category: which category of the SDK is logged message.
     func debug(message: String, category: LogCategory) {
-        if level > .debug || level == .none { return }
+        if level > .debug || level == .none {
+            return
+        }
 
         log(message: message, category: category, type: .debug)
     }
@@ -23,7 +25,9 @@ final class DefaultLogger: Logger {
     ///   - message: message that needs to be logged.
     ///   - category: which category of the SDK is logged message.
     func info(message: String, category: LogCategory) {
-        if level > .info || level == .none { return }
+        if level > .info || level == .none {
+            return
+        }
 
         log(message: message, category: category, type: .info)
     }
@@ -33,7 +37,9 @@ final class DefaultLogger: Logger {
     ///   - message: message that needs to be logged.
     ///   - category: which category of the SDK is logged message.
     func warning(message: String, category: LogCategory) {
-        if level > .warning || level == .none { return }
+        if level > .warning || level == .none {
+            return
+        }
 
         log(message: message, category: category, type: .fault)
     }
@@ -43,7 +49,9 @@ final class DefaultLogger: Logger {
     ///   - message: message that needs to be logged.
     ///   - category: which category of the SDK is logged message.
     func error(message: String, category: LogCategory) {
-        if level > .error || level == .none { return }
+        if level > .error || level == .none {
+            return
+        }
 
         log(message: message, category: category, type: .error)
     }
