@@ -11,6 +11,7 @@ struct Verificator {
     let completionHandler: VerificationCompletionHandler
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
+    let deviceTagManager: DeviceTagManager
     let logger: Logger
 
     init(userId: String,
@@ -19,6 +20,7 @@ struct Verificator {
          sessionIdentifier: String?,
          miraclAPI: APIBlueprint,
          userStorage: UserStorage,
+         deviceTagManager: DeviceTagManager,
          logger: Logger,
          completionHandler: @escaping VerificationCompletionHandler) throws {
         self.userId = userId
@@ -30,6 +32,7 @@ struct Verificator {
         self.userStorage = userStorage
         self.logger = logger
         self.completionHandler = completionHandler
+        self.deviceTagManager = deviceTagManager
 
         try validateInput()
     }
@@ -49,7 +52,8 @@ struct Verificator {
                 userId: userId,
                 deviceName: deviceName,
                 accessId: sessionIdentifier,
-                mpinId: mpinId
+                mpinId: mpinId,
+                deviceTag: deviceTagManager.deviceTag
             ) { _, verificationAPIResponse, error in
                 logOperation(operation: LoggingConstants.finished)
 

@@ -24,6 +24,7 @@ class VerificatorTests: XCTestCase {
             sessionIdentifier: nil,
             miraclAPI: api,
             userStorage: mockUserStorage,
+            deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger
         ) { verified, error in
             XCTAssertNotNil(verified)
@@ -58,6 +59,7 @@ class VerificatorTests: XCTestCase {
                 sessionIdentifier: invalidAccessId,
                 miraclAPI: api,
                 userStorage: mockUserStorage,
+                deviceTagManager: DeviceTagManager(logger: logger),
                 logger: logger,
                 completionHandler: { _, _ in }
             )
@@ -82,6 +84,7 @@ class VerificatorTests: XCTestCase {
                 sessionIdentifier: nil,
                 miraclAPI: api,
                 userStorage: mockUserStorage,
+                deviceTagManager: DeviceTagManager(logger: logger),
                 logger: logger,
                 completionHandler: { _, _ in }
             )
@@ -108,6 +111,7 @@ class VerificatorTests: XCTestCase {
             sessionIdentifier: nil,
             miraclAPI: api,
             userStorage: mockUserStorage,
+            deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { response, error in
                 XCTAssertNil(response)
@@ -143,6 +147,7 @@ class VerificatorTests: XCTestCase {
             sessionIdentifier: nil,
             miraclAPI: api,
             userStorage: mockUserStorage,
+            deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { response, error in
                 XCTAssertNil(response)
@@ -176,6 +181,7 @@ class VerificatorTests: XCTestCase {
             sessionIdentifier: nil,
             miraclAPI: api,
             userStorage: mockUserStorage,
+            deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)
@@ -211,6 +217,7 @@ class VerificatorTests: XCTestCase {
             sessionIdentifier: nil,
             miraclAPI: api,
             userStorage: mockUserStorage,
+            deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { verified, error in
                 XCTAssertNil(verified)
