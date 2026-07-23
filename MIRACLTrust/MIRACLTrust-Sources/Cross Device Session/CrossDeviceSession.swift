@@ -18,6 +18,15 @@ import Foundation
     /// Hash of the transaction that needs to be signed if any.
     public let signingHash: String
 
+    /// The type of the session.
+    public var type: CrossDeviceSessionType {
+        if !signingHash.isEmpty {
+            return .signing
+        }
+
+        return .authentication
+    }
+
     public init(
         userId: String,
         projectId: String,

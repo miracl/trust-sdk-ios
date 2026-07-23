@@ -251,6 +251,8 @@
     XCTAssertFalse([dict[@"crossDeviceSession"] isEqual:[NSNull null]]);
     
     CrossDeviceSession *crossDeviceSession = (CrossDeviceSession *)dict[@"crossDeviceSession"];
+    XCTAssertEqual(crossDeviceSession.type, CrossDeviceSessionTypeSigning);
+    
     dict = [self.crossDeviceSessionCompatibilityCase abortCrossDeviceSession:crossDeviceSession];
     XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
     isAborted = dict[@"isAborted"];
@@ -267,6 +269,7 @@
     XCTAssertTrue([dict[@"error"] isEqual:[NSNull null]]);
     XCTAssertFalse([dict[@"crossDeviceSession"] isEqual:[NSNull null]]);
     self.crossDeviceSession = (CrossDeviceSession *) dict[@"crossDeviceSession"];
+    XCTAssertEqual(self.crossDeviceSession.type, CrossDeviceSessionTypeAuthentication);
     
     NSURL *verificationURL = [self.api getVerificaitonURLWithServiceAccountToken:serviceAccountToken
                                                                        projectId:projectId
