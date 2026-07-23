@@ -30,6 +30,8 @@ struct CrossDeviceSessionIntegrationTest {
         let qrCode = "https://mcl.mpin.io#\(sessionId)"
         let session = try await crossDeviceSessionCase.getCrossDeviceSessionForQRCode(qrCode: qrCode)
         #expect(session.projectId == projectId)
+        #expect(session.signingHash == "")
+        #expect(session.type == .authentication)
     }
 
     @Test("Get cross device session for different project and for hash and description", .timeLimit(.minutes(1)))
@@ -42,6 +44,7 @@ struct CrossDeviceSessionIntegrationTest {
         #expect(session.projectId == expectedProjectId)
         #expect(session.signingHash == hash)
         #expect(session.sessionDescription == description)
+        #expect(session.type == .signing)
     }
 
     @Test("Get cross device session for invalid QR Code", .timeLimit(.minutes(1)))
@@ -79,6 +82,8 @@ struct CrossDeviceSessionIntegrationTest {
         let session = try await crossDeviceSessionCase.getCrossDeviceSessionForUniversalLinkURL(universalLinkURL: universalLinkURL)
 
         #expect(session.projectId == projectId)
+        #expect(session.signingHash == "")
+        #expect(session.type == .authentication)
     }
 
     @Test("Get cross device session from Universal Link URL for different project and for hash and description", .timeLimit(.minutes(1)))
@@ -92,6 +97,7 @@ struct CrossDeviceSessionIntegrationTest {
         #expect(session.projectId == expectedProjectId)
         #expect(session.signingHash == hash)
         #expect(session.sessionDescription == description)
+        #expect(session.type == .signing)
     }
 
     @Test("Get cross device session from Universal Link URL for missing URL fragment", .timeLimit(.minutes(1)))
@@ -117,6 +123,8 @@ struct CrossDeviceSessionIntegrationTest {
             payload: payload
         )
         #expect(session.projectId == projectId)
+        #expect(session.signingHash == "")
+        #expect(session.type == .authentication)
     }
 
     @Test("Get cross device session from push notification payload for different projectId", .timeLimit(.minutes(1)))
@@ -134,6 +142,7 @@ struct CrossDeviceSessionIntegrationTest {
         #expect(session.projectId == expectedProjectId)
         #expect(session.signingHash == hash)
         #expect(session.sessionDescription == description)
+        #expect(session.type == .signing)
     }
 
     @Test("Get cross device session from push notification payload but missing required entry", .timeLimit(.minutes(1)))
