@@ -1,3 +1,3 @@
 public enum MIRACLTrustVersion {
-    public static let current = "1.15.0"
+    public static let current = "1.16.0"
 }
