@@ -4,30 +4,25 @@ import XCTest
 final class ConfigurationTests: XCTestCase {
     func testSDKCorrectConfiguration() throws {
         let applicationInfo = UUID().uuidString
+        let projectId = UUID().uuidString
 
-        guard let configuration = try? Configuration.Builder(
-            projectId: "mockedProjectId",
-            projectURL: projectURL
-        ).applicationInfo(applicationInfo: applicationInfo)
-            .build() else {
-            XCTFail("Fail at \(#function) on row \(#line)")
-            return
-        }
+        let configuration = try XCTUnwrap(
+            Configuration.Builder(projectId: projectId, projectURL: projectURL)
+                .applicationInfo(applicationInfo: applicationInfo)
+                .build()
+        )
+        try MIRACLTrust.configure(with: configuration)
 
-        do {
-            try MIRACLTrust.configure(with: configuration)
-        } catch {
-            XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
-        }
+        let configurationHeaders = try XCTUnwrap(MIRACLTrust.getInstance().urlSessionConfiguration.httpAdditionalHeaders)
+        let miraclHeader = try XCTUnwrap(configurationHeaders["X-Miracl-Client"] as? String)
+        let sdkVersion = try XCTUnwrap(Bundle(for: MIRACLTrust.self).infoDictionary?["CFBundleShortVersionString"])
+        XCTAssertEqual(miraclHeader, "MIRACL iOS SDK/\(sdkVersion) \(applicationInfo)")
 
-        do {
-            let configurationHeaders = try XCTUnwrap(MIRACLTrust.getInstance().urlSessionConfiguration.httpAdditionalHeaders)
-            let miraclHeader = try XCTUnwrap(configurationHeaders["X-MIRACL-CLIENT"] as? String)
-            let sdkVersion = try XCTUnwrap(Bundle(for: MIRACLTrust.self).infoDictionary?["CFBundleShortVersionString"])
-            XCTAssertEqual(miraclHeader, "MIRACL iOS SDK/\(sdkVersion) \(applicationInfo)")
-        } catch {
-            XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
-        }
+        let deviceTagHeader = try XCTUnwrap(configurationHeaders["X-Miracl-Device-Tag"] as? String)
+        XCTAssertEqual(deviceTagHeader, MIRACLTrust.getInstance().deviceTagManager.deviceTag)
+
+        let deviceName = try XCTUnwrap(configurationHeaders["X-Miracl-Device-Name"] as? String)
+        XCTAssertEqual(deviceName, MIRACLTrust.getInstance().deviceName)
     }
 
     func testSDKEmptyProjectIdConfiguration() {
