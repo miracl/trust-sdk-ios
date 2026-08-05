@@ -61,24 +61,6 @@ struct API: APIBlueprint {
         }
     }
 
-    func getClientSecretShare(
-        _ clientSecretShareURL: URL,
-        completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
-    ) {
-        do {
-            let request = try APIRequest(
-                url: clientSecretShareURL,
-                path: nil,
-                requestBody: EmptyRequestBody(),
-                logger: logger
-            )
-
-            executor.execute(apiRequest: request, completion: completionHandler)
-        } catch {
-            completionHandler(.failed, nil, error)
-        }
-    }
-
     /// Server pass1
     /// - Parameters:
     ///   - dtas: dtas
@@ -423,6 +405,33 @@ struct API: APIBlueprint {
                 apiRequest: request,
                 completion: completionHandler
             )
+        } catch {
+            completionHandler(.failed, nil, error)
+        }
+    }
+
+    func getTAShare(
+        designatedTA: DesignatedTA,
+        mpinId: String,
+        publicKey: String,
+        completionHandler: @escaping APIRequestCompletionHandler<TAShareResponse>
+    ) {
+        do {
+            let requestBody = TAShareRequestBody(
+                mpinId: mpinId,
+                pubKey: publicKey
+            )
+
+            let request = try APIRequest(
+                url: designatedTA.url,
+                path: nil,
+                method: .post,
+                requestBody: requestBody,
+                authorizationHeader: "Bearer \(designatedTA.token)",
+                logger: logger
+            )
+
+            executor.execute(apiRequest: request, completion: completionHandler)
         } catch {
             completionHandler(.failed, nil, error)
         }

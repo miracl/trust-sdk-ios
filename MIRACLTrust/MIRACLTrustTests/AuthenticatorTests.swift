@@ -424,7 +424,9 @@ class AuthenticatorTests: XCTestCase {
     func testWAM() throws {
         let mpinId = "7b22696174223a313632313431373839312c22757365724944223a22383631303732393532222c22634944223a2261623938653665382d326133652d346438632d623831322d323636306433633337373433222c2273616c74223a22486f7063634d7a6a794b53705279616d535333316351222c2276223a352c2273636f7065223a5b2261757468225d2c22647461223a5b5d2c227674223a227076227d"
 
-        let dtas = "WyIyMDdiNWU5M2MxNTQ3YjY2ODY0MzUwNDIwZDU2MTU5MjVkODkyM2EyMWJkZDRlOTRmMzM0ZjViZWIxZDJhZjYxIiwiMThiYzUzYTQzY2VhOWM4MzE0MTRiYmFkZTE0NmE0NTcwNDJiMzNmYjQwN2ZiYzEzYjgyZWZhZjI4MTdmYjczOSJd"
+        let dtaNode = "DTA Node"
+        // Base64 representation of ["DTA Node","DTA Node"]
+        let dtas = "WyJEVEEgTm9kZSIsIkRUQSBOb2RlIl0="
 
         var renewSecretResponse = RenewSecretResponse()
         renewSecretResponse.token = UUID().uuidString
@@ -436,17 +438,20 @@ class AuthenticatorTests: XCTestCase {
         api.authenticationResponseManager.authenticateResponse = authenticateResponse
         api.authenticationResponseManager.authenticateDVSAuth = true
 
-        var clientSecretResponse = ClientSecretResponse()
-        clientSecretResponse.dvsClientSecret = NSUUID().uuidString
+        let taShareResponse = TAShareResponse(
+            node: dtaNode,
+            share: UUID().uuidString
+        )
 
-        api.clientSecretResponsesManager.clientSecret1Response = clientSecretResponse
-        api.clientSecretResponsesManager.clientSecret2Response = clientSecretResponse
-        api.registrationResponse = RegistrationResponse(
+        api.taSharesResponsesManager.taShare1Response = taShareResponse
+        api.taSharesResponsesManager.taShare2Response = taShareResponse
+        api.registrationResponse = try RegistrationResponse(
             mpinId: mpinId,
             projectId: projectId,
-            dtas: dtas,
-            curve: "BN254CX",
-            secretUrls: ["https://example.com", "https://example.com"]
+            designatedTAs: [
+                DesignatedTA(url: XCTUnwrap(URL(string: "https://test.com")), token: UUID().uuidString),
+                DesignatedTA(url: XCTUnwrap(URL(string: "https://test.com")), token: UUID().uuidString)
+            ]
         )
         api.registrationError = nil
         api.registrationResultCall = .success

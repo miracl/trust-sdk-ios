@@ -11,9 +11,11 @@ protocol APIBlueprint: Sendable {
         completionHandler: @escaping APIRequestCompletionHandler<RegistrationResponse>
     )
 
-    func getClientSecretShare(
-        _ clientSecretShareURL: URL,
-        completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
+    func getTAShare(
+        designatedTA: DesignatedTA,
+        mpinId: String,
+        publicKey: String,
+        completionHandler: @escaping APIRequestCompletionHandler<TAShareResponse>
     )
 
     func pass1(

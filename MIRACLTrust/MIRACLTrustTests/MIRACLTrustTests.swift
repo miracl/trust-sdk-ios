@@ -16,6 +16,7 @@ class MIRACLTrustTests: XCTestCase {
 
     private let backoff: Int64 = 1_688_029_968
     private let mpinId = "7b22696174223a313631373237323435332c22757365724944223a22676c6f62616c406578616d706c652e636f6d222c22634944223a2236636134636133622d623663342d343262332d386536372d336432653038616532643765222c2273616c74223a226d30756558414b4162566234425756742b5461745a51222c2276223a352c2273636f7065223a5b2261757468225d2c22647461223a5b5d2c227674223a227076227d"
+    let dtas = "WyJEVEEgTm9kZSIsIkRUQSBOb2RlIl0="
     private let clientToken = Data([1, 2, 3])
 
     override func setUpWithError() throws {
@@ -50,13 +51,13 @@ class MIRACLTrustTests: XCTestCase {
         let validRegistration = RegistrationResponse(
             mpinId: mpinId,
             projectId: projectId,
-            dtas: randomString,
-            curve: "BN254CX",
-            secretUrls: ["https://www.example.com", "https://www.example.com"]
+            designatedTAs: [
+                DesignatedTA(url: URL(string: "https://example.com")!, token: randomString),
+                DesignatedTA(url: URL(string: "https://example.com")!, token: randomString)
+            ]
         )
 
-        var clientSecretResponse = ClientSecretResponse()
-        clientSecretResponse.dvsClientSecret = randomString
+        let taShareResponse = TAShareResponse(node: "DTA Node", share: randomString)
 
         var pass1Response = Pass1Response()
         pass1Response.challenge = randomString
@@ -88,8 +89,8 @@ class MIRACLTrustTests: XCTestCase {
         mockAPI.authenticationResponseManager.authenticateResponse = authenticateResponse
 
         mockAPI.registrationResponse = validRegistration
-        mockAPI.clientSecretResponsesManager.clientSecret1Response = clientSecretResponse
-        mockAPI.clientSecretResponsesManager.clientSecret2Response = clientSecretResponse
+        mockAPI.taSharesResponsesManager.taShare1Response = taShareResponse
+        mockAPI.taSharesResponsesManager.taShare2Response = taShareResponse
         mockAPI.verificationResponse = VerificationRequestResponse(backoff: backoff, method: "link")
         mockAPI.verificationConfirmationResponse = verificationConfirmationResponse
         mockAPI.sessionAborterResultCall = .success
@@ -299,6 +300,7 @@ class MIRACLTrustTests: XCTestCase {
         let randomString = randomString
         let clientToken = clientToken
         let mpinId = mpinId
+        let dtas = dtas
 
         MIRACLTrust.getInstance().register(for: userId, activationToken: activationToken) { processPinHandler in
             processPinHandler("1234")
@@ -311,7 +313,7 @@ class MIRACLTrustTests: XCTestCase {
                 let user = try XCTUnwrap(user)
 
                 XCTAssertEqual(user.userId, userId)
-                XCTAssertEqual(user.dtas, randomString)
+                XCTAssertEqual(user.dtas, dtas)
                 XCTAssertEqual(user.token, clientToken)
                 XCTAssertEqual(user.mpinId, Data(hexString: mpinId))
                 XCTAssertEqual(user.hashedMpinId, "d3ddd84f90ff4497df43534e0ab0813f71838f5ea92ba98705a84a0d6f593c8d")

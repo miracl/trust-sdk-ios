@@ -108,110 +108,85 @@ final class Registrator: Sendable {
                 return
             }
 
-            if CryptoSupportedEllipticCurves(rawValue: response.curve) == nil {
-                self.callCompletionHandlerWithError(error: RegistrationError.unsupportedEllipticCurve)
-                return
-            }
-
-            if response.secretUrls.isEmpty {
-                self.logOperation(operation: "registerUser emtpy secret URLs")
+            if response.designatedTAs.isEmpty {
+                self.logOperation(operation: "registerUser emtpy designatedTAs array")
 
                 self.callCompletionHandlerWithError(error: RegistrationError.registrationFail(nil))
                 return
             }
 
-            self.getClientSecretShares(
+            self.getTAShareResponses(
                 mpinId: response.mpinId,
-                dtas: response.dtas,
-                keyPairResult: (keyPairResult.privateKey, keyPairResult.publicKey),
-                secretURLs: response.secretUrls
+                designatedTAs: response.designatedTAs,
+                keyPairResult: (keyPairResult.privateKey, keyPairResult.publicKey)
             )
         }
     }
 
-    private func getClientSecretShares(
+    private func getTAShareResponses(
         mpinId: String,
-        dtas: String,
-        keyPairResult: (privateKey: Data, publicKey: Data),
-        secretURLs: [String]
+        designatedTAs: [DesignatedTA],
+        keyPairResult: (privateKey: Data, publicKey: Data)
     ) {
         logOperation(operation: LoggingConstants.registrationGettingClientSecretShares)
 
         let dispatchGroup = DispatchGroup()
         let writeQueue = DispatchQueue(label: "com.miracl.secretURLsQueue")
 
-        nonisolated(unsafe) var results = [Data]()
-        nonisolated(unsafe) var secretURLFetchingError: Error?
+        nonisolated(unsafe) var taShareResponses = [TAShareResponse]()
+        nonisolated(unsafe) var taShareResponsesError: Error?
 
-        let filteredSecretURLs: [String] = Array(secretURLs.prefix(2))
-
-        for secretURL in filteredSecretURLs {
+        let filteredTAs: [DesignatedTA] = Array(designatedTAs.prefix(2))
+        for designatedTA in filteredTAs {
             dispatchGroup.enter()
 
-            guard let clientSecretShareURL = URL(string: secretURL) else {
-                logOperation(operation: LoggingConstants.registrationInvalidClientSecretShareURL)
-                secretURLFetchingError = RegistrationError.registrationFail(nil)
-                dispatchGroup.leave()
-                break
-            }
-
-            getClientSecretShare(clientSecretShareURL: clientSecretShareURL) { result in
+            getTAShare(designatedTA: designatedTA, mpinId: mpinId, publicKey: keyPairResult.publicKey) { result in
                 switch result {
-                case let .success(clientSecretShare):
+                case let .success(response):
                     writeQueue.async {
-                        results.append(clientSecretShare)
+                        taShareResponses.append(response)
                     }
                 case let .failure(error):
                     writeQueue.async {
-                        secretURLFetchingError = error
+                        taShareResponsesError = error
                     }
                 }
+
                 dispatchGroup.leave()
             }
         }
 
         dispatchGroup.notify(queue: writeQueue) {
-            if let secretURLFetchingError {
+            if let taShareResponsesError {
                 self.callCompletionHandlerWithError(
-                    error: secretURLFetchingError
+                    error: taShareResponsesError
                 )
                 return
             }
 
             self.getClientToken(
                 mpinId: mpinId,
-                clientSecrets: results,
-                dtas: dtas,
+                taShareResponses: taShareResponses,
                 keypair: keyPairResult
             )
         }
     }
 
-    private func getClientSecretShare(
-        clientSecretShareURL: URL,
-        completionHandler: @escaping @Sendable (Result<Data, Error>) -> Void
+    private func getTAShare(
+        designatedTA: DesignatedTA,
+        mpinId: String,
+        publicKey: Data,
+        completionHandler: @escaping @Sendable (Result<TAShareResponse, Error>) -> Void
     ) {
-        miraclAPI.getClientSecretShare(clientSecretShareURL) { _, response, error in
-            if let error {
-                if case APIError.executionError = error {
-                    self.miraclAPI.getClientSecretShare(clientSecretShareURL) { _, retryResponse, retryError in
-                        if let retryResponse {
-                            completionHandler(
-                                .success(Data(hexString: retryResponse.dvsClientSecret))
-                            )
-                        } else if let retryError {
-                            completionHandler(.failure(RegistrationError.registrationFail(retryError)))
-                        } else {
-                            completionHandler(.failure(RegistrationError.registrationFail(nil)))
-                        }
-                    }
-                } else {
-                    completionHandler(.failure(RegistrationError.registrationFail(error)))
-                }
-            } else if let response {
-                completionHandler(
-                    .success(Data(hexString: response.dvsClientSecret))
-                )
+        miraclAPI.getTAShare(
+            designatedTA: designatedTA,
+            mpinId: mpinId,
+            publicKey: publicKey.hex
+        ) { _, response, error in
+            if let response {
+                completionHandler(.success(response))
+            } else if let error {
+                completionHandler(.failure(RegistrationError.registrationFail(error)))
             } else {
                 completionHandler(.failure(RegistrationError.registrationFail(nil)))
             }
@@ -220,8 +195,7 @@ final class Registrator: Sendable {
 
     private func getClientToken(
         mpinId: String,
-        clientSecrets: [Data],
-        dtas: String,
+        taShareResponses: [TAShareResponse],
         keypair: (privateKey: Data, publicKey: Data)
     ) {
         logOperation(operation: LoggingConstants.getClientToken)
@@ -242,21 +216,25 @@ final class Registrator: Sendable {
         var combinedMpinId = Data(hexString: mpinId)
         combinedMpinId.append(publicKey)
 
-        if clientSecrets.count < 2 {
+        let clientSecretsShares = taShareResponses.map { response in
+            Data(hexString: response.share)
+        }
+
+        if clientSecretsShares.count < 2 {
             callCompletionHandlerWithError(error: RegistrationError.registrationFail(nil))
             return
         }
 
         let (clientTokenData, tokenCryptoError) =
             crypto.getSigningClientToken(
-                clientSecret1: clientSecrets[0],
-                clientSecret2: clientSecrets[1],
+                clientSecret1: clientSecretsShares[0],
+                clientSecret2: clientSecretsShares[1],
                 privateKey: keypair.privateKey,
                 signingMpinId: combinedMpinId,
                 pinCode: pin
             )
 
-        if let tokenCryptoError = tokenCryptoError {
+        if let tokenCryptoError {
             callCompletionHandlerWithError(error: RegistrationError.registrationFail(tokenCryptoError))
             return
         }
@@ -266,13 +244,22 @@ final class Registrator: Sendable {
             return
         }
 
-        addOrUpdateUser(
-            pinLength: pinLength,
-            mpinId: mpinId,
-            clientTokenData: clientTokenData,
-            dtas: dtas,
-            publicKey: publicKey
-        )
+        do {
+            let dtasArray = taShareResponses.map { response in
+                response.node
+            }
+            let dtas = try JSONEncoder().encode(dtasArray).base64EncodedString()
+
+            addOrUpdateUser(
+                pinLength: pinLength,
+                mpinId: mpinId,
+                clientTokenData: clientTokenData,
+                dtas: dtas,
+                publicKey: publicKey
+            )
+        } catch {
+            callCompletionHandlerWithError(error: RegistrationError.registrationFail(error))
+        }
     }
 
     private func addOrUpdateUser(

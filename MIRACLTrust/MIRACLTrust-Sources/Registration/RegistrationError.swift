@@ -15,6 +15,7 @@ public enum RegistrationError: Error, DefaultLocalizedError {
     case registrationFail(Error?)
 
     /// Curve returned by the platform is unsupported by this version of the SDK.
+    @available(*, deprecated, message: "This error is no longer returned and will be removed in a future release.")
     case unsupportedEllipticCurve
 
     /// PIN code was not entered.
