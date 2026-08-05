@@ -14,32 +14,20 @@ class AuthenticationResponseManager: @unchecked Sendable {
     }
 }
 
-class ClientSecretResponsesManager: @unchecked Sendable {
-    var retryEnabled = false
-    var retryEnabledForSecondClientSecret = false
-    var retryInProgress = false
+class TASharesResponsesManager: @unchecked Sendable {
+    var taShare1Error: Error?
+    var taShare1Response: TAShareResponse?
+    var taShare1ResultCall: APICallResult = .failed
 
-    var clientSecret1Error: Error?
-    var clientSecret1Response: ClientSecretResponse?
-    var clientSecret1ResultCall: APICallResult = .failed
-
-    var clientSecret1RetryError: Error?
-    var clientSecret1RetryResponse: ClientSecretResponse?
-    var clientSecret1RetryResultCall: APICallResult = .failed
-
-    var clientSecret2Error: Error?
-    var clientSecret2Response: ClientSecretResponse?
-    var clientSecret2ResultCall: APICallResult = .failed
-
-    var clientSecret2RetryError: Error?
-    var clientSecret2RetryResponse: ClientSecretResponse?
-    var clientSecret2RetryResultCall: APICallResult = .failed
+    var taShare2Error: Error?
+    var taShare2Response: TAShareResponse?
+    var taShare2ResultCall: APICallResult = .failed
 
     var isSecondRequest = false
 }
 
 struct MockAPI: APIBlueprint {
-    var clientSecretResponsesManager = ClientSecretResponsesManager()
+    var taSharesResponsesManager = TASharesResponsesManager()
 
     var pass1Error: Error?
     var pass1Response: Pass1Response?
@@ -83,67 +71,25 @@ struct MockAPI: APIBlueprint {
     var updateCrossDeviceSessionResponse: [String: String]?
     var updateCrossDeviceSessionResultCall: APICallResult = .failed
 
-    func getClientSecretShare(
-        _: URL,
-        completionHandler: @escaping APIRequestCompletionHandler<ClientSecretResponse>
+    func getTAShare(
+        designatedTA _: DesignatedTA,
+        mpinId _: String,
+        publicKey _: String,
+        completionHandler: @escaping APIRequestCompletionHandler<TAShareResponse>
     ) {
-        if clientSecretResponsesManager.retryEnabled {
-            if clientSecretResponsesManager.retryInProgress {
-                completionHandler(
-                    clientSecretResponsesManager.clientSecret1RetryResultCall,
-                    clientSecretResponsesManager.clientSecret1RetryResponse,
-                    clientSecretResponsesManager.clientSecret1RetryError
-                )
-            } else {
-                clientSecretResponsesManager.retryInProgress = true
-
-                completionHandler(
-                    clientSecretResponsesManager.clientSecret1ResultCall,
-                    clientSecretResponsesManager.clientSecret1Response,
-                    clientSecretResponsesManager.clientSecret1Error
-                )
-            }
-        } else if clientSecretResponsesManager.retryEnabledForSecondClientSecret {
-            if clientSecretResponsesManager.isSecondRequest {
-                if clientSecretResponsesManager.retryInProgress {
-                    completionHandler(
-                        clientSecretResponsesManager.clientSecret2RetryResultCall,
-                        clientSecretResponsesManager.clientSecret2RetryResponse,
-                        clientSecretResponsesManager.clientSecret2RetryError
-                    )
-                } else {
-                    clientSecretResponsesManager.retryInProgress = true
-
-                    completionHandler(
-                        clientSecretResponsesManager.clientSecret2ResultCall,
-                        clientSecretResponsesManager.clientSecret2Response,
-                        clientSecretResponsesManager.clientSecret2Error
-                    )
-                }
-            } else {
-                clientSecretResponsesManager.isSecondRequest = true
-                completionHandler(
-                    clientSecretResponsesManager.clientSecret1ResultCall,
-                    clientSecretResponsesManager.clientSecret1Response,
-                    clientSecretResponsesManager.clientSecret1Error
-                )
-            }
-
+        if taSharesResponsesManager.isSecondRequest {
+            completionHandler(
+                taSharesResponsesManager.taShare2ResultCall,
+                taSharesResponsesManager.taShare2Response,
+                taSharesResponsesManager.taShare2Error
+            )
         } else {
-            if clientSecretResponsesManager.isSecondRequest {
-                completionHandler(
-                    clientSecretResponsesManager.clientSecret2ResultCall,
-                    clientSecretResponsesManager.clientSecret2Response,
-                    clientSecretResponsesManager.clientSecret2Error
-                )
-            } else {
-                clientSecretResponsesManager.isSecondRequest = true
-                completionHandler(
-                    clientSecretResponsesManager.clientSecret1ResultCall,
-                    clientSecretResponsesManager.clientSecret1Response,
-                    clientSecretResponsesManager.clientSecret1Error
-                )
-            }
+            taSharesResponsesManager.isSecondRequest = true
+            completionHandler(
+                taSharesResponsesManager.taShare1ResultCall,
+                taSharesResponsesManager.taShare1Response,
+                taSharesResponsesManager.taShare1Error
+            )
         }
     }
 

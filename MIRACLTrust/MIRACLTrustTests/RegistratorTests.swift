@@ -13,7 +13,7 @@ class RegistratorTests: XCTestCase {
 
     var crypto = mockCrypto()
     var userId = NSUUID().uuidString
-    var dtas = NSUUID().uuidString
+
     var projectId = UUID().uuidString
     var storage: UserStorage = MockUserStorage()
     var activationToken = UUID().uuidString
@@ -22,14 +22,15 @@ class RegistratorTests: XCTestCase {
     var mpinId = "7b22696174223a313631373237323435332c22757365724944223a22676c6f62616c406578616d706c652e636f6d222c22634944223a2236636134636133622d623663342d343262332d386536372d336432653038616532643765222c2273616c74223a226d30756558414b4162566234425756742b5461745a51222c2276223a352c2273636f7065223a5b2261757468225d2c22647461223a5b5d2c227674223a227076227d"
     let hashOfMpinId = "d3ddd84f90ff4497df43534e0ab0813f71838f5ea92ba98705a84a0d6f593c8d"
     var randomString = NSUUID().uuidString
+    var dtas = "WyJEVEEgTm9kZSIsIkRUQSBOb2RlIl0="
     let logger = DefaultLogger(level: .none)
 
     override func setUpWithError() throws {
         crypto = RegistratorTests.mockCrypto()
         crypto.clientTokenData = clientToken
         userId = NSUUID().uuidString
-        dtas = NSUUID().uuidString
         activationToken = UUID().uuidString
+        dtas = "WyJEVEEgTm9kZSIsIkRUQSBOb2RlIl0="
         mockAPI = createMockAPI()
 
         let configuration = try Configuration
@@ -44,10 +45,10 @@ class RegistratorTests: XCTestCase {
 
     func testRegistratorSuccessful() throws {
         let userId = userId
-        let dtas = dtas
         let clientToken = clientToken
         let mpinId = mpinId
         let hashOfMpinId = hashOfMpinId
+        let dtas = dtas
 
         try register(completionHandler: { user, error in
             do {
@@ -94,11 +95,16 @@ class RegistratorTests: XCTestCase {
 
         activationToken = UUID().uuidString
 
-        let newDtas = NSUUID().uuidString
-        dtas = newDtas
         mpinId = "7b22696174223a313632313431373839312c22757365724944223a22383631303732393532222c22634944223a2261623938653665382d326133652d346438632d623831322d323636306433633337373433222c2273616c74223a22486f7063634d7a6a794b53705279616d535333316351222c2276223a352c2273636f7065223a5b2261757468225d2c22647461223a5b5d2c227674223a227076227d"
+
+        dtas = "WyJEVEEgTm9kZSBPdmVycmlkZSIsIkRUQSBOb2RlIE92ZXJyaWRlIl0="
+        let secondDtasCopy = dtas
+
         let mpinIdUpdatedCopy = mpinId
         mockAPI = createMockAPI()
+
+        mockAPI.taSharesResponsesManager.taShare1Response = TAShareResponse(node: "DTA Node Override", share: randomString)
+        mockAPI.taSharesResponsesManager.taShare2Response = TAShareResponse(node: "DTA Node Override", share: randomString)
 
         let newToken = Data([3, 4, 5])
         crypto = RegistratorTests.mockCrypto()
@@ -110,7 +116,7 @@ class RegistratorTests: XCTestCase {
                 let user = try XCTUnwrap(user)
 
                 XCTAssertEqual(user.userId, userId)
-                XCTAssertEqual(user.dtas, newDtas)
+                XCTAssertEqual(user.dtas, secondDtasCopy)
                 XCTAssertEqual(user.token, newToken)
                 XCTAssertEqual(user.mpinId, Data(hexString: mpinIdUpdatedCopy))
             } catch {
@@ -265,25 +271,10 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegistratorWrongElipticCurve() throws {
-        let desiredError = RegistrationError.unsupportedEllipticCurve
-
-        mockAPI.registrationResponse?.curve = UUID().uuidString
-        mockAPI.registrationError = nil
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegistratorEmptySecretUrls() throws {
+    func testRegistratorEmptyDesginatedTAs() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
-        mockAPI.registrationResponse?.secretUrls = []
+        mockAPI.registrationResponse?.designatedTAs = []
         mockAPI.registrationError = nil
 
         try register(completionHandler: { user, error in
@@ -295,47 +286,13 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegistratorInvalidClientSecretURLs() throws {
-        let desiredError = RegistrationError.registrationFail(nil)
-
-        // Invalid URL is at [0]
-        mockAPI.registrationResponse?.secretUrls = [
-            "https:// example. com/my endpoint ",
-            "https://example.com"
-        ]
-        mockAPI.registrationError = nil
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-
-        // Invalid URL is at [1]
-        mockAPI.registrationResponse?.secretUrls = [
-            "https://example.com",
-            "https:// example. com/my endpoint "
-        ]
-
-        mockAPI.registrationError = nil
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegistratorErrorOnFirstClientSecretRequest() throws {
+    func testRegistratorErrorOnFirstTAShareRequest() throws {
         let cause = TestJsonMalformedError.fail
         let desiredError = RegistrationError.registrationFail(cause)
 
-        mockAPI.clientSecretResponsesManager.clientSecret1Error = TestJsonMalformedError.fail
-        mockAPI.clientSecretResponsesManager.clientSecret1Response = nil
-        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .failed
+        mockAPI.taSharesResponsesManager.taShare1Error = TestJsonMalformedError.fail
+        mockAPI.taSharesResponsesManager.taShare1Response = nil
+        mockAPI.taSharesResponsesManager.taShare1ResultCall = .failed
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -346,12 +303,12 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegistratorNilResponseOnFirstClientSecretRequest() throws {
+    func testRegistratorNilResponseOnFirstTAShareRequest() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
-        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
-        mockAPI.clientSecretResponsesManager.clientSecret1Response = nil
-        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .failed
+        mockAPI.taSharesResponsesManager.taShare1Error = nil
+        mockAPI.taSharesResponsesManager.taShare1Response = nil
+        mockAPI.taSharesResponsesManager.taShare1ResultCall = .failed
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -362,113 +319,13 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegistratorErrorOnSecondClientSecretRequest() throws {
+    func testRegistratorErrorOnSecondTAShareRequest() throws {
         let cause = TestJsonMalformedError.fail
         let desiredError = RegistrationError.registrationFail(cause)
 
-        mockAPI.clientSecretResponsesManager.clientSecret2Error = TestJsonMalformedError.fail
-        mockAPI.clientSecretResponsesManager.clientSecret2Response = nil
-        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .failed
-
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
-            assertError(
-                current: error,
-                expected: desiredError
-            )
-        })
-    }
-
-    func testRegistratorWithRetry() throws {
-        let cause = APIError.executionError("", nil)
-
-        mockAPI.clientSecretResponsesManager.retryInProgress = false
-        mockAPI.clientSecretResponsesManager.retryEnabled = true
-
-        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .failed
-        mockAPI.clientSecretResponsesManager.clientSecret1Response = nil
-        mockAPI.clientSecretResponsesManager.clientSecret1Error = cause
-
-        mockAPI.clientSecretResponsesManager.clientSecret1RetryResultCall = .success
-        mockAPI.clientSecretResponsesManager.clientSecret1RetryResponse = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
-        mockAPI.clientSecretResponsesManager.clientSecret1RetryError = nil
-
-        let userId = userId
-        let dtas = dtas
-        let mpinId = mpinId
-        let hashOfMpinId = hashOfMpinId
-        let clientToken = clientToken
-
-        try register(completionHandler: { user, error in
-            do {
-                let user = try XCTUnwrap(user)
-
-                XCTAssertEqual(user.userId, userId)
-                XCTAssertEqual(user.dtas, dtas)
-                XCTAssertEqual(user.token, clientToken)
-                XCTAssertEqual(user.mpinId, Data(hexString: mpinId))
-                XCTAssertEqual(user.hashedMpinId, hashOfMpinId)
-            } catch {
-                XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
-            }
-        })
-    }
-
-    func testRegistratorWithRetryForSecondClientSecretRequest() throws {
-        let cause = APIError.executionError("", nil)
-
-        mockAPI.clientSecretResponsesManager.retryEnabledForSecondClientSecret = true
-
-        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .success
-        mockAPI.clientSecretResponsesManager.clientSecret1Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
-        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
-
-        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .failed
-        mockAPI.clientSecretResponsesManager.clientSecret2Response = nil
-        mockAPI.clientSecretResponsesManager.clientSecret2Error = cause
-
-        mockAPI.clientSecretResponsesManager.clientSecret2RetryResultCall = .success
-        mockAPI.clientSecretResponsesManager.clientSecret2RetryResponse = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
-        mockAPI.clientSecretResponsesManager.clientSecret2RetryError = nil
-
-        let userId = userId
-        let dtas = dtas
-        let mpinId = mpinId
-        let hashOfMpinId = hashOfMpinId
-        let clientToken = clientToken
-
-        try register(completionHandler: { user, error in
-            do {
-                let user = try XCTUnwrap(user)
-
-                XCTAssertEqual(user.userId, userId)
-                XCTAssertEqual(user.dtas, dtas)
-                XCTAssertEqual(user.token, clientToken)
-                XCTAssertEqual(user.mpinId, Data(hexString: mpinId))
-                XCTAssertEqual(user.hashedMpinId, hashOfMpinId)
-            } catch {
-                XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
-            }
-        })
-    }
-
-    func testRegistratorExecutionErrorForSecondRequest() throws {
-        let cause = APIError.executionError("", nil)
-        let desiredError = RegistrationError.registrationFail(cause)
-
-        mockAPI.clientSecretResponsesManager.retryEnabledForSecondClientSecret = true
-
-        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .success
-        mockAPI.clientSecretResponsesManager.clientSecret1Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
-        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
-
-        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .failed
-        mockAPI.clientSecretResponsesManager.clientSecret2Response = nil
-        mockAPI.clientSecretResponsesManager.clientSecret2Error = cause
-
-        mockAPI.clientSecretResponsesManager.clientSecret2RetryResultCall = .failed
-        mockAPI.clientSecretResponsesManager.clientSecret2RetryResponse = nil
-        mockAPI.clientSecretResponsesManager.clientSecret2RetryError = cause
+        mockAPI.taSharesResponsesManager.taShare2Error = TestJsonMalformedError.fail
+        mockAPI.taSharesResponsesManager.taShare2Response = nil
+        mockAPI.taSharesResponsesManager.taShare2ResultCall = .failed
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -539,10 +396,13 @@ class RegistratorTests: XCTestCase {
         })
     }
 
-    func testRegistratorErrorOneSecretURL() throws {
+    func testRegistratorErrorOneDesignatedTA() throws {
         let desiredError = RegistrationError.registrationFail(nil)
 
-        mockAPI.registrationResponse?.secretUrls = ["https://example.com"]
+        let taURL = try XCTUnwrap(URL(string: "https://example.com"))
+        mockAPI.registrationResponse?.designatedTAs = [
+            DesignatedTA(url: taURL, token: randomString)
+        ]
 
         try register(completionHandler: { user, error in
             XCTAssertNil(user)
@@ -620,30 +480,25 @@ class RegistratorTests: XCTestCase {
     private func createMockAPI() -> MockAPI {
         let randomString = NSUUID().uuidString
 
-        var clientSecretResponse = ClientSecretResponse()
-        clientSecretResponse.dvsClientSecret = randomString
-
         let registrationResponse2 = RegistrationResponse(
             mpinId: mpinId,
             projectId: projectId,
-            dtas: dtas,
-            curve: "BN254CX",
-            secretUrls: [
-                "https://www.example.com",
-                "https://www.example1.com"
+            designatedTAs: [
+                DesignatedTA(url: URL(string: "https://www.example1.com")!, token: UUID().uuidString),
+                DesignatedTA(url: URL(string: "https://www.example2.com")!, token: UUID().uuidString)
             ]
         )
 
         var mockAPI = MockAPI()
         mockAPI.registrationResponse = registrationResponse2
 
-        mockAPI.clientSecretResponsesManager.clientSecret1ResultCall = .success
-        mockAPI.clientSecretResponsesManager.clientSecret1Error = nil
-        mockAPI.clientSecretResponsesManager.clientSecret1Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
+        mockAPI.taSharesResponsesManager.taShare1ResultCall = .success
+        mockAPI.taSharesResponsesManager.taShare1Error = nil
+        mockAPI.taSharesResponsesManager.taShare1Response = TAShareResponse(node: "DTA Node", share: randomString)
 
-        mockAPI.clientSecretResponsesManager.clientSecret2ResultCall = .success
-        mockAPI.clientSecretResponsesManager.clientSecret2Error = nil
-        mockAPI.clientSecretResponsesManager.clientSecret2Response = ClientSecretResponse(dvsClientSecret: UUID().uuidString)
+        mockAPI.taSharesResponsesManager.taShare2ResultCall = .success
+        mockAPI.taSharesResponsesManager.taShare2Error = nil
+        mockAPI.taSharesResponsesManager.taShare2Response = TAShareResponse(node: "DTA Node", share: randomString)
 
         return mockAPI
     }

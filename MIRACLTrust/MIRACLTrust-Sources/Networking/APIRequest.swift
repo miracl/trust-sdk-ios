@@ -11,6 +11,7 @@ class APIRequest<T: Codable> {
     var urlComponents: URLComponents
     var method: HTTPMethod
     var requestBody: T?
+    var authorizationHeader: String?
     var logger: Logger
 
     init(
@@ -19,6 +20,7 @@ class APIRequest<T: Codable> {
         method: HTTPMethod = .get,
         queryParameters: [String: String]? = nil,
         requestBody: T?,
+        authorizationHeader: String? = nil,
         logger: Logger
     ) throws {
         guard let baseURL = url, let components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
@@ -65,6 +67,7 @@ class APIRequest<T: Codable> {
             }
             urlComponents.queryItems = queryItems
         }
+        self.authorizationHeader = authorizationHeader
         self.logger = logger
 
         logger.debug(
@@ -79,6 +82,10 @@ class APIRequest<T: Codable> {
         }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
+
+        if let authorizationHeader {
+            request.addValue(authorizationHeader, forHTTPHeaderField: "Authorization")
+        }
 
         if method == .post || method == .put || method == .delete {
             if let requestBody = requestBody {

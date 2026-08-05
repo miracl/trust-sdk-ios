@@ -6,10 +6,6 @@
 
 import Foundation
 
-enum CryptoSupportedEllipticCurves: String {
-    case BN254CX
-}
-
 /// Object - Oriented wrapper for AMCL crypto library.
 struct Crypto: CryptoBlueprint {
     private let mPinHashTypeBN254CX = Int32(32)

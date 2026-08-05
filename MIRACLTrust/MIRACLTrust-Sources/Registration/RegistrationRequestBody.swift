@@ -5,4 +5,5 @@ struct RegistrationRequestBody: Codable {
     var publicKey: String
     var pushToken: String?
     var deviceTag: String
+    var ver = 2
 }

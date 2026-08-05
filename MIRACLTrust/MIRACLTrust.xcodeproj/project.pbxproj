@@ -178,7 +178,7 @@
 		6DC46A6725B9BB080099866C /* Registrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBA72E6240FC50B00561F89 /* Registrator.swift */; };
 		6DC46A6825B9BB080099866C /* RegistrationRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42DDA924113E7500EFA78A /* RegistrationRequestBody.swift */; };
 		6DC46A6925B9BB080099866C /* RegistrationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBA72F2240FE5D700561F89 /* RegistrationError.swift */; };
-		6DC46A6A25B9BB080099866C /* ClientSecretResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42DDB22416236E00EFA78A /* ClientSecretResponse.swift */; };
+		6DC46A6A25B9BB080099866C /* TAShareResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42DDB22416236E00EFA78A /* TAShareResponse.swift */; };
 		6DC46A7B25B9BB210099866C /* StringProtocol+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5AFD412422315000FBACDA /* StringProtocol+Helpers.swift */; };
 		6DC46A7C25B9BB210099866C /* OSLog+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3DDA56255530C800A0CD94 /* OSLog+Helper.swift */; };
 		6DC46A7D25B9BB210099866C /* UIDevice+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBA72F42410E5AD00561F89 /* UIDevice+Helpers.swift */; };
@@ -227,6 +227,8 @@
 		6DF2D3FB26A019BC004CAD54 /* SQLiteMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3FA26A019BC004CAD54 /* SQLiteMigration.swift */; };
 		6DF2D3FD26A01F21004CAD54 /* SQLiteMigration0to1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3FC26A01F21004CAD54 /* SQLiteMigration0to1.swift */; };
 		6DF2D3FF26A06BEC004CAD54 /* SQLMigrationFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3FE26A06BEC004CAD54 /* SQLMigrationFactory.swift */; };
+		6DF654A2302217B4005490ED /* DesignatedTA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF654A1302217B4005490ED /* DesignatedTA.swift */; };
+		6DF654A6302226EE005490ED /* TAShareRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF654A5302226E2005490ED /* TAShareRequestBody.swift */; };
 		6DFE8FC527EB6E380085380D /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFE8FC427EB6E380085380D /* Helpers.swift */; };
 		6DFEC8CE26E1049100E8F682 /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */; };
 		83695C1C2C9734AA00411EAA /* EmailVerificationMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */; };
@@ -342,7 +344,7 @@
 		6D42DDA7241135D100EFA78A /* RegistrationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationResponse.swift; sourceTree = "<group>"; };
 		6D42DDA924113E7500EFA78A /* RegistrationRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationRequestBody.swift; sourceTree = "<group>"; };
 		6D42DDAB2412799C00EFA78A /* MockAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPI.swift; sourceTree = "<group>"; };
-		6D42DDB22416236E00EFA78A /* ClientSecretResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSecretResponse.swift; sourceTree = "<group>"; };
+		6D42DDB22416236E00EFA78A /* TAShareResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TAShareResponse.swift; sourceTree = "<group>"; };
 		6D43A0E629F120A600E0939A /* ClientErrorData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientErrorData.swift; sourceTree = "<group>"; };
 		6D444BEC2A1C9BED00FD0329 /* APIRequestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequestError.swift; sourceTree = "<group>"; };
 		6D49C10E2448497900C48178 /* SQLiteUserStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteUserStorageTests.swift; sourceTree = "<group>"; };
@@ -530,6 +532,8 @@
 		6DF2D3FA26A019BC004CAD54 /* SQLiteMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteMigration.swift; sourceTree = "<group>"; };
 		6DF2D3FC26A01F21004CAD54 /* SQLiteMigration0to1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteMigration0to1.swift; sourceTree = "<group>"; };
 		6DF2D3FE26A06BEC004CAD54 /* SQLMigrationFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLMigrationFactory.swift; sourceTree = "<group>"; };
+		6DF654A1302217B4005490ED /* DesignatedTA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignatedTA.swift; sourceTree = "<group>"; };
+		6DF654A5302226E2005490ED /* TAShareRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TAShareRequestBody.swift; sourceTree = "<group>"; };
 		6DFE8FC427EB6E380085380D /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		6DFEC8CD26E1049100E8F682 /* MockURLSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
 		83695C1B2C9734AA00411EAA /* EmailVerificationMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailVerificationMethod.swift; sourceTree = "<group>"; };
@@ -1084,7 +1088,9 @@
 				6DBA72F2240FE5D700561F89 /* RegistrationError.swift */,
 				6D42DDA924113E7500EFA78A /* RegistrationRequestBody.swift */,
 				6D42DDA7241135D100EFA78A /* RegistrationResponse.swift */,
-				6D42DDB22416236E00EFA78A /* ClientSecretResponse.swift */,
+				6DF654A1302217B4005490ED /* DesignatedTA.swift */,
+				6D42DDB22416236E00EFA78A /* TAShareResponse.swift */,
+				6DF654A5302226E2005490ED /* TAShareRequestBody.swift */,
 			);
 			path = Registration;
 			sourceTree = "<group>";
@@ -1534,6 +1540,7 @@
 				6D2E4F112E2E62DA0001B5A7 /* CrossDeviceSession.swift in Sources */,
 				6D663D742E312C79004B1D53 /* CrossDeviceSessionAuthenticator.swift in Sources */,
 				6DC89F612E2FCA1000683AFB /* CrossDeviceSessionAborter.swift in Sources */,
+				6DF654A2302217B4005490ED /* DesignatedTA.swift in Sources */,
 				83695C1C2C9734AA00411EAA /* EmailVerificationMethod.swift in Sources */,
 				6DC46A2325B9BAE40099866C /* Signer.swift in Sources */,
 				6DF2D3FF26A06BEC004CAD54 /* SQLMigrationFactory.swift in Sources */,
@@ -1559,7 +1566,7 @@
 				6DF2D3F5269F0363004CAD54 /* SQLiteUserStorage.swift in Sources */,
 				6DC46A4F25B9BAFD0099866C /* VerificationConfirmationRequestBody.swift in Sources */,
 				6DC46A7E25B9BB210099866C /* Data+Extensions.swift in Sources */,
-				6DC46A6A25B9BB080099866C /* ClientSecretResponse.swift in Sources */,
+				6DC46A6A25B9BB080099866C /* TAShareResponse.swift in Sources */,
 				6DC46A5425B9BAFD0099866C /* VerificationRequestResponse.swift in Sources */,
 				6D291E942E55F80600C6AD80 /* StorageType.swift in Sources */,
 				FA5D21162D0890CC00E3548C /* VerificationQuickCodeRequestBody.swift in Sources */,
@@ -1614,6 +1621,7 @@
 				6DC46A0825B9BAD40099866C /* DefaultLogger.swift in Sources */,
 				6DC46A7C25B9BB210099866C /* OSLog+Helper.swift in Sources */,
 				6DC46A5325B9BAFD0099866C /* VerificationError.swift in Sources */,
+				6DF654A6302226EE005490ED /* TAShareRequestBody.swift in Sources */,
 				6DC46A4E25B9BAFD0099866C /* VerificationRequestBody.swift in Sources */,
 				6D6A20732FCDBD7400AC51E8 /* BackupConfigurable.swift in Sources */,
 				6DC4699F25B9B9890099866C /* sqlite3.c in Sources */,

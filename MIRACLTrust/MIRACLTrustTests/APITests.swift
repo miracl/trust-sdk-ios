@@ -18,11 +18,11 @@ class APITests: XCTestCase {
         api?.executor.urlSession = mockURLSession
     }
 
-    func testGetClientSecret2ForError() throws {
+    func testGetTAShare2ForError() throws {
         let desiredStatusCode = 400
 
-        let clientSecretURL = try XCTUnwrap(URL(string: "https://www.clientsecret.com"))
-        let desiredError = APIError.apiClientError(statusCode: desiredStatusCode, clientErrorData: nil, requestId: "", message: nil, requestURL: clientSecretURL)
+        let taShareURL = try XCTUnwrap(URL(string: "https://www.tashare.com"))
+        let desiredError = APIError.apiClientError(statusCode: desiredStatusCode, clientErrorData: nil, requestId: "", message: nil, requestURL: taShareURL)
 
         let api = try XCTUnwrap(api)
 
@@ -35,28 +35,41 @@ class APITests: XCTestCase {
             headerFields: nil
         )
 
-        api.getClientSecretShare(clientSecretURL, completionHandler: { result, response, error in
+        api.getTAShare(
+            designatedTA: DesignatedTA(url: taShareURL, token: UUID().uuidString),
+            mpinId: UUID().uuidString,
+            publicKey: UUID().uuidString
+        ) { result, response, error in
             XCTAssertEqual(result, APICallResult.failed)
             XCTAssertNil(response)
             assertError(current: error, expected: desiredError)
-        })
+        }
     }
 
-    func testGetClientSecret2() throws {
-        let clientSecretURL = try XCTUnwrap(URL(string: "https://www.clientsecret.com"))
+    func testGetTAShare() throws {
+        let taShareURL = try XCTUnwrap(URL(string: "https://www.tashare.com"))
         let api = try XCTUnwrap(api)
-        let clientSecret = UUID().uuidString
+        let node = UUID().uuidString
+        let share = UUID().uuidString
 
         mockURLSession.data = Data("""
-            { "dvsClientSecret": "\(clientSecret)" }
+            {
+                "node": "\(node)",
+                "share": "\(share)"
+            }
         """.utf8)
 
-        api.getClientSecretShare(clientSecretURL) { result, response, error in
+        api.getTAShare(
+            designatedTA: DesignatedTA(url: taShareURL, token: UUID().uuidString),
+            mpinId: UUID().uuidString,
+            publicKey: UUID().uuidString
+        ) { result, response, error in
             XCTAssertEqual(result, APICallResult.success)
             XCTAssertNil(error)
             do {
                 let response = try XCTUnwrap(response)
-                XCTAssertEqual(response.dvsClientSecret, clientSecret)
+                XCTAssertEqual(response.node, node)
+                XCTAssertEqual(response.share, share)
             } catch {
                 XCTFail("Fail at \(#function) on row \(#line) аnd error \(error)")
             }
@@ -67,11 +80,12 @@ class APITests: XCTestCase {
         let randomString = UUID().uuidString
         let pinLength = 4
         let api = try XCTUnwrap(api)
-        let curve = "BN254CX"
         let secretUrls = ["example.com", "example.com"]
 
-        let secretUrlsString = secretUrls.map { secretUrl in
-            "\"\(secretUrl)\""
+        let designatedTAsArray = secretUrls.map { secretUrl in
+            """
+            { "url" : "\(secretUrl)", "token" : "\(randomString)" }
+            """
         }.joined(separator: ",")
 
         mockURLSession.data = Data(
@@ -79,11 +93,8 @@ class APITests: XCTestCase {
                 {
                     "mpinId" : "\(randomString)",
                     "projectId" : "\(randomString)",
-                    "dtas" : "\(randomString)",
-                    "curve" : "\(curve)",
                     "pinLength" : \(pinLength),
-                    "secretUrls" : [ \(secretUrlsString)],
-                    "verificationType" : "PV"
+                    "designatedTAs" : [ \(designatedTAsArray) ]
                 }
             """.utf8
         )
@@ -101,15 +112,54 @@ class APITests: XCTestCase {
 
                 XCTAssertEqual(response.mpinId, randomString)
                 XCTAssertEqual(response.projectId, randomString)
-                XCTAssertEqual(response.dtas, randomString)
-                XCTAssertEqual(response.curve, curve)
-                XCTAssertEqual(response.secretUrls, secretUrls)
+                let designatedTAs = response.designatedTAs
+                for (index, designatedTA) in designatedTAs.enumerated() {
+                    XCTAssertEqual(designatedTA.url, URL(string: secretUrls[index]))
+                    XCTAssertEqual(designatedTA.token, randomString)
+                }
             } catch {
                 XCTFail("Fail at \(#function) on row \(#line) and error \(error)")
             }
 
             XCTAssertNil(error)
             XCTAssertEqual(result, APICallResult.success)
+        }
+    }
+
+    func testRegisterUserWithInvalidDesignatedTAURL() throws {
+        let randomString = UUID().uuidString
+        let pinLength = 4
+        let api = try XCTUnwrap(api)
+        let secretUrls = ["https:// example. com/my endpoint ", "example.com"]
+
+        let designatedTAsArray = secretUrls.map { secretUrl in
+            """
+            { "url" : "\(secretUrl)", "token" : "\(randomString)" }
+            """
+        }.joined(separator: ",")
+
+        mockURLSession.data = Data(
+            """
+                {
+                    "mpinId" : "\(randomString)",
+                    "projectId" : "\(randomString)",
+                    "pinLength" : \(pinLength),
+                    "designatedTAs" : [ \(designatedTAsArray) ]
+                }
+            """.utf8
+        )
+
+        api.registerUser(
+            userId: randomString,
+            activationToken: randomString,
+            deviceName: randomString,
+            publicKey: randomString,
+            pushToken: nil,
+            deviceTag: randomString
+        ) { result, response, error in
+            XCTAssertNil(response)
+            XCTAssertNotNil(error)
+            XCTAssertEqual(result, APICallResult.failed)
         }
     }
 
