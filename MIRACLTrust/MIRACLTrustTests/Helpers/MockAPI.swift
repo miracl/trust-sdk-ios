@@ -185,7 +185,6 @@ struct MockAPI: APIBlueprint {
         userId _: String,
         deviceName _: String,
         accessId _: String?,
-        mpinId _: String?,
         deviceTag _: String,
         completionHandler: @escaping APIRequestCompletionHandler<VerificationRequestResponse>
     ) {

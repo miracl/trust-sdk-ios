@@ -42,7 +42,6 @@ protocol APIBlueprint: Sendable {
         userId: String,
         deviceName: String,
         accessId: String?,
-        mpinId: String?,
         deviceTag: String,
         completionHandler: @escaping APIRequestCompletionHandler<VerificationRequestResponse>
     )

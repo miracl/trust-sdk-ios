@@ -23,7 +23,6 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
-            userStorage: mockUserStorage,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger
         ) { verified, error in
@@ -58,7 +57,6 @@ class VerificatorTests: XCTestCase {
                 deviceName: deviceName,
                 sessionIdentifier: invalidAccessId,
                 miraclAPI: api,
-                userStorage: mockUserStorage,
                 deviceTagManager: DeviceTagManager(logger: logger),
                 logger: logger,
                 completionHandler: { _, _ in }
@@ -83,7 +81,6 @@ class VerificatorTests: XCTestCase {
                 deviceName: deviceName,
                 sessionIdentifier: nil,
                 miraclAPI: api,
-                userStorage: mockUserStorage,
                 deviceTagManager: DeviceTagManager(logger: logger),
                 logger: logger,
                 completionHandler: { _, _ in }
@@ -110,7 +107,6 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
-            userStorage: mockUserStorage,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { response, error in
@@ -146,7 +142,6 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
-            userStorage: mockUserStorage,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { response, error in
@@ -180,7 +175,6 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
-            userStorage: mockUserStorage,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { verified, error in
@@ -216,7 +210,6 @@ class VerificatorTests: XCTestCase {
             deviceName: deviceName,
             sessionIdentifier: nil,
             miraclAPI: api,
-            userStorage: mockUserStorage,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
             completionHandler: { verified, error in
