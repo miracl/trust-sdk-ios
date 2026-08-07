@@ -104,7 +104,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertEqual(activationTokenResponse?.projectId, projectId)
     }
 
-    func testVerificationWithMpinId() async throws {
+    func testDefaultVerificationFromRegisteredDevice() async throws {
         let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
@@ -295,7 +295,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(activationTokenError)
     }
 
-    func testEmailCodeVerificationWithMpinId() async throws {
+    func testEmailCodeVerificationFromRegisteredDevice() async throws {
         let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
@@ -343,7 +343,7 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.code)
     }
 
-    func testEmailCodeVerificationWithoutMpinId() async throws {
+    func testEmailCodeVerificationFromNewDevice() async throws {
         let extendedMailAddress = createMailpitUserId()
 
         configuration = try Configuration
@@ -377,7 +377,11 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNotNil(user)
         XCTAssertNil(registrationError)
 
-        try MIRACLTrust.getInstance().delete(user: XCTUnwrap(user))
+        DeviceTagManager.cachedTag = nil
+        let miraclSDKDirectory = MIRACLTrust.getInstance().deviceTagManager.miraclSDKDirectory
+        let appSupportDir = try XCTUnwrap(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first)
+        let sdkDirectory = appSupportDir.appendingPathComponent(miraclSDKDirectory)
+        try FileManager.default.removeItem(at: sdkDirectory)
 
         // Prevent verification request backoff
         sleep(5)
@@ -389,67 +393,6 @@ class VerificationIntegrationTests: XCTestCase {
         XCTAssertNil(error)
         XCTAssertNotNil(verificationResponse)
         XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.link)
-    }
-
-    func testEmailCodeVerificationWithRevokedMpinId() async throws {
-        let extendedMailAddress = createMailpitUserId()
-
-        configuration = try Configuration
-            .Builder(projectId: projectIdECV, projectURL: projectURLECV)
-            .userStorage(userStorage: storage)
-            .build()
-        try MIRACLTrust.configure(with: XCTUnwrap(configuration))
-
-        let timestamp = Date()
-        var (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
-            userId: extendedMailAddress
-        )
-
-        XCTAssertNotNil(verificationResponse)
-        XCTAssertNil(error)
-
-        let code = try await mailpitService.getVerificationCode(receiver: extendedMailAddress, timestamp: timestamp)
-        let (activationTokenResponse, activationTokenError) = try await activationTokenTestCase.getActivationToken(
-            userId: extendedMailAddress, code: XCTUnwrap(code)
-        )
-
-        XCTAssertNotNil(activationTokenResponse)
-        XCTAssertNil(activationTokenError)
-
-        registrationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        let (regUser, registrationError) = try await registrationTestCase.registerUser(
-            userId: extendedMailAddress, activationToken: XCTUnwrap(activationTokenResponse?.activationToken)
-        )
-
-        XCTAssertNotNil(regUser)
-        XCTAssertNil(registrationError)
-
-        var user = try XCTUnwrap(regUser)
-
-        let authenticationTestCase = JWTAuthenticationTestCase()
-        authenticationTestCase.pinCode = String(Int32.random(in: 1000 ..< 9999))
-        var (jwt, authError) = await authenticationTestCase.generateJWT(user: user)
-        XCTAssertNotNil(authError)
-        XCTAssertNil(jwt)
-
-        (jwt, authError) = await authenticationTestCase.generateJWT(user: user)
-        XCTAssertNotNil(authError)
-        XCTAssertNil(jwt)
-
-        (jwt, authError) = await authenticationTestCase.generateJWT(user: user)
-        assertError(current: authError, expected: AuthenticationError.revoked)
-        XCTAssertNil(jwt)
-
-        user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: extendedMailAddress))
-        XCTAssertEqual(user.revoked, true)
-
-        (verificationResponse, error) = await verificationTestCase.sendVerificationEmail(
-            userId: extendedMailAddress
-        )
-
-        XCTAssertNil(error)
-        XCTAssertNotNil(verificationResponse)
-        XCTAssertEqual(verificationResponse?.method, EmailVerificationMethod.code)
     }
 
     func testCustomVerification() async throws {

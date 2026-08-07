@@ -196,7 +196,6 @@ struct API: APIBlueprint {
         userId: String,
         deviceName: String,
         accessId: String?,
-        mpinId: String?,
         deviceTag: String,
         completionHandler: @escaping APIRequestCompletionHandler<VerificationRequestResponse>
     ) {
@@ -205,8 +204,7 @@ struct API: APIBlueprint {
             userId: userId,
             deviceName: deviceName,
             deviceTag: deviceTag,
-            accessId: accessId,
-            mpinId: mpinId
+            accessId: accessId
         )
 
         do {

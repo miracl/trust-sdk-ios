@@ -10,7 +10,6 @@ struct Verificator {
     let sessionIdentifier: String?
     let completionHandler: VerificationCompletionHandler
     let miraclAPI: APIBlueprint
-    let userStorage: UserStorage
     let deviceTagManager: DeviceTagManager
     let logger: Logger
 
@@ -19,7 +18,6 @@ struct Verificator {
          deviceName: String,
          sessionIdentifier: String?,
          miraclAPI: APIBlueprint,
-         userStorage: UserStorage,
          deviceTagManager: DeviceTagManager,
          logger: Logger,
          completionHandler: @escaping VerificationCompletionHandler) throws {
@@ -29,7 +27,6 @@ struct Verificator {
         self.deviceName =
             deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
         self.miraclAPI = miraclAPI
-        self.userStorage = userStorage
         self.logger = logger
         self.completionHandler = completionHandler
         self.deviceTagManager = deviceTagManager
@@ -43,16 +40,11 @@ struct Verificator {
         DispatchQueue.global(qos: .default).async {
             logOperation(operation: LoggingConstants.verificationStarted)
 
-            let userDTO = try? userStorage.getUser(by: userId, projectId: projectId)
-
-            let mpinId = userDTO?.mpinId.hex
-
             miraclAPI.verifyUser(
                 projectId: projectId,
                 userId: userId,
                 deviceName: deviceName,
                 accessId: sessionIdentifier,
-                mpinId: mpinId,
                 deviceTag: deviceTagManager.deviceTag
             ) { _, verificationAPIResponse, error in
                 logOperation(operation: LoggingConstants.finished)

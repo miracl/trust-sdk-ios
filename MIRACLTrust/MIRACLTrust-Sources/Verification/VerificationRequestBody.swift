@@ -4,5 +4,4 @@ struct VerificationRequestBody: Codable {
     var deviceName: String
     var deviceTag: String
     var accessId: String?
-    var mpinId: String?
 }
