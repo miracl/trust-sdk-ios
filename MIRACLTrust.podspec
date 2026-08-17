@@ -5,13 +5,13 @@ Pod::Spec.new do |s|
   s.name = "MIRACLTrust"
   s.summary = "MIRACL Trust SDK for iOS"
   s.requires_arc = true
-  s.version = "1.18.0"
+  s.version = "1.19.0"
   s.license = { :type => "Apache2", :file => "LICENSE" }
   s.author = { "MIRACL" => "operations@miracl.com" }
   s.homepage = "https://github.com/miracl/trust-sdk-ios"
   s.source = {
     :git => "https://github.com/miracl/trust-sdk-ios",
-    :tag => "1.18.0"
+    :tag => "1.19.0"
   }
 
   s.framework = "UIKit"

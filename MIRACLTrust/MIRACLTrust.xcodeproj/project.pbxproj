@@ -1741,7 +1741,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1806,7 +1806,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1832,7 +1832,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.trust.sdk-ios.MIRACLTrustTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1852,7 +1852,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.trust.sdk-ios.MIRACLTrustTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1874,7 +1874,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radoslavpenev.MIRACLTrustIntegrationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "MIRACLTrustIntegrationTests/Cases/MIRACLTrustIntegrationTests-Bridging-Header.h";
@@ -1899,7 +1899,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radoslavpenev.MIRACLTrustIntegrationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "MIRACLTrustIntegrationTests/Cases/MIRACLTrustIntegrationTests-Bridging-Header.h";
@@ -1922,7 +1922,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.applclippoc.MIRACLTrust-Test-Host-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1944,7 +1944,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.miracl.applclippoc.MIRACLTrust-Test-Host-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1985,7 +1985,7 @@
 					"$(PROJECT_DIR)/MIRACLTrust-Sources/Crypto/src",
 				);
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				MODULEMAP_FILE = "$(SRCROOT)/MIRACLTrust-Sources/MIRACLTrust.modulemap";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2034,7 +2034,7 @@
 					"$(PROJECT_DIR)/MIRACLTrust-Sources/Crypto/src",
 				);
 				MARKETING_VERSION = "$(MIRACL_SDK_VERSION)";
-				MIRACL_SDK_VERSION = 1.18.0;
+				MIRACL_SDK_VERSION = 1.19.0;
 				MODULEMAP_FILE = "$(SRCROOT)/MIRACLTrust-Sources/MIRACLTrust.modulemap";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
