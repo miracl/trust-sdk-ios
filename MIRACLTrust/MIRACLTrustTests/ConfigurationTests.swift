@@ -13,7 +13,8 @@ final class ConfigurationTests: XCTestCase {
         )
         try MIRACLTrust.configure(with: configuration)
 
-        let configurationHeaders = try XCTUnwrap(MIRACLTrust.getInstance().urlSessionConfiguration.httpAdditionalHeaders)
+        let miraclAPI = try XCTUnwrap(MIRACLTrust.getInstance().miraclAPI as? API)
+        let configurationHeaders = try XCTUnwrap(miraclAPI.executor.urlSession.configuration.httpAdditionalHeaders)
         let miraclHeader = try XCTUnwrap(configurationHeaders["X-Miracl-Client"] as? String)
         let sdkVersion = try XCTUnwrap(Bundle(for: MIRACLTrust.self).infoDictionary?["CFBundleShortVersionString"])
         XCTAssertEqual(miraclHeader, "MIRACL iOS SDK/\(sdkVersion) \(applicationInfo)")
