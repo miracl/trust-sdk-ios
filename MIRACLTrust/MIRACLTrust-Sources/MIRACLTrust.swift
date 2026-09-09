@@ -46,17 +46,9 @@ import Foundation
 
         self.projectId = projectId
         deviceName = configuration.deviceName
-        urlSessionConfiguration = configuration.urlSessionConfiguration
-
-        miraclAPI = API(
-            baseURL: projectURL,
-            urlSessionConfiguration: configuration.urlSessionConfiguration,
-            logger: logger
-        )
-
         crypto = Crypto(logger: logger)
-
         deviceTagManager = DeviceTagManager(logger: logger)
+        urlSessionConfiguration = configuration.urlSessionConfiguration
 
         let sdkVersion = Bundle(for: MIRACLTrust.self).infoDictionary?["MIRACL_SDK_VERSION"] ?? MIRACLTrustVersion.current
         var miraclHeader = "MIRACL iOS SDK/\(sdkVersion)"
@@ -64,12 +56,18 @@ import Foundation
             miraclHeader.append(" \(applicationInfo)")
         }
 
-        var additionalHeaders = configuration.urlSessionConfiguration.httpAdditionalHeaders ?? [:]
+        var additionalHeaders = urlSessionConfiguration.httpAdditionalHeaders ?? [:]
         additionalHeaders["X-Miracl-Client"] = miraclHeader
         additionalHeaders["X-Miracl-Device-Name"] = deviceName
         additionalHeaders["X-Miracl-Device-Tag"] = deviceTagManager.deviceTag
 
-        configuration.urlSessionConfiguration.httpAdditionalHeaders = additionalHeaders
+        urlSessionConfiguration.httpAdditionalHeaders = additionalHeaders
+
+        miraclAPI = API(
+            baseURL: projectURL,
+            urlSessionConfiguration: urlSessionConfiguration,
+            logger: logger
+        )
 
         userStorage = try MIRACLTrust.createUserStorage(
             storageType: configuration.storageType,
