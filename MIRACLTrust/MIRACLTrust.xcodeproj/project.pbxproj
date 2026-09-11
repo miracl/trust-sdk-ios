@@ -121,6 +121,7 @@
 		6DB7797124ADC08F00FA5219 /* QRAuthenticationCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DB7797024ADC08F00FA5219 /* QRAuthenticationCompatibilityCase.m */; };
 		6DB7797624ADF42000FA5219 /* RegistrationCompatibilityCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DB7797524ADF42000FA5219 /* RegistrationCompatibilityCase.m */; };
 		6DBA72F1240FDF9E00561F89 /* RegistratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBA72F0240FDF9E00561F89 /* RegistratorTests.swift */; };
+		6DBC45C73053182B0052A227 /* MIRACLTrust+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBC45C63053182B0052A227 /* MIRACLTrust+Async.swift */; };
 		6DBCBAA72FAE0E6B00474ABA /* MailpitServiceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCBAA62FAE0E6000474ABA /* MailpitServiceWrapper.swift */; };
 		6DBCBAA92FAE10B500474ABA /* MailpitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCBAA82FAE10AE00474ABA /* MailpitService.swift */; };
 		6DBD1A7425D1694A002702F8 /* QuickCodeIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBD1A7325D1694A002702F8 /* QuickCodeIntegrationTests.swift */; };
@@ -220,6 +221,9 @@
 		6DEE19CE25CA7A2E0086D64A /* QuickCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEE19CD25CA7A2E0086D64A /* QuickCodeGenerator.swift */; };
 		6DEE19DE25CA7AC80086D64A /* QuickCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEE19DD25CA7AC80086D64A /* QuickCode.swift */; };
 		6DEEBA332FBF123C00E2A89E /* DeviceTagManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEEBA322FBF123700E2A89E /* DeviceTagManager.swift */; };
+		6DEF2BC6305A89CC00FBC284 /* MIRACLTrustAsyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF2BC5305A89CC00FBC284 /* MIRACLTrustAsyncTests.swift */; };
+		6DEF2BCD305D381700FBC284 /* MIRACLTrust+Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF2BCC305D381200FBC284 /* MIRACLTrust+Core.swift */; };
+		6DEF2BD1305D803D00FBC284 /* MIRACLTrustAsyncCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF2BD0305D803100FBC284 /* MIRACLTrustAsyncCompatibilityTests.swift */; };
 		6DF2D3F3269F00B5004CAD54 /* UserStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3F2269F00B5004CAD54 /* UserStorage.swift */; };
 		6DF2D3F5269F0363004CAD54 /* SQLiteUserStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3F4269F0363004CAD54 /* SQLiteUserStorage.swift */; };
 		6DF2D3F7269F03DE004CAD54 /* SQLiteUserStorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF2D3F6269F03DE004CAD54 /* SQLiteUserStorageError.swift */; };
@@ -472,6 +476,7 @@
 		6DBA72F42410E5AD00561F89 /* UIDevice+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Helpers.swift"; sourceTree = "<group>"; };
 		6DBAF66125764E2C007F0364 /* VerificationConfirmationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationConfirmationResponse.swift; sourceTree = "<group>"; };
 		6DBAF66A25765FE1007F0364 /* VerificationConfirmationRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationConfirmationRequestBody.swift; sourceTree = "<group>"; };
+		6DBC45C63053182B0052A227 /* MIRACLTrust+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIRACLTrust+Async.swift"; sourceTree = "<group>"; };
 		6DBCBAA62FAE0E6000474ABA /* MailpitServiceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailpitServiceWrapper.swift; sourceTree = "<group>"; };
 		6DBCBAA82FAE10AE00474ABA /* MailpitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailpitService.swift; sourceTree = "<group>"; };
 		6DBD1A7325D1694A002702F8 /* QuickCodeIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCodeIntegrationTests.swift; sourceTree = "<group>"; };
@@ -525,6 +530,9 @@
 		6DEE19CD25CA7A2E0086D64A /* QuickCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCodeGenerator.swift; sourceTree = "<group>"; };
 		6DEE19DD25CA7AC80086D64A /* QuickCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCode.swift; sourceTree = "<group>"; };
 		6DEEBA322FBF123700E2A89E /* DeviceTagManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTagManager.swift; sourceTree = "<group>"; };
+		6DEF2BC5305A89CC00FBC284 /* MIRACLTrustAsyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIRACLTrustAsyncTests.swift; sourceTree = "<group>"; };
+		6DEF2BCC305D381200FBC284 /* MIRACLTrust+Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIRACLTrust+Core.swift"; sourceTree = "<group>"; };
+		6DEF2BD0305D803100FBC284 /* MIRACLTrustAsyncCompatibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIRACLTrustAsyncCompatibilityTests.swift; sourceTree = "<group>"; };
 		6DF2D3F2269F00B5004CAD54 /* UserStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStorage.swift; sourceTree = "<group>"; };
 		6DF2D3F4269F0363004CAD54 /* SQLiteUserStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteUserStorage.swift; sourceTree = "<group>"; };
 		6DF2D3F6269F03DE004CAD54 /* SQLiteUserStorageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteUserStorageError.swift; sourceTree = "<group>"; };
@@ -667,6 +675,7 @@
 				6D663D792E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift */,
 				6D8947782F6C339D00D1AD15 /* CreateInstanceTests.swift */,
 				6D6A20662FC8259C00AC51E8 /* DeviceTagTests.swift */,
+				6DEF2BC5305A89CC00FBC284 /* MIRACLTrustAsyncTests.swift */,
 				6D18500C23E038E8008E85E5 /* Info.plist */,
 			);
 			path = MIRACLTrustTests;
@@ -906,6 +915,7 @@
 			children = (
 				6DA992F824AC93AB002F6AA2 /* MIRACLTrustIntegrationTests-Bridging-Header.h */,
 				6DB7796524ADBBFE00FA5219 /* Objective-C */,
+				6DEF2BD23061434800FBC284 /* Async */,
 				6DB7796224ADBBE900FA5219 /* Swift */,
 			);
 			path = Cases;
@@ -1127,6 +1137,8 @@
 				6D49C1092446EE9B00C48178 /* User Storage */,
 				6D2B93A824B732F0005FDA35 /* Signing */,
 				6D771BC7264BA98000949D52 /* MIRACLTrust.swift */,
+				6DEF2BCC305D381200FBC284 /* MIRACLTrust+Core.swift */,
+				6DBC45C63053182B0052A227 /* MIRACLTrust+Async.swift */,
 				6D2EDBFB2FEBCF3900028053 /* MIRACLTrustVersion.swift */,
 				6D18503223E05F41008E85E5 /* Configuration.swift */,
 				6D86ADC623FEDF2800A6BCE6 /* ConfigurationError.swift */,
@@ -1164,6 +1176,14 @@
 				FA5D21172D08926800E3548C /* VerificationQuickCodeResponse.swift */,
 			);
 			path = QuickCode;
+			sourceTree = "<group>";
+		};
+		6DEF2BD23061434800FBC284 /* Async */ = {
+			isa = PBXGroup;
+			children = (
+				6DEF2BD0305D803100FBC284 /* MIRACLTrustAsyncCompatibilityTests.swift */,
+			);
+			path = Async;
 			sourceTree = "<group>";
 		};
 		FAE467E42CF9E14900754F5C /* MIRACLTrustHelperAPI */ = {
@@ -1415,6 +1435,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D36273B256FAE2600993AD3 /* VerificatorTests.swift in Sources */,
+				6DEF2BC6305A89CC00FBC284 /* MIRACLTrustAsyncTests.swift in Sources */,
 				6D663D7A2E338D5C004B1D53 /* CrossDeviceSessionAuthenticatorTest.swift in Sources */,
 				6DDC22A8270AD0F7003A2DE8 /* AbortSessionTests.swift in Sources */,
 				6D42DDAC2412799C00EFA78A /* MockAPI.swift in Sources */,
@@ -1474,6 +1495,7 @@
 				6DCFDD4424AA0E7D00CED02F /* QRAuthenticationTestCase.swift in Sources */,
 				6D8E8DAA25ED30C20084B6FE /* QuickCodeCompatibilityCode.m in Sources */,
 				6DEC21DB26F3502E0099C836 /* PushNotificationAuthenticationCompatibilityCase.m in Sources */,
+				6DEF2BD1305D803D00FBC284 /* MIRACLTrustAsyncCompatibilityTests.swift in Sources */,
 				FAE467E72CF9E15E00754F5C /* PlatformAPI.swift in Sources */,
 				FAE467E62CF9E15E00754F5C /* HelperAPIModel.swift in Sources */,
 				6D70EF692B0F8E84004AE28A /* PushNotificationPayloadAuthenticationSessionDetailsCompatibilityCase.m in Sources */,
@@ -1592,7 +1614,9 @@
 				6D2EDBFC2FEBCF4100028053 /* MIRACLTrustVersion.swift in Sources */,
 				6DC46A7D25B9BB210099866C /* UIDevice+Helpers.swift in Sources */,
 				6D5D1C8C2D9EC41C004BDA7B /* SigningResult.swift in Sources */,
+				6DEF2BCD305D381700FBC284 /* MIRACLTrust+Core.swift in Sources */,
 				6D91ABD426FDE1C900EE28CF /* AuthenticationSessionDetailsFetcher.swift in Sources */,
+				6DBC45C73053182B0052A227 /* MIRACLTrust+Async.swift in Sources */,
 				6DEE19CE25CA7A2E0086D64A /* QuickCodeGenerator.swift in Sources */,
 				6DED0DAB2AA0D56C008875C6 /* SQLiteMigration2to3.swift in Sources */,
 				6DC46A9225B9BB2B0099866C /* APIRequest.swift in Sources */,

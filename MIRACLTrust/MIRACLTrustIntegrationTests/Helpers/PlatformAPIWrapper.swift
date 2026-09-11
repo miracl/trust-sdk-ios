@@ -181,4 +181,29 @@ import XCTest
             }
         }
     }
+
+    func verifySignatureAsync(
+        signingResult: SigningResult,
+        serviceAccountToken: String,
+        projectId: String,
+        projectURL: String
+    ) async throws -> VerifySigningResponse {
+        try await withCheckedThrowingContinuation { continuation in
+            platformAPI.verifySignature(
+                for: signingResult.signature,
+                timestamp: signingResult.timestamp,
+                serviceAccountToken: serviceAccountToken,
+                projectId: projectId,
+                projectURL: projectURL
+            ) { signingResponse, error in
+                if let signingResponse {
+                    continuation.resume(returning: signingResponse)
+                } else if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    fatalError("verifySignature crashed")
+                }
+            }
+        }
+    }
 }
