@@ -297,7 +297,6 @@ class MIRACLTrustTests: XCTestCase {
         let expectation = XCTestExpectation(description: "register")
         let expectationForPinHandler = XCTestExpectation(description: "register - pinHandler")
 
-        let randomString = randomString
         let clientToken = clientToken
         let mpinId = mpinId
         let dtas = dtas
