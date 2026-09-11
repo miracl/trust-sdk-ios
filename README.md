@@ -173,10 +173,22 @@ that:
   - [Email Code](https://miracl.com/resources/docs/guides/built-in-user-verification/email-code/)
 
   Start the verification by calling the
-  [sendVerificationEmail](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/sendverificationemail(userid:authenticationsessiondetails:completionhandler:)>)
+  [sendVerificationEmail](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/sendverificationemail(userid:)>)
   method:
 
-  Swift:
+  ```swift
+  do {
+      let verificationResponse = try await MIRACLTrust.getInstance().sendVerificationEmail(
+          userId: <#Unique user identifier (any string, i.e. email)#>
+      )
+      // Check here if verification email is sent.
+  } catch {
+      // Handle errors.
+  }
+  ```
+
+  <details>
+  <summary>Using Completion Handlers</summary>
 
   ```swift
       MIRACLTrust.getInstance().sendVerificationEmail(
@@ -186,7 +198,10 @@ that:
       }
   ```
 
-  Objective-C:
+  </details>
+
+  <details>
+  <summary>Using Objective-C</summary>
 
   ```objc
       [[MIRACLTrust getInstance]
@@ -197,6 +212,8 @@ that:
                             // is sent and handle any verification errors.
                         }];
   ```
+
+  </details>
 
   Then, a verification email is sent, and a
   [VerificationResponse](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/verificationresponse)
@@ -237,10 +254,30 @@ that:
 
      After the application recieves the Verification URL, it must confirm the
      verification by passing it to the
-     [getActivationToken](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getactivationtoken(verificationurl:completionhandler:)>)
+     [getActivationToken](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getactivationtoken(verificationurl:)>)
      method:
 
-     Swift:
+     ```swift
+     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+         guard let verificationURL = userActivity.webpageURL else {
+             return
+         }
+
+         Task {
+             do {
+                 let activationTokenResponse = try await MIRACLTrust
+                     .getInstance()
+                     .getActivationToken(verificationURL: verificationURL)
+                 // Pass the activation token to the `register` method.
+             } catch {
+                 // Handle activation token error.
+             }
+         }
+     }
+     ```
+
+     <details>
+     <summary>Using Completion Handlers</summary>
 
      ```swift
      func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
@@ -256,7 +293,10 @@ that:
      }
      ```
 
-     Objective-C:
+     </details>
+
+     <details>
+     <summary>Using Objective-C</summary>
 
      ```objc
      -(void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity
@@ -276,6 +316,8 @@ that:
      }
      ```
 
+     </details>
+
      Call this method after the Universal Link is handled in the application.
      For `UIKit` applications, use the
      [scene](https://developer.apple.com/documentation/uikit/uiscenedelegate/3238056-scene)
@@ -289,10 +331,22 @@ that:
 
      When the end user enters the verification code, the application must
      confirm the verification by passing it to the
-     [getActivationToken](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getactivationtoken(userid:code:completionhandler:)>)
+     [getActivationToken](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getactivationtoken(userid:code:)>)
      method:
 
-     Swift:
+     ```swift
+     do {
+         let activationTokenResponse = try await MIRACLTrust
+             .getInstance()
+             .getActivationToken(userId: userId, code: code)
+         // Pass the activation token to the `register` method.
+     } catch {
+         // Handle error
+     }
+     ```
+
+     <details>
+     <summary>Using Completion Handlers</summary>
 
      ```swift
      MIRACLTrust
@@ -302,32 +356,51 @@ that:
         }
      ```
 
-     Objective-C:
+     </details>
+
+     <details>
+     <summary>Using Objective-C</summary>
 
      ```objc
      [[MIRACLTrust getInstance]
      getActivationTokenWithUserId:userId
      code:code
      completionHandler:^(ActivationTokenResponse * _Nullable response, NSError * _Nullable error) {
-
         // Pass the activation token to the `register` method.
      }];
      ```
 
-2. Pass the User ID (email or any string you use for identification), activation
-   token (received from verification),
-   [PinRequestHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/pinrequesthandler)
-   and
-   [RegistrationCompletionHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/registrationcompletionhandler)
-   implementations to the
-   [register](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/register(for:activationtoken:pushnotificationstoken:didrequestpinhandler:completionhandler:)>)
-   method. When the registration is successful, a
-   [RegistrationCompletionHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/registrationcompletionhandler)
-   callback is returned, passing the registered user. Otherwise
-   [RegistrationError](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/registrationerror)
-   is passed in the callback.
+     </details>
 
-   Swift:
+2. Pass the User ID (email or any string you use for identification), activation
+   token (received from verification) and
+   [PinRequestHandler](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/pinrequesthandler)
+   to the [register](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/register(for:activationtoken:pushnotificationstoken:didrequestpinhandler:)>)
+   method. When the registration is successful, a
+   registered [User](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/user)
+   is returned. Otherwise
+   [RegistrationError](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/registrationerror)
+   is thrown.
+
+   ```swift
+   do {
+       let user = try await MIRACLTrust.getInstance().register(
+           userId: <#Unique user identifier (any string, i.e. email)#>,
+           activationToken: <#Activation token#>,
+           didRequestPinHandler: { pinProcessor in
+               // Here the user creates a PIN code for their new User ID.
+
+               pinProcessor(<#Provide your PIN code here#>)
+           }
+       )
+       // Get the user object or handle the error appropriately.
+   } catch {
+       // Handle error.
+   }
+   ```
+
+   <details>
+   <summary>Using Completion Handlers</summary>
 
    ```swift
    MIRACLTrust.getInstance().register(
@@ -344,7 +417,10 @@ that:
    )
    ```
 
-   Objective-C:
+   </details>
+
+   <details>
+   <summary>Using Objective-C</summary>
 
    ```objc
    [[MIRACLTrust getInstance] registerFor:<#Unique user identifier (any string, i.e. email)#>
@@ -359,8 +435,10 @@ that:
                    }];
    ```
 
+   </details>
+
    If you call the
-   [register](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/register(for:activationtoken:pushnotificationstoken:didrequestpinhandler:completionhandler:)>)
+   [register](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/register(for:activationtoken:pushnotificationstoken:didrequestpinhandler:)>)
    method with the same User ID more than once, the User ID will be overridden.
    Therefore, you can use it when you want to reset your authentication PIN
    code.
@@ -368,12 +446,28 @@ that:
 ### Authentication
 
 То authenticate users on your mobile application, call the
-[authenticate](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticate(user:didrequestpinhandler:completionhandler:)>)
+[authenticate](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticate(user:didrequestpinhandler:)>)
 method. If the authentication is successful, a
 [JWT](https://datatracker.ietf.org/doc/html/rfc7519) authentication token is
 generated for a registered user.
 
-Swift:
+```swift
+do {
+    let jwt = try await MIRACLTrust.getInstance().authenticate(
+        user: <#Already registered user object#>
+    ) { pinHandler in
+        // Here the user provides their current User ID's PIN code.
+
+        pinHandler(<#Provide your PIN here#>)
+    }
+    // Get the JWT.
+} catch {
+    // Handle error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
     MIRACLTrust.getInstance().authenticate(
@@ -387,7 +481,10 @@ Swift:
     }
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
 [[MIRACLTrust getInstance] authenticate:<#Already registered user object#>
@@ -397,6 +494,8 @@ Objective-C:
                           // Get the JWT or handle the error appropriately.
                     }];
 ```
+
+</details>
 
 After the JWT authentication token is generated, it needs to be sent to the
 application server for
@@ -410,10 +509,29 @@ cryptographic signing of documents. For more information, see
 In the context of this SDK, we refer to it as 'Signing'.
 
 To sign a document, use the
-[sign](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/sign(message:user:didrequestsigningpinhandler:completionhandler:)>)
+[sign](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/sign(message:user:didrequestsigningpinhandler:)>)
 method as follows:
 
-Swift:
+```swift
+do {
+    let signingResult = try await MIRACLTrust.getInstance().sign(
+        message: <#Message hash#>,
+        user: <#Already registered user#>,
+        didRequestSigningPinHandler: { pinProcessor in
+            // Here the user provides their current signing PIN.
+
+            pinProcessor(<#Provide your signing user PIN here#>)
+        }
+    )
+    // The signingResult object contains a signature and a timestamp,
+    // and can be sent for verification.
+} catch {
+    // Handle the signing error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
 MIRACLTrust.getInstance().sign(
@@ -424,13 +542,16 @@ MIRACLTrust.getInstance().sign(
 
         pinProcessor(<#Provide your signing user PIN here#>)
     }, completionHandler: { signingResult, error in
-        // The signingResult object contains signature and timestamp,
+        // The signingResult object contains a signature and a timestamp,
         // and can be sent for verification.
     }
 )
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
 [[MIRACLTrust getInstance] signWithMessage: <#Message hash#>
@@ -440,10 +561,12 @@ Objective-C:
 
                     pinProcessor(<#Provide your signing user PIN here#>);
                 } completionHandler: ^(SigningResult * _Nullable signingResult, NSError * _Nullable error) {
-                    // The signingResult object contains signature and timestamp,
+                    // The signingResult object contains a signature and a timestamp,
                     // and can be sent for verification.
                 }];
 ```
+
+</details>
 
 The signature is generated from a document hash. To get this hash, you can use
 the [CryptoKit](https://developer.apple.com/documentation/cryptokit) or
@@ -480,10 +603,32 @@ to fetch it:
 - Via universal link
 
   Use the
-  [getCrossDeviceSessionFromUniversalLinkURL](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getcrossdevicesessionfromuniversallinkurl(universallinkurl:completionhandler:)>)
+  [getCrossDeviceSessionFromUniversalLinkURL](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getcrossdevicesessionfromuniversallinkurl(universallinkurl:)>)
   method:
 
-  Swift:
+  ```swift
+  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+      guard let universalLinkURL = userActivity.webpageURL else {
+          return
+      }
+
+      Task {
+          do {
+              let crossDeviceSession = try await MIRACLTrust
+                  .getInstance()
+                  .getCrossDeviceSessionFromUniversalLinkURL(
+                      universalLinkURL: universalLinkURL
+                  )
+              // Use the cross-device session.
+          } catch {
+              // Handle error.
+          }
+      }
+  }
+  ```
+
+  <details>
+  <summary>Using Completion Handlers</summary>
 
   ```swift
   func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
@@ -496,12 +641,15 @@ to fetch it:
           .getCrossDeviceSessionFromUniversalLinkURL(
               universalLinkURL: universalLinkURL
           ) { crossDeviceSession, error in
-              // Use the cross device session or handle the error appropriately.
+              // Use the cross-device session or handle the error appropriately.
           }
   }
   ```
 
-  Objective-C:
+  </details>
+
+  <details>
+  <summary>Using Objective-C</summary>
 
   ```objc
   -(void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
@@ -515,10 +663,12 @@ to fetch it:
                   CrossDeviceSession *crossDeviceSession,
                   NSError *error
               ) {
-                  // Use the cross device session or handle the error appropriately.
+                  // Use the cross-device session or handle the error appropriately.
               }];
   }
   ```
+
+  </details>
 
   Call this method after the Universal Link is handled in the application. For
   `UIKit` applications, use the
@@ -532,10 +682,24 @@ to fetch it:
 - Via QR code:
 
   Use the
-  [getCrossDeviceSessionFromQRCode](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getcrossdevicesessionfromqrcode(qrcode:completionhandler:)>)
+  [getCrossDeviceSessionFromQRCode](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getcrossdevicesessionfromqrcode(qrcode:)>)
   method:
 
-  Swift:
+  ```swift
+  do {
+      let crossDeviceSession = try await MIRACLTrust
+          .getInstance()
+          .getCrossDeviceSessionFromQRCode(
+              qrCode: <#QR code taken from a MIRACL Trust page#>
+          )
+      // Use the cross-device session.
+  } catch {
+      // Handle error.
+  }
+  ```
+
+  <details>
+  <summary>Using Completion Handlers</summary>
 
   ```swift
   MIRACLTrust
@@ -543,11 +707,14 @@ to fetch it:
       .getCrossDeviceSessionFromQRCode(
           qrCode: <#QR code taken from a MIRACL Trust page#>
       ) { crossDeviceSession, error in
-          // Use the cross device session or handle the error appropriately.
+          // Use the cross-device session.
       }
   ```
 
-  Objective-C:
+  </details>
+
+  <details>
+  <summary>Using Objective-C</summary>
 
   ```objc
   [[MIRACLTrust getInstance]
@@ -556,17 +723,42 @@ to fetch it:
           CrossDeviceSession * crossDeviceSession,
           NSError * error
       ) {
-          // Use the cross device session or handle the error appropriately.
+          // Use the cross-device session or handle the error appropriately.
       }];
   ```
+
+  </details>
 
 - Via push notification:
 
   Use the
-  [getCrossDeviceSessionFromPushNotificationPayload](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getcrossdevicesessionfrompushnotificationpayload(pushnotificationpayload:completionhandler:)>)
+  [getCrossDeviceSessionFromPushNotificationPayload](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getcrossdevicesessionfrompushnotificationpayload(pushnotificationpayload:)>)
   method:
 
-  Swift:
+  ```swift
+  func userNotificationCenter(
+      _ center: UNUserNotificationCenter,
+      didReceive response: UNNotificationResponse,
+      withCompletionHandler completionHandler: @escaping () -> Void
+  ) {
+      let pushPayload = response.notification.request.content.userInfo
+      Task {
+          do {
+              let crossDeviceSession = try await MIRACLTrust
+                  .getInstance()
+                  .getCrossDeviceSessionFromPushNotificationPayload(
+                      pushNotificationPayload: pushPayload
+                  )
+              // Use the cross-device session.
+          } catch {
+              // Handle error.
+          }
+      }
+  }
+  ```
+
+  <details>
+  <summary>Using Completion Handlers</summary>
 
   ```swift
   func userNotificationCenter(
@@ -580,12 +772,15 @@ to fetch it:
           .getCrossDeviceSessionFromPushNotificationPayload(
               pushNotificationPayload: pushPayload
           ) { crossDeviceSession, error in
-              // Use the cross device session or handle the error appropriately.
+              // Use the cross-device session or handle the error appropriately.
           }
   }
   ```
 
-  Objective-C:
+  </details>
+
+  <details>
+  <summary>Using Objective-C</summary>
 
   ```objc
   - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -598,10 +793,12 @@ to fetch it:
           completionHandler:^(
               CrossDeviceSession * crossDeviceSession, NSError *error
           ) {
-              // Use the cross device session or handle the error appropriately.
+              // Use the cross-device session or handle the error appropriately.
           }];
   }
   ```
+
+  </details>
 
 After fetching the cross-device session, you can proceed with either
 authentication or document signing. To determine which operation the session is
@@ -612,15 +809,31 @@ property.
 #### Authenticate with the Cross-Device Session
 
 Authenticate using the
-[authenticateCrossDeviceSession](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticatecrossdevicesession(crossdevicesession:user:didrequestpinhandler:completionhandler:)>)
+[authenticateCrossDeviceSession](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/authenticatecrossdevicesession(crossdevicesession:user:didrequestpinhandler:)>)
 method:
 
-Swift:
+```swift
+do {
+    try await MIRACLTrust.getInstance().authenticateCrossDeviceSession(
+        crossDeviceSession: <#Cross-device session for authentication#>,
+        user: user
+    ) { pinProcessor in
+        // Here the user provides their current User ID's PIN code.
+        pinProcessor(<#Provide your PIN here#>)
+    }
+    // Handle your authentication result here.
+} catch {
+    // Handle error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
     MIRACLTrust.getInstance().authenticateCrossDeviceSession(
-        crossDeviceSession
-        user: user
+        <#Cross-device session for authentication#> ,
+        user: <#Already registered user#>
     ) { pinProcessor in
         // Here the user provides their current User ID's PIN code.
         pinProcessor(<#Provide your PIN here#>)
@@ -629,12 +842,15 @@ Swift:
     }
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
 [[MIRACLTrust getInstance]
-        authenticateCrossDeviceSession:crossDeviceSession
-        user:user
+        authenticateCrossDeviceSession:<#Cross-device session for authentication#>
+        user:<#Already registered user#>
         didRequestPinHandler:^(void (^ pinProcessor)(NSString *)) {
             // Here the user provides their current User ID's PIN code.
             pinProcessor(<#Provide your PIN here#>);
@@ -643,20 +859,40 @@ Objective-C:
         }];
 ```
 
+</details>
+
 #### Sign with the Cross-Device Session
 
 Sign a document with the
-[signCrossDeviceSession](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/signcrossdevicesession(crossdevicesession:user:didrequestsigningpinhandler:completionhandler:)>)
+[signCrossDeviceSession](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/signcrossdevicesession(crossdevicesession:user:didrequestsigningpinhandler:)>)
 method:
 
-Swift:
+```swift
+do {
+    try await MIRACLTrust
+        .getInstance()
+        .signCrossDeviceSession(
+            crossDeviceSession: <#Cross-device session for signing#>,
+            user: <#Already registered user#>
+        ) { pinProcessor in
+            // Here the user provides their current User ID's PIN code.
+            pinProcessor(<#Provide your PIN here#>)
+        }
+    // Handle your signing result here.
+} catch {
+    // Handle error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
   MIRACLTrust
       .getInstance()
       .signCrossDeviceSession(
-          crossDeviceSession,
-          user: user
+          <#Cross-device session for signing#>,
+          user: <#Already registered user#>
       ) { processPinHandler in
           // Here the user provides their current User ID's PIN code.
           pinProcessor(<#Provide your PIN here#>)
@@ -665,12 +901,15 @@ Swift:
       }
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
   [[MIRACLTrust getInstance]
-          signCrossDeviceSession:crossDeviceSession
-                            user:user
+          signCrossDeviceSession:<#Cross Device Sesssion for signing#>
+                            user:<#Already registered user#>
      didRequestSigningPinHandler:
                         ^(void (^ _Nonnull pinProcessor)(NSString * _Nullable)
       ) {
@@ -681,33 +920,54 @@ Objective-C:
       }];
 ```
 
+</details>
+
 #### Abort the Cross-Device Session
 
 To cancel the handling of the cross-device session, call the
-[abortCrossDeviceSession](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/abortcrossdevicesession(crossdevicesession:completionhandler:)>)
+[abortCrossDeviceSession](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/abortcrossdevicesession(crossdevicesession:)>)
 method:
 
-Swift:
+```swift
+do {
+    try await MIRACLTrust
+        .getInstance()
+        .abortCrossDeviceSession(
+            crossDeviceSession: <#Cross Device Sesssion to abort#>
+        )
+    // Handle the session abort result here.
+} catch {
+    // Handle error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
   MIRACLTrust
       .getInstance()
       .abortCrossDeviceSession(
-          crossDeviceSession
+          <#Cross Device Sesssion to abort#>
       ) { isAborted, error in
-          // Handle session aborting result here.
+          // Handle the session abort result here.
       }
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
 [[MIRACLTrust getInstance]
-    abortCrossDeviceSession:crossDeviceSession
+    abortCrossDeviceSession:<#Cross Device Sesssion to abort#>
     completionHandler:^(BOOL isAborted, NSError * error) {
-        // Handle session aborting result here.
+        // Handle the session abort result here.
     }];
 ```
+
+</details>
 
 ### QuickCode
 
@@ -716,12 +976,28 @@ is a way to register another device without going through the verification
 process.
 
 To generate a QuickCode, call the
-[generateQuickCode](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/generatequickcode(user:didrequestpinhandler:completionhandler:)>)
+[generateQuickCode](<https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/generatequickcode(user:didrequestpinhandler:)>)
 method with an already registered
 [User](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/user/)
 object:
 
-Swift:
+```swift
+do {
+    let quickCode = try await MIRACLTrust.getInstance().generateQuickCode(
+        user: <#Already registered user#>,
+        didRequestPinHandler: { pinHandler in
+            // Here the user provides their current User ID's PIN code.
+            pinHandler(<#Provide your user PIN here#>)
+        }
+    )
+    // Get the QuickCode object or handle the error appropriately.
+} catch {
+    // Handle error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
 MIRACLTrust.getInstance().generateQuickCode(
@@ -736,7 +1012,10 @@ MIRACLTrust.getInstance().generateQuickCode(
 )
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
  [[MIRACLTrust getInstance]
@@ -750,6 +1029,8 @@ Objective-C:
      }];
 ```
 
+</details>
+
 ### User Management
 
 The MIRACL Trust iOS SDK provides several methods for managing users registered
@@ -759,13 +1040,26 @@ previously registered users.
 #### Get a registered user
 
 To retrieve a specific registered user by their User ID, use the
-[getUser(userId:completionHandler)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getuser%28userid:completionhandler:%29)
+[getUser(userId:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getuser%28userid:)
 method:
 
-Swift:
+```swift
+do {
+    if let user = try await MIRACLTrust.getInstance().getUser(userId: <#Unique user identifier(i.e. email)#>) {
+        // User exists.
+    } else {
+        // No user registered with this User ID.
+    }
+} catch {
+    // Cannot retrieve the user due to an error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
-MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+MIRACLTrust.getInstance().getUser(userId: <#Unique user identifier(i.e. email)#>) { user, error in
     if let user {
         // User exists.
     } if let error {
@@ -776,11 +1070,14 @@ MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
 }
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
 [[MIRACLTrust getInstance]
-    getUserWithUserId: userId
+    getUserWithUserId: <#Unique user identifier(i.e. email)#>
     completionHandler:^(User * user, NSError *error) {
         if (user != nil) {
             // User exists.
@@ -792,13 +1089,25 @@ Objective-C:
     }];
 ```
 
+</details>
+
 #### Get all registered users
 
 To obtain the list of all users registered on а device, access the
-[getUsers(completionHandler:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getUsers)
+[getUsers()](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/getUsers())
 method:
 
-Swift:
+```swift
+do {
+    let users = try await MIRACLTrust.getInstance().getUsers()
+    // Handle registered users.
+} catch {
+    // Handle error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
 MIRACLTrust.getInstance().getUsers { users, error in
@@ -806,7 +1115,10 @@ MIRACLTrust.getInstance().getUsers { users, error in
 }
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
 [[MIRACLTrust getInstance] getUsersWithCompletionHandler:^(NSArray<User *> * users, NSError * error) {
@@ -814,16 +1126,28 @@ Objective-C:
 }];
 ```
 
+</details>
+
 #### Delete a registered user
 
 To delete a previously registered user from a device, call the
-[delete(user:completionHandler:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/miracltrust/delete%28user:completionhandler:%29)
+[delete(user:)](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/miracltrust/miracltrust/delete%28user:)
 method:
 
-Swift:
+```swift
+do {
+    try await MIRACLTrust.getInstance().delete(user: <#Already registered user#>)
+    // User deleted successfully.
+} catch {
+    // Cannot delete the user due to an error.
+}
+```
+
+<details>
+<summary>Using Completion Handlers</summary>
 
 ```swift
-MIRACLTrust.getInstance().delete(user: user) { isDeleted, error in
+MIRACLTrust.getInstance().delete(user: <#Already registered user#>) { isDeleted, error in
     if isDeleted {
          // User deleted successfully.
     } else if let error {
@@ -832,11 +1156,14 @@ MIRACLTrust.getInstance().delete(user: user) { isDeleted, error in
 }
 ```
 
-Objective-C:
+</details>
+
+<details>
+<summary>Using Objective-C</summary>
 
 ```objc
 [[MIRACLTrust getInstance]
-    deleteWithUser: user
+    deleteWithUser: <#Already registered user#>
     completionHandler:^(BOOL isDeleted, NSError * error) {
         if (isDeleted) {
             // User deleted successfully.
@@ -845,6 +1172,8 @@ Objective-C:
         }
     }];
 ```
+
+</details>
 
 ## FAQ
 
@@ -857,30 +1186,28 @@ Objective-C:
    operation is blocked until a PIN code is provided. Therefore, this is a good
    place to display some user interface for entering the PIN code. For example:
 
-   Swift:
-
    ```swift
-   MIRACLTrust.getInstance().register(
-       for: <#Unique user identifier(i.e. email)#>,
-       activationToken: <#Activation token#>,
-       didRequestPinHandler: { pinProcessor in
-           let enterPinViewController = EnterPinViewController()
-           enterPinViewController.pinProcessor = pinProcessor
+   do {
+       let user = try await MIRACLTrust.getInstance().register(
+           userId: <#Unique user identifier(i.e. email)#>,
+           activationToken: <#Activation token#>,
+           didRequestPinHandler: { pinProcessor in
+               let enterPinViewController = EnterPinViewController()
+               enterPinViewController.pinProcessor = pinProcessor
 
-           present(enterPinViewController, animated:true)
-       },
-       completionHandler: { user, error in
-          // Get the user object or handle the error appropriately.
-       }
-   )
+               present(enterPinViewController, animated: true)
+           }
+       )
+       // Get the user object or handle the error appropriately.
+   } catch {
+       // Handle error
+   }
    ```
 
    In the view controller for entering the PIN code, you need to call the
    [pinProcessor](https://miracl.github.io/trust-sdk-ios/documentation/miracltrust/processpinhandler)
    closure, which sends the PIN code to the SDK and restores the previously
    executed operation:
-
-   Swift:
 
    ```swift
    func submitPINCode() {
