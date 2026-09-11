@@ -234,25 +234,11 @@ import Foundation
         crossDeviceSession: CrossDeviceSession,
         completionHandler: @escaping VerificationCompletionHandler
     ) {
-        do {
-            let verificator = try Verificator(
-                userId: userId,
-                projectId: projectId,
-                deviceName: deviceName,
-                sessionIdentifier: crossDeviceSession.sessionId,
-                miraclAPI: miraclAPI,
-                deviceTagManager: deviceTagManager,
-                logger: logger,
-                completionHandler: completionHandler
-            )
-            verificator.verify()
-        } catch {
-            logError(error: error, category: .verification)
-
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        sendVerificationEmailCore(
+            userId: userId,
+            crossDeviceSession: crossDeviceSession,
+            completionHandler: completionHandler
+        )
     }
 
     /// Default method for verifying the User ID with the MIRACL Trust platform.
@@ -265,25 +251,10 @@ import Foundation
         userId: String,
         completionHandler: @escaping VerificationCompletionHandler
     ) {
-        do {
-            let verificator = try Verificator(
-                userId: userId,
-                projectId: projectId,
-                deviceName: deviceName,
-                sessionIdentifier: nil,
-                miraclAPI: miraclAPI,
-                deviceTagManager: deviceTagManager,
-                logger: logger,
-                completionHandler: completionHandler
-            )
-            verificator.verify()
-        } catch {
-            logError(error: error, category: .verification)
-
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        sendVerificationEmailCore(
+            userId: userId,
+            completionHandler: completionHandler
+        )
     }
 
     /// Confirms user verification and as a result, an activation token is obtained. This activation token should be used in the registration process.
@@ -294,22 +265,10 @@ import Foundation
         verificationURL: URL,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) {
-        do {
-            let handler = try VerificationConfirmationHandler(
-                verificationURL: verificationURL,
-                miraclAPI: miraclAPI,
-                deviceTagManager: deviceTagManager,
-                logger: logger,
-                completionHandler: completionHandler
-            )
-            handler.handle()
-        } catch {
-            logError(error: error, category: .verificationConfirmation)
-
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        getActivationTokenCore(
+            verificationURL: verificationURL,
+            completionHandler: completionHandler
+        )
     }
 
     /// Confirms user verification and as a result, an activation token is obtained. This activation token should be used in the registration process.
@@ -322,23 +281,11 @@ import Foundation
         code: String,
         completionHandler: @escaping ActivationTokenCompletionHandler
     ) {
-        do {
-            let handler = try VerificationConfirmationHandler(
-                userId: userId,
-                activationCode: code,
-                miraclAPI: miraclAPI,
-                deviceTagManager: deviceTagManager,
-                logger: logger,
-                completionHandler: completionHandler
-            )
-            handler.handle()
-        } catch {
-            logError(error: error, category: .verificationConfirmation)
-
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        getActivationTokenCore(
+            userId: userId,
+            code: code,
+            completionHandler: completionHandler
+        )
     }
 
     /// Generates a [QuickCode](https://miracl.com/resources/docs/guides/built-in-user-verification/quickcode/) for a registered user.
@@ -351,19 +298,11 @@ import Foundation
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping QuickCodeCompletionHandler
     ) {
-        let generator = QuickCodeGenerator(
+        generateQuickCodeCore(
             user: user,
-            api: miraclAPI,
-            deviceName: deviceName,
-            storage: userStorage,
-            crypto: crypto,
-            logger: logger,
-            deviceTagManager: deviceTagManager,
-            didRequestPinHandler: didRequestPinHandler
-        ) { quickCode, error in
-            completionHandler(quickCode, error)
-        }
-        generator.generate()
+            didRequestPinHandler: didRequestPinHandler,
+            completionHandler: completionHandler
+        )
     }
 
     // MARK: User Registration
@@ -383,31 +322,13 @@ import Foundation
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping RegistrationCompletionHandler
     ) {
-        do {
-            let registrator = try Registrator(
-                userId: userId,
-                activationToken: activationToken,
-                deviceName: deviceName,
-                pushNotificationsToken: pushNotificationsToken,
-                api: miraclAPI,
-                userStorage: userStorage,
-                projectId: projectId,
-                crypto: crypto,
-                logger: logger,
-                deviceTagManager: deviceTagManager,
-                didRequestPinHandler: didRequestPinHandler,
-                completionHandler: { user, error in
-                    completionHandler(user, error)
-                }
-            )
-            registrator.register()
-        } catch {
-            logError(error: error, category: .registration)
-
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        registerCore(
+            for: userId,
+            activationToken: activationToken,
+            pushNotificationsToken: pushNotificationsToken,
+            didRequestPinHandler: didRequestPinHandler,
+            completionHandler: completionHandler
+        )
     }
 
     // MARK: Authentication
@@ -431,20 +352,11 @@ import Foundation
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping JWTCompletionHandler
     ) {
-        let jwtGenerator = JWTGenerator(
+        authenticateCore(
             user: user,
-            miraclAPI: miraclAPI,
-            deviceName: deviceName,
-            userStorage: userStorage,
-            crypto: crypto,
-            logger: logger,
-            deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { jwt, error in
-                completionHandler(jwt, error)
-            }
+            completionHandler: completionHandler
         )
-        jwtGenerator.generate()
     }
 
     /// Authenticates identity in the MIRACL Trust platform.
@@ -565,21 +477,10 @@ import Foundation
         qrCode: String,
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
-        do {
-            let fetcher = try CrossDeviceSessionFetcher(
-                qrCode: qrCode,
-                miraclAPI: miraclAPI,
-                logger: logger
-            ) { session, error in
-                completionHandler(session, error)
-            }
-
-            fetcher.fetch()
-        } catch {
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        getCrossDeviceSessionFromQRCodeCore(
+            qrCode: qrCode,
+            completionHandler: completionHandler
+        )
     }
 
     /// Gets ``CrossDeviceSession`` for a universal link.
@@ -593,21 +494,10 @@ import Foundation
         universalLinkURL: URL,
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
-        do {
-            let fetcher = try CrossDeviceSessionFetcher(
-                universalLinkURL: universalLinkURL,
-                miraclAPI: miraclAPI,
-                logger: logger
-            ) { session, error in
-                completionHandler(session, error)
-            }
-
-            fetcher.fetch()
-        } catch {
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        getCrossDeviceSessionFromUniversalLinkURLCore(
+            universalLinkURL: universalLinkURL,
+            completionHandler: completionHandler
+        )
     }
 
     /// Gets ``CrossDeviceSession`` for a push notification.
@@ -621,21 +511,10 @@ import Foundation
         pushNotificationPayload: [AnyHashable: Any],
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
-        do {
-            let fetcher = try CrossDeviceSessionFetcher(
-                pushNotificationPayload: pushNotificationPayload,
-                miraclAPI: miraclAPI,
-                logger: logger
-            ) { session, error in
-                completionHandler(session, error)
-            }
-
-            fetcher.fetch()
-        } catch {
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        getCrossDeviceSessionFromPushNotificationPayloadCore(
+            pushNotificationPayload: pushNotificationPayload,
+            completionHandler: completionHandler
+        )
     }
 
     /// Authenticates the user in the MIRACL Trust platform.
@@ -654,26 +533,12 @@ import Foundation
         didRequestPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping AuthenticationCompletionHandler
     ) {
-        let crossDeviceSessionAuthenticator = CrossDeviceSessionAuthenticator(
-            user: user,
+        authenticateCrossDeviceSessionCore(
             crossDeviceSession: crossDeviceSession,
-            miraclAPI: miraclAPI,
-            userStorage: userStorage,
-            crypto: crypto,
-            deviceName: deviceName,
-            logger: logger,
-            deviceTagManager: deviceTagManager,
+            user: user,
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { isAuthenticated, error in
-                if let error, case AuthenticationError.invalidAuthenticationSession = error {
-                    completionHandler(isAuthenticated, AuthenticationError.invalidCrossDeviceSession)
-                } else {
-                    completionHandler(isAuthenticated, error)
-                }
-            }
+            completionHandler: completionHandler
         )
-
-        crossDeviceSessionAuthenticator.authenticate()
     }
 
     /// Generates a signature for a hash provided by the ``CrossDeviceSession`` parameter and updates the session.
@@ -690,34 +555,12 @@ import Foundation
         didRequestSigningPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping CrossDeviceSigningCompletionHandler
     ) {
-        do {
-            let signer = try Signer(
-                messageHash: Data(hexString: crossDeviceSession.signingHash),
-                sessionIdentifier: crossDeviceSession.sessionId,
-                user: user,
-                miraclAPI: miraclAPI,
-                userStorage: userStorage,
-                crypto: crypto,
-                logger: logger,
-                deviceName: deviceName,
-                deviceTagManager: deviceTagManager,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signinResult, error in
-                if signinResult != nil {
-                    completionHandler(true, nil)
-                } else if let error {
-                    completionHandler(false, error)
-                } else {
-                    completionHandler(false, SigningError.signingFail(nil))
-                }
-            }
-            signer.sign()
-        } catch {
-            logError(error: error, category: .signing)
-            DispatchQueue.main.async {
-                completionHandler(false, error)
-            }
-        }
+        signCrossDeviceSessionCore(
+            crossDeviceSession: crossDeviceSession,
+            user: user,
+            didRequestSigningPinHandler: didRequestSigningPinHandler,
+            completionHandler: completionHandler
+        )
     }
 
     /// Cancels the ``CrossDeviceSession``.
@@ -730,20 +573,10 @@ import Foundation
         crossDeviceSession: CrossDeviceSession,
         completionHandler: @escaping CrossDeviceSessionAborterCompletionHandler
     ) {
-        do {
-            let aborter = try CrossDeviceSessionAborter(
-                sessionId: crossDeviceSession.sessionId,
-                miraclAPI: miraclAPI
-            ) { result, error in
-                completionHandler(result, error)
-            }
-
-            aborter.abort()
-        } catch {
-            DispatchQueue.main.async {
-                completionHandler(false, error)
-            }
-        }
+        abortCrossDeviceSessionCore(
+            crossDeviceSession: crossDeviceSession,
+            completionHandler: completionHandler
+        )
     }
 
     // MARK: Authentication Session management
@@ -886,29 +719,12 @@ import Foundation
         didRequestSigningPinHandler: @escaping PinRequestHandler,
         completionHandler: @escaping SigningCompletionHandler
     ) {
-        do {
-            let signer = try Signer(
-                messageHash: message,
-                sessionIdentifier: nil,
-                user: user,
-                miraclAPI: miraclAPI,
-                userStorage: userStorage,
-                crypto: crypto,
-                logger: logger,
-                deviceName: deviceName,
-                deviceTagManager: deviceTagManager,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signature, error in
-                completionHandler(signature, error)
-            }
-
-            signer.sign()
-        } catch {
-            logError(error: error, category: .signing)
-            DispatchQueue.main.async {
-                completionHandler(nil, error)
-            }
-        }
+        signCore(
+            message: message,
+            user: user,
+            didRequestSigningPinHandler: didRequestSigningPinHandler,
+            completionHandler: completionHandler
+        )
     }
 
     // MARK: Getting single user
@@ -931,21 +747,10 @@ import Foundation
         userId: String,
         completionHandler: @escaping GetUserCompletionHandler
     ) {
-        let storage = userStorage
-        let projectId = projectId
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                let user = try storage.getUser(by: userId, projectId: projectId)
-                DispatchQueue.main.async {
-                    completionHandler(user?.toUser(), nil)
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completionHandler(nil, error)
-                }
-            }
-        }
+        getUserCore(
+            userId: userId,
+            completionHandler: completionHandler
+        )
     }
 
     // MARK: Getting all registered users
@@ -954,22 +759,7 @@ import Foundation
     ///
     /// - Parameter completionHandler: The ``GetUsersCompletionHandler`` closure to be executed when the request completes.
     @objc public func getUsers(completionHandler: @escaping GetUsersCompletionHandler) {
-        let storage = userStorage
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                let allUsers = try storage.all().map { userDTO in
-                    userDTO.toUser()
-                }
-
-                DispatchQueue.main.async {
-                    completionHandler(allUsers, nil)
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completionHandler(nil, error)
-                }
-            }
-        }
+        getUsersCore(completionHandler: completionHandler)
     }
 
     @_spi(MIRACLTrustAuthenticatorApi)
@@ -1028,27 +818,12 @@ import Foundation
         user: User,
         completionHandler: @escaping DeleteUserCompletionHandler
     ) {
-        let storage = userStorage
-        let completionHandler = completionHandler
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try storage.delete(user: user.toUserDTO())
-
-                DispatchQueue.main.async {
-                    completionHandler(true, nil)
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completionHandler(false, error)
-                }
-            }
-        }
+        deleteCore(user: user, completionHandler: completionHandler)
     }
 
     // MARK: Private methods
 
-    private func logError(error: Error, category: LogCategory) {
+    func logError(error: Error, category: LogCategory) {
         logger.error(
             message: "\(LoggingConstants.finishedWithError)=\(error)",
             category: category
