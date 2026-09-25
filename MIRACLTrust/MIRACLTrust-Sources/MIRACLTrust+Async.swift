@@ -48,14 +48,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getActivationTokenCore(verificationURL: verificationURL) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getActivationTokenCore(verificationURL: verificationURL) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -72,14 +66,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getActivationTokenCore(userId: userId, code: code) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getActivationTokenCore(userId: userId, code: code) { result in
+                continuation.resume(with: result)
             }
         }
     }

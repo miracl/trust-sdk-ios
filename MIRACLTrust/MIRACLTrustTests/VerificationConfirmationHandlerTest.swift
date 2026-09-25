@@ -34,25 +34,22 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         let randomStringCopy = randomString
         let userIdCopy = userId
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(error)
-
-            XCTAssertNotNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
             do {
-                let activationToken = try XCTUnwrap(activationTokenResponse?.activationToken)
-                XCTAssertEqual(activationToken, randomStringCopy)
+                let activationTokenResponse = try result.get()
+                XCTAssertEqual(activationTokenResponse.activationToken, randomStringCopy)
+
+                XCTAssertNotNil(activationTokenResponse.userId)
+                XCTAssertEqual(userIdCopy, activationTokenResponse.userId)
+
+                XCTAssertNotNil(activationTokenResponse.accessId)
+                XCTAssertEqual(randomStringCopy, activationTokenResponse.accessId)
+
+                XCTAssertNotNil(activationTokenResponse.projectId)
+                XCTAssertEqual(randomStringCopy, activationTokenResponse.projectId)
             } catch {
-                XCTFail("Cannot unwrap activation token - \(error)")
+                XCTFail("Error when getting Activation Token Result - \(error)")
             }
-
-            XCTAssertNotNil(activationTokenResponse?.userId)
-            XCTAssertEqual(userIdCopy, activationTokenResponse?.userId)
-
-            XCTAssertNotNil(activationTokenResponse?.accessId)
-            XCTAssertEqual(randomStringCopy, activationTokenResponse?.accessId)
-
-            XCTAssertNotNil(activationTokenResponse?.projectId)
-            XCTAssertEqual(randomStringCopy, activationTokenResponse?.projectId)
         })
     }
 
@@ -60,14 +57,14 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         activationCode = ""
         verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)"))
 
-        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
+        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyVerificationCode)
         }
     }
 
     func testMissingActivationCode() throws {
         verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)"))
-        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
+        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyVerificationCode)
         }
     }
@@ -76,7 +73,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         userId = ""
         verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth&user_id=\(userId)"))
 
-        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
+        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyUserId)
         }
     }
@@ -84,7 +81,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
     func testMissingUserId() throws {
         verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?client_id=\(clientId)&code=\(activationCode)&redirect_uri=\(redirectURI)&stage=auth"))
 
-        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _, _ in }), "") { error in
+        XCTAssertThrowsError(try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { _ in }), "") { error in
             assertError(current: error, expected: ActivationTokenError.emptyUserId)
         }
     }
@@ -96,8 +93,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
 
         let desiredError = ActivationTokenError.getActivationTokenFail(cause)
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
 
             assertError(current: error, expected: desiredError)
         })
@@ -106,8 +106,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
     func testNilResponse() throws {
         mockAPI.verificationConfirmationResponse = nil
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: ActivationTokenError.getActivationTokenFail(nil))
         })
     }
@@ -131,8 +134,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
 
         let expectedError = ActivationTokenError.getActivationTokenFail(cause)
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         })
     }
@@ -145,8 +151,12 @@ class VerificationConfirmationHandlerTest: XCTestCase {
 
         let desiredError = ActivationTokenError.getActivationTokenFail(cause)
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(current: error, expected: desiredError)
         })
     }
@@ -169,8 +179,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         mockAPI.verificationConfirmationResultCall = .failed
         let userIdCopy = userId
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
 
             if let activationTokenError = error as? ActivationTokenError {
                 if case let ActivationTokenError.unsuccessfulVerification(activationTokenErrorResponse: activationTokenErrorResponse) = activationTokenError, let activationTokenErrorResponse {
@@ -205,8 +218,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         mockAPI.verificationConfirmationResultCall = .failed
         let userIdCopy = userId
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
 
             if let activationTokenError = error as? ActivationTokenError {
                 if case let ActivationTokenError.unsuccessfulVerification(activationTokenErrorResponse: activationTokenErrorResponse) = activationTokenError, let activationTokenErrorResponse {
@@ -240,8 +256,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         mockAPI.verificationConfirmationResponse = nil
         mockAPI.verificationConfirmationResultCall = .failed
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
 
             if let activationTokenError = error as? ActivationTokenError {
                 if case let ActivationTokenError.unsuccessfulVerification(activationTokenErrorResponse: activationTokenErrorResponse) = activationTokenError {
@@ -271,8 +290,11 @@ class VerificationConfirmationHandlerTest: XCTestCase {
         mockAPI.verificationConfirmationResponse = nil
         mockAPI.verificationConfirmationResultCall = .failed
 
-        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { activationTokenResponse, error in
-            XCTAssertNil(activationTokenResponse)
+        try verificationConfirmationHandler(verificationConfirmationCompletionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
 
             if let activationTokenError = error as? ActivationTokenError {
                 if case let ActivationTokenError.unsuccessfulVerification(activationTokenErrorResponse: activationTokenErrorResponse) = activationTokenError {
@@ -290,7 +312,7 @@ class VerificationConfirmationHandlerTest: XCTestCase {
     // MARK: Private
 
     private func verificationConfirmationHandler(
-        verificationConfirmationCompletionHandler: @escaping ActivationTokenCompletionHandler
+        verificationConfirmationCompletionHandler: @escaping ActivationTokenResultCompletionHandler
     ) throws {
         let expectation = XCTestExpectation(description: "Wait for verification confirmation")
 
@@ -299,8 +321,8 @@ class VerificationConfirmationHandlerTest: XCTestCase {
             miraclAPI: mockAPI,
             deviceTagManager: DeviceTagManager(logger: DefaultLogger(level: .none)),
             logger: logger
-        ) { activationTokenResponse, error in
-            verificationConfirmationCompletionHandler(activationTokenResponse, error)
+        ) { result in
+            verificationConfirmationCompletionHandler(result)
             expectation.fulfill()
         }
 
