@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.platform = :ios
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '15.0'
   s.name = "MIRACLTrust"
   s.summary = "MIRACL Trust SDK for iOS"
   s.requires_arc = true
