@@ -288,7 +288,14 @@ import Foundation
     ) {
         getActivationTokenCore(
             verificationURL: verificationURL,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(activationTokenResponse):
+                    completionHandler(activationTokenResponse, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -305,7 +312,14 @@ import Foundation
         getActivationTokenCore(
             userId: userId,
             code: code,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(activationTokenResponse):
+                    completionHandler(activationTokenResponse, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 

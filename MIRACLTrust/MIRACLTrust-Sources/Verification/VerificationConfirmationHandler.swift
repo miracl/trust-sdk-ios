@@ -3,9 +3,11 @@ import Foundation
 let INVALID_VERIFICATION_CODE = "INVALID_VERIFICATION_CODE"
 let UNSUCCESSFUL_VERIFICATION = "UNSUCCESSFUL_VERIFICATION"
 
+typealias ActivationTokenResultCompletionHandler = @MainActor @Sendable (Result<ActivationTokenResponse, Error>) -> Void
+
 struct VerificationConfirmationHandler {
     let miraclAPI: APIBlueprint
-    let completionHandler: ActivationTokenCompletionHandler
+    let completionHandler: ActivationTokenResultCompletionHandler
     let activationCode: String?
     let userId: String?
     let logger: Logger
@@ -16,7 +18,7 @@ struct VerificationConfirmationHandler {
         miraclAPI: APIBlueprint,
         deviceTagManager: DeviceTagManager,
         logger: Logger,
-        completionHandler: @escaping ActivationTokenCompletionHandler
+        completionHandler: @escaping ActivationTokenResultCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI
         self.completionHandler = completionHandler
@@ -40,7 +42,7 @@ struct VerificationConfirmationHandler {
         miraclAPI: APIBlueprint,
         deviceTagManager: DeviceTagManager,
         logger: Logger,
-        completionHandler: @escaping ActivationTokenCompletionHandler
+        completionHandler: @escaping ActivationTokenResultCompletionHandler
     ) throws {
         self.miraclAPI = miraclAPI
         self.completionHandler = completionHandler
@@ -112,11 +114,12 @@ struct VerificationConfirmationHandler {
             let activationTokenResponse = ActivationTokenResponse(
                 activationToken: response.actToken,
                 projectId: response.projectId,
-                userId: userId, accessId: response.accessId
+                userId: userId,
+                accessId: response.accessId
             )
 
             DispatchQueue.main.async {
-                completionHandler(activationTokenResponse, nil)
+                completionHandler(.success(activationTokenResponse))
             }
 
             logOperation(operation: LoggingConstants.finished)
@@ -169,7 +172,7 @@ struct VerificationConfirmationHandler {
 
     private func callCompletionHandler(with error: Error) {
         DispatchQueue.main.async {
-            completionHandler(nil, error)
+            completionHandler(.failure(error))
         }
     }
 

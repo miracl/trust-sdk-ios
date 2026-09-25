@@ -54,7 +54,7 @@ extension MIRACLTrust {
 
     func getActivationTokenCore(
         verificationURL: URL,
-        completionHandler: @escaping ActivationTokenCompletionHandler
+        completionHandler: @escaping ActivationTokenResultCompletionHandler
     ) {
         do {
             let handler = try VerificationConfirmationHandler(
@@ -69,7 +69,7 @@ extension MIRACLTrust {
             logError(error: error, category: .verificationConfirmation)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
@@ -77,7 +77,7 @@ extension MIRACLTrust {
     func getActivationTokenCore(
         userId: String,
         code: String,
-        completionHandler: @escaping ActivationTokenCompletionHandler
+        completionHandler: @escaping ActivationTokenResultCompletionHandler
     ) {
         do {
             let handler = try VerificationConfirmationHandler(
@@ -93,7 +93,7 @@ extension MIRACLTrust {
             logError(error: error, category: .verificationConfirmation)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
