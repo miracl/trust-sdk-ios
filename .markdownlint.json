@@ -5,5 +5,11 @@
   },
   "ol-prefix": {
       "style": "ordered"
+  },
+  "MD033": {
+    "allowed_elements": [
+      "details",
+      "summary"
+    ]
   }
 }
