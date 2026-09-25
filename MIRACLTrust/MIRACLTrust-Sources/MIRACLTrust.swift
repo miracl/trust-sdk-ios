@@ -210,7 +210,14 @@ import Foundation
                 miraclAPI: miraclAPI,
                 deviceTagManager: deviceTagManager,
                 logger: logger,
-                completionHandler: completionHandler
+                completionHandler: { result in
+                    switch result {
+                    case let .success(response):
+                        completionHandler(response, nil)
+                    case let .failure(error):
+                        completionHandler(nil, error)
+                    }
+                }
             )
             verificator.verify()
         } catch {
@@ -237,7 +244,14 @@ import Foundation
         sendVerificationEmailCore(
             userId: userId,
             crossDeviceSession: crossDeviceSession,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(response):
+                    completionHandler(response, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -253,7 +267,14 @@ import Foundation
     ) {
         sendVerificationEmailCore(
             userId: userId,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(response):
+                    completionHandler(response, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 

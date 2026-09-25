@@ -25,16 +25,13 @@ class VerificatorTests: XCTestCase {
             miraclAPI: api,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger
-        ) { verified, error in
-            XCTAssertNotNil(verified)
-            XCTAssertNil(error)
-
+        ) { result in
             do {
-                let response = try XCTUnwrap(verified)
-                XCTAssertEqual(response.backoff, backoff)
-                XCTAssertEqual(response.method, EmailVerificationMethod.link)
+                let verificationResponse = try result.get()
+                XCTAssertEqual(verificationResponse.backoff, backoff)
+                XCTAssertEqual(verificationResponse.method, EmailVerificationMethod.link)
             } catch {
-                XCTFail("Cannot unwrap Verification Response")
+                XCTFail("No verification response")
             }
             expectation.fulfill()
         }
@@ -59,7 +56,7 @@ class VerificatorTests: XCTestCase {
                 miraclAPI: api,
                 deviceTagManager: DeviceTagManager(logger: logger),
                 logger: logger,
-                completionHandler: { _, _ in }
+                completionHandler: { _ in }
             )
         ) { error in
             XCTAssertTrue(error is VerificationError)
@@ -83,7 +80,7 @@ class VerificatorTests: XCTestCase {
                 miraclAPI: api,
                 deviceTagManager: DeviceTagManager(logger: logger),
                 logger: logger,
-                completionHandler: { _, _ in }
+                completionHandler: { _ in }
             )
         ) { error in
             XCTAssertTrue(error is VerificationError)
@@ -109,11 +106,12 @@ class VerificatorTests: XCTestCase {
             miraclAPI: api,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
-            completionHandler: { response, error in
-                XCTAssertNil(response)
-
-                XCTAssertTrue(error is VerificationError)
-                XCTAssertEqual(error as? VerificationError, VerificationError.verificaitonFail(nil))
+            completionHandler: { result in
+                guard case let .failure(error) = result else {
+                    XCTFail("Expected .failure, but got \(result)")
+                    return
+                }
+                assertError(current: error, expected: VerificationError.verificaitonFail(nil))
                 expectation.fulfill()
             }
         )
@@ -144,11 +142,14 @@ class VerificatorTests: XCTestCase {
             miraclAPI: api,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
-            completionHandler: { response, error in
-                XCTAssertNil(response)
+            completionHandler: { result in
+                guard case let .failure(error) = result else {
+                    XCTFail("Expected .failure, but got \(result)")
+                    return
+                }
 
-                XCTAssertTrue(error is VerificationError)
-                XCTAssertEqual(error as? VerificationError, desiredError)
+                assertError(current: error, expected: desiredError)
+
                 expectation.fulfill()
             }
         )
@@ -177,51 +178,17 @@ class VerificatorTests: XCTestCase {
             miraclAPI: api,
             deviceTagManager: DeviceTagManager(logger: logger),
             logger: logger,
-            completionHandler: { verified, error in
-                XCTAssertNil(verified)
-                XCTAssertNotNil(error)
-                XCTAssertTrue(error is VerificationError)
-                XCTAssertEqual(error as? VerificationError, VerificationError.requestBackoff(backoff: backoff))
-
-                if let error, case let VerificationError.requestBackoff(backoffInError) = error {
-                    XCTAssertEqual(backoffInError, backoff)
+            completionHandler: { result in
+                guard case let .failure(error) = result else {
+                    XCTFail("Expected .failure, but got \(result)")
+                    return
                 }
 
-                expectation.fulfill()
-            }
-        )
-        verificator.verify()
+                assertError(current: error, expected: VerificationError.requestBackoff(backoff: backoff))
 
-        wait(for: [expectation], timeout: 20.0)
-    }
-
-    func testRequestBackoffError() throws {
-        let expectation = XCTestExpectation()
-
-        let backoff: Int64 = 1_688_029_968
-
-        var api = MockAPI()
-        api.verificationResponse = nil
-        api.verificationError = apiClientError(with: BACKOFF_ERROR, context: ["backoff": String(backoff)])
-
-        let verificator = try Verificator(
-            userId: userId,
-            projectId: projectId,
-            deviceName: deviceName,
-            sessionIdentifier: nil,
-            miraclAPI: api,
-            deviceTagManager: DeviceTagManager(logger: logger),
-            logger: logger,
-            completionHandler: { verified, error in
-                XCTAssertNil(verified)
-                XCTAssertNotNil(error)
-                XCTAssertTrue(error is VerificationError)
-                XCTAssertEqual(error as? VerificationError, VerificationError.requestBackoff(backoff: backoff))
-
-                if let error, case let VerificationError.requestBackoff(backoffInError) = error {
+                if case let VerificationError.requestBackoff(backoffInError) = error {
                     XCTAssertEqual(backoffInError, backoff)
                 }
-
                 expectation.fulfill()
             }
         )
