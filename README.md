@@ -12,8 +12,8 @@ The MIRACL Trust iOS SDK provides the following functionalities:
 
 ## System Requirements
 
-- Xcode 10 or newer
-- iOS 11 or newer
+- Xcode 13 or newer
+- iOS 15 or newer
 - Swift 4.2 or newer
 
 ## Installation
