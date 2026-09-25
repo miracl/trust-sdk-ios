@@ -3,12 +3,14 @@ import Foundation
 let BACKOFF_ERROR = "BACKOFF_ERROR"
 let REQUEST_BACKOFF = "REQUEST_BACKOFF"
 
+typealias VerificationResultCompletionHandler = @MainActor @Sendable (Result<VerificationResponse, Error>) -> Void
+
 struct Verificator {
     let userId: String
     let projectId: String
     let deviceName: String
     let sessionIdentifier: String?
-    let completionHandler: VerificationCompletionHandler
+    let completionHandler: VerificationResultCompletionHandler
     let miraclAPI: APIBlueprint
     let deviceTagManager: DeviceTagManager
     let logger: Logger
@@ -20,7 +22,7 @@ struct Verificator {
          miraclAPI: APIBlueprint,
          deviceTagManager: DeviceTagManager,
          logger: Logger,
-         completionHandler: @escaping VerificationCompletionHandler) throws {
+         completionHandler: @escaping VerificationResultCompletionHandler) throws {
         self.userId = userId
         self.projectId = projectId
         self.sessionIdentifier = sessionIdentifier
@@ -55,7 +57,7 @@ struct Verificator {
                             backoff: verificationAPIResponse.backoff,
                             method: EmailVerificationMethod.emailVerificationMethodFromString(verificationAPIResponse.method)
                         )
-                        completionHandler(verificationResponse, nil)
+                        completionHandler(.success(verificationResponse))
                     } else if let error {
                         if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error,
                            let clientErrorData,
@@ -63,17 +65,14 @@ struct Verificator {
                            let context = clientErrorData.context,
                            let backoffString = context["backoff"],
                            let backoff = Int64(backoffString) {
-                            completionHandler(
-                                nil,
-                                VerificationError.requestBackoff(backoff: backoff)
-                            )
+                            completionHandler(.failure(VerificationError.requestBackoff(backoff: backoff)))
 
                             return
                         }
 
-                        completionHandler(nil, VerificationError.verificaitonFail(error))
+                        completionHandler(.failure(VerificationError.verificaitonFail(error)))
                     } else {
-                        completionHandler(nil, VerificationError.verificaitonFail(nil))
+                        completionHandler(.failure(VerificationError.verificaitonFail(nil)))
                     }
                 }
             }

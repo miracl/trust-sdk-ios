@@ -4,7 +4,7 @@ extension MIRACLTrust {
     func sendVerificationEmailCore(
         userId: String,
         crossDeviceSession: CrossDeviceSession,
-        completionHandler: @escaping VerificationCompletionHandler
+        completionHandler: @escaping VerificationResultCompletionHandler
     ) {
         do {
             let verificator = try Verificator(
@@ -22,14 +22,14 @@ extension MIRACLTrust {
             logError(error: error, category: .verification)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func sendVerificationEmailCore(
         userId: String,
-        completionHandler: @escaping VerificationCompletionHandler
+        completionHandler: @escaping VerificationResultCompletionHandler
     ) {
         do {
             let verificator = try Verificator(
@@ -47,7 +47,7 @@ extension MIRACLTrust {
             logError(error: error, category: .verification)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
