@@ -84,14 +84,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.generateQuickCodeCore(user: user, didRequestPinHandler: didRequestPinHandler) { quickCode, error in
-                if let quickCode {
-                    continuation.resume(returning: quickCode)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.generateQuickCodeCore(user: user, didRequestPinHandler: didRequestPinHandler) { result in
+                continuation.resume(with: result)
             }
         }
     }
