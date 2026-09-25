@@ -17,14 +17,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.sendVerificationEmailCore(userId: userId, crossDeviceSession: crossDeviceSession) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.sendVerificationEmailCore(userId: userId, crossDeviceSession: crossDeviceSession) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -40,14 +34,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.sendVerificationEmailCore(userId: userId) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.sendVerificationEmailCore(userId: userId) { result in
+                continuation.resume(with: result)
             }
         }
     }
