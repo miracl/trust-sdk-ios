@@ -1,8 +1,10 @@
 import Foundation
 
+typealias QuickCodeResultCompletionHandler = @MainActor @Sendable (Result<QuickCode, Error>) -> Void
+
 struct QuickCodeGenerator {
     let user: User
-    let completionHandler: QuickCodeCompletionHandler
+    let completionHandler: QuickCodeResultCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let api: APIBlueprint
     let deviceName: String
@@ -22,7 +24,7 @@ struct QuickCodeGenerator {
         logger: Logger,
         deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping QuickCodeCompletionHandler
+        completionHandler: @escaping QuickCodeResultCompletionHandler
     ) {
         self.user = user
         self.api = api
@@ -116,7 +118,7 @@ struct QuickCodeGenerator {
                 )
 
                 DispatchQueue.main.async {
-                    completionHandler(quickCode, nil)
+                    completionHandler(.success(quickCode))
                 }
             } else if let error {
                 callCompletionHandler(with: QuickCodeError.generationFail(error))
@@ -133,7 +135,7 @@ struct QuickCodeGenerator {
                 category: .quickCode
             )
 
-            completionHandler(nil, error)
+            completionHandler(.failure(error))
         }
     }
 

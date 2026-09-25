@@ -101,7 +101,7 @@ extension MIRACLTrust {
     func generateQuickCodeCore(
         user: User,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping QuickCodeCompletionHandler
+        completionHandler: @escaping QuickCodeResultCompletionHandler
     ) {
         let generator = QuickCodeGenerator(
             user: user,
@@ -111,10 +111,10 @@ extension MIRACLTrust {
             crypto: crypto,
             logger: logger,
             deviceTagManager: deviceTagManager,
-            didRequestPinHandler: didRequestPinHandler
-        ) { quickCode, error in
-            completionHandler(quickCode, error)
-        }
+            didRequestPinHandler: didRequestPinHandler,
+            completionHandler: completionHandler
+        )
+
         generator.generate()
     }
 

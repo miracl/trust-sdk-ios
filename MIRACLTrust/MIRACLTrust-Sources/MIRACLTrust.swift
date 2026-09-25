@@ -336,7 +336,14 @@ import Foundation
         generateQuickCodeCore(
             user: user,
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(quickCode):
+                    completionHandler(quickCode, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
