@@ -1,0 +1,3 @@
+# Copy this file to 'Config.xcconfig' in the same directory and set your MIRACL Trust credentials
+MIRACL_PROJECT_ID = YOUR_PROJECT_ID
+MIRACL_PROJECT_DOMAIN = YOUR_PROJECT_DOMAIN

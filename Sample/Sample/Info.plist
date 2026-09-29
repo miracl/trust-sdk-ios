@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>MIRACLProjectDomain</key>
+	<string>$(MIRACL_PROJECT_DOMAIN)</string>
+	<key>MIRACLProjectId</key>
+	<string>$(MIRACL_PROJECT_ID)</string>
+</dict>
+</plist>
