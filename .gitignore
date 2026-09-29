@@ -90,3 +90,6 @@ fastlane/test_output
 iOSInjectionProject/
 
 .github/.DS_Store
+
+# Local credentials for iOS Sample
+Sample/**/Config.xcconfig
