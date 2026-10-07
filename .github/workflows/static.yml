@@ -27,7 +27,8 @@ jobs:
 
       - name: Generate documentation
         run: |
-          swift package --allow-writing-to-directory ./docs \
+          swift package --triple arm64-apple-ios26.5-simulator \
+            --allow-writing-to-directory ./docs \
             generate-documentation --target MIRACLTrust \
             --disable-indexing \
             --transform-for-static-hosting \
