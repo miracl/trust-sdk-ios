@@ -11,7 +11,6 @@ enum Destination: Hashable {
 }
 
 struct ContentView: View {
-    @Binding var deepLinkURL: URL?
     @State private var navigationPath: [Destination] = []
     @State private var errorMessage: String?
     
@@ -21,7 +20,7 @@ struct ContentView: View {
             set: { if !$0 { errorMessage = nil } }
         )
     }
-
+    
     var body: some View {
         NavigationStack(path: $navigationPath) {
             HomeView(navigationPath: $navigationPath, onError: showError)
@@ -42,11 +41,10 @@ struct ContentView: View {
                     }
                 }
         }
-        .task(id: deepLinkURL) {
-            if let url = deepLinkURL {
-                navigationPath = [.registration(url: url)]
-                deepLinkURL = nil
-            }
+        .onOpenURL { url in
+            guard url.path.hasPrefix("/verification/confirmation") else { return }
+            
+            navigationPath = [.registration(url: url)]
         }
         .alert("Error", isPresented: isErrorAlertPresented) {
             Button("OK", role: .cancel) { errorMessage = nil }
@@ -54,7 +52,7 @@ struct ContentView: View {
             Text(errorMessage ?? "")
         }
     }
-
+    
     private func showError(_ message: String) {
         errorMessage = message
     }
