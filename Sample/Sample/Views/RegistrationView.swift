@@ -54,7 +54,7 @@ struct RegistrationView: View {
         }
         .navigationTitle("Register Device")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { startRegistration() }
+        .task(id: url) { startRegistration() }
     }
 
     private func startRegistration() {

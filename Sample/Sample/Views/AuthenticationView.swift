@@ -59,7 +59,7 @@ struct AuthenticationView: View {
         }
         .navigationTitle("Authenticate")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { startAuthentication() }
+        .task { startAuthentication() }
     }
 
     private func startAuthentication() {
