@@ -9,11 +9,11 @@ struct AuthenticationView: View {
     @State private var pinCode = ""
     @State private var user: User?
     @State private var isProcessing = false
-    @State private var pinProcessor: ((String?) -> Void)?
+    @State private var processPinHandler: ProcessPinHandler?
 
     var body: some View {
         Group {
-            if let processor = pinProcessor, let targetUser = user {
+            if let pinHandler = processPinHandler, let targetUser = user {
                 Form {
                     Section(header: Text(userId)) {
                         SecureField("Enter PIN", text: $pinCode)
@@ -29,9 +29,9 @@ struct AuthenticationView: View {
                 .safeAreaInset(edge: .bottom) {
                     Button {
                         isProcessing = true
-                        let currentProcessor = processor
-                        pinProcessor = nil
-                        currentProcessor(pinCode)
+                        let currentPinHandler = pinHandler
+                        processPinHandler = nil
+                        currentPinHandler(pinCode)
                     } label: {
                         HStack {
                             Spacer()
@@ -68,8 +68,8 @@ struct AuthenticationView: View {
 
         MIRACLTrust.getInstance().authenticate(
             user: targetUser,
-            didRequestPinHandler: { processor in
-                self.pinProcessor = processor
+            didRequestPinHandler: { processPinHandler in
+                self.processPinHandler = processPinHandler
             },
             completionHandler: { jwtToken, error in
                 if let error = error {
