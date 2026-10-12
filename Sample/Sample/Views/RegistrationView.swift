@@ -22,26 +22,16 @@ struct RegistrationView: View {
                     }
                 }
                 .safeAreaInset(edge: .bottom) {
-                    Button {
+                    PrimaryButton(
+                        title: "Register",
+                        isLoading: isProcessing,
+                        isDisabled: pinCode.trimmingCharacters(in: .whitespaces).isEmpty || isProcessing
+                    ) {
                         isProcessing = true
-                        let currentProcessor = pinHandler
+                        let currentPinHandler = pinHandler
                         processPinHandler = nil
-                        currentProcessor(pinCode)
-                    } label: {
-                        HStack {
-                            Spacer()
-                            if isProcessing {
-                                ProgressView()
-                            } else {
-                                Text("Register")
-                                    .bold()
-                            }
-                            Spacer()
-                        }
+                        currentPinHandler(pinCode)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(pinCode.trimmingCharacters(in: .whitespaces).isEmpty || isProcessing)
                     .padding()
                 }
             } else {
