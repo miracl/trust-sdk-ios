@@ -87,23 +87,8 @@ struct RegistrationView: View {
                         navigationPath.removeAll()
                         return
                     }
-
-                    guard let user = registeredUser else { return }
-
-                    MIRACLTrust.getInstance().authenticate(
-                        user: user,
-                        didRequestPinHandler: { authProcessor in
-                            authProcessor(self.pinCode)
-                        },
-                        completionHandler: { jwtToken, authError in
-                            if let authError = authError {
-                                onError(authError.localizedDescription)
-                                navigationPath.removeAll()
-                            } else if let jwtToken = jwtToken {
-                                navigationPath = [.authenticationSuccessful(jwtToken: jwtToken)]
-                            }
-                        }
-                    )
+                    
+                    navigationPath = []
                 }
             )
         }
