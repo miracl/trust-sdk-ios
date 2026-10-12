@@ -32,15 +32,8 @@ struct AuthenticationResultView: View {
                 .padding()
             }
             
-            VStack {
-                Button(action: {
-                    navigationPath.removeAll()
-                }) {
-                    Text("Done")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+            PrimaryButton(title: "Done") {
+                navigationPath.removeAll()
             }
             .padding()
         }

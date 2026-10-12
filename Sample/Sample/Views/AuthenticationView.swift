@@ -27,26 +27,16 @@ struct AuthenticationView: View {
                     }
                 }
                 .safeAreaInset(edge: .bottom) {
-                    Button {
+                    PrimaryButton(
+                        title: "Authenticate",
+                        isLoading: isProcessing,
+                        isDisabled: pinCode.count != targetUser.pinLength || isProcessing
+                    ) {
                         isProcessing = true
                         let currentPinHandler = pinHandler
                         processPinHandler = nil
                         currentPinHandler(pinCode)
-                    } label: {
-                        HStack {
-                            Spacer()
-                            if isProcessing {
-                                ProgressView()
-                            } else {
-                                Text("Authenticate")
-                                    .bold()
-                            }
-                            Spacer()
-                        }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(pinCode.count != targetUser.pinLength || isProcessing)
                     .padding()
                 }
             } else {

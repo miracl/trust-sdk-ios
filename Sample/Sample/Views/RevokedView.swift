@@ -27,25 +27,15 @@ struct RevokedView: View {
                 .foregroundColor(.secondary)
 
             Spacer()
-
-            Button {
+            
+            PrimaryButton(
+                title: "Send Verification Email",
+                isLoading: isProcessing,
+                isDisabled: isProcessing
+            ) {
                 sendVerificationEmail()
-            } label: {
-                HStack {
-                    Spacer()
-                    if isProcessing {
-                        ProgressView()
-                    } else {
-                        Text("Send Verification Email")
-                            .bold()
-                    }
-                    Spacer()
-                }
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .disabled(isProcessing)
-            .padding(.horizontal)
+            .padding()
         }
         .navigationTitle("Disabled")
         .navigationBarTitleDisplayMode(.inline)

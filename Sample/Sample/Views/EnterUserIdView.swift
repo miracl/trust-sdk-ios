@@ -20,23 +20,13 @@ struct EnterUserIdView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            Button {
+            PrimaryButton(
+                title: "Send Verification Email",
+                isLoading: isProcessing,
+                isDisabled: userId.trimmingCharacters(in: .whitespaces).isEmpty || isProcessing
+            ) {
                 sendVerificationEmail()
-            } label: {
-                HStack {
-                    Spacer()
-                    if isProcessing {
-                        ProgressView()
-                    } else {
-                        Text("Send Verification Email")
-                            .bold()
-                    }
-                    Spacer()
-                }
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .disabled(userId.trimmingCharacters(in: .whitespaces).isEmpty || isProcessing)
             .padding()
         }
         .navigationTitle("Enter User ID")
