@@ -9,11 +9,11 @@ struct RegistrationView: View {
     @State private var pinCode = ""
     @State private var userId = ""
     @State private var isProcessing = false
-    @State private var pinProcessor: ((String?) -> Void)?
+    @State private var processPinHandler: ProcessPinHandler?
 
     var body: some View {
         Group {
-            if let processor = pinProcessor {
+            if let pinHandler = processPinHandler {
                 Form {
                     Section(header: Text(userId)) {
                         SecureField("Choose PIN", text: $pinCode)
@@ -24,8 +24,8 @@ struct RegistrationView: View {
                 .safeAreaInset(edge: .bottom) {
                     Button {
                         isProcessing = true
-                        let currentProcessor = processor
-                        pinProcessor = nil
+                        let currentProcessor = pinHandler
+                        processPinHandler = nil
                         currentProcessor(pinCode)
                     } label: {
                         HStack {
@@ -78,8 +78,8 @@ struct RegistrationView: View {
             MIRACLTrust.getInstance().register(
                 for: tokenResponse.userId,
                 activationToken: tokenResponse.activationToken,
-                didRequestPinHandler: { processor in
-                    self.pinProcessor = processor
+                didRequestPinHandler: { processPinHandler in
+                    self.processPinHandler = processPinHandler
                 },
                 completionHandler: { registeredUser, error in
                     if let error = error {
