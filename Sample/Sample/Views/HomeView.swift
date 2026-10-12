@@ -29,7 +29,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .onAppear { loadUsers() }
+            .task { loadUsers() }
             .confirmationDialog(
                 "Remove User?",
                 isPresented: isDeleteConfirmationPresented,
