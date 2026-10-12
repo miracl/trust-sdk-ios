@@ -5,7 +5,7 @@ on:
 
 jobs:
   lint:
-    runs-on: macos-26
+    runs-on: xcode-27
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
             --to ${{ github.sha }}
  
   test:
-    runs-on: macos-26
+    runs-on: xcode-27
     needs: lint
     steps:
         - name: Checkout
@@ -50,10 +50,10 @@ jobs:
           run: | 
               cd MIRACLTrust
               xcrun simctl erase "iPhone 17"
-              xcodebuild clean test -scheme "MIRACLTrust-iOS" -destination "platform=iOS Simulator,name=iPhone 17,OS=26.5" -quiet
+              xcodebuild clean test -scheme "MIRACLTrust-iOS" -destination "platform=iOS Simulator,name=iPhone 17,OS=27.0" -quiet
 
   integration-test:
-    runs-on: macos-26
+    runs-on: xcode-27
     needs: test
     steps:
       - name: Checkout
@@ -79,7 +79,7 @@ jobs:
         run: |
             cd MIRACLTrust
             xcrun simctl erase "iPhone 17"
-            xcodebuild clean test -scheme MIRACLTrust-IntegrationTests -destination "platform=iOS Simulator,name=iPhone 17,OS=26.5" -resultBundlePath reports/MIRACLTrust-IntegrationTests -quiet 
+            xcodebuild clean test -scheme MIRACLTrust-IntegrationTests -destination "platform=iOS Simulator,name=iPhone 17,OS=27.0" -resultBundlePath reports/MIRACLTrust-IntegrationTests -quiet
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         if: failure()
@@ -88,7 +88,7 @@ jobs:
           path: MIRACLTrust/reports/
 
   build:
-    runs-on: macos-26
+    runs-on: xcode-27
     needs: integration-test
     steps:
       - name: Checkout
