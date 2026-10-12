@@ -60,6 +60,13 @@ struct AuthenticationView: View {
         .navigationTitle("Authenticate")
         .navigationBarTitleDisplayMode(.inline)
         .task { startAuthentication() }
+        .onDisappear {
+            // Cancel pending authentication if the user pops this view off the navigation stack
+            if let pinHandler = processPinHandler {
+                processPinHandler = nil
+                pinHandler(nil)
+            }
+        }
     }
 
     private func startAuthentication() {
@@ -73,9 +80,15 @@ struct AuthenticationView: View {
             },
             completionHandler: { jwtToken, error in
                 if let error = error {
-                    if let authError = error as? AuthenticationError, case .revoked = authError {
+                    switch error {
+                    case AuthenticationError.pinCancelled:
+                        // Ignore cancellation when user navigates back
+                        return
+                        
+                    case AuthenticationError.revoked:
                         navigationPath = [.revoked(userId: userId)]
-                    } else {
+                        
+                    default:
                         onError(error.localizedDescription)
                         pinCode = ""
                         isProcessing = false

@@ -55,6 +55,13 @@ struct RegistrationView: View {
         .navigationTitle("Register Device")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: url) { startRegistration() }
+        .onDisappear {
+            // Cancel pending registration if the user pops this view off the navigation stack
+            if let pinHandler = processPinHandler {
+                processPinHandler = nil
+                pinHandler(nil)
+            }
+        }
     }
 
     private func startRegistration() {
@@ -83,6 +90,11 @@ struct RegistrationView: View {
                 },
                 completionHandler: { registeredUser, error in
                     if let error = error {
+                        // Ignore cancellation when user navigates back
+                        if case RegistrationError.pinCancelled = error {
+                            return
+                        }
+                        
                         onError(error.localizedDescription)
                         navigationPath.removeAll()
                         return
