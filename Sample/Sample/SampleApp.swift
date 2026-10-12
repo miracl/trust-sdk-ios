@@ -3,8 +3,6 @@ import MIRACLTrust
 
 @main
 struct SampleApp: App {
-    @State private var deepLinkURL: URL?
-    
     init() {
         do {
             let config = try Configuration.Builder(
@@ -23,19 +21,7 @@ struct SampleApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(deepLinkURL: $deepLinkURL)
-                .onOpenURL { url in
-                    deepLinkURL = extractVerificationURL(from: url)
-                }
+            ContentView()
         }
-    }
-    
-    private func extractVerificationURL(from url: URL) -> URL? {
-        guard let scheme = url.scheme, scheme.lowercased() == "https",
-              let host = url.host, host.lowercased() == MIRACLTrustConfig.projectDomain.lowercased(),
-              url.path.hasPrefix("/verification/confirmation") else {
-            return nil
-        }
-        return url
     }
 }
