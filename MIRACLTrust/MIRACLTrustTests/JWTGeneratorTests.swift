@@ -76,11 +76,12 @@ class JWTGeneratorTests: XCTestCase {
     }
 
     func testFailedJWTGenerationInvalidCodeResponse() {
-        authenticator?.response = nil
+        let desiredError = AuthenticationError.authenticationFail(nil)
+        authenticator?.result = .failure(desiredError)
 
         testJWTGenerator { code, error in
             XCTAssertNil(code)
-            assertError(current: error, expected: AuthenticationError.authenticationFail(nil))
+            assertError(current: error, expected: desiredError)
         }
     }
 
@@ -131,10 +132,6 @@ class JWTGeneratorTests: XCTestCase {
         var authenticateResponse = AuthenticateResponse()
         authenticateResponse.jwt = responseCode
 
-        var mockAuthenticator = MockAuthenticator(completionHandler: { _, _ in })
-        mockAuthenticator.error = nil
-        mockAuthenticator.response = authenticateResponse
-
-        return mockAuthenticator
+        return MockAuthenticator(completionHandler: { _ in }, result: .success(authenticateResponse))
     }
 }

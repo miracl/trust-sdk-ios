@@ -82,15 +82,16 @@ struct UniversalLinkAuthenticator {
         }
     }
 
-    @Sendable private func authenticationResult(response: AuthenticateResponse?, error: Error?) {
+    @Sendable private func authenticationResult(result: Result<AuthenticateResponse, Error>) {
         logger.info(
             message: LoggingConstants.finished,
             category: .authentication
         )
 
-        if response != nil {
+        switch result {
+        case .success:
             callCompletionHandler(authenticated: true)
-        } else {
+        case let .failure(error):
             callCompletionHandler(
                 authenticated: false,
                 error: error
