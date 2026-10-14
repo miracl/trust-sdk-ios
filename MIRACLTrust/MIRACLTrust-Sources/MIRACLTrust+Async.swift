@@ -112,14 +112,8 @@ public extension MIRACLTrust {
                 activationToken: activationToken,
                 pushNotificationsToken: pushNotificationsToken,
                 didRequestPinHandler: didRequestPinHandler
-            ) { user, error in
-                if let user {
-                    continuation.resume(returning: user)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }

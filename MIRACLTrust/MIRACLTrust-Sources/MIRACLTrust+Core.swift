@@ -123,7 +123,7 @@ extension MIRACLTrust {
         activationToken: String,
         pushNotificationsToken: String? = nil,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping RegistrationCompletionHandler
+        completionHandler: @escaping RegistrationResultCompletionHandler
     ) {
         do {
             let registrator = try Registrator(
@@ -145,7 +145,7 @@ extension MIRACLTrust {
             logError(error: error, category: .registration)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }

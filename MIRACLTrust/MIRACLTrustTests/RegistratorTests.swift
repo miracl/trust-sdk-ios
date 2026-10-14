@@ -50,9 +50,9 @@ class RegistratorTests: XCTestCase {
         let hashOfMpinId = hashOfMpinId
         let dtas = dtas
 
-        try register(completionHandler: { user, error in
+        try register(completionHandler: { result in
             do {
-                let user = try XCTUnwrap(user)
+                let user = try result.get()
 
                 XCTAssertEqual(user.userId, userId)
                 XCTAssertEqual(user.dtas, dtas)
@@ -74,10 +74,9 @@ class RegistratorTests: XCTestCase {
         let mpinIdCopy = mpinId
         let hashOfMpinId = hashOfMpinId
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(error)
+        try register(completionHandler: { result in
             do {
-                let user = try XCTUnwrap(user)
+                let user = try result.get()
 
                 XCTAssertEqual(user.userId, userId)
                 XCTAssertEqual(user.dtas, dtasCopy)
@@ -111,9 +110,9 @@ class RegistratorTests: XCTestCase {
         crypto.signingClientToken = newToken
 
         let expectation1 = XCTestExpectation(description: "Cannot create Registrator.")
-        try register(completionHandler: { user, error in
+        try register(completionHandler: { result in
             do {
-                let user = try XCTUnwrap(user)
+                let user = try result.get()
 
                 XCTAssertEqual(user.userId, userId)
                 XCTAssertEqual(user.dtas, secondDtasCopy)
@@ -139,7 +138,7 @@ class RegistratorTests: XCTestCase {
                                              logger: logger,
                                              deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
-                                             completionHandler: { _, _ in })) { error in
+                                             completionHandler: { _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
             XCTAssertEqual(error as? RegistrationError, RegistrationError.emptyUserId)
         }
@@ -154,7 +153,7 @@ class RegistratorTests: XCTestCase {
                                              logger: logger,
                                              deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
-                                             completionHandler: { _, _ in })) { error in
+                                             completionHandler: { _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
             XCTAssertEqual(error as? RegistrationError, RegistrationError.emptyUserId)
         }
@@ -171,7 +170,7 @@ class RegistratorTests: XCTestCase {
                                              logger: logger,
                                              deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
-                                             completionHandler: { _, _ in })) { error in
+                                             completionHandler: { _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
             XCTAssertEqual(error as? RegistrationError, RegistrationError.emptyActivationToken)
         }
@@ -186,7 +185,7 @@ class RegistratorTests: XCTestCase {
                                              logger: logger,
                                              deviceTagManager: DeviceTagManager(logger: logger),
                                              didRequestPinHandler: didRequestPinHandler,
-                                             completionHandler: { _, _ in })) { error in
+                                             completionHandler: { _ in })) { error in
             XCTAssertTrue(error is RegistrationError)
             XCTAssertEqual(error as? RegistrationError, RegistrationError.emptyActivationToken)
         }
@@ -199,8 +198,12 @@ class RegistratorTests: XCTestCase {
         crypto = RegistratorTests.mockCrypto()
         crypto.keyPairError = expectedCause
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -214,8 +217,12 @@ class RegistratorTests: XCTestCase {
         mockAPI.registrationError = apiClientError(with: "INVALID_ACTIVATION_TOKEN")
         mockAPI.registrationResponse = nil
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -232,8 +239,12 @@ class RegistratorTests: XCTestCase {
         mockAPI.registrationError = expectedCause
         mockAPI.registrationResponse = nil
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -247,8 +258,11 @@ class RegistratorTests: XCTestCase {
         mockAPI.registrationError = nil
         mockAPI.registrationResponse = nil
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -262,8 +276,11 @@ class RegistratorTests: XCTestCase {
         mockAPI.registrationResponse?.projectId = UUID().uuidString
         mockAPI.registrationError = nil
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -277,8 +294,11 @@ class RegistratorTests: XCTestCase {
         mockAPI.registrationResponse?.designatedTAs = []
         mockAPI.registrationError = nil
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -294,8 +314,11 @@ class RegistratorTests: XCTestCase {
         mockAPI.taSharesResponsesManager.taShare1Response = nil
         mockAPI.taSharesResponsesManager.taShare1ResultCall = .failed
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -310,8 +333,11 @@ class RegistratorTests: XCTestCase {
         mockAPI.taSharesResponsesManager.taShare1Response = nil
         mockAPI.taSharesResponsesManager.taShare1ResultCall = .failed
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -327,8 +353,12 @@ class RegistratorTests: XCTestCase {
         mockAPI.taSharesResponsesManager.taShare2Response = nil
         mockAPI.taSharesResponsesManager.taShare2ResultCall = .failed
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -342,8 +372,12 @@ class RegistratorTests: XCTestCase {
             pinProcessor("nil")
         }
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -357,8 +391,11 @@ class RegistratorTests: XCTestCase {
             pinProcessor(nil)
         }
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -372,8 +409,11 @@ class RegistratorTests: XCTestCase {
             pinProcessor("123")
         }
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -387,8 +427,11 @@ class RegistratorTests: XCTestCase {
             pinProcessor("1234567890")
         }
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -404,8 +447,12 @@ class RegistratorTests: XCTestCase {
             DesignatedTA(url: taURL, token: randomString)
         ]
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -421,8 +468,12 @@ class RegistratorTests: XCTestCase {
         crypto = RegistratorTests.mockCrypto()
         crypto.signingClientTokenError = expectedCause
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -436,8 +487,12 @@ class RegistratorTests: XCTestCase {
         crypto = RegistratorTests.mockCrypto()
         crypto.signingClientToken = Data()
 
-        try register(completionHandler: { user, error in
-            XCTAssertNil(user)
+        try register(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -447,7 +502,7 @@ class RegistratorTests: XCTestCase {
 
     // MARK: Private
 
-    private func register(completionHandler: @escaping RegistrationCompletionHandler) throws {
+    private func register(completionHandler: @escaping RegistrationResultCompletionHandler) throws {
         let expectation = XCTestExpectation(description: "Cannot create Registrator.")
 
         let registrator = try Registrator(
@@ -461,8 +516,8 @@ class RegistratorTests: XCTestCase {
             logger: logger,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { user, error in
-                completionHandler(user, error)
+            completionHandler: { result in
+                completionHandler(result)
 
                 expectation.fulfill()
             }
