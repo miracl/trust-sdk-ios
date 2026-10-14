@@ -12,6 +12,8 @@ let UNSUCCESSFUL_AUTHENTICATION = "UNSUCCESSFUL_AUTHENTICATION"
 let INVALID_AUTH_SESSION = "INVALID_AUTH_SESSION"
 let INVALID_AUTHENTICATION_SESSION = "INVALID_AUTHENTICATION_SESSION"
 
+typealias AuthenticationResultCompletionHandler = @MainActor @Sendable (Result<AuthenticateResponse, Error>) -> Void
+
 struct Authenticator: AuthenticatorBlueprint {
     let user: User
     let didRequestPinHandler: PinRequestHandler
@@ -24,7 +26,7 @@ struct Authenticator: AuthenticatorBlueprint {
     let logger: Logger
     let deviceTagManager: DeviceTagManager
 
-    var completionHandler: AuthenticateCompletionHandler
+    var completionHandler: AuthenticationResultCompletionHandler
 
     init(user: User,
          sessionIdentifier: String?,
@@ -36,7 +38,7 @@ struct Authenticator: AuthenticatorBlueprint {
          scope: [String] = ["oidc"],
          deviceTagManager: DeviceTagManager,
          didRequestPinHandler: @escaping PinRequestHandler,
-         completionHandler: @escaping AuthenticateCompletionHandler) throws {
+         completionHandler: @escaping AuthenticationResultCompletionHandler) throws {
         self.user = user
         self.sessionIdentifier = sessionIdentifier
         self.didRequestPinHandler = didRequestPinHandler
@@ -313,7 +315,7 @@ struct Authenticator: AuthenticatorBlueprint {
                 category: .authentication
             )
 
-            completionHandler(response, nil)
+            completionHandler(.success(response))
         }
     }
 
@@ -333,10 +335,11 @@ struct Authenticator: AuthenticatorBlueprint {
                 deviceTagManager: deviceTagManager,
                 didRequestPinHandler: { pinHandler in
                     pinHandler(pinCode)
-                }, completionHandler: { updatedAuthenticationResponse, updatedAuthenticationError in
-                    if let updatedAuthenticationResponse = updatedAuthenticationResponse {
+                }, completionHandler: { result in
+                    switch result {
+                    case let .success(updatedAuthenticationResponse):
                         finishAuthentication(with: updatedAuthenticationResponse)
-                    } else if let updatedAuthenticationError = updatedAuthenticationError {
+                    case let .failure(updatedAuthenticationError):
                         callCompletionHandler(with: updatedAuthenticationError)
                     }
                 }
@@ -365,7 +368,7 @@ struct Authenticator: AuthenticatorBlueprint {
 
     private func callCompletionHandler(with error: Error) {
         DispatchQueue.main.async {
-            completionHandler(nil, error)
+            completionHandler(.failure(error))
         }
     }
 

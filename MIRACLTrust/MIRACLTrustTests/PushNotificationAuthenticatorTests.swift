@@ -210,13 +210,9 @@ class PushNotificationAuthenticatorTests: XCTestCase {
     private func mockAuthenticator() -> MockAuthenticator {
         let authenticateResponse = AuthenticateResponse()
 
-        var mockAuthenticator = MockAuthenticator(
-            completionHandler: { _, _ in }
+        return MockAuthenticator(
+            completionHandler: { _ in }, result: .success(authenticateResponse)
         )
-        mockAuthenticator.error = nil
-        mockAuthenticator.response = authenticateResponse
-
-        return mockAuthenticator
     }
 
     private func createUser() -> User {

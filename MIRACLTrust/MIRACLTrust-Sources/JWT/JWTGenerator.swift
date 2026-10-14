@@ -68,20 +68,20 @@ struct JWTGenerator {
         }
     }
 
-    @Sendable private func authenticationResult(response: AuthenticateResponse?, error: Error?) {
-        if let error = error {
+    @Sendable private func authenticationResult(result: Result<AuthenticateResponse, Error>) {
+        do {
+            let response = try result.get()
+            guard let jwt = response.jwt else {
+                callCompletionHandler(with: AuthenticationError.authenticationFail(nil))
+                return
+            }
+
+            logOperation(operation: LoggingConstants.finished)
+            DispatchQueue.main.async {
+                completionHandler(jwt, nil)
+            }
+        } catch {
             callCompletionHandler(with: error)
-            return
-        }
-
-        guard let jwt = response?.jwt else {
-            callCompletionHandler(with: AuthenticationError.authenticationFail(nil))
-            return
-        }
-
-        logOperation(operation: LoggingConstants.finished)
-        DispatchQueue.main.async {
-            completionHandler(jwt, nil)
         }
     }
 

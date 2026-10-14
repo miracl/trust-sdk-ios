@@ -116,8 +116,7 @@ class SignerTests: XCTestCase {
     func testSignerRevokedUser() throws {
         let desiredError = SigningError.revoked
 
-        authenticator?.response = nil
-        authenticator?.error = AuthenticationError.revoked
+        authenticator?.result = .failure(AuthenticationError.revoked)
 
         try testSigning { signatureResult, error in
             XCTAssertNil(signatureResult)
@@ -128,8 +127,7 @@ class SignerTests: XCTestCase {
     func testSignerUnsuccessfulAuthentication() throws {
         let desiredError = SigningError.unsuccessfulAuthentication
 
-        authenticator?.response = nil
-        authenticator?.error = AuthenticationError.unsuccessfulAuthentication
+        authenticator?.result = .failure(AuthenticationError.unsuccessfulAuthentication)
 
         try testSigning { signatureResult, error in
             XCTAssertNil(signatureResult)
@@ -141,8 +139,7 @@ class SignerTests: XCTestCase {
         let wrappedError = APIError.executionError("Something went wrong", nil)
         let desiredError = SigningError.signingFail(AuthenticationError.authenticationFail(wrappedError))
 
-        authenticator?.response = nil
-        authenticator?.error = AuthenticationError.authenticationFail(wrappedError)
+        authenticator?.result = .failure(AuthenticationError.authenticationFail(wrappedError))
 
         try testSigning { signatureResult, error in
             XCTAssertNil(signatureResult)
@@ -443,13 +440,10 @@ class SignerTests: XCTestCase {
     func mockAuthenticator() -> MockAuthenticator {
         let authenticateResponse = AuthenticateResponse()
 
-        var mockAuthenticator = MockAuthenticator(
-            completionHandler: { _, _ in }
+        return MockAuthenticator(
+            completionHandler: { _ in },
+            result: .success(authenticateResponse)
         )
-        mockAuthenticator.error = nil
-        mockAuthenticator.response = authenticateResponse
-
-        return mockAuthenticator
     }
 
     class func mockCrypto() -> MockCrypto {

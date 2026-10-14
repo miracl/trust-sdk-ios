@@ -1,4 +1,4 @@
 protocol AuthenticatorBlueprint: Sendable {
-    var completionHandler: AuthenticateCompletionHandler { get set }
+    var completionHandler: AuthenticationResultCompletionHandler { get set }
     func authenticate()
 }

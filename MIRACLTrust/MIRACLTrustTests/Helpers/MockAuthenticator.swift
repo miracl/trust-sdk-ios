@@ -1,14 +1,13 @@
 @testable import MIRACLTrust
 
 struct MockAuthenticator: AuthenticatorBlueprint {
-    var completionHandler: AuthenticateCompletionHandler
+    var completionHandler: AuthenticationResultCompletionHandler
 
-    var response: AuthenticateResponse?
-    var error: Error?
+    var result: Result<AuthenticateResponse, Error>
 
     func authenticate() {
         Task { @MainActor in
-            completionHandler(response, error)
+            completionHandler(result)
         }
     }
 }

@@ -68,8 +68,16 @@ struct QuickCodeGenerator {
         }
     }
 
-    @Sendable func authenticationResult(response: AuthenticateResponse?, error: Error?) {
-        if let error = error {
+    @Sendable func authenticationResult(result: Result<AuthenticateResponse, Error>) {
+        switch result {
+        case let .success(response):
+            guard let jwt = response.jwt else {
+                callCompletionHandler(with: QuickCodeError.generationFail(nil))
+                return
+            }
+
+            executeVerificationRequest(for: jwt)
+        case let .failure(error):
             if case AuthenticationError.revoked = error {
                 callCompletionHandler(with: QuickCodeError.revoked)
             } else if case AuthenticationError.unsuccessfulAuthentication = error {
@@ -81,15 +89,7 @@ struct QuickCodeGenerator {
             } else {
                 callCompletionHandler(with: QuickCodeError.generationFail(error))
             }
-            return
         }
-
-        guard let jwt = response?.jwt else {
-            callCompletionHandler(with: QuickCodeError.generationFail(nil))
-            return
-        }
-
-        executeVerificationRequest(for: jwt)
     }
 
     private func executeVerificationRequest(

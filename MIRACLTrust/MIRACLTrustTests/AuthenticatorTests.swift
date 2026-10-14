@@ -51,18 +51,27 @@ class AuthenticatorTests: XCTestCase {
     // MARK: Tests
 
     func testAuthentication() throws {
-        try authenticate(completionHandler: { authenticationResponse, error in
-            XCTAssertNotNil(authenticationResponse)
-            XCTAssertNil(error)
+        try authenticate(completionHandler: { result in
+            do {
+                let authenticationResponse = try result.get()
+                XCTAssertNotNil(authenticationResponse)
+            } catch {
+                XCTFail("Cannot unwrap authentication response - \(error)")
+            }
+
         })
     }
 
     func testAuthenticationWithEmptySessionIdentifier() throws {
         accessId = nil
 
-        try authenticate(completionHandler: { authenticationResponse, error in
-            XCTAssertNotNil(authenticationResponse)
-            XCTAssertNil(error)
+        try authenticate(completionHandler: { result in
+            do {
+                let authenticationResponse = try result.get()
+                XCTAssertNotNil(authenticationResponse)
+            } catch {
+                XCTFail("Cannot unwrap authentication response - \(error)")
+            }
         })
     }
 
@@ -71,7 +80,12 @@ class AuthenticatorTests: XCTestCase {
             pinHandler("123")
         }
 
-        try authenticate(completionHandler: { _, error in
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: AuthenticationError.invalidPin
@@ -82,7 +96,12 @@ class AuthenticatorTests: XCTestCase {
             pinHandler("12345")
         }
 
-        try authenticate(completionHandler: { _, error in
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: AuthenticationError.invalidPin
@@ -93,7 +112,12 @@ class AuthenticatorTests: XCTestCase {
             pinHandler(nil)
         }
 
-        try authenticate(completionHandler: { _, error in
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: AuthenticationError.pinCancelled
@@ -104,7 +128,12 @@ class AuthenticatorTests: XCTestCase {
             pinHandler(UUID().uuidString)
         }
 
-        try authenticate(completionHandler: { _, error in
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: AuthenticationError.invalidPin
@@ -120,8 +149,12 @@ class AuthenticatorTests: XCTestCase {
         crypto.clientPass1X = Data([])
         crypto.clientPass1Error = cryptoError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -135,8 +168,11 @@ class AuthenticatorTests: XCTestCase {
 
         api.pass1Error = expectedError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -150,8 +186,12 @@ class AuthenticatorTests: XCTestCase {
 
         api.pass1Error = expectedError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -167,11 +207,15 @@ class AuthenticatorTests: XCTestCase {
         let storage = storage
         let projectId = projectId
         let userId = userId
-        try authenticate(completionHandler: { response, error in
+        try authenticate(completionHandler: { result in
             do {
-                XCTAssertNil(response)
                 let user = try XCTUnwrap(storage.getUser(by: userId, projectId: projectId))
                 XCTAssertTrue(user.revoked)
+
+                guard case let .failure(error) = result else {
+                    XCTFail("Expected .failure, but got \(result)")
+                    return
+                }
                 assertError(
                     current: error,
                     expected: desiredError
@@ -190,8 +234,11 @@ class AuthenticatorTests: XCTestCase {
         let storage = storage
         let projectId = projectId
         let userId = userId
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
 
             do {
                 let user = try XCTUnwrap(storage.getUser(by: userId, projectId: projectId))
@@ -213,8 +260,11 @@ class AuthenticatorTests: XCTestCase {
 
         api.pass1Error = expectedError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -228,8 +278,11 @@ class AuthenticatorTests: XCTestCase {
         crypto.clientPass2Error = cryptoError
         crypto.clientPass2V = Data([])
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -243,8 +296,12 @@ class AuthenticatorTests: XCTestCase {
 
         api.pass2Error = expectedError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -259,8 +316,12 @@ class AuthenticatorTests: XCTestCase {
 
         api.pass2Error = expectedError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -274,8 +335,11 @@ class AuthenticatorTests: XCTestCase {
 
         api.authenticationResponseManager.authenticateError = expectedError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -289,8 +353,11 @@ class AuthenticatorTests: XCTestCase {
 
         api.authenticationResponseManager.authenticateError = expectedError
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -303,8 +370,11 @@ class AuthenticatorTests: XCTestCase {
 
         api.authenticationResponseManager.authenticateError = apiClientError(with: INVALID_AUTH_SESSION)
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -317,8 +387,12 @@ class AuthenticatorTests: XCTestCase {
 
         api.authenticationResponseManager.authenticateError = apiClientError(with: INVALID_AUTHENTICATION_SESSION)
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(
                 current: error,
                 expected: desiredError
@@ -334,8 +408,11 @@ class AuthenticatorTests: XCTestCase {
         let storage = storage
         let projectId = projectId
         let userId = userId
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -358,8 +435,11 @@ class AuthenticatorTests: XCTestCase {
         let storage = storage
         let projectId = projectId
         let userId = userId
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -383,8 +463,11 @@ class AuthenticatorTests: XCTestCase {
 
         api.authenticationResponseManager.authenticateError = apiClientError(with: INVALID_AUTH)
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -397,8 +480,11 @@ class AuthenticatorTests: XCTestCase {
 
         api.authenticationResponseManager.authenticateError = apiClientError(with: UNSUCCESSFUL_AUTHENTICATION)
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -412,8 +498,11 @@ class AuthenticatorTests: XCTestCase {
         api.authenticationResponseManager.authenticateResponse = nil
         api.authenticationResponseManager.authenticateError = nil
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -458,13 +547,11 @@ class AuthenticatorTests: XCTestCase {
 
         let userId = userId
         let storage = storage
-        try authenticate(completionHandler: { authenticationResponse, error in
-            XCTAssertNotNil(authenticationResponse)
-            XCTAssertNil(error)
-
-            XCTAssertEqual(try? storage.all().count, 1)
-
+        try authenticate(completionHandler: { result in
             do {
+                _ = try result.get()
+                XCTAssertEqual(try storage.all().count, 1)
+
                 let currentUser = try XCTUnwrap(storage.all().first)
 
                 XCTAssertEqual(currentUser.userId, userId)
@@ -480,7 +567,7 @@ class AuthenticatorTests: XCTestCase {
     func testAuthWithRevokedUser() {
         user = AuthenticatorTests.createUser(revoked: true)
 
-        XCTAssertThrowsError(try authenticate(completionHandler: { _, _ in })) { error in
+        XCTAssertThrowsError(try authenticate(completionHandler: { _ in })) { error in
             assertError(current: error, expected: AuthenticationError.revoked)
         }
     }
@@ -498,15 +585,18 @@ class AuthenticatorTests: XCTestCase {
         api.pass2Response = nil
         api.pass2ResultCall = .failed
 
-        try authenticate(completionHandler: { response, error in
-            XCTAssertNil(response)
+        try authenticate(completionHandler: { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: AuthenticationError.authenticationFail(wrappedError))
         })
     }
 
     // MARK: Private methods
 
-    private func authenticate(completionHandler: @escaping AuthenticateCompletionHandler) throws {
+    private func authenticate(completionHandler: @escaping AuthenticationResultCompletionHandler) throws {
         let expectation = XCTestExpectation(description: "Wait for Authentication.")
 
         let authenticator = try Authenticator(
@@ -519,8 +609,8 @@ class AuthenticatorTests: XCTestCase {
             logger: logger,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler
-        ) { response, error in
-            completionHandler(response, error)
+        ) { result in
+            completionHandler(result)
             expectation.fulfill()
         }
         authenticator.authenticate()

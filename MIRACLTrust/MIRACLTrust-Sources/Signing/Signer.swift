@@ -74,10 +74,9 @@ struct Signer {
         }
 
         if var authenticator = authenticator {
-            authenticator.completionHandler = { response, error in
+            authenticator.completionHandler = { result in
                 handleAuthenticationResult(
-                    response: response,
-                    error: error,
+                    result: result,
                     pin: pin
                 )
             }
@@ -97,10 +96,9 @@ struct Signer {
                     didRequestPinHandler: { processPinHandler in
                         processPinHandler(pinCode)
                     },
-                    completionHandler: { response, error in
+                    completionHandler: { result in
                         handleAuthenticationResult(
-                            response: response,
-                            error: error,
+                            result: result,
                             pin: pin
                         )
                     }
@@ -113,13 +111,13 @@ struct Signer {
     }
 
     private func handleAuthenticationResult(
-        response: AuthenticateResponse?,
-        error: Error?,
+        result: Result<AuthenticateResponse, Error>,
         pin: Int32
     ) {
-        if response != nil {
+        switch result {
+        case .success:
             signMessage(with: pin)
-        } else if let error = error {
+        case let .failure(error):
             if case AuthenticationError.revoked = error {
                 callCompletionHandler(error: SigningError.revoked)
             } else if case AuthenticationError.unsuccessfulAuthentication = error {
