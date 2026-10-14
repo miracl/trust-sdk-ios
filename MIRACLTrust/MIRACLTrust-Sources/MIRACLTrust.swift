@@ -368,9 +368,15 @@ import Foundation
             for: userId,
             activationToken: activationToken,
             pushNotificationsToken: pushNotificationsToken,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestPinHandler: didRequestPinHandler
+        ) { result in
+            switch result {
+            case let .success(user):
+                completionHandler(user, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     // MARK: Authentication

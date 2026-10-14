@@ -2,13 +2,15 @@ import Foundation
 
 let INVALID_ACTIVATION_TOKEN = "INVALID_ACTIVATION_TOKEN"
 
+public typealias RegistrationResultCompletionHandler = @MainActor @Sendable (Result<User, Error>) -> Void
+
 final class Registrator: Sendable {
     let userId: String
     let activationToken: String
     let deviceName: String
     let pushNotificationsToken: String?
     let didRequestPinHandler: PinRequestHandler
-    let completionHandler: RegistrationCompletionHandler
+    let completionHandler: RegistrationResultCompletionHandler
     let miraclAPI: APIBlueprint
     let crypto: CryptoBlueprint
     let projectId: String
@@ -30,7 +32,7 @@ final class Registrator: Sendable {
         logger: Logger,
         deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping RegistrationCompletionHandler
+        completionHandler: @escaping RegistrationResultCompletionHandler
     ) throws {
         self.userId = userId.trimmingCharacters(in: .whitespacesAndNewlines)
         self.activationToken = activationToken.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -293,7 +295,7 @@ final class Registrator: Sendable {
                 try userStorage.update(user: user.toUserDTO())
 
                 DispatchQueue.main.async {
-                    self.completionHandler(user, nil)
+                    self.completionHandler(.success(user))
                 }
             } else {
                 logger.info(
@@ -304,7 +306,7 @@ final class Registrator: Sendable {
                 try userStorage.add(user: user.toUserDTO())
 
                 DispatchQueue.main.async {
-                    self.completionHandler(user, nil)
+                    self.completionHandler(.success(user))
                 }
             }
 
@@ -321,7 +323,7 @@ final class Registrator: Sendable {
         logOperation(operation: "\(LoggingConstants.finishedWithError)=\(error)")
 
         DispatchQueue.main.async {
-            self.completionHandler(nil, error)
+            self.completionHandler(.failure(error))
         }
     }
 

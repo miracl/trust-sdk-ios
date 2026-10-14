@@ -293,11 +293,12 @@ struct Authenticator: AuthenticatorBlueprint {
                 deviceTagManager: deviceTagManager
             ) { processPinHandler in
                 processPinHandler(pinCode)
-            } completionHandler: { updatedUser, error in
-                if let updatedUser = updatedUser {
+            } completionHandler: { result in
+                switch result {
+                case let .success(updatedUser):
                     logOperation(operation: LoggingConstants.wamFinished)
                     redoAuthentication(with: updatedUser, pinCode: pinCode)
-                } else if let error = error {
+                case let .failure(error):
                     logOperation(
                         operation: "\(LoggingConstants.wamUserError) = \(error)"
                     )
