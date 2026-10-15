@@ -139,14 +139,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.authenticateCore(user: user, didRequestPinHandler: didRequestPinHandler) { jwt, error in
-                if let jwt {
-                    continuation.resume(returning: jwt)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.authenticateCore(user: user, didRequestPinHandler: didRequestPinHandler) { result in
+                continuation.resume(with: result)
             }
         }
     }

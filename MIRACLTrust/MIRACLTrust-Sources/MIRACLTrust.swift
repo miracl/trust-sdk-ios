@@ -402,9 +402,15 @@ import Foundation
     ) {
         authenticateCore(
             user: user,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestPinHandler: didRequestPinHandler
+        ) { result in
+            switch result {
+            case let .success(jwt):
+                completionHandler(jwt, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Authenticates identity in the MIRACL Trust platform.
