@@ -214,14 +214,8 @@ public extension MIRACLTrust {
                 crossDeviceSession: crossDeviceSession,
                 user: user,
                 didRequestPinHandler: didRequestPinHandler
-            ) { isAuthenticated, error in
-                if isAuthenticated {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }

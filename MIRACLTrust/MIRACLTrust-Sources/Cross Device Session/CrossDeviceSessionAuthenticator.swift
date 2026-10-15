@@ -1,5 +1,7 @@
 import Foundation
 
+typealias CrossDeviceSessionAuthenticatorResultCompletionHandler = @MainActor @Sendable (Result<Void, Error>) -> Void
+
 struct CrossDeviceSessionAuthenticator {
     let user: User
     let crossDeviceSession: CrossDeviceSession
@@ -7,7 +9,7 @@ struct CrossDeviceSessionAuthenticator {
     let userStorage: UserStorage
     let crypto: CryptoBlueprint
     let deviceName: String
-    let completionHandler: AuthenticationCompletionHandler
+    let completionHandler: CrossDeviceSessionAuthenticatorResultCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let logger: Logger
     let deviceTagManager: DeviceTagManager
@@ -24,7 +26,7 @@ struct CrossDeviceSessionAuthenticator {
         logger: Logger,
         deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping AuthenticationCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionAuthenticatorResultCompletionHandler
     ) {
         self.user = user
         self.crossDeviceSession = crossDeviceSession
@@ -73,7 +75,6 @@ struct CrossDeviceSessionAuthenticator {
             authenticator.authenticate()
         } catch {
             callCompletionHandler(
-                authenticated: false,
                 error: error
             )
         }
@@ -89,28 +90,25 @@ struct CrossDeviceSessionAuthenticator {
 
         switch result {
         case .success:
-            callCompletionHandler(authenticated: true)
+            DispatchQueue.main.async {
+                completionHandler(.success(()))
+            }
         case let .failure(error):
             callCompletionHandler(
-                authenticated: false,
                 error: error
             )
         }
     }
 
     private func callCompletionHandler(
-        authenticated: Bool,
-        error: Error? = nil
+        error: Error
     ) {
-        if let error {
-            logger.error(
-                message: "\(LoggingConstants.finishedWithError)=\(error)",
-                category: .authentication
-            )
-        }
-
+        logger.error(
+            message: "\(LoggingConstants.finishedWithError)=\(error)",
+            category: .authentication
+        )
         DispatchQueue.main.async {
-            completionHandler(authenticated, error)
+            completionHandler(.failure(error))
         }
     }
 }

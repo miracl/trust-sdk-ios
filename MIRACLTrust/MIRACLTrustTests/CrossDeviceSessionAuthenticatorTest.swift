@@ -44,9 +44,12 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
     }
 
     func testSuccessfulAuthentication() throws {
-        try testCrossDeviceSessionAuthentication { result, error in
-            XCTAssertTrue(result)
-            XCTAssertNil(error)
+        try testCrossDeviceSessionAuthentication { result in
+            do {
+                _ = try result.get()
+            } catch {
+                XCTFail("Expected .success, but got \(result)")
+            }
         }
     }
 
@@ -54,8 +57,12 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
         user = createUser(mpinId: Data(), token: Data())
         authenticator = nil
 
-        try testCrossDeviceSessionAuthentication { result, error in
-            XCTAssertFalse(result)
+        try testCrossDeviceSessionAuthentication { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(current: error, expected: AuthenticationError.invalidUserData)
         }
     }
@@ -64,8 +71,11 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
         user = createUser(userId: "", projectId: "")
         authenticator = nil
 
-        try testCrossDeviceSessionAuthentication { result, error in
-            XCTAssertFalse(result)
+        try testCrossDeviceSessionAuthentication { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: AuthenticationError.invalidUserData)
         }
     }
@@ -76,8 +86,11 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
             pinHandler("123")
         }
 
-        try testCrossDeviceSessionAuthentication { result, error in
-            XCTAssertFalse(result)
+        try testCrossDeviceSessionAuthentication { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: AuthenticationError.invalidPin)
         }
     }
@@ -88,8 +101,11 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
             pinHandler("1234567890")
         }
 
-        try testCrossDeviceSessionAuthentication { result, error in
-            XCTAssertFalse(result)
+        try testCrossDeviceSessionAuthentication { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: AuthenticationError.invalidPin)
         }
     }
@@ -97,7 +113,7 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
     // MARK: Private
 
     private func testCrossDeviceSessionAuthentication(
-        testCompletionHandler: @escaping AuthenticationCompletionHandler
+        testCompletionHandler: @escaping CrossDeviceSessionAuthenticatorResultCompletionHandler
     ) throws {
         let expectation = XCTestExpectation(description: "Wait for QR Authentication")
         let logger = DefaultLogger(level: .none)
@@ -112,8 +128,8 @@ final class CrossDeviceSessionAuthenticatorTest: XCTestCase {
             logger: logger,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler
-        ) { result, error in
-            testCompletionHandler(result, error)
+        ) { result in
+            testCompletionHandler(result)
             expectation.fulfill()
         }
         crossDeviceSessionAuthenticator.authenticator = authenticator
