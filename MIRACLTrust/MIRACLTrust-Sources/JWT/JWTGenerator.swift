@@ -1,10 +1,12 @@
 import Foundation
 
+typealias JWTGenerationResultCompletionHandler = @MainActor @Sendable (Result<String, Error>) -> Void
+
 struct JWTGenerator {
     let user: User
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
-    let completionHandler: JWTCompletionHandler
+    let completionHandler: JWTGenerationResultCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let deviceName: String
     let crypto: CryptoBlueprint
@@ -22,7 +24,7 @@ struct JWTGenerator {
         logger: Logger,
         deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping JWTCompletionHandler
+        completionHandler: @escaping JWTGenerationResultCompletionHandler
     ) {
         self.user = user
         self.miraclAPI = miraclAPI
@@ -78,7 +80,7 @@ struct JWTGenerator {
 
             logOperation(operation: LoggingConstants.finished)
             DispatchQueue.main.async {
-                completionHandler(jwt, nil)
+                completionHandler(.success(jwt))
             }
         } catch {
             callCompletionHandler(with: error)
@@ -89,7 +91,7 @@ struct JWTGenerator {
         logOperation(operation: "\(LoggingConstants.finishedWithError) = \(error)")
 
         DispatchQueue.main.async {
-            completionHandler(nil, error)
+            completionHandler(.failure(error))
         }
     }
 

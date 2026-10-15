@@ -153,7 +153,7 @@ extension MIRACLTrust {
     func authenticateCore(
         user: User,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping JWTCompletionHandler
+        completionHandler: @escaping JWTGenerationResultCompletionHandler
     ) {
         let jwtGenerator = JWTGenerator(
             user: user,
