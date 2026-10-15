@@ -171,7 +171,7 @@ extension MIRACLTrust {
 
     func getCrossDeviceSessionFromQRCodeCore(
         qrCode: String,
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) {
         do {
             let fetcher = try CrossDeviceSessionFetcher(
@@ -184,14 +184,14 @@ extension MIRACLTrust {
             fetcher.fetch()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func getCrossDeviceSessionFromUniversalLinkURLCore(
         universalLinkURL: URL,
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) {
         do {
             let fetcher = try CrossDeviceSessionFetcher(
@@ -204,14 +204,14 @@ extension MIRACLTrust {
             fetcher.fetch()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func getCrossDeviceSessionFromPushNotificationPayloadCore(
         pushNotificationPayload: [AnyHashable: Any],
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) {
         do {
             let fetcher = try CrossDeviceSessionFetcher(
@@ -224,7 +224,7 @@ extension MIRACLTrust {
             fetcher.fetch()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
