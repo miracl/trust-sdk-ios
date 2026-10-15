@@ -608,9 +608,15 @@ import Foundation
         authenticateCrossDeviceSessionCore(
             crossDeviceSession: crossDeviceSession,
             user: user,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestPinHandler: didRequestPinHandler
+        ) { result in
+            switch result {
+            case .success:
+                completionHandler(true, nil)
+            case let .failure(error):
+                completionHandler(false, error)
+            }
+        }
     }
 
     /// Generates a signature for a hash provided by the ``CrossDeviceSession`` parameter and updates the session.

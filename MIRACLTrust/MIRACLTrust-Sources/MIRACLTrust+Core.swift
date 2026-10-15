@@ -233,7 +233,7 @@ extension MIRACLTrust {
         crossDeviceSession: CrossDeviceSession,
         user: User,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping AuthenticationCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionAuthenticatorResultCompletionHandler
     ) {
         let crossDeviceSessionAuthenticator = CrossDeviceSessionAuthenticator(
             user: user,
@@ -245,11 +245,11 @@ extension MIRACLTrust {
             logger: logger,
             deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { isAuthenticated, error in
-                if let error, case AuthenticationError.invalidAuthenticationSession = error {
-                    completionHandler(isAuthenticated, AuthenticationError.invalidCrossDeviceSession)
+            completionHandler: { result in
+                if case let .failure(error) = result, case AuthenticationError.invalidAuthenticationSession = error {
+                    completionHandler(.failure(AuthenticationError.invalidCrossDeviceSession))
                 } else {
-                    completionHandler(isAuthenticated, error)
+                    completionHandler(result)
                 }
             }
         )
