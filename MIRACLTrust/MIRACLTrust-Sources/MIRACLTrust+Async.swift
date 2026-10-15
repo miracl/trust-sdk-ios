@@ -154,14 +154,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getCrossDeviceSessionFromQRCodeCore(qrCode: qrCode) { crossDeviceSession, error in
-                if let crossDeviceSession {
-                    continuation.resume(returning: crossDeviceSession)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getCrossDeviceSessionFromQRCodeCore(qrCode: qrCode) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -175,14 +169,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getCrossDeviceSessionFromUniversalLinkURLCore(universalLinkURL: universalLinkURL) { crossDeviceSession, error in
-                if let crossDeviceSession {
-                    continuation.resume(returning: crossDeviceSession)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getCrossDeviceSessionFromUniversalLinkURLCore(universalLinkURL: universalLinkURL) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -200,14 +188,8 @@ public extension MIRACLTrust {
         return try await withCheckedThrowingContinuation { continuation in
             self.getCrossDeviceSessionFromPushNotificationPayloadCore(
                 pushNotificationPayload: pushNotificationPayload
-            ) { crossDeviceSession, error in
-                if let crossDeviceSession {
-                    continuation.resume(returning: crossDeviceSession)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }

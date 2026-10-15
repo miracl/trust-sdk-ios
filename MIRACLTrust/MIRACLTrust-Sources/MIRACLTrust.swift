@@ -532,9 +532,15 @@ import Foundation
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
         getCrossDeviceSessionFromQRCodeCore(
-            qrCode: qrCode,
-            completionHandler: completionHandler
-        )
+            qrCode: qrCode
+        ) { result in
+            switch result {
+            case let .success(crossDeviceSession):
+                completionHandler(crossDeviceSession, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Gets ``CrossDeviceSession`` for a universal link.
@@ -549,9 +555,15 @@ import Foundation
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
         getCrossDeviceSessionFromUniversalLinkURLCore(
-            universalLinkURL: universalLinkURL,
-            completionHandler: completionHandler
-        )
+            universalLinkURL: universalLinkURL
+        ) { result in
+            switch result {
+            case let .success(crossDeviceSession):
+                completionHandler(crossDeviceSession, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Gets ``CrossDeviceSession`` for a push notification.
@@ -566,9 +578,15 @@ import Foundation
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
         getCrossDeviceSessionFromPushNotificationPayloadCore(
-            pushNotificationPayload: pushNotificationPayload,
-            completionHandler: completionHandler
-        )
+            pushNotificationPayload: pushNotificationPayload
+        ) { result in
+            switch result {
+            case let .success(crossDeviceSession):
+                completionHandler(crossDeviceSession, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Authenticates the user in the MIRACL Trust platform.
