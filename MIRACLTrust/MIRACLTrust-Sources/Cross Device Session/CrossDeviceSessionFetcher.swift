@@ -1,16 +1,18 @@
 import Foundation
 
+typealias CrossDeviceSessionResultCompletionHandler = @MainActor @Sendable (Result<CrossDeviceSession, Error>) -> Void
+
 final class CrossDeviceSessionFetcher: Sendable {
     let sessionId: String
     let miraclAPI: APIBlueprint
-    let completionHandler: CrossDeviceSessionCompletionHandler
+    let completionHandler: CrossDeviceSessionResultCompletionHandler
     let logger: Logger
 
     init(
         qrCode: String,
         miraclAPI: APIBlueprint,
         logger: Logger,
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) throws {
         sessionId = try CrossDeviceSessionFetcher.getAccessIdFromQRCode(qrCode: qrCode)
         self.miraclAPI = miraclAPI
@@ -22,7 +24,7 @@ final class CrossDeviceSessionFetcher: Sendable {
         universalLinkURL: URL,
         miraclAPI: APIBlueprint,
         logger: Logger,
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) throws {
         sessionId = try CrossDeviceSessionFetcher.getAccessId(from: universalLinkURL)
         self.miraclAPI = miraclAPI
@@ -34,7 +36,7 @@ final class CrossDeviceSessionFetcher: Sendable {
         pushNotificationPayload: [AnyHashable: Any],
         miraclAPI: APIBlueprint,
         logger: Logger,
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) throws {
         sessionId = try CrossDeviceSessionFetcher.getAccessId(from: pushNotificationPayload)
         self.miraclAPI = miraclAPI
@@ -69,16 +71,16 @@ final class CrossDeviceSessionFetcher: Sendable {
             )
 
             DispatchQueue.main.async {
-                self.completionHandler(crossDeviceSession, nil)
+                self.completionHandler(.success(crossDeviceSession))
             }
         }
     }
 
     // MARK: Private
 
-    private func callCompletionHandler(with error: Error?) {
+    private func callCompletionHandler(with error: Error) {
         DispatchQueue.main.async {
-            self.completionHandler(nil, error)
+            self.completionHandler(.failure(error))
         }
     }
 
