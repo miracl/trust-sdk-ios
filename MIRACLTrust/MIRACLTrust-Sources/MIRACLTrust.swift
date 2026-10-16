@@ -659,7 +659,14 @@ import Foundation
     ) {
         abortCrossDeviceSessionCore(
             crossDeviceSession: crossDeviceSession,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case .success:
+                    completionHandler(true, nil)
+                case let .failure(error):
+                    completionHandler(false, error)
+                }
+            }
         )
     }
 

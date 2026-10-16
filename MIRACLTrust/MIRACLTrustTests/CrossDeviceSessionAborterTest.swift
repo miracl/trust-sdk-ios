@@ -23,9 +23,12 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
     }
 
     func testAbortSession() {
-        abortCrossDeviceSession { isAborted, error in
-            XCTAssertTrue(isAborted)
-            XCTAssertNil(error)
+        abortCrossDeviceSession { result in
+            do {
+                _ = try result.get()
+            } catch {
+                XCTFail("Expected .success, but got \(error)")
+            }
         }
     }
 
@@ -34,7 +37,7 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         XCTAssertThrowsError(try CrossDeviceSessionAborter(
             sessionId: sessionId,
             miraclAPI: api,
-            completionHandler: { _, _ in }
+            completionHandler: { _ in }
         ), "Abort session with empty sessionId") { error in
             assertError(current: error, expected: CrossDeviceSessionError.invalidCrossDeviceSession)
         }
@@ -45,7 +48,7 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         XCTAssertThrowsError(try CrossDeviceSessionAborter(
             sessionId: sessionId,
             miraclAPI: api,
-            completionHandler: { _, _ in }
+            completionHandler: { _ in }
         ), "Abort session with empty sessionId") { error in
             assertError(current: error, expected: CrossDeviceSessionError.invalidCrossDeviceSession)
         }
@@ -56,8 +59,11 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         api.sessionAborterError = nil
         api.sessionDetailsResponse = nil
 
-        abortCrossDeviceSession { isAborted, error in
-            XCTAssertFalse(isAborted)
+        abortCrossDeviceSession { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: CrossDeviceSessionError.abortCrossDeviceSessionFail(nil))
         }
     }
@@ -71,8 +77,11 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         api.sessionAborterError = cause
         api.sessionDetailsResponse = nil
 
-        abortCrossDeviceSession { isAborted, error in
-            XCTAssertFalse(isAborted)
+        abortCrossDeviceSession { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: desiredError)
         }
     }
@@ -87,8 +96,11 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
         )
         api.sessionAborterResponse = [:]
 
-        abortCrossDeviceSession { isAborted, error in
-            XCTAssertFalse(isAborted)
+        abortCrossDeviceSession { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -96,13 +108,13 @@ final class CrossDeviceSessionAborterTest: XCTestCase {
     // MARK: Private
 
     private func abortCrossDeviceSession(
-        completionHandler: @escaping AuthenticationSessionAborterCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionAborterResultCompletionHandler
     ) {
         do {
             let expectation = XCTestExpectation(description: "Wait for session abort")
 
-            let aborter = try CrossDeviceSessionAborter(sessionId: sessionId, miraclAPI: api) { isAborted, error in
-                completionHandler(isAborted, error)
+            let aborter = try CrossDeviceSessionAborter(sessionId: sessionId, miraclAPI: api) { result in
+                completionHandler(result)
                 expectation.fulfill()
             }
             aborter.abort()
