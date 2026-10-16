@@ -1,10 +1,12 @@
 import Foundation
 
+public typealias SignResultCompletionHandler = @MainActor @Sendable (Result<SigningResult, Error>) -> Void
+
 struct Signer {
     let messageHash: Data
     let user: User
     let didRequestSigningPinHandler: PinRequestHandler
-    let completionHandler: SigningCompletionHandler
+    let completionHandler: SignResultCompletionHandler
     let crypto: CryptoBlueprint
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
@@ -26,7 +28,7 @@ struct Signer {
         deviceName: String,
         deviceTagManager: DeviceTagManager,
         didRequestSigningPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping SigningCompletionHandler
+        completionHandler: @escaping SignResultCompletionHandler
     ) throws {
         self.messageHash = messageHash
         self.user = user
@@ -186,7 +188,9 @@ struct Signer {
             )
 
             let signingResult = SigningResult(signature: signature, timestamp: timestamp)
-            callCompletionHandler(signingResult: signingResult)
+            DispatchQueue.main.async {
+                completionHandler(.success(signingResult))
+            }
         }
     }
 
@@ -207,28 +211,27 @@ struct Signer {
                     callCompletionHandler(error: SigningError.signingFail(error))
                 } else {
                     let signingResult = SigningResult(signature: signature, timestamp: timestamp)
-                    callCompletionHandler(signingResult: signingResult)
+                    DispatchQueue.main.async {
+                        completionHandler(.success(signingResult))
+                    }
                 }
             }
 
         } catch {
-            callCompletionHandler(signingResult: nil, error: error)
+            callCompletionHandler(error: error)
         }
     }
 
     private func callCompletionHandler(
-        signingResult: SigningResult? = nil,
-        error: Error? = nil
+        error: Error
     ) {
-        if let error {
-            logger.error(
-                message: "\(LoggingConstants.finishedWithError)=\(error)",
-                category: .signing
-            )
-        }
+        logger.error(
+            message: "\(LoggingConstants.finishedWithError)=\(error)",
+            category: .signing
+        )
 
         DispatchQueue.main.async {
-            completionHandler(signingResult, error)
+            completionHandler(.failure(error))
         }
     }
 

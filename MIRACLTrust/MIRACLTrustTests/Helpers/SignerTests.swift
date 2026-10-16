@@ -44,10 +44,9 @@ class SignerTests: XCTestCase {
     func testSignerForNoSession() throws {
         let signingUser = signingUser
         let hashData = hashData
-        try testSigning { signatureResult, error in
-            XCTAssertNil(error)
+        try testSigning { result in
             do {
-                let signatureResult = try XCTUnwrap(signatureResult)
+                let signatureResult = try result.get()
                 let publicKey = try XCTUnwrap(signingUser.publicKey)
 
                 XCTAssertEqual(signatureResult.signature.mpinId, signingUser.mpinId.hex)
@@ -69,10 +68,9 @@ class SignerTests: XCTestCase {
         let signingUser = signingUser
         let hashData = hashData
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(error)
+        try testSigning { result in
             do {
-                let signatureResult = try XCTUnwrap(signatureResult)
+                let signatureResult = try result.get()
                 let publicKey = try XCTUnwrap(signingUser.publicKey)
 
                 XCTAssertEqual(signatureResult.signature.mpinId, signingUser.mpinId.hex)
@@ -94,10 +92,13 @@ class SignerTests: XCTestCase {
             processPinHandler("OneTwoThree")
         }
 
-        try testSigning { signature, error in
-            XCTAssertNil(signature)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, SigningError.invalidPin)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
+            assertError(current: error, expected: SigningError.invalidPin)
         }
     }
 
@@ -106,10 +107,13 @@ class SignerTests: XCTestCase {
             processPinHandler(nil)
         }
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, SigningError.pinCancelled)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
+            assertError(current: error, expected: SigningError.pinCancelled)
         }
     }
 
@@ -118,8 +122,12 @@ class SignerTests: XCTestCase {
 
         authenticator?.result = .failure(AuthenticationError.revoked)
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(current: error, expected: desiredError)
         }
     }
@@ -129,8 +137,12 @@ class SignerTests: XCTestCase {
 
         authenticator?.result = .failure(AuthenticationError.unsuccessfulAuthentication)
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+
             assertError(current: error, expected: desiredError)
         }
     }
@@ -141,8 +153,11 @@ class SignerTests: XCTestCase {
 
         authenticator?.result = .failure(AuthenticationError.authenticationFail(wrappedError))
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: desiredError)
         }
     }
@@ -151,8 +166,11 @@ class SignerTests: XCTestCase {
         let desiredError = SigningError.emptyPublicKey
         signingUser = SignerTests.createUser(publicKey: nil)
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: desiredError)
         }
     }
@@ -165,10 +183,12 @@ class SignerTests: XCTestCase {
         crypto.signMessageU = Data()
         crypto.signMessageV = Data()
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, desiredError)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+            assertError(current: error, expected: desiredError)
         }
     }
 
@@ -178,10 +198,12 @@ class SignerTests: XCTestCase {
         crypto.signMessageU = Data()
         crypto.signMessageV = Data()
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, desiredError)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+            assertError(current: error, expected: desiredError)
         }
     }
 
@@ -192,10 +214,12 @@ class SignerTests: XCTestCase {
         crypto.signMessageU = Data()
         crypto.signMessageV = Data([1, 2, 3])
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, expectedError)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+            assertError(current: error, expected: expectedError)
         }
     }
 
@@ -206,10 +230,12 @@ class SignerTests: XCTestCase {
         crypto.signMessageU = Data([1, 2, 3])
         crypto.signMessageV = Data()
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, expectedError)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+            assertError(current: error, expected: expectedError)
         }
     }
 
@@ -220,10 +246,12 @@ class SignerTests: XCTestCase {
         crypto.signMessageU = Data()
         crypto.signMessageV = Data()
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, expectedError)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+            assertError(current: error, expected: expectedError)
         }
     }
 
@@ -238,10 +266,12 @@ class SignerTests: XCTestCase {
         mockAPI.updateCrossDeviceSessionError = wrappedError
         mockAPI.updateCrossDeviceSessionResponse = nil
 
-        try testSigning { signatureResult, error in
-            XCTAssertNil(signatureResult)
-            XCTAssertTrue(error is SigningError)
-            XCTAssertEqual(error as? SigningError, expectedError)
+        try testSigning { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+            assertError(current: error, expected: expectedError)
         }
     }
 
@@ -264,7 +294,7 @@ class SignerTests: XCTestCase {
             deviceName: deviceName,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: { _, _ in
+            completionHandler: { _ in
             }
         ), "Empty Access Id Error") { error in
             XCTAssertTrue(error is SigningError)
@@ -301,7 +331,7 @@ class SignerTests: XCTestCase {
             deviceName: deviceName,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: { _, _ in
+            completionHandler: { _ in
             }
         ), "Empty Access Id Error") { error in
             XCTAssertTrue(error is SigningError)
@@ -337,7 +367,7 @@ class SignerTests: XCTestCase {
             deviceName: deviceName,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: { _, _ in
+            completionHandler: { _ in
             }
         ), "Empty Access Id Error") { error in
             XCTAssertTrue(error is SigningError)
@@ -362,7 +392,7 @@ class SignerTests: XCTestCase {
             deviceName: deviceName,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: { _, _ in
+            completionHandler: { _ in
             }
         ), "Empty Access Id Error") { error in
             XCTAssertTrue(error is SigningError)
@@ -372,7 +402,7 @@ class SignerTests: XCTestCase {
 
     // MARK: Private
 
-    func testSigning(completionHandler: @escaping SigningCompletionHandler) throws {
+    func testSigning(completionHandler: @escaping SignResultCompletionHandler) throws {
         let waitForSigningOperationFinish = XCTestExpectation(description: "Signing Sign completion")
         do {
             guard let didRequestSigningPinHandler = didRequestSigningPinHandler else {
@@ -391,9 +421,9 @@ class SignerTests: XCTestCase {
                 deviceName: deviceName,
                 deviceTagManager: DeviceTagManager(logger: logger),
                 didRequestSigningPinHandler: didRequestSigningPinHandler,
-                completionHandler: { signature, error in
+                completionHandler: { result in
+                    completionHandler(result)
                     waitForSigningOperationFinish.fulfill()
-                    completionHandler(signature, error)
                 }
             )
 
