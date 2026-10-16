@@ -251,14 +251,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            self.abortCrossDeviceSessionCore(crossDeviceSession: crossDeviceSession) { isAborted, error in
-                if isAborted {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.abortCrossDeviceSessionCore(crossDeviceSession: crossDeviceSession) { result in
+                continuation.resume(with: result)
             }
         }
     }
