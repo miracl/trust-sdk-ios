@@ -261,7 +261,7 @@ extension MIRACLTrust {
         crossDeviceSession: CrossDeviceSession,
         user: User,
         didRequestSigningPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping CrossDeviceSigningCompletionHandler
+        completionHandler: @escaping SignResultCompletionHandler
     ) {
         do {
             let signer = try Signer(
@@ -274,21 +274,14 @@ extension MIRACLTrust {
                 logger: logger,
                 deviceName: deviceName,
                 deviceTagManager: deviceTagManager,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signinResult, error in
-                if signinResult != nil {
-                    completionHandler(true, nil)
-                } else if let error {
-                    completionHandler(false, error)
-                } else {
-                    completionHandler(false, SigningError.signingFail(nil))
-                }
-            }
+                didRequestSigningPinHandler: didRequestSigningPinHandler,
+                completionHandler: completionHandler
+            )
             signer.sign()
         } catch {
             logError(error: error, category: .signing)
             DispatchQueue.main.async {
-                completionHandler(false, error)
+                completionHandler(.failure(error))
             }
         }
     }
@@ -317,7 +310,7 @@ extension MIRACLTrust {
         message: Data,
         user: User,
         didRequestSigningPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping SigningCompletionHandler
+        completionHandler: @escaping SignResultCompletionHandler
     ) {
         do {
             let signer = try Signer(
@@ -330,16 +323,15 @@ extension MIRACLTrust {
                 logger: logger,
                 deviceName: deviceName,
                 deviceTagManager: deviceTagManager,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signature, error in
-                completionHandler(signature, error)
-            }
+                didRequestSigningPinHandler: didRequestSigningPinHandler,
+                completionHandler: completionHandler
+            )
 
             signer.sign()
         } catch {
             logError(error: error, category: .signing)
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }

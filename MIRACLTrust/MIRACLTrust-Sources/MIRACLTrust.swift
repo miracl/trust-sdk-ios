@@ -636,9 +636,15 @@ import Foundation
         signCrossDeviceSessionCore(
             crossDeviceSession: crossDeviceSession,
             user: user,
-            didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestSigningPinHandler: didRequestSigningPinHandler
+        ) { result in
+            switch result {
+            case .success:
+                completionHandler(true, nil)
+            case let .failure(error):
+                completionHandler(false, error)
+            }
+        }
     }
 
     /// Cancels the ``CrossDeviceSession``.
@@ -801,7 +807,14 @@ import Foundation
             message: message,
             user: user,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(signingResult):
+                    completionHandler(signingResult, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
