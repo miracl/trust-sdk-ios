@@ -249,6 +249,9 @@ public let MIRACL_API_URL = "https://api.mpin.io"
 
 typealias AuthenticateCompletionHandler = @MainActor @Sendable (AuthenticateResponse?, Error?) -> Void
 typealias APIRequestCompletionHandler<T> = @Sendable (APICallResult, T?, Error?) -> Void
+typealias GetUsersResultCompletionHandler = @MainActor @Sendable (Result<[User], Error>) -> Void
+typealias GetUserResultCompletionHandler = @MainActor @Sendable (Result<User?, Error>) -> Void
+typealias DeleteUserResultCompletionHandler = @MainActor @Sendable (Result<Void, Error>) -> Void
 
 let REDACTED_STRING = "<REDACTED>"
 

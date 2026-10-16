@@ -847,7 +847,14 @@ import Foundation
     ) {
         getUserCore(
             userId: userId,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(user):
+                    completionHandler(user, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -857,7 +864,14 @@ import Foundation
     ///
     /// - Parameter completionHandler: The ``GetUsersCompletionHandler`` closure to be executed when the request completes.
     @objc public func getUsers(completionHandler: @escaping GetUsersCompletionHandler) {
-        getUsersCore(completionHandler: completionHandler)
+        getUsersCore(completionHandler: { result in
+            switch result {
+            case let .success(users):
+                completionHandler(users, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        })
     }
 
     @_spi(MIRACLTrustAuthenticatorApi)
@@ -916,7 +930,14 @@ import Foundation
         user: User,
         completionHandler: @escaping DeleteUserCompletionHandler
     ) {
-        deleteCore(user: user, completionHandler: completionHandler)
+        deleteCore(user: user, completionHandler: { result in
+            switch result {
+            case .success:
+                completionHandler(true, nil)
+            case let .failure(error):
+                completionHandler(false, error)
+            }
+        })
     }
 
     // MARK: Private methods
