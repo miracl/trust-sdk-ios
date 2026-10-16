@@ -285,14 +285,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getUsersCore { users, error in
-                if let users {
-                    continuation.resume(returning: users)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getUsersCore { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -304,12 +298,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getUserCore(userId: userId) { user, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: user)
-                }
+            self.getUserCore(userId: userId) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -321,14 +311,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            self.deleteCore(user: user) { isDeleted, error in
-                if isDeleted {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.deleteCore(user: user) { result in
+                continuation.resume(with: result)
             }
         }
     }

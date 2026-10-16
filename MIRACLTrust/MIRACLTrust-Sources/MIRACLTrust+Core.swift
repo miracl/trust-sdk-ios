@@ -334,7 +334,7 @@ extension MIRACLTrust {
         }
     }
 
-    func getUsersCore(completionHandler: @escaping GetUsersCompletionHandler) {
+    func getUsersCore(completionHandler: @escaping GetUsersResultCompletionHandler) {
         let storage = userStorage
         DispatchQueue.global(qos: .userInitiated).async {
             do {
@@ -343,11 +343,11 @@ extension MIRACLTrust {
                 }
 
                 DispatchQueue.main.async {
-                    completionHandler(allUsers, nil)
+                    completionHandler(.success(allUsers))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completionHandler(nil, error)
+                    completionHandler(.failure(error))
                 }
             }
         }
@@ -355,7 +355,7 @@ extension MIRACLTrust {
 
     func getUserCore(
         userId: String,
-        completionHandler: @escaping GetUserCompletionHandler
+        completionHandler: @escaping GetUserResultCompletionHandler
     ) {
         let storage = userStorage
         let projectId = projectId
@@ -364,11 +364,11 @@ extension MIRACLTrust {
             do {
                 let user = try storage.getUser(by: userId, projectId: projectId)
                 DispatchQueue.main.async {
-                    completionHandler(user?.toUser(), nil)
+                    completionHandler(.success(user?.toUser()))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completionHandler(nil, error)
+                    completionHandler(.failure(error))
                 }
             }
         }
@@ -376,7 +376,7 @@ extension MIRACLTrust {
 
     func deleteCore(
         user: User,
-        completionHandler: @escaping DeleteUserCompletionHandler
+        completionHandler: @escaping DeleteUserResultCompletionHandler
     ) {
         let storage = userStorage
         let completionHandler = completionHandler
@@ -386,11 +386,11 @@ extension MIRACLTrust {
                 try storage.delete(user: user.toUserDTO())
 
                 DispatchQueue.main.async {
-                    completionHandler(true, nil)
+                    completionHandler(.success(()))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completionHandler(false, error)
+                    completionHandler(.failure(error))
                 }
             }
         }
