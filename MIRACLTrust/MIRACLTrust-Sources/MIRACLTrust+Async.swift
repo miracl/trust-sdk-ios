@@ -238,14 +238,8 @@ public extension MIRACLTrust {
                 crossDeviceSession: crossDeviceSession,
                 user: user,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { isSigned, error in
-                if isSigned {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result.map { _ in () })
             }
         }
     }
@@ -284,14 +278,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.signCore(message: message, user: user, didRequestSigningPinHandler: didRequestSigningPinHandler) { signingResult, error in
-                if let signingResult {
-                    continuation.resume(returning: signingResult)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.signCore(message: message, user: user, didRequestSigningPinHandler: didRequestSigningPinHandler) { result in
+                continuation.resume(with: result)
             }
         }
     }
