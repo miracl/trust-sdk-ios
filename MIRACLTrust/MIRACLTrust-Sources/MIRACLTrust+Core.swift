@@ -288,20 +288,18 @@ extension MIRACLTrust {
 
     func abortCrossDeviceSessionCore(
         crossDeviceSession: CrossDeviceSession,
-        completionHandler: @escaping CrossDeviceSessionAborterCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionAborterResultCompletionHandler
     ) {
         do {
             let aborter = try CrossDeviceSessionAborter(
                 sessionId: crossDeviceSession.sessionId,
-                miraclAPI: miraclAPI
-            ) { result, error in
-                completionHandler(result, error)
-            }
-
+                miraclAPI: miraclAPI,
+                completionHandler: completionHandler
+            )
             aborter.abort()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(false, error)
+                completionHandler(.failure(error))
             }
         }
     }
