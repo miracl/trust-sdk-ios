@@ -5,7 +5,7 @@ struct PrimaryButton: View {
     var isLoading: Bool = false
     var isDisabled: Bool = false
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Group {

@@ -1,5 +1,5 @@
-import SwiftUI
 import MIRACLTrust
+import SwiftUI
 
 struct EmailSentView: View {
     let userId: String

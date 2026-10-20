@@ -1,5 +1,5 @@
-import SwiftUI
 import MIRACLTrust
+import SwiftUI
 
 struct RevokedView: View {
     let userId: String
@@ -27,7 +27,7 @@ struct RevokedView: View {
                 .foregroundColor(.secondary)
 
             Spacer()
-            
+
             PrimaryButton(
                 title: "Send Verification Email",
                 isLoading: isProcessing,
@@ -47,7 +47,7 @@ struct RevokedView: View {
             isProcessing = false
             if let error = error {
                 if let verificationError = error as? VerificationError,
-                   case .requestBackoff(let backoff) = verificationError {
+                   case let .requestBackoff(backoff) = verificationError {
                     let currentSeconds = Int64(Date().timeIntervalSince1970)
                     let remainingSeconds = max(1, backoff - currentSeconds)
                     onError("You’ve requested too many verification emails. Try again in \(remainingSeconds) seconds.")

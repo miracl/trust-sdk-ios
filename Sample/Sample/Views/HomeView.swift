@@ -1,5 +1,5 @@
-import SwiftUI
 import MIRACLTrust
+import SwiftUI
 
 struct HomeView: View {
     @Binding var navigationPath: [Destination]
@@ -75,7 +75,7 @@ struct HomeView: View {
         } else {
             targetDestination = .authentication(userId: user.userId)
         }
-        
+
         return NavigationLink(value: targetDestination) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(user.userId)
@@ -114,9 +114,9 @@ struct HomeView: View {
             if let error = error {
                 onError(error.localizedDescription)
             } else if let allUsers = rawUsers {
-                self.users = allUsers.filter { $0.projectId == MIRACLTrustConfig.projectId }
+                users = allUsers.filter { $0.projectId == MIRACLTrustConfig.projectId }
             }
-            self.isLoading = false
+            isLoading = false
         }
     }
 }

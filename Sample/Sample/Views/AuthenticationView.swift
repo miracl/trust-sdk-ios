@@ -1,5 +1,5 @@
-import SwiftUI
 import MIRACLTrust
+import SwiftUI
 
 struct AuthenticationView: View {
     let userId: String
@@ -61,7 +61,7 @@ struct AuthenticationView: View {
 
     private func startAuthentication() {
         guard let targetUser = MIRACLTrust.getInstance().getUser(by: userId) else { return }
-        self.user = targetUser
+        user = targetUser
 
         MIRACLTrust.getInstance().authenticate(
             user: targetUser,
@@ -74,10 +74,10 @@ struct AuthenticationView: View {
                     case AuthenticationError.pinCancelled:
                         // Ignore cancellation when user navigates back
                         return
-                        
+
                     case AuthenticationError.revoked:
                         navigationPath = [.revoked(userId: userId)]
-                        
+
                     default:
                         onError(error.localizedDescription)
                         pinCode = ""

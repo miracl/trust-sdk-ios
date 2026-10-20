@@ -1,5 +1,5 @@
-import SwiftUI
 import MIRACLTrust
+import SwiftUI
 
 struct RegistrationView: View {
     let url: URL
@@ -58,7 +58,7 @@ struct RegistrationView: View {
         MIRACLTrust.getInstance().getActivationToken(verificationURL: url) { tokenResponse, error in
             if let error = error {
                 if let tokenError = error as? ActivationTokenError,
-                   case .unsuccessfulVerification(let response) = tokenError,
+                   case let .unsuccessfulVerification(response) = tokenError,
                    let resendUserId = response?.userId {
                     onError("Verification link expired for \(resendUserId). Please request a new link.")
                     navigationPath = [.enterUserId(userId: resendUserId)]
@@ -70,7 +70,7 @@ struct RegistrationView: View {
             }
 
             guard let tokenResponse = tokenResponse else { return }
-            self.userId = tokenResponse.userId
+            userId = tokenResponse.userId
 
             MIRACLTrust.getInstance().register(
                 for: tokenResponse.userId,
@@ -78,18 +78,18 @@ struct RegistrationView: View {
                 didRequestPinHandler: { processPinHandler in
                     self.processPinHandler = processPinHandler
                 },
-                completionHandler: { registeredUser, error in
+                completionHandler: { _, error in
                     if let error = error {
                         // Ignore cancellation when user navigates back
                         if case RegistrationError.pinCancelled = error {
                             return
                         }
-                        
+
                         onError(error.localizedDescription)
                         navigationPath.removeAll()
                         return
                     }
-                    
+
                     navigationPath = []
                 }
             )
