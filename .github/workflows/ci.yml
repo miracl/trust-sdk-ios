@@ -11,19 +11,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install swiftlint and swiftformat
-        run: |
-            brew update
-            brew install swiftlint
-            brew install swiftformat
       - name: Run swiftlint check
         run: |
-            cd MIRACLTrust
-            swiftlint
+            swift package plugin --allow-writing-to-package-directory swiftlint
       - name: Run swiftformat check
         run: |
-            cd MIRACLTrust
-            swiftformat . --lint --swiftversion 5.7 --commas inline --disable wrapMultilineStatementBraces --disable redundantOptionalBinding
+            swift package plugin --allow-writing-to-package-directory swiftformat  . --lint --swiftversion 5.7 --commas inline --disable wrapMultilineStatementBraces --disable redundantOptionalBinding
       - name: Lint README.md
         run: |
             npm install -g markdownlint-cli
