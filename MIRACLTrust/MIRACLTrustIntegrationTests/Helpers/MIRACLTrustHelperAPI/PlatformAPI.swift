@@ -15,11 +15,7 @@ import MIRACLTrust
         description: String? = nil,
         completionHandler: @escaping @Sendable (StartSessionResult?, Error?) -> Void
     ) {
-        guard let url = URL(string: projectURL) else {
-            return
-        }
-
-        guard let request = URLRequest.sessionRequest(
+        guard let url = URL(string: projectURL), let request = URLRequest.sessionRequest(
             url: url,
             projectId: projectId,
             userId: userId,
@@ -32,13 +28,9 @@ import MIRACLTrust
         requestExecutor.executeHTTPRequest(request: request) { (result: Result<StartSessionResponse?, HelperAPIError>) in
             switch result {
             case let .success(session):
-                if let session = session {
-                    if let urlComponents = URLComponents(url: session.qrURL, resolvingAgainstBaseURL: false) {
-                        if let fragment = urlComponents.fragment {
-                            let session = StartSessionResult(accessId: fragment, webOTT: session.webOTT)
-                            completionHandler(session, nil)
-                        }
-                    }
+                if let session = session, let urlComponents = URLComponents(url: session.qrURL, resolvingAgainstBaseURL: false), let fragment = urlComponents.fragment {
+                    let session = StartSessionResult(accessId: fragment, webOTT: session.webOTT)
+                    completionHandler(session, nil)
                 }
             case let .failure(failure):
                 completionHandler(nil, failure)
@@ -55,11 +47,7 @@ import MIRACLTrust
         expiration: Date? = nil,
         completionHandler: @escaping @Sendable (URL?, Error?) -> Void
     ) {
-        guard let url = URL(string: projectURL) else {
-            return
-        }
-
-        guard let request = URLRequest.verificationURLRequest(
+        guard let url = URL(string: projectURL), let request = URLRequest.verificationURLRequest(
             url: url,
             serviceAccountToken: serviceAccountToken,
             projectId: projectId,
@@ -89,11 +77,7 @@ import MIRACLTrust
         webOTT: String,
         completionHandler: @escaping @Sendable (SessionStatusResponse?, Error?) -> Void
     ) {
-        guard let url = URL(string: projectURL) else {
-            return
-        }
-
-        guard let request = URLRequest.accessRequest(url: url, webOTT: webOTT) else {
+        guard let url = URL(string: projectURL), let request = URLRequest.accessRequest(url: url, webOTT: webOTT) else {
             return
         }
 
@@ -115,11 +99,7 @@ import MIRACLTrust
         projectURL: String,
         completionHandler: @escaping @Sendable (VerifySigningResponse?, Error?) -> Void
     ) {
-        guard let url = URL(string: projectURL) else {
-            return
-        }
-
-        guard let request = URLRequest.verifySignatureRequest(url: url, signature: signature, timestamp: timestamp, serviceAccountToken: serviceAccountToken, projectId: projectId) else {
+        guard let url = URL(string: projectURL), let request = URLRequest.verifySignatureRequest(url: url, signature: signature, timestamp: timestamp, serviceAccountToken: serviceAccountToken, projectId: projectId) else {
             return
         }
 

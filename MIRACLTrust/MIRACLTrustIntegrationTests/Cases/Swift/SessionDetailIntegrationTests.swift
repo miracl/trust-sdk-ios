@@ -60,10 +60,8 @@ class SessionDetailIntegrationTests: XCTestCase {
         // There is a bug on a platform.
         var isJsonError = false
 
-        if case let .getAuthenticationSessionDetailsFail(cause) = error as? AuthenticationSessionError {
-            if let cause, case .apiMalformedJSON = cause as? APIError {
-                isJsonError = true
-            }
+        if case let .getAuthenticationSessionDetailsFail(cause) = error as? AuthenticationSessionError, let cause, case .apiMalformedJSON = cause as? APIError {
+            isJsonError = true
         }
         XCTAssertTrue(isJsonError)
     }

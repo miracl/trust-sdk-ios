@@ -201,15 +201,7 @@ struct APIRequestExecutor {
         urlResponse: URLResponse?,
         responseData: Data?
     ) {
-        guard let httpURLResponse = urlResponse as? HTTPURLResponse else {
-            return
-        }
-
-        guard let httpMethod = urlRequest.httpMethod else {
-            return
-        }
-
-        guard let url = urlRequest.url else {
+        guard let httpURLResponse = urlResponse as? HTTPURLResponse, let httpMethod = urlRequest.httpMethod, let url = urlRequest.url else {
             return
         }
 

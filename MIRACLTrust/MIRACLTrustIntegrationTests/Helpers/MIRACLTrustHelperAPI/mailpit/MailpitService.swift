@@ -32,10 +32,8 @@ struct MailpitService {
         let messageContent = try await mailpitAPI.getMessage(id: messageId)
 
         let regex = try Regex("Type the following code to register your device: (\\d{6})")
-        if let match = try regex.firstMatch(in: messageContent) {
-            if let code = String(match.0).components(separatedBy: ": ").last {
-                return code
-            }
+        if let match = try regex.firstMatch(in: messageContent), let code = String(match.0).components(separatedBy: ": ").last {
+            return code
         }
 
         return nil
