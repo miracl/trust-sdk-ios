@@ -135,10 +135,8 @@ struct Authenticator: AuthenticatorBlueprint {
         logOperation(operation: LoggingConstants.serverPass1)
 
         var pkHex: String?
-        if let publicKey = user.publicKey {
-            if !publicKey.isEmpty {
-                pkHex = publicKey.hex
-            }
+        if let publicKey = user.publicKey, !publicKey.isEmpty {
+            pkHex = publicKey.hex
         }
 
         miraclAPI.pass1(
@@ -151,15 +149,13 @@ struct Authenticator: AuthenticatorBlueprint {
             if apiCallResult == .failed, let error = error {
                 logOperation(operation: "Pass1 error = \(error)")
 
-                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error {
-                    if let clientErrorData, clientErrorData.code == MPINID_EXPIRED || clientErrorData.code == EXPIRED_MPINID {
-                        let user = user.revoke()
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == MPINID_EXPIRED || clientErrorData.code == EXPIRED_MPINID {
+                    let user = user.revoke()
 
-                        try? userStorage.update(user: user.toUserDTO())
+                    try? userStorage.update(user: user.toUserDTO())
 
-                        callCompletionHandler(with: AuthenticationError.revoked)
-                        return
-                    }
+                    callCompletionHandler(with: AuthenticationError.revoked)
+                    return
                 }
 
                 callCompletionHandler(with: AuthenticationError.authenticationFail(error))
@@ -222,25 +218,23 @@ struct Authenticator: AuthenticatorBlueprint {
             if apiCallResult == .failed, let error = error {
                 logOperation(operation: "Authenticate error = \(error)")
 
-                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error {
-                    if let clientErrorData {
-                        switch clientErrorData.code {
-                        case MPINID_REVOKED, REVOKED_MPINID:
-                            let user = user.revoke()
+                if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData {
+                    switch clientErrorData.code {
+                    case MPINID_REVOKED, REVOKED_MPINID:
+                        let user = user.revoke()
 
-                            try? userStorage.update(user: user.toUserDTO())
+                        try? userStorage.update(user: user.toUserDTO())
 
-                            callCompletionHandler(with: AuthenticationError.revoked)
-                            return
-                        case INVALID_AUTH_SESSION, INVALID_AUTHENTICATION_SESSION:
-                            callCompletionHandler(with: AuthenticationError.invalidAuthenticationSession)
-                            return
-                        case INVALID_AUTH, UNSUCCESSFUL_AUTHENTICATION:
-                            callCompletionHandler(with: AuthenticationError.unsuccessfulAuthentication)
-                            return
-                        default:
-                            break
-                        }
+                        callCompletionHandler(with: AuthenticationError.revoked)
+                        return
+                    case INVALID_AUTH_SESSION, INVALID_AUTHENTICATION_SESSION:
+                        callCompletionHandler(with: AuthenticationError.invalidAuthenticationSession)
+                        return
+                    case INVALID_AUTH, UNSUCCESSFUL_AUTHENTICATION:
+                        callCompletionHandler(with: AuthenticationError.unsuccessfulAuthentication)
+                        return
+                    default:
+                        break
                     }
                 }
                 logOperation(operation: LoggingConstants.authenticateError + "= \(error)")

@@ -87,12 +87,10 @@ class APIRequest<T: Codable> {
             request.addValue(authorizationHeader, forHTTPHeaderField: "Authorization")
         }
 
-        if method == .post || method == .put || method == .delete {
-            if let requestBody = requestBody {
-                let encoder = JSONEncoder()
-                if let jsonData = try? encoder.encode(requestBody) {
-                    request.httpBody = jsonData
-                }
+        if method == .post || method == .put || method == .delete, let requestBody = requestBody {
+            let encoder = JSONEncoder()
+            if let jsonData = try? encoder.encode(requestBody) {
+                request.httpBody = jsonData
             }
         }
         return request

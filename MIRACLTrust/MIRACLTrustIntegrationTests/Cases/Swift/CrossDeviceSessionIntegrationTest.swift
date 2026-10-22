@@ -56,10 +56,8 @@ struct CrossDeviceSessionIntegrationTest {
 
         var isJsonError = false
 
-        if case let .getCrossDeviceSessionFail(cause) = error {
-            if let cause, case .apiMalformedJSON = cause as? APIError {
-                isJsonError = true
-            }
+        if case let .getCrossDeviceSessionFail(cause) = error, let cause, case .apiMalformedJSON = cause as? APIError {
+            isJsonError = true
         }
         #expect(isJsonError)
     }

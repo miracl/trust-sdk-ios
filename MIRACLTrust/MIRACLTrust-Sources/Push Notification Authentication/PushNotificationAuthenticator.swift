@@ -34,15 +34,7 @@ struct PushNotificationAuthenticator {
 
     func authenticate(with payload: [AnyHashable: Any]) {
         guard let userId = payload["userID"] as? String, !userId.isEmpty,
-              let projectId = payload["projectID"] as? String, !projectId.isEmpty else {
-            callCompletionHandler(
-                authenticated: false,
-                error: AuthenticationError.invalidPushNotificationPayload
-            )
-            return
-        }
-
-        guard let qrCode = payload["qrURL"] as? String,
+              let projectId = payload["projectID"] as? String, !projectId.isEmpty, let qrCode = payload["qrURL"] as? String,
               let urlComponents = URLComponents(string: qrCode),
               let accessId = urlComponents.fragment, !accessId.isEmpty else {
             callCompletionHandler(
