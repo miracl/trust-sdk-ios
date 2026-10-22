@@ -40,6 +40,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.5"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.65.0"),
+        .package(url: "https://github.com/nicklockwood/SwiftFormat", exact: "0.64.0")
     ],
     targets: [
         .target(

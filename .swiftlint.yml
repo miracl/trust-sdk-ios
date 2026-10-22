@@ -17,3 +17,7 @@ function_body_length:
 
 type_name:
   max_length: 80
+
+excluded:
+  - .build
+  - ../.build
