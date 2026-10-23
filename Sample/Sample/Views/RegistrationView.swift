@@ -1,6 +1,9 @@
 import MIRACLTrust
 import SwiftUI
 
+private let minPinLength = 4
+private let maxPinLength = 6
+
 struct RegistrationView: View {
     let url: URL
     @Binding var navigationPath: [Destination]
@@ -19,13 +22,18 @@ struct RegistrationView: View {
                         SecureField("Choose PIN", text: $pinCode)
                             .keyboardType(.numberPad)
                             .disabled(isProcessing)
+                            .onChange(of: pinCode) { _, newValue in
+                                if newValue.count > maxPinLength {
+                                    pinCode = String(newValue.prefix(maxPinLength))
+                                }
+                            }
                     }
                 }
                 .safeAreaInset(edge: .bottom) {
                     PrimaryButton(
                         title: "Register",
                         isLoading: isProcessing,
-                        isDisabled: pinCode.trimmingCharacters(in: .whitespaces).isEmpty || isProcessing
+                        isDisabled: pinCode.count < minPinLength || isProcessing
                     ) {
                         isProcessing = true
                         let currentPinHandler = pinHandler
