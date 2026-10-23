@@ -3,8 +3,12 @@ import Foundation
 enum MIRACLTrustConfig {
     /// MIRACL Trust Project ID
     static let projectId: String = {
-        guard let value = Bundle.main.object(forInfoDictionaryKey: "MIRACLProjectId") as? String, !value.isEmpty else {
-            fatalError("MIRACLProjectId is not configured in Config.xcconfig")
+        guard
+            let value = Bundle.main.object(forInfoDictionaryKey: "MIRACLProjectId") as? String,
+            !value.isEmpty,
+            value != "YOUR_PROJECT_ID"
+        else {
+            fatalError("Set your MIRACL_PROJECT_ID in Config.xcconfig")
         }
         return value
     }()
@@ -13,9 +17,10 @@ enum MIRACLTrustConfig {
     static let projectDomain: String = {
         guard
             let value = Bundle.main.object(forInfoDictionaryKey: "MIRACLProjectDomain") as? String,
-            !value.isEmpty
+            !value.isEmpty,
+            value != "YOUR_PROJECT_DOMAIN"
         else {
-            fatalError("MIRACLProjectDomain is missing from Info.plist or Config.xcconfig")
+            fatalError("Set your MIRACL_PROJECT_DOMAIN in Config.xcconfig")
         }
 
         if value.contains("://") {
