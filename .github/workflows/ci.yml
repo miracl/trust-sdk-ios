@@ -100,3 +100,7 @@ jobs:
         run: |
           cd MIRACLTrust
           xcodebuild clean build archive -scheme "MIRACLTrust-iOS" -destination generic/platform=iOS  -archivePath xcframework-output/iOS -quiet SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+      - name: Build Sample App
+        run: |
+          cd Sample
+          xcodebuild build -scheme "Sample" -destination "generic/platform=iOS Simulator" CODE_SIGNING_ALLOWED=NO -quiet
