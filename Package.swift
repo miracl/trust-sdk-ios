@@ -28,7 +28,7 @@ let sqliteSettings: [CSetting] = [
 let package = Package(
     name: "MIRACLTrust",
     platforms: [
-        .iOS(.v11)
+        .iOS(.v15)
     ],
     products: [
         .library(
