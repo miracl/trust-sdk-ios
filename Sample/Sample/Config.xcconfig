@@ -1,2 +1,3 @@
 MIRACL_PROJECT_ID = YOUR_PROJECT_ID
+// Raw host without protocol scheme (e.g., example.miracl.io)
 MIRACL_PROJECT_DOMAIN = YOUR_PROJECT_DOMAIN
