@@ -1,10 +1,12 @@
 import Foundation
 
+typealias JWTGenerationResultCompletionHandler = @MainActor @Sendable (Result<String, Error>) -> Void
+
 struct JWTGenerator {
     let user: User
     let miraclAPI: APIBlueprint
     let userStorage: UserStorage
-    let completionHandler: JWTCompletionHandler
+    let completionHandler: JWTGenerationResultCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let deviceName: String
     let crypto: CryptoBlueprint
@@ -22,7 +24,7 @@ struct JWTGenerator {
         logger: Logger,
         deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping JWTCompletionHandler
+        completionHandler: @escaping JWTGenerationResultCompletionHandler
     ) {
         self.user = user
         self.miraclAPI = miraclAPI
@@ -68,20 +70,20 @@ struct JWTGenerator {
         }
     }
 
-    @Sendable private func authenticationResult(response: AuthenticateResponse?, error: Error?) {
-        if let error = error {
+    @Sendable private func authenticationResult(result: Result<AuthenticateResponse, Error>) {
+        do {
+            let response = try result.get()
+            guard let jwt = response.jwt else {
+                callCompletionHandler(with: AuthenticationError.authenticationFail(nil))
+                return
+            }
+
+            logOperation(operation: LoggingConstants.finished)
+            DispatchQueue.main.async {
+                completionHandler(.success(jwt))
+            }
+        } catch {
             callCompletionHandler(with: error)
-            return
-        }
-
-        guard let jwt = response?.jwt else {
-            callCompletionHandler(with: AuthenticationError.authenticationFail(nil))
-            return
-        }
-
-        logOperation(operation: LoggingConstants.finished)
-        DispatchQueue.main.async {
-            completionHandler(jwt, nil)
         }
     }
 
@@ -89,7 +91,7 @@ struct JWTGenerator {
         logOperation(operation: "\(LoggingConstants.finishedWithError) = \(error)")
 
         DispatchQueue.main.async {
-            completionHandler(nil, error)
+            completionHandler(.failure(error))
         }
     }
 

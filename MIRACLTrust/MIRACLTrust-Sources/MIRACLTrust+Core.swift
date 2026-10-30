@@ -4,7 +4,7 @@ extension MIRACLTrust {
     func sendVerificationEmailCore(
         userId: String,
         crossDeviceSession: CrossDeviceSession,
-        completionHandler: @escaping VerificationCompletionHandler
+        completionHandler: @escaping VerificationResultCompletionHandler
     ) {
         do {
             let verificator = try Verificator(
@@ -22,14 +22,14 @@ extension MIRACLTrust {
             logError(error: error, category: .verification)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func sendVerificationEmailCore(
         userId: String,
-        completionHandler: @escaping VerificationCompletionHandler
+        completionHandler: @escaping VerificationResultCompletionHandler
     ) {
         do {
             let verificator = try Verificator(
@@ -47,14 +47,14 @@ extension MIRACLTrust {
             logError(error: error, category: .verification)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func getActivationTokenCore(
         verificationURL: URL,
-        completionHandler: @escaping ActivationTokenCompletionHandler
+        completionHandler: @escaping ActivationTokenResultCompletionHandler
     ) {
         do {
             let handler = try VerificationConfirmationHandler(
@@ -69,7 +69,7 @@ extension MIRACLTrust {
             logError(error: error, category: .verificationConfirmation)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
@@ -77,7 +77,7 @@ extension MIRACLTrust {
     func getActivationTokenCore(
         userId: String,
         code: String,
-        completionHandler: @escaping ActivationTokenCompletionHandler
+        completionHandler: @escaping ActivationTokenResultCompletionHandler
     ) {
         do {
             let handler = try VerificationConfirmationHandler(
@@ -93,7 +93,7 @@ extension MIRACLTrust {
             logError(error: error, category: .verificationConfirmation)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
@@ -101,7 +101,7 @@ extension MIRACLTrust {
     func generateQuickCodeCore(
         user: User,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping QuickCodeCompletionHandler
+        completionHandler: @escaping QuickCodeResultCompletionHandler
     ) {
         let generator = QuickCodeGenerator(
             user: user,
@@ -111,10 +111,10 @@ extension MIRACLTrust {
             crypto: crypto,
             logger: logger,
             deviceTagManager: deviceTagManager,
-            didRequestPinHandler: didRequestPinHandler
-        ) { quickCode, error in
-            completionHandler(quickCode, error)
-        }
+            didRequestPinHandler: didRequestPinHandler,
+            completionHandler: completionHandler
+        )
+
         generator.generate()
     }
 
@@ -123,7 +123,7 @@ extension MIRACLTrust {
         activationToken: String,
         pushNotificationsToken: String? = nil,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping RegistrationCompletionHandler
+        completionHandler: @escaping RegistrationResultCompletionHandler
     ) {
         do {
             let registrator = try Registrator(
@@ -145,7 +145,7 @@ extension MIRACLTrust {
             logError(error: error, category: .registration)
 
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
@@ -153,7 +153,7 @@ extension MIRACLTrust {
     func authenticateCore(
         user: User,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping JWTCompletionHandler
+        completionHandler: @escaping JWTGenerationResultCompletionHandler
     ) {
         let jwtGenerator = JWTGenerator(
             user: user,
@@ -171,7 +171,7 @@ extension MIRACLTrust {
 
     func getCrossDeviceSessionFromQRCodeCore(
         qrCode: String,
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) {
         do {
             let fetcher = try CrossDeviceSessionFetcher(
@@ -184,14 +184,14 @@ extension MIRACLTrust {
             fetcher.fetch()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func getCrossDeviceSessionFromUniversalLinkURLCore(
         universalLinkURL: URL,
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) {
         do {
             let fetcher = try CrossDeviceSessionFetcher(
@@ -204,14 +204,14 @@ extension MIRACLTrust {
             fetcher.fetch()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func getCrossDeviceSessionFromPushNotificationPayloadCore(
         pushNotificationPayload: [AnyHashable: Any],
-        completionHandler: @escaping CrossDeviceSessionCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionResultCompletionHandler
     ) {
         do {
             let fetcher = try CrossDeviceSessionFetcher(
@@ -224,7 +224,7 @@ extension MIRACLTrust {
             fetcher.fetch()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
@@ -233,7 +233,7 @@ extension MIRACLTrust {
         crossDeviceSession: CrossDeviceSession,
         user: User,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping AuthenticationCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionAuthenticatorResultCompletionHandler
     ) {
         let crossDeviceSessionAuthenticator = CrossDeviceSessionAuthenticator(
             user: user,
@@ -245,11 +245,11 @@ extension MIRACLTrust {
             logger: logger,
             deviceTagManager: deviceTagManager,
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { isAuthenticated, error in
-                if let error, case AuthenticationError.invalidAuthenticationSession = error {
-                    completionHandler(isAuthenticated, AuthenticationError.invalidCrossDeviceSession)
+            completionHandler: { result in
+                if case let .failure(error) = result, case AuthenticationError.invalidAuthenticationSession = error {
+                    completionHandler(.failure(AuthenticationError.invalidCrossDeviceSession))
                 } else {
-                    completionHandler(isAuthenticated, error)
+                    completionHandler(result)
                 }
             }
         )
@@ -261,7 +261,7 @@ extension MIRACLTrust {
         crossDeviceSession: CrossDeviceSession,
         user: User,
         didRequestSigningPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping CrossDeviceSigningCompletionHandler
+        completionHandler: @escaping SignResultCompletionHandler
     ) {
         do {
             let signer = try Signer(
@@ -274,41 +274,32 @@ extension MIRACLTrust {
                 logger: logger,
                 deviceName: deviceName,
                 deviceTagManager: deviceTagManager,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signinResult, error in
-                if signinResult != nil {
-                    completionHandler(true, nil)
-                } else if let error {
-                    completionHandler(false, error)
-                } else {
-                    completionHandler(false, SigningError.signingFail(nil))
-                }
-            }
+                didRequestSigningPinHandler: didRequestSigningPinHandler,
+                completionHandler: completionHandler
+            )
             signer.sign()
         } catch {
             logError(error: error, category: .signing)
             DispatchQueue.main.async {
-                completionHandler(false, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
     func abortCrossDeviceSessionCore(
         crossDeviceSession: CrossDeviceSession,
-        completionHandler: @escaping CrossDeviceSessionAborterCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionAborterResultCompletionHandler
     ) {
         do {
             let aborter = try CrossDeviceSessionAborter(
                 sessionId: crossDeviceSession.sessionId,
-                miraclAPI: miraclAPI
-            ) { result, error in
-                completionHandler(result, error)
-            }
-
+                miraclAPI: miraclAPI,
+                completionHandler: completionHandler
+            )
             aborter.abort()
         } catch {
             DispatchQueue.main.async {
-                completionHandler(false, error)
+                completionHandler(.failure(error))
             }
         }
     }
@@ -317,7 +308,7 @@ extension MIRACLTrust {
         message: Data,
         user: User,
         didRequestSigningPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping SigningCompletionHandler
+        completionHandler: @escaping SignResultCompletionHandler
     ) {
         do {
             let signer = try Signer(
@@ -330,21 +321,20 @@ extension MIRACLTrust {
                 logger: logger,
                 deviceName: deviceName,
                 deviceTagManager: deviceTagManager,
-                didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { signature, error in
-                completionHandler(signature, error)
-            }
+                didRequestSigningPinHandler: didRequestSigningPinHandler,
+                completionHandler: completionHandler
+            )
 
             signer.sign()
         } catch {
             logError(error: error, category: .signing)
             DispatchQueue.main.async {
-                completionHandler(nil, error)
+                completionHandler(.failure(error))
             }
         }
     }
 
-    func getUsersCore(completionHandler: @escaping GetUsersCompletionHandler) {
+    func getUsersCore(completionHandler: @escaping GetUsersResultCompletionHandler) {
         let storage = userStorage
         DispatchQueue.global(qos: .userInitiated).async {
             do {
@@ -353,11 +343,11 @@ extension MIRACLTrust {
                 }
 
                 DispatchQueue.main.async {
-                    completionHandler(allUsers, nil)
+                    completionHandler(.success(allUsers))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completionHandler(nil, error)
+                    completionHandler(.failure(error))
                 }
             }
         }
@@ -365,7 +355,7 @@ extension MIRACLTrust {
 
     func getUserCore(
         userId: String,
-        completionHandler: @escaping GetUserCompletionHandler
+        completionHandler: @escaping GetUserResultCompletionHandler
     ) {
         let storage = userStorage
         let projectId = projectId
@@ -374,11 +364,11 @@ extension MIRACLTrust {
             do {
                 let user = try storage.getUser(by: userId, projectId: projectId)
                 DispatchQueue.main.async {
-                    completionHandler(user?.toUser(), nil)
+                    completionHandler(.success(user?.toUser()))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completionHandler(nil, error)
+                    completionHandler(.failure(error))
                 }
             }
         }
@@ -386,7 +376,7 @@ extension MIRACLTrust {
 
     func deleteCore(
         user: User,
-        completionHandler: @escaping DeleteUserCompletionHandler
+        completionHandler: @escaping DeleteUserResultCompletionHandler
     ) {
         let storage = userStorage
         let completionHandler = completionHandler
@@ -396,11 +386,11 @@ extension MIRACLTrust {
                 try storage.delete(user: user.toUserDTO())
 
                 DispatchQueue.main.async {
-                    completionHandler(true, nil)
+                    completionHandler(.success(()))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completionHandler(false, error)
+                    completionHandler(.failure(error))
                 }
             }
         }

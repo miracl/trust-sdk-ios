@@ -139,11 +139,7 @@ class UniversalLinkAuthenticatorTests: XCTestCase {
     private func mockAuthenticator() -> AuthenticatorBlueprint {
         let authenticateResponse = AuthenticateResponse()
 
-        var mockAuthenticator = MockAuthenticator(completionHandler: { _, _ in })
-        mockAuthenticator.error = nil
-        mockAuthenticator.response = authenticateResponse
-
-        return mockAuthenticator
+        return MockAuthenticator(completionHandler: { _ in }, result: .success(authenticateResponse))
     }
 
     private func createUser(

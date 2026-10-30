@@ -1,14 +1,16 @@
 import Foundation
 
+typealias CrossDeviceSessionAborterResultCompletionHandler = @MainActor @Sendable (Result<Void, Error>) -> Void
+
 struct CrossDeviceSessionAborter {
     let sessionId: String
     let miraclAPI: APIBlueprint
-    let completionHandler: CrossDeviceSessionAborterCompletionHandler
+    let completionHandler: CrossDeviceSessionAborterResultCompletionHandler
 
     init(
         sessionId: String,
         miraclAPI: APIBlueprint,
-        completionHandler: @escaping CrossDeviceSessionAborterCompletionHandler
+        completionHandler: @escaping CrossDeviceSessionAborterResultCompletionHandler
     ) throws {
         self.sessionId = sessionId.trimmingCharacters(in: .whitespacesAndNewlines)
         self.miraclAPI = miraclAPI
@@ -22,14 +24,12 @@ struct CrossDeviceSessionAborter {
             if let error {
                 if case let APIError.apiClientError(statusCode: _, clientErrorData: clientErrorData, requestId: _, message: _, requestURL: _) = error, let clientErrorData, clientErrorData.code == INVALID_REQUEST_PARAMETERS, let context = clientErrorData.context, context["params"] == "id" {
                     callCompletionHandler(
-                        isAborted: false,
                         error: CrossDeviceSessionError.invalidCrossDeviceSession
                     )
                     return
                 }
 
                 callCompletionHandler(
-                    isAborted: false,
                     error: CrossDeviceSessionError.abortCrossDeviceSessionFail(error)
                 )
                 return
@@ -37,27 +37,24 @@ struct CrossDeviceSessionAborter {
 
             if result == .failed {
                 callCompletionHandler(
-                    isAborted: false,
                     error: CrossDeviceSessionError.abortCrossDeviceSessionFail(error)
                 )
                 return
             }
 
-            callCompletionHandler(
-                isAborted: true,
-                error: nil
-            )
+            DispatchQueue.main.async {
+                completionHandler(.success(()))
+            }
         }
     }
 
     // MARK: Private
 
     private func callCompletionHandler(
-        isAborted: Bool,
-        error: Error?
+        error: Error
     ) {
         DispatchQueue.main.async {
-            completionHandler(isAborted, error)
+            completionHandler(.failure(error))
         }
     }
 

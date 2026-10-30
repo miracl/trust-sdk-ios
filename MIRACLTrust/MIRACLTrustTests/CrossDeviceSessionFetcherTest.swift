@@ -48,9 +48,13 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
     func testGetCrossDeviceSessionFromQRCode() {
         let sessionId = sessionId
 
-        getCrossDeviceSessionFromQrCode { details, error in
-            XCTAssertNil(error)
-            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
+        getCrossDeviceSessionFromQrCode { result in
+            do {
+                let details = try result.get()
+                self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
+            } catch {
+                XCTFail("Expected .success, but got \(error)")
+            }
         }
     }
 
@@ -58,9 +62,13 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
     func testGetSessionDetailsUniversalLinkURL() {
         let sessionId = sessionId
 
-        getCrossDeviceSessionFromUniversalLinkURL { details, error in
-            XCTAssertNil(error)
-            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
+        getCrossDeviceSessionFromUniversalLinkURL { result in
+            do {
+                let details = try result.get()
+                self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
+            } catch {
+                XCTFail("Expected .success, but got \(error)")
+            }
         }
     }
 
@@ -68,9 +76,13 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
     func testGetSessionDetailsPayload() {
         let sessionId = sessionId
 
-        getCrossDeviceSessionFromPayload { details, error in
-            XCTAssertNil(error)
-            self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
+        getCrossDeviceSessionFromPayload { result in
+            do {
+                let details = try result.get()
+                self.assertSessionDetails(crossDeviceSession: details, sessionId: sessionId)
+            } catch {
+                XCTFail("Expected .success, but got \(error)")
+            }
         }
     }
 
@@ -78,7 +90,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         qrCode = "https://mcl.mpin.io"
 
         XCTAssertThrowsError(
-            try CrossDeviceSessionFetcher(qrCode: qrCode, miraclAPI: api, logger: logger, completionHandler: { _, _ in }),
+            try CrossDeviceSessionFetcher(qrCode: qrCode, miraclAPI: api, logger: logger, completionHandler: { _ in }),
             "Error when creating detail fetcher"
         ) { error in
             assertError(
@@ -92,7 +104,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         let universalLinkURL = try XCTUnwrap(URL(string: "https://mcl.mpin.io"))
 
         XCTAssertThrowsError(
-            try CrossDeviceSessionFetcher(universalLinkURL: universalLinkURL, miraclAPI: api, logger: logger, completionHandler: { _, _ in }),
+            try CrossDeviceSessionFetcher(universalLinkURL: universalLinkURL, miraclAPI: api, logger: logger, completionHandler: { _ in }),
             "Error when creating detail fetcher"
         ) { error in
             assertError(
@@ -106,7 +118,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         payload = ["qrURL": "https://mcl.mpin.io"]
 
         XCTAssertThrowsError(
-            try CrossDeviceSessionFetcher(pushNotificationPayload: payload, miraclAPI: api, logger: logger, completionHandler: { _, _ in }),
+            try CrossDeviceSessionFetcher(pushNotificationPayload: payload, miraclAPI: api, logger: logger, completionHandler: { _ in }),
             "Error when creating detail fetcher"
         ) { error in
             assertError(
@@ -124,8 +136,11 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         api.crossDeviceSessionResultCall = .failed
         api.sessionDetailsResponse = nil
 
-        getCrossDeviceSessionFromQrCode { detail, error in
-            XCTAssertNil(detail)
+        getCrossDeviceSessionFromQrCode { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: expectedError
@@ -140,8 +155,11 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         api.crossDeviceSessionResultCall = .failed
         api.crossDeviceSessionResponse = nil
 
-        getCrossDeviceSessionFromQrCode { detail, error in
-            XCTAssertNil(detail)
+        getCrossDeviceSessionFromQrCode { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(
                 current: error,
                 expected: desiredError
@@ -151,7 +169,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
 
     // MARK: Private
 
-    private func getCrossDeviceSessionFromQrCode(completionHandler: @escaping CrossDeviceSessionCompletionHandler) {
+    private func getCrossDeviceSessionFromQrCode(completionHandler: @escaping CrossDeviceSessionResultCompletionHandler) {
         let waitForSession = XCTestExpectation(description: "Wait for getSessionDetails to finish")
 
         do {
@@ -159,8 +177,8 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
                 qrCode: qrCode,
                 miraclAPI: api,
                 logger: logger
-            ) { session, error in
-                completionHandler(session, error)
+            ) { result in
+                completionHandler(result)
                 waitForSession.fulfill()
             }
             crossDeviceSessionFetcher.fetch()
@@ -174,7 +192,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         }
     }
 
-    private func getCrossDeviceSessionFromUniversalLinkURL(completionHandler: @escaping CrossDeviceSessionCompletionHandler) {
+    private func getCrossDeviceSessionFromUniversalLinkURL(completionHandler: @escaping CrossDeviceSessionResultCompletionHandler) {
         let waitForSession = XCTestExpectation(description: "Wait for getSessionDetails to finish")
 
         do {
@@ -184,8 +202,8 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
                 universalLinkURL: url,
                 miraclAPI: api,
                 logger: logger
-            ) { session, error in
-                completionHandler(session, error)
+            ) { result in
+                completionHandler(result)
                 waitForSession.fulfill()
             }
             crossDeviceSessionFetcher.fetch()
@@ -199,7 +217,7 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
         }
     }
 
-    private func getCrossDeviceSessionFromPayload(completionHandler: @escaping CrossDeviceSessionCompletionHandler) {
+    private func getCrossDeviceSessionFromPayload(completionHandler: @escaping CrossDeviceSessionResultCompletionHandler) {
         let waitForSession = XCTestExpectation(description: "Wait for getSessionDetails to finish")
 
         do {
@@ -207,8 +225,8 @@ final class CrossDeviceSessionFetcherTest: XCTestCase {
                 pushNotificationPayload: payload,
                 miraclAPI: api,
                 logger: logger
-            ) { session, error in
-                completionHandler(session, error)
+            ) { result in
+                completionHandler(result)
                 waitForSession.fulfill()
             }
             crossDeviceSessionFetcher.fetch()

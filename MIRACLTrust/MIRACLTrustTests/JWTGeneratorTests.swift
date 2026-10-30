@@ -33,9 +33,13 @@ class JWTGeneratorTests: XCTestCase {
 
     func testSuccessfulJWTGeneration() {
         let responseCode = responseCode
-        testJWTGenerator { code, error in
-            XCTAssertEqual(code, responseCode)
-            XCTAssertNil(error)
+        testJWTGenerator { result in
+            do {
+                let code = try result.get()
+                XCTAssertEqual(code, responseCode)
+            } catch {
+                XCTFail("Expected .success, but got \(error)")
+            }
         }
     }
 
@@ -46,8 +50,11 @@ class JWTGeneratorTests: XCTestCase {
             pinHandler("123")
         }
 
-        testJWTGenerator { code, error in
-            XCTAssertNil(code)
+        testJWTGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: AuthenticationError.invalidPin)
         }
     }
@@ -59,8 +66,11 @@ class JWTGeneratorTests: XCTestCase {
             pinHandler("12345678")
         }
 
-        testJWTGenerator { code, error in
-            XCTAssertNil(code)
+        testJWTGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: AuthenticationError.invalidPin)
         }
     }
@@ -69,24 +79,31 @@ class JWTGeneratorTests: XCTestCase {
         authenticator = nil
         user = JWTGeneratorTests.createValidUser(mpinId: Data(), token: Data())
 
-        testJWTGenerator { code, error in
-            XCTAssertNil(code)
+        testJWTGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: AuthenticationError.invalidUserData)
         }
     }
 
     func testFailedJWTGenerationInvalidCodeResponse() {
-        authenticator?.response = nil
+        let desiredError = AuthenticationError.authenticationFail(nil)
+        authenticator?.result = .failure(desiredError)
 
-        testJWTGenerator { code, error in
-            XCTAssertNil(code)
-            assertError(current: error, expected: AuthenticationError.authenticationFail(nil))
+        testJWTGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
+            assertError(current: error, expected: desiredError)
         }
     }
 
     /// Helper functions
     private func testJWTGenerator(
-        testCompletionHandler: @escaping JWTCompletionHandler
+        testCompletionHandler: @escaping JWTGenerationResultCompletionHandler
     ) {
         let expectation = XCTestExpectation(description: "Wait for JWT.")
         let logger = DefaultLogger(level: .none)
@@ -100,8 +117,8 @@ class JWTGeneratorTests: XCTestCase {
             logger: logger,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { code, error in
-                testCompletionHandler(code, error)
+            completionHandler: { result in
+                testCompletionHandler(result)
                 expectation.fulfill()
             }
         )
@@ -131,10 +148,6 @@ class JWTGeneratorTests: XCTestCase {
         var authenticateResponse = AuthenticateResponse()
         authenticateResponse.jwt = responseCode
 
-        var mockAuthenticator = MockAuthenticator(completionHandler: { _, _ in })
-        mockAuthenticator.error = nil
-        mockAuthenticator.response = authenticateResponse
-
-        return mockAuthenticator
+        return MockAuthenticator(completionHandler: { _ in }, result: .success(authenticateResponse))
     }
 }

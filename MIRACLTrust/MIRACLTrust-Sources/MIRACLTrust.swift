@@ -210,7 +210,14 @@ import Foundation
                 miraclAPI: miraclAPI,
                 deviceTagManager: deviceTagManager,
                 logger: logger,
-                completionHandler: completionHandler
+                completionHandler: { result in
+                    switch result {
+                    case let .success(response):
+                        completionHandler(response, nil)
+                    case let .failure(error):
+                        completionHandler(nil, error)
+                    }
+                }
             )
             verificator.verify()
         } catch {
@@ -237,7 +244,14 @@ import Foundation
         sendVerificationEmailCore(
             userId: userId,
             crossDeviceSession: crossDeviceSession,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(response):
+                    completionHandler(response, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -253,7 +267,14 @@ import Foundation
     ) {
         sendVerificationEmailCore(
             userId: userId,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(response):
+                    completionHandler(response, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -267,7 +288,14 @@ import Foundation
     ) {
         getActivationTokenCore(
             verificationURL: verificationURL,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(activationTokenResponse):
+                    completionHandler(activationTokenResponse, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -284,7 +312,14 @@ import Foundation
         getActivationTokenCore(
             userId: userId,
             code: code,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(activationTokenResponse):
+                    completionHandler(activationTokenResponse, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -301,7 +336,14 @@ import Foundation
         generateQuickCodeCore(
             user: user,
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(quickCode):
+                    completionHandler(quickCode, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -326,9 +368,15 @@ import Foundation
             for: userId,
             activationToken: activationToken,
             pushNotificationsToken: pushNotificationsToken,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestPinHandler: didRequestPinHandler
+        ) { result in
+            switch result {
+            case let .success(user):
+                completionHandler(user, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     // MARK: Authentication
@@ -354,9 +402,15 @@ import Foundation
     ) {
         authenticateCore(
             user: user,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestPinHandler: didRequestPinHandler
+        ) { result in
+            switch result {
+            case let .success(jwt):
+                completionHandler(jwt, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Authenticates identity in the MIRACL Trust platform.
@@ -478,9 +532,15 @@ import Foundation
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
         getCrossDeviceSessionFromQRCodeCore(
-            qrCode: qrCode,
-            completionHandler: completionHandler
-        )
+            qrCode: qrCode
+        ) { result in
+            switch result {
+            case let .success(crossDeviceSession):
+                completionHandler(crossDeviceSession, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Gets ``CrossDeviceSession`` for a universal link.
@@ -495,9 +555,15 @@ import Foundation
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
         getCrossDeviceSessionFromUniversalLinkURLCore(
-            universalLinkURL: universalLinkURL,
-            completionHandler: completionHandler
-        )
+            universalLinkURL: universalLinkURL
+        ) { result in
+            switch result {
+            case let .success(crossDeviceSession):
+                completionHandler(crossDeviceSession, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Gets ``CrossDeviceSession`` for a push notification.
@@ -512,9 +578,15 @@ import Foundation
         completionHandler: @escaping CrossDeviceSessionCompletionHandler
     ) {
         getCrossDeviceSessionFromPushNotificationPayloadCore(
-            pushNotificationPayload: pushNotificationPayload,
-            completionHandler: completionHandler
-        )
+            pushNotificationPayload: pushNotificationPayload
+        ) { result in
+            switch result {
+            case let .success(crossDeviceSession):
+                completionHandler(crossDeviceSession, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        }
     }
 
     /// Authenticates the user in the MIRACL Trust platform.
@@ -536,9 +608,15 @@ import Foundation
         authenticateCrossDeviceSessionCore(
             crossDeviceSession: crossDeviceSession,
             user: user,
-            didRequestPinHandler: didRequestPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestPinHandler: didRequestPinHandler
+        ) { result in
+            switch result {
+            case .success:
+                completionHandler(true, nil)
+            case let .failure(error):
+                completionHandler(false, error)
+            }
+        }
     }
 
     /// Generates a signature for a hash provided by the ``CrossDeviceSession`` parameter and updates the session.
@@ -558,9 +636,15 @@ import Foundation
         signCrossDeviceSessionCore(
             crossDeviceSession: crossDeviceSession,
             user: user,
-            didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: completionHandler
-        )
+            didRequestSigningPinHandler: didRequestSigningPinHandler
+        ) { result in
+            switch result {
+            case .success:
+                completionHandler(true, nil)
+            case let .failure(error):
+                completionHandler(false, error)
+            }
+        }
     }
 
     /// Cancels the ``CrossDeviceSession``.
@@ -575,7 +659,14 @@ import Foundation
     ) {
         abortCrossDeviceSessionCore(
             crossDeviceSession: crossDeviceSession,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case .success:
+                    completionHandler(true, nil)
+                case let .failure(error):
+                    completionHandler(false, error)
+                }
+            }
         )
     }
 
@@ -723,7 +814,14 @@ import Foundation
             message: message,
             user: user,
             didRequestSigningPinHandler: didRequestSigningPinHandler,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(signingResult):
+                    completionHandler(signingResult, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -749,7 +847,14 @@ import Foundation
     ) {
         getUserCore(
             userId: userId,
-            completionHandler: completionHandler
+            completionHandler: { result in
+                switch result {
+                case let .success(user):
+                    completionHandler(user, nil)
+                case let .failure(error):
+                    completionHandler(nil, error)
+                }
+            }
         )
     }
 
@@ -759,7 +864,14 @@ import Foundation
     ///
     /// - Parameter completionHandler: The ``GetUsersCompletionHandler`` closure to be executed when the request completes.
     @objc public func getUsers(completionHandler: @escaping GetUsersCompletionHandler) {
-        getUsersCore(completionHandler: completionHandler)
+        getUsersCore(completionHandler: { result in
+            switch result {
+            case let .success(users):
+                completionHandler(users, nil)
+            case let .failure(error):
+                completionHandler(nil, error)
+            }
+        })
     }
 
     @_spi(MIRACLTrustAuthenticatorApi)
@@ -818,7 +930,14 @@ import Foundation
         user: User,
         completionHandler: @escaping DeleteUserCompletionHandler
     ) {
-        deleteCore(user: user, completionHandler: completionHandler)
+        deleteCore(user: user, completionHandler: { result in
+            switch result {
+            case .success:
+                completionHandler(true, nil)
+            case let .failure(error):
+                completionHandler(false, error)
+            }
+        })
     }
 
     // MARK: Private methods

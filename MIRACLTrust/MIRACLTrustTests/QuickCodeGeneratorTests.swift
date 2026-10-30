@@ -54,11 +54,9 @@ class QuickCodeGeneratorTests: XCTestCase {
         let ttlSeconds = ttlSeconds
         let expireTime = expireTime
 
-        try testQuickCodeGenerator(testCompletionHandler: { quickCode, error in
-            XCTAssertNil(error)
-
+        try testQuickCodeGenerator(testCompletionHandler: { result in
             do {
-                let quickCode = try XCTUnwrap(quickCode)
+                let quickCode = try result.get()
                 XCTAssertEqual(quickCode.code, quickCodeString)
                 XCTAssertEqual(quickCode.ttlSeconds, ttlSeconds)
                 XCTAssertEqual(quickCode.expireTime, expireTime)
@@ -70,30 +68,29 @@ class QuickCodeGeneratorTests: XCTestCase {
 
     func testForAuthenticationIssue() throws {
         let expectedError = QuickCodeError.generationFail(AuthenticationError.invalidUserData)
-        authenticator?.error = AuthenticationError.invalidUserData
+        authenticator?.result = .failure(AuthenticationError.invalidUserData)
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
-            assertError(current: error, expected: expectedError)
-        }
-    }
-
-    func testForEmptyAuthenticateResponse() throws {
-        let expectedError = QuickCodeError.generationFail(nil)
-        authenticator?.response = nil
-
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
 
     func testForNilJWT() throws {
         let expectedError = QuickCodeError.generationFail(nil)
-        authenticator?.response?.jwt = nil
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        var authenticationResponse = AuthenticateResponse()
+        authenticationResponse.jwt = nil
+        authenticator?.result = .success(authenticationResponse)
+
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -106,8 +103,11 @@ class QuickCodeGeneratorTests: XCTestCase {
         mockAPI.verificationQuickCodeResponse = nil
         mockAPI.verificationQuickCodeError = returnedError
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -119,8 +119,11 @@ class QuickCodeGeneratorTests: XCTestCase {
         mockAPI.verificationQuickCodeResponse = nil
         mockAPI.verificationQuickCodeError = nil
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -129,11 +132,13 @@ class QuickCodeGeneratorTests: XCTestCase {
         let returnedError = AuthenticationError.unsuccessfulAuthentication
         let expectedError = QuickCodeError.unsuccessfulAuthentication
 
-        authenticator?.response = nil
-        authenticator?.error = returnedError
+        authenticator?.result = .failure(returnedError)
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -142,11 +147,13 @@ class QuickCodeGeneratorTests: XCTestCase {
         let returnedError = AuthenticationError.revoked
         let expectedError = QuickCodeError.revoked
 
-        authenticator?.response = nil
-        authenticator?.error = returnedError
+        authenticator?.result = .failure(returnedError)
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -155,11 +162,13 @@ class QuickCodeGeneratorTests: XCTestCase {
         let returnedError = AuthenticationError.invalidPin
         let expectedError = QuickCodeError.invalidPin
 
-        authenticator?.response = nil
-        authenticator?.error = returnedError
+        authenticator?.result = .failure(returnedError)
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -168,11 +177,13 @@ class QuickCodeGeneratorTests: XCTestCase {
         let returnedError = AuthenticationError.pinCancelled
         let expectedError = QuickCodeError.pinCancelled
 
-        authenticator?.response = nil
-        authenticator?.error = returnedError
+        authenticator?.result = .failure(returnedError)
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
@@ -181,20 +192,22 @@ class QuickCodeGeneratorTests: XCTestCase {
         let returnedError = AuthenticationError.authenticationFail(
             apiClientError(with: "EXAMPLE_CODE")
         )
-        authenticator?.response = nil
-        authenticator?.error = returnedError
+        authenticator?.result = .failure(returnedError)
 
         let expectedError = QuickCodeError.generationFail(returnedError)
 
-        try testQuickCodeGenerator { quickCode, error in
-            XCTAssertNil(quickCode)
+        try testQuickCodeGenerator { result in
+            guard case let .failure(error) = result else {
+                XCTFail("Expected .failure, but got \(result)")
+                return
+            }
             assertError(current: error, expected: expectedError)
         }
     }
 
     // MARK: Private
 
-    private func testQuickCodeGenerator(testCompletionHandler: @escaping QuickCodeCompletionHandler) throws {
+    private func testQuickCodeGenerator(testCompletionHandler: @escaping QuickCodeResultCompletionHandler) throws {
         let testExpectation = XCTestExpectation(description: "Quick Code Unit Tests")
         var quickCodeGenerator = try QuickCodeGenerator(
             user: XCTUnwrap(user),
@@ -205,8 +218,8 @@ class QuickCodeGeneratorTests: XCTestCase {
             logger: logger,
             deviceTagManager: DeviceTagManager(logger: logger),
             didRequestPinHandler: didRequestPinHandler,
-            completionHandler: { quickCode, error in
-                testCompletionHandler(quickCode, error)
+            completionHandler: { result in
+                testCompletionHandler(result)
                 testExpectation.fulfill()
             }
         )
@@ -216,11 +229,7 @@ class QuickCodeGeneratorTests: XCTestCase {
     }
 
     private func mockAuthenticator() -> MockAuthenticator {
-        var mockAuthenticator = MockAuthenticator(completionHandler: { _, _ in })
-        mockAuthenticator.error = nil
-        mockAuthenticator.response = authenticateResponse
-
-        return mockAuthenticator
+        MockAuthenticator(completionHandler: { _ in }, result: .success(authenticateResponse))
     }
 
     private func createUser(

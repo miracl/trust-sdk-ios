@@ -1,8 +1,10 @@
 import Foundation
 
+typealias QuickCodeResultCompletionHandler = @MainActor @Sendable (Result<QuickCode, Error>) -> Void
+
 struct QuickCodeGenerator {
     let user: User
-    let completionHandler: QuickCodeCompletionHandler
+    let completionHandler: QuickCodeResultCompletionHandler
     let didRequestPinHandler: PinRequestHandler
     let api: APIBlueprint
     let deviceName: String
@@ -22,7 +24,7 @@ struct QuickCodeGenerator {
         logger: Logger,
         deviceTagManager: DeviceTagManager,
         didRequestPinHandler: @escaping PinRequestHandler,
-        completionHandler: @escaping QuickCodeCompletionHandler
+        completionHandler: @escaping QuickCodeResultCompletionHandler
     ) {
         self.user = user
         self.api = api
@@ -66,8 +68,16 @@ struct QuickCodeGenerator {
         }
     }
 
-    @Sendable func authenticationResult(response: AuthenticateResponse?, error: Error?) {
-        if let error = error {
+    @Sendable func authenticationResult(result: Result<AuthenticateResponse, Error>) {
+        switch result {
+        case let .success(response):
+            guard let jwt = response.jwt else {
+                callCompletionHandler(with: QuickCodeError.generationFail(nil))
+                return
+            }
+
+            executeVerificationRequest(for: jwt)
+        case let .failure(error):
             if case AuthenticationError.revoked = error {
                 callCompletionHandler(with: QuickCodeError.revoked)
             } else if case AuthenticationError.unsuccessfulAuthentication = error {
@@ -79,15 +89,7 @@ struct QuickCodeGenerator {
             } else {
                 callCompletionHandler(with: QuickCodeError.generationFail(error))
             }
-            return
         }
-
-        guard let jwt = response?.jwt else {
-            callCompletionHandler(with: QuickCodeError.generationFail(nil))
-            return
-        }
-
-        executeVerificationRequest(for: jwt)
     }
 
     private func executeVerificationRequest(
@@ -116,7 +118,7 @@ struct QuickCodeGenerator {
                 )
 
                 DispatchQueue.main.async {
-                    completionHandler(quickCode, nil)
+                    completionHandler(.success(quickCode))
                 }
             } else if let error {
                 callCompletionHandler(with: QuickCodeError.generationFail(error))
@@ -133,7 +135,7 @@ struct QuickCodeGenerator {
                 category: .quickCode
             )
 
-            completionHandler(nil, error)
+            completionHandler(.failure(error))
         }
     }
 

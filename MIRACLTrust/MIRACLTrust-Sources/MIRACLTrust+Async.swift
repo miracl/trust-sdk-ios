@@ -17,14 +17,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.sendVerificationEmailCore(userId: userId, crossDeviceSession: crossDeviceSession) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.sendVerificationEmailCore(userId: userId, crossDeviceSession: crossDeviceSession) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -40,14 +34,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.sendVerificationEmailCore(userId: userId) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.sendVerificationEmailCore(userId: userId) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -60,14 +48,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getActivationTokenCore(verificationURL: verificationURL) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getActivationTokenCore(verificationURL: verificationURL) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -84,14 +66,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getActivationTokenCore(userId: userId, code: code) { response, error in
-                if let response {
-                    continuation.resume(returning: response)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getActivationTokenCore(userId: userId, code: code) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -108,14 +84,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.generateQuickCodeCore(user: user, didRequestPinHandler: didRequestPinHandler) { quickCode, error in
-                if let quickCode {
-                    continuation.resume(returning: quickCode)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.generateQuickCodeCore(user: user, didRequestPinHandler: didRequestPinHandler) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -142,14 +112,8 @@ public extension MIRACLTrust {
                 activationToken: activationToken,
                 pushNotificationsToken: pushNotificationsToken,
                 didRequestPinHandler: didRequestPinHandler
-            ) { user, error in
-                if let user {
-                    continuation.resume(returning: user)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -175,14 +139,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.authenticateCore(user: user, didRequestPinHandler: didRequestPinHandler) { jwt, error in
-                if let jwt {
-                    continuation.resume(returning: jwt)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.authenticateCore(user: user, didRequestPinHandler: didRequestPinHandler) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -196,14 +154,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getCrossDeviceSessionFromQRCodeCore(qrCode: qrCode) { crossDeviceSession, error in
-                if let crossDeviceSession {
-                    continuation.resume(returning: crossDeviceSession)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getCrossDeviceSessionFromQRCodeCore(qrCode: qrCode) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -217,14 +169,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getCrossDeviceSessionFromUniversalLinkURLCore(universalLinkURL: universalLinkURL) { crossDeviceSession, error in
-                if let crossDeviceSession {
-                    continuation.resume(returning: crossDeviceSession)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getCrossDeviceSessionFromUniversalLinkURLCore(universalLinkURL: universalLinkURL) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -242,14 +188,8 @@ public extension MIRACLTrust {
         return try await withCheckedThrowingContinuation { continuation in
             self.getCrossDeviceSessionFromPushNotificationPayloadCore(
                 pushNotificationPayload: pushNotificationPayload
-            ) { crossDeviceSession, error in
-                if let crossDeviceSession {
-                    continuation.resume(returning: crossDeviceSession)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -274,14 +214,8 @@ public extension MIRACLTrust {
                 crossDeviceSession: crossDeviceSession,
                 user: user,
                 didRequestPinHandler: didRequestPinHandler
-            ) { isAuthenticated, error in
-                if isAuthenticated {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -304,14 +238,8 @@ public extension MIRACLTrust {
                 crossDeviceSession: crossDeviceSession,
                 user: user,
                 didRequestSigningPinHandler: didRequestSigningPinHandler
-            ) { isSigned, error in
-                if isSigned {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            ) { result in
+                continuation.resume(with: result.map { _ in () })
             }
         }
     }
@@ -323,14 +251,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            self.abortCrossDeviceSessionCore(crossDeviceSession: crossDeviceSession) { isAborted, error in
-                if isAborted {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.abortCrossDeviceSessionCore(crossDeviceSession: crossDeviceSession) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -350,14 +272,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.signCore(message: message, user: user, didRequestSigningPinHandler: didRequestSigningPinHandler) { signingResult, error in
-                if let signingResult {
-                    continuation.resume(returning: signingResult)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.signCore(message: message, user: user, didRequestSigningPinHandler: didRequestSigningPinHandler) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -369,14 +285,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getUsersCore { users, error in
-                if let users {
-                    continuation.resume(returning: users)
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.getUsersCore { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -388,12 +298,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            self.getUserCore(userId: userId) { user, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: user)
-                }
+            self.getUserCore(userId: userId) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -405,14 +311,8 @@ public extension MIRACLTrust {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            self.deleteCore(user: user) { isDeleted, error in
-                if isDeleted {
-                    continuation.resume(returning: ())
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    fatalError("\(#function) fatal error")
-                }
+            self.deleteCore(user: user) { result in
+                continuation.resume(with: result)
             }
         }
     }
