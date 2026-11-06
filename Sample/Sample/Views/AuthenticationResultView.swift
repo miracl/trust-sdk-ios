@@ -39,7 +39,7 @@ struct AuthenticationResultView: View {
             }
 
             PrimaryButton(title: "Done") {
-                navigationPath.removeAll()
+                navigationPath = []
             }
             .padding()
         }
