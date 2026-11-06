@@ -8,17 +8,8 @@ struct HomeView: View {
     @State private var users: [User] = []
     @State private var isLoading = true
     @State private var userToDelete: User?
-
-    private var isDeleteConfirmationPresented: Binding<Bool> {
-        Binding(
-            get: { userToDelete != nil },
-            set: {
-                if !$0 {
-                    userToDelete = nil
-                }
-            }
-        )
-    }
+    @State private var handlingTask: Task<Void, Never>?
+    @State private var isDeleteConfirmationPresented = false
 
     var body: some View {
         mainContent
@@ -33,14 +24,20 @@ struct HomeView: View {
                     }
                 }
             }
-            .task { loadUsers() }
+            .task { await loadUsers() }
+            .onDisappear {
+                handlingTask?.cancel()
+            }
             .confirmationDialog(
                 "Remove User?",
-                isPresented: isDeleteConfirmationPresented,
+                isPresented: $isDeleteConfirmationPresented,
                 titleVisibility: .visible
             ) {
                 Button("Remove User", role: .destructive) { deleteSelectedUser() }
-                Button("Cancel", role: .cancel) { userToDelete = nil }
+                Button("Cancel", role: .cancel) {
+                    userToDelete = nil
+                    isDeleteConfirmationPresented = false
+                }
             } message: {
                 Text("You will no longer be able to authenticate with this device.")
             }
@@ -94,6 +91,7 @@ struct HomeView: View {
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
+                isDeleteConfirmationPresented = true
                 userToDelete = user
             } label: {
                 Label("Delete", systemImage: "trash")
@@ -102,25 +100,31 @@ struct HomeView: View {
     }
 
     private func deleteSelectedUser() {
-        guard let user = userToDelete else { return }
-        MIRACLTrust.getInstance().delete(user: user) { _, error in
-            userToDelete = nil
-            if let error = error {
+        handlingTask?.cancel()
+        handlingTask = Task {
+            do {
+                guard let user = userToDelete else { return }
+                try await MIRACLTrust.getInstance().delete(user: user)
+                userToDelete = nil
+                await loadUsers()
+            } catch is CancellationError {
+                return
+            } catch {
+                userToDelete = nil
                 onError(error.localizedDescription)
-            } else {
-                loadUsers()
             }
         }
     }
 
-    private func loadUsers() {
-        MIRACLTrust.getInstance().getUsers { rawUsers, error in
-            if let error = error {
-                onError(error.localizedDescription)
-            } else if let allUsers = rawUsers {
-                users = allUsers.filter { $0.projectId == MIRACLTrustConfig.projectId }
-            }
-            isLoading = false
+    private func loadUsers() async {
+        do {
+            users = try await MIRACLTrust.getInstance().getUsers().filter { $0.projectId == MIRACLTrustConfig.projectId }
+        } catch is CancellationError {
+            return
+        } catch {
+            onError(error.localizedDescription)
         }
+
+        isLoading = false
     }
 }
