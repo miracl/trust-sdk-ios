@@ -52,7 +52,7 @@ struct RegistrationView: View {
         }
         .navigationTitle("Register Device")
         .navigationBarTitleDisplayMode(.inline)
-        .task(id: url) { startRegistration() }
+        .task(id: url) { await startRegistration() }
         .onDisappear {
             // Cancel pending registration if the user pops this view off the navigation stack
             if let pinHandler = processPinHandler {
@@ -62,45 +62,35 @@ struct RegistrationView: View {
         }
     }
 
-    private func startRegistration() {
-        MIRACLTrust.getInstance().getActivationToken(verificationURL: url) { tokenResponse, error in
-            if let error = error {
-                if let tokenError = error as? ActivationTokenError,
-                   case let .unsuccessfulVerification(response) = tokenError,
-                   let resendUserId = response?.userId {
-                    onError("Verification link expired for \(resendUserId). Please request a new link.")
-                    navigationPath = [.enterUserId(userId: resendUserId)]
-                } else {
-                    onError(error.localizedDescription)
-                    navigationPath.removeAll()
-                }
-                return
+    private func startRegistration() async {
+        do {
+            let miraclTrust = MIRACLTrust.getInstance()
+            let activationTokenResponse = try await miraclTrust.getActivationToken(verificationURL: url)
+            userId = activationTokenResponse.userId
+
+            _ = try await miraclTrust.register(userId: activationTokenResponse.userId, activationToken: activationTokenResponse.activationToken) { processPinHandler in
+                self.processPinHandler = processPinHandler
             }
 
-            guard let tokenResponse = tokenResponse else { return }
-            userId = tokenResponse.userId
+            navigationPath = []
+        } catch is CancellationError, RegistrationError.pinCancelled {
+            // User intentionally cancelled PIN entry; dismiss silently
+            return
+        } catch {
+            handleRegistrationFailure(error)
+        }
+    }
 
-            MIRACLTrust.getInstance().register(
-                for: tokenResponse.userId,
-                activationToken: tokenResponse.activationToken,
-                didRequestPinHandler: { processPinHandler in
-                    self.processPinHandler = processPinHandler
-                },
-                completionHandler: { _, error in
-                    if let error = error {
-                        // Ignore cancellation when user navigates back
-                        if case RegistrationError.pinCancelled = error {
-                            return
-                        }
+    private func handleRegistrationFailure(_ error: Error) {
+        switch error {
+        case let ActivationTokenError.unsuccessfulVerification(.some(response)):
+            let resendUserId = response.userId
+            onError("Verification link expired for \(resendUserId). Please request a new link.")
+            navigationPath = [.enterUserId(userId: resendUserId)]
 
-                        onError(error.localizedDescription)
-                        navigationPath.removeAll()
-                        return
-                    }
-
-                    navigationPath = []
-                }
-            )
+        default:
+            onError(error.localizedDescription)
+            navigationPath.removeAll()
         }
     }
 }
