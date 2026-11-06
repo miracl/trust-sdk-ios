@@ -49,7 +49,7 @@ struct AuthenticationView: View {
         }
         .navigationTitle("Authenticate")
         .navigationBarTitleDisplayMode(.inline)
-        .task { startAuthentication() }
+        .task { await startAuthentication() }
         .onDisappear {
             // Cancel pending authentication if the user pops this view off the navigation stack
             if let pinHandler = processPinHandler {
@@ -59,35 +59,25 @@ struct AuthenticationView: View {
         }
     }
 
-    private func startAuthentication() {
-        guard let targetUser = MIRACLTrust.getInstance().getUser(by: userId) else { return }
-        user = targetUser
+    private func startAuthentication() async {
+        do {
+            let miraclTrust = MIRACLTrust.getInstance()
+            guard let targetUser = try await miraclTrust.getUser(userId: userId) else { return }
+            user = targetUser
 
-        MIRACLTrust.getInstance().authenticate(
-            user: targetUser,
-            didRequestPinHandler: { processPinHandler in
+            let jwtToken = try await miraclTrust.authenticate(user: targetUser) { processPinHandler in
                 self.processPinHandler = processPinHandler
-            },
-            completionHandler: { jwtToken, error in
-                if let error = error {
-                    switch error {
-                    case AuthenticationError.pinCancelled:
-                        // Ignore cancellation when user navigates back
-                        return
-
-                    case AuthenticationError.revoked:
-                        navigationPath = [.revoked(userId: userId)]
-
-                    default:
-                        onError(error.localizedDescription)
-                        pinCode = ""
-                        isProcessing = false
-                        startAuthentication()
-                    }
-                } else if let jwtToken = jwtToken {
-                    navigationPath = [.authenticationSuccessful(jwtToken: jwtToken)]
-                }
             }
-        )
+            navigationPath = [.authenticationSuccessful(jwtToken: jwtToken)]
+        } catch is CancellationError, AuthenticationError.pinCancelled {
+            return
+        } catch AuthenticationError.revoked {
+            navigationPath = [.revoked(userId: userId)]
+        } catch {
+            onError(error.localizedDescription)
+            pinCode = ""
+            isProcessing = false
+            await startAuthentication()
+        }
     }
 }

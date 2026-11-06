@@ -8,6 +8,7 @@ struct HomeView: View {
     @State private var users: [User] = []
     @State private var isLoading = true
     @State private var userToDelete: User?
+    @State private var handlingTask: Task<Void, Never>?
 
     private var isDeleteConfirmationPresented: Binding<Bool> {
         Binding(
@@ -33,7 +34,10 @@ struct HomeView: View {
                     }
                 }
             }
-            .task { loadUsers() }
+            .task { await loadUsers() }
+            .onDisappear {
+                handlingTask?.cancel()
+            }
             .confirmationDialog(
                 "Remove User?",
                 isPresented: isDeleteConfirmationPresented,
@@ -102,25 +106,30 @@ struct HomeView: View {
     }
 
     private func deleteSelectedUser() {
-        guard let user = userToDelete else { return }
-        MIRACLTrust.getInstance().delete(user: user) { _, error in
-            userToDelete = nil
-            if let error = error {
+        handlingTask?.cancel()
+        handlingTask = Task {
+            do {
+                guard let user = userToDelete else { return }
+                try await MIRACLTrust.getInstance().delete(user: user)
+                userToDelete = nil
+                await loadUsers()
+            } catch is CancellationError {
+                return
+            } catch {
                 onError(error.localizedDescription)
-            } else {
-                loadUsers()
             }
         }
     }
 
-    private func loadUsers() {
-        MIRACLTrust.getInstance().getUsers { rawUsers, error in
-            if let error = error {
-                onError(error.localizedDescription)
-            } else if let allUsers = rawUsers {
-                users = allUsers.filter { $0.projectId == MIRACLTrustConfig.projectId }
-            }
-            isLoading = false
+    private func loadUsers() async {
+        do {
+            users = try await MIRACLTrust.getInstance().getUsers().filter { $0.projectId == MIRACLTrustConfig.projectId }
+        } catch is CancellationError {
+            return
+        } catch {
+            onError(error.localizedDescription)
         }
+
+        isLoading = false
     }
 }
