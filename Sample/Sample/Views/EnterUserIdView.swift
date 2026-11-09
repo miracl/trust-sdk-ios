@@ -7,6 +7,7 @@ struct EnterUserIdView: View {
     let onError: (String) -> Void
 
     @State private var isProcessing = false
+    @State private var handlingTask: Task<Void, Never>?
 
     var body: some View {
         Form {
@@ -18,6 +19,9 @@ struct EnterUserIdView: View {
                     .autocorrectionDisabled()
                     .disabled(isProcessing)
             }
+        }
+        .onDisappear {
+            handlingTask?.cancel()
         }
         .safeAreaInset(edge: .bottom) {
             PrimaryButton(
@@ -34,20 +38,22 @@ struct EnterUserIdView: View {
     }
 
     private func sendVerificationEmail() {
-        isProcessing = true
-        MIRACLTrust.getInstance().sendVerificationEmail(userId: userId) { _, error in
-            isProcessing = false
-            if let error = error {
-                if let verificationError = error as? VerificationError,
-                   case let .requestBackoff(backoff) = verificationError {
-                    let currentSeconds = Int64(Date().timeIntervalSince1970)
-                    let remainingSeconds = max(1, backoff - currentSeconds)
-                    onError("You’ve requested too many verification emails. Try again in \(remainingSeconds) seconds.")
-                } else {
-                    onError(error.localizedDescription)
-                }
-            } else {
+        handlingTask?.cancel()
+        handlingTask = Task {
+            defer { isProcessing = false }
+            isProcessing = true
+
+            do {
+                _ = try await MIRACLTrust.getInstance().sendVerificationEmail(userId: userId)
                 navigationPath.append(.emailSent(userId: userId))
+            } catch let VerificationError.requestBackoff(backoff) {
+                let currentSeconds = Int64(Date().timeIntervalSince1970)
+                let remainingSeconds = max(1, backoff - currentSeconds)
+                onError("You’ve requested too many verification emails. Try again in \(remainingSeconds) seconds.")
+            } catch is CancellationError {
+                return
+            } catch {
+                onError(error.localizedDescription)
             }
         }
     }
