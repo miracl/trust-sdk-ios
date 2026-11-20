@@ -14,23 +14,21 @@ struct MIRACLTrustAsyncTests {
     init() async throws {
         let configuration = try Configuration.Builder(projectId: projectId, projectURL: projectURL).build()
         try MIRACLTrust.configure(with: configuration)
-
-        MIRACLTrust.getInstance().userStorage = MockUserStorage()
-        MIRACLTrust.getInstance().crypto = createMockCrypto()
     }
 
     @Test func sendVerificationEmailCrossDeviceSession() async throws {
         let randomBackoff = Int64.random(in: 0 ... Int64.max)
         let method = "link"
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationResultCall = .success
             mockAPI.verificationError = nil
             mockAPI.verificationResponse = VerificationRequestResponse(backoff: randomBackoff, method: method)
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let crossDeviceSession = createCrossDeviceSession()
-        let verificationResponse = try await MIRACLTrust.getInstance().sendVerificationEmail(userId: UUID().uuidString, crossDeviceSession: crossDeviceSession)
+        let verificationResponse = try await miraclTrust.sendVerificationEmail(userId: UUID().uuidString, crossDeviceSession: crossDeviceSession)
         #expect(verificationResponse.backoff == randomBackoff)
         #expect(verificationResponse.method == .link)
     }
@@ -38,15 +36,16 @@ struct MIRACLTrustAsyncTests {
     @Test func sendVerificationEmailCrossDeviceSessionWithError() async {
         let expectedError = apiClientError(with: "Something wrong")
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationResultCall = .failed
             mockAPI.verificationError = expectedError
             mockAPI.verificationResponse = nil
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let crossDeviceSession = createCrossDeviceSession()
         let error = await #expect(throws: VerificationError.self, performing: {
-            try await MIRACLTrust.getInstance().sendVerificationEmail(userId: UUID().uuidString, crossDeviceSession: crossDeviceSession)
+            try await miraclTrust.sendVerificationEmail(userId: UUID().uuidString, crossDeviceSession: crossDeviceSession)
         })
 
         #expect(error == VerificationError.verificaitonFail(expectedError))
@@ -55,8 +54,9 @@ struct MIRACLTrustAsyncTests {
     @Test func sendVerificationEmailCrossDeviceSessionCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
+            let miraclTrust = createMIRACLTrust()
             let crossDeviceSession = createCrossDeviceSession()
-            return try await MIRACLTrust.getInstance().sendVerificationEmail(userId: UUID().uuidString, crossDeviceSession: crossDeviceSession)
+            return try await miraclTrust.sendVerificationEmail(userId: UUID().uuidString, crossDeviceSession: crossDeviceSession)
         }
 
         await #expect(throws: CancellationError.self) {
@@ -68,13 +68,14 @@ struct MIRACLTrustAsyncTests {
         let randomBackoff = Int64.random(in: 0 ... Int64.max)
         let method = "link"
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationResultCall = .success
             mockAPI.verificationError = nil
             mockAPI.verificationResponse = VerificationRequestResponse(backoff: randomBackoff, method: method)
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let verificationResponse = try await MIRACLTrust.getInstance().sendVerificationEmail(userId: UUID().uuidString)
+        let verificationResponse = try await miraclTrust.sendVerificationEmail(userId: UUID().uuidString)
         #expect(verificationResponse.backoff == randomBackoff)
         #expect(verificationResponse.method == .link)
     }
@@ -82,14 +83,15 @@ struct MIRACLTrustAsyncTests {
     @Test func sendVerificationEmailWithError() async {
         let expectedError = apiClientError(with: "Something wrong")
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationResultCall = .failed
             mockAPI.verificationError = expectedError
             mockAPI.verificationResponse = nil
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: VerificationError.self, performing: {
-            try await MIRACLTrust.getInstance().sendVerificationEmail(userId: UUID().uuidString)
+            try await miraclTrust.sendVerificationEmail(userId: UUID().uuidString)
         })
 
         #expect(error == VerificationError.verificaitonFail(expectedError))
@@ -98,7 +100,8 @@ struct MIRACLTrustAsyncTests {
     @Test func sendVerificationEmailCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-            return try await MIRACLTrust.getInstance().sendVerificationEmail(userId: UUID().uuidString)
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.sendVerificationEmail(userId: UUID().uuidString)
         }
 
         await #expect(throws: CancellationError.self) {
@@ -114,7 +117,7 @@ struct MIRACLTrustAsyncTests {
 
         let verificationURL = try #require(URL(string: "https://example.com?code=af1cc549573718409de44d8bf2e67a06&user_id=\(userId)"))
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationConfirmationResultCall = .success
             mockAPI.verificationConfirmationError = nil
             mockAPI.verificationConfirmationResponse = VerificationConfirmationResponse(
@@ -123,8 +126,9 @@ struct MIRACLTrustAsyncTests {
                 actToken: actToken
             )
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let activationTokenResponse = try await MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL)
+        let activationTokenResponse = try await miraclTrust.getActivationToken(verificationURL: verificationURL)
         #expect(activationTokenResponse.activationToken == actToken)
         #expect(activationTokenResponse.accessId == accessId)
         #expect(activationTokenResponse.projectId == projectId)
@@ -137,14 +141,15 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = ActivationTokenError.getActivationTokenFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationConfirmationResultCall = .failed
             mockAPI.verificationConfirmationError = cause
             mockAPI.verificationConfirmationResponse = nil
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: ActivationTokenError.self, performing: {
-            try await MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL)
+            try await miraclTrust.getActivationToken(verificationURL: verificationURL)
         })
 
         #expect(error == desiredError)
@@ -154,7 +159,8 @@ struct MIRACLTrustAsyncTests {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
             let verificationURL = try #require(URL(string: "https://example.com"))
-            return try await MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL)
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.getActivationToken(verificationURL: verificationURL)
         }
 
         await #expect(throws: CancellationError.self) {
@@ -170,7 +176,7 @@ struct MIRACLTrustAsyncTests {
         let userId = UUID().uuidString
         let code = UUID().uuidString
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationConfirmationResultCall = .success
             mockAPI.verificationConfirmationError = nil
             mockAPI.verificationConfirmationResponse = VerificationConfirmationResponse(
@@ -179,8 +185,9 @@ struct MIRACLTrustAsyncTests {
                 actToken: actToken
             )
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let activationTokenResponse = try await MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code)
+        let activationTokenResponse = try await miraclTrust.getActivationToken(userId: userId, code: code)
         #expect(activationTokenResponse.activationToken == actToken)
         #expect(activationTokenResponse.accessId == accessId)
         #expect(activationTokenResponse.projectId == projectId)
@@ -194,14 +201,15 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = ActivationTokenError.getActivationTokenFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.verificationConfirmationResultCall = .failed
             mockAPI.verificationConfirmationError = cause
             mockAPI.verificationConfirmationResponse = nil
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: ActivationTokenError.self, performing: {
-            try await MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code)
+            try await miraclTrust.getActivationToken(userId: userId, code: code)
         })
 
         #expect(error == desiredError)
@@ -210,7 +218,8 @@ struct MIRACLTrustAsyncTests {
     @Test func getActivationTokenUserIdCodeCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-            return try await MIRACLTrust.getInstance().getActivationToken(userId: "", code: "")
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.getActivationToken(userId: "", code: "")
         }
 
         await #expect(throws: CancellationError.self) {
@@ -222,7 +231,7 @@ struct MIRACLTrustAsyncTests {
         let user = createUser()
         let quickCode = UUID().uuidString
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -237,8 +246,9 @@ struct MIRACLTrustAsyncTests {
             mockAPI.authenticationResponseManager.authenticateResponse = authenticateResponse
             mockAPI.verificationQuickCodeResponse = VerificationQuickCodeResponse(code: quickCode, expireTime: Date(), ttlSeconds: Int.random(in: 1 ... 999))
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let returnedQuickCode = try await MIRACLTrust.getInstance().generateQuickCode(user: user) { processPinHandler in
+        let returnedQuickCode = try await miraclTrust.generateQuickCode(user: user) { processPinHandler in
             processPinHandler("1234")
         }
         #expect(quickCode == returnedQuickCode.code)
@@ -250,7 +260,7 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = QuickCodeError.generationFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -267,9 +277,10 @@ struct MIRACLTrustAsyncTests {
             mockAPI.verificationQuickCodeResponse = nil
             mockAPI.verificationQuickCodeError = cause
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: QuickCodeError.self, performing: {
-            try await MIRACLTrust.getInstance().generateQuickCode(user: user) { processPinHandler in
+            try await miraclTrust.generateQuickCode(user: user) { processPinHandler in
                 processPinHandler("1234")
             }
         })
@@ -279,7 +290,8 @@ struct MIRACLTrustAsyncTests {
     @Test func generateQuickCodeCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-            return try await MIRACLTrust.getInstance().generateQuickCode(user: createUser()) { processPinHandler in
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.generateQuickCode(user: createUser()) { processPinHandler in
                 processPinHandler("1234")
             }
         }
@@ -293,7 +305,7 @@ struct MIRACLTrustAsyncTests {
         let userId = UUID().uuidString
         let activationToken = UUID().uuidString
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             let validRegistration = RegistrationResponse(
                 mpinId: mpinId,
                 projectId: projectId,
@@ -309,8 +321,9 @@ struct MIRACLTrustAsyncTests {
             mockAPI.taSharesResponsesManager.taShare1Response = taShareResponse
             mockAPI.taSharesResponsesManager.taShare2Response = taShareResponse
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let user = try await MIRACLTrust.getInstance().register(userId: userId, activationToken: activationToken) { processPinHandler in
+        let user = try await miraclTrust.register(userId: userId, activationToken: activationToken) { processPinHandler in
             processPinHandler("1234")
         }
         #expect(user.userId == userId)
@@ -324,14 +337,15 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = RegistrationError.registrationFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.registrationResponse = nil
             mockAPI.registrationError = cause
             mockAPI.registrationResultCall = .failed
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: RegistrationError.self, performing: {
-            try await MIRACLTrust.getInstance().register(userId: randomString, activationToken: randomString) { processPinHandler in
+            try await miraclTrust.register(userId: randomString, activationToken: randomString) { processPinHandler in
                 processPinHandler("1234")
             }
         })
@@ -341,7 +355,8 @@ struct MIRACLTrustAsyncTests {
     @Test func registerCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-            return try await MIRACLTrust.getInstance().register(userId: "", activationToken: "") { processPinHandler in
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.register(userId: "", activationToken: "") { processPinHandler in
                 processPinHandler("1234")
             }
         }
@@ -355,7 +370,7 @@ struct MIRACLTrustAsyncTests {
         let user = createUser()
         let jwt = UUID().uuidString
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -369,8 +384,9 @@ struct MIRACLTrustAsyncTests {
 
             mockAPI.authenticationResponseManager.authenticateResponse = authenticateResponse
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let jwtResponse = try await MIRACLTrust.getInstance().authenticate(user: user) { processPinHandler in
+        let jwtResponse = try await miraclTrust.authenticate(user: user) { processPinHandler in
             processPinHandler("1234")
         }
         #expect(jwt == jwtResponse)
@@ -382,7 +398,7 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = AuthenticationError.authenticationFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -395,8 +411,10 @@ struct MIRACLTrustAsyncTests {
             mockAPI.authenticationResponseManager.authenticateError = cause
         }
 
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
+
         let error = await #expect(throws: AuthenticationError.self, performing: {
-            try await MIRACLTrust.getInstance().authenticate(user: user) { processPinHandler in
+            try await miraclTrust.authenticate(user: user) { processPinHandler in
                 processPinHandler("1234")
             }
         })
@@ -406,7 +424,8 @@ struct MIRACLTrustAsyncTests {
     @Test func authenticateCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-            return try await MIRACLTrust.getInstance().authenticate(user: createUser()) { processPinHandler in
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.authenticate(user: createUser()) { processPinHandler in
                 processPinHandler("1234")
             }
         }
@@ -420,11 +439,12 @@ struct MIRACLTrustAsyncTests {
         let accessId = "b227d0850d4280b98c5124a14aec84bf"
         let qrCode = "https://example.mpin.io#\(accessId)"
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.crossDeviceSessionResponse = CrossDeviceSessionResponse(prerollId: randomString, projectId: randomString, signingHash: randomString, sessionDescription: randomString)
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let crossDeviceSession = try await MIRACLTrust.getInstance().getCrossDeviceSessionFromQRCode(qrCode: qrCode)
+        let crossDeviceSession = try await miraclTrust.getCrossDeviceSessionFromQRCode(qrCode: qrCode)
         #expect(crossDeviceSession.userId == randomString)
         #expect(crossDeviceSession.projectId == randomString)
         #expect(crossDeviceSession.signingHash == randomString)
@@ -437,12 +457,13 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = CrossDeviceSessionError.getCrossDeviceSessionFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.crossDeviceSessionError = cause
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
-            try await MIRACLTrust.getInstance().getCrossDeviceSessionFromQRCode(qrCode: qrCode)
+            try await miraclTrust.getCrossDeviceSessionFromQRCode(qrCode: qrCode)
         })
         #expect(error == desiredError)
     }
@@ -450,7 +471,8 @@ struct MIRACLTrustAsyncTests {
     @Test func getCrossDeviceSessionFromQRCodeCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-            return try await MIRACLTrust.getInstance().getCrossDeviceSessionFromQRCode(qrCode: "")
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.getCrossDeviceSessionFromQRCode(qrCode: "")
         }
 
         await #expect(throws: CancellationError.self) {
@@ -462,11 +484,12 @@ struct MIRACLTrustAsyncTests {
         let accessId = "b227d0850d4280b98c5124a14aec84bf"
         let universalLinkURL = try #require(URL(string: "https://example.mpin.io#\(accessId)"))
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.crossDeviceSessionResponse = CrossDeviceSessionResponse(prerollId: randomString, projectId: randomString, signingHash: randomString, sessionDescription: randomString)
         }
 
-        let crossDeviceSession = try await MIRACLTrust.getInstance().getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: universalLinkURL)
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
+        let crossDeviceSession = try await miraclTrust.getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: universalLinkURL)
         #expect(crossDeviceSession.userId == randomString)
         #expect(crossDeviceSession.projectId == randomString)
         #expect(crossDeviceSession.signingHash == randomString)
@@ -479,12 +502,13 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = CrossDeviceSessionError.getCrossDeviceSessionFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.crossDeviceSessionError = cause
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
-            try await MIRACLTrust.getInstance().getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: universalLinkURL)
+            try await miraclTrust.getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: universalLinkURL)
         })
         #expect(error == desiredError)
     }
@@ -492,8 +516,9 @@ struct MIRACLTrustAsyncTests {
     @Test func getCrossDeviceSessionFromUniversalLinkURLCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
+            let miraclTrust = createMIRACLTrust()
             let url = try #require(URL(string: "https://example.com"))
-            return try await MIRACLTrust.getInstance().getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: url)
+            return try await miraclTrust.getCrossDeviceSessionFromUniversalLinkURL(universalLinkURL: url)
         }
 
         await #expect(throws: CancellationError.self) {
@@ -505,11 +530,12 @@ struct MIRACLTrustAsyncTests {
         let accessId = "b227d0850d4280b98c5124a14aec84bf"
         let payload = ["qrURL": "https://mcl.mpin.io#\(accessId)"]
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.crossDeviceSessionResponse = CrossDeviceSessionResponse(prerollId: randomString, projectId: randomString, signingHash: randomString, sessionDescription: randomString)
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let crossDeviceSession = try await MIRACLTrust.getInstance().getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: payload)
+        let crossDeviceSession = try await miraclTrust.getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: payload)
         #expect(crossDeviceSession.userId == randomString)
         #expect(crossDeviceSession.projectId == randomString)
         #expect(crossDeviceSession.signingHash == randomString)
@@ -523,12 +549,14 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = CrossDeviceSessionError.getCrossDeviceSessionFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.crossDeviceSessionError = cause
         }
 
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
+
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
-            try await MIRACLTrust.getInstance().getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: payload)
+            try await miraclTrust.getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: payload)
         })
         #expect(error == desiredError)
     }
@@ -536,7 +564,8 @@ struct MIRACLTrustAsyncTests {
     @Test func getCrossDeviceSessionFromPuhsNotificationPayloadCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-            return try await MIRACLTrust.getInstance().getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: [:])
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.getCrossDeviceSessionFromPushNotificationPayload(pushNotificationPayload: [:])
         }
 
         await #expect(throws: CancellationError.self) {
@@ -548,7 +577,7 @@ struct MIRACLTrustAsyncTests {
         let crossDeviceSession = createCrossDeviceSession()
         let user = createUser()
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -563,7 +592,9 @@ struct MIRACLTrustAsyncTests {
             mockAPI.authenticationResponseManager.authenticateResponse = authenticateResponse
         }
 
-        try await MIRACLTrust.getInstance().authenticateCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
+
+        try await miraclTrust.authenticateCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
             processPinHandler("1234")
         }
     }
@@ -575,7 +606,7 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = AuthenticationError.authenticationFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -590,8 +621,9 @@ struct MIRACLTrustAsyncTests {
             mockAPI.authenticationResponseManager.authenticateError = cause
         }
 
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
         let error = await #expect(throws: AuthenticationError.self, performing: {
-            try await MIRACLTrust.getInstance().authenticateCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
+            try await miraclTrust.authenticateCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
                 processPinHandler("1234")
             }
         })
@@ -604,7 +636,9 @@ struct MIRACLTrustAsyncTests {
 
             let crossDeviceSession = createCrossDeviceSession()
             let user = createUser()
-            return try await MIRACLTrust.getInstance().authenticateCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
+            let miraclTrust = createMIRACLTrust()
+
+            return try await miraclTrust.authenticateCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
                 processPinHandler("1234")
             }
         }
@@ -618,7 +652,7 @@ struct MIRACLTrustAsyncTests {
         let user = createUser()
         let crossDeviceSession = createCrossDeviceSession(signingHash: UUID().uuidString)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -635,8 +669,9 @@ struct MIRACLTrustAsyncTests {
             mockAPI.updateCrossDeviceSessionError = nil
             mockAPI.updateCrossDeviceSessionResultCall = .success
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        try await MIRACLTrust.getInstance().signCrossDeviceSession(
+        try await miraclTrust.signCrossDeviceSession(
             crossDeviceSession: crossDeviceSession,
             user: user
         ) { processPinHandler in
@@ -651,7 +686,7 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = SigningError.signingFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -668,9 +703,10 @@ struct MIRACLTrustAsyncTests {
             mockAPI.updateCrossDeviceSessionError = cause
             mockAPI.updateCrossDeviceSessionResultCall = .success
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: SigningError.self, performing: {
-            try await MIRACLTrust.getInstance().signCrossDeviceSession(
+            try await miraclTrust.signCrossDeviceSession(
                 crossDeviceSession: crossDeviceSession,
                 user: user
             ) { processPinHandler in
@@ -686,7 +722,8 @@ struct MIRACLTrustAsyncTests {
 
             let crossDeviceSession = createCrossDeviceSession()
             let user = createUser()
-            return try await MIRACLTrust.getInstance().signCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.signCrossDeviceSession(crossDeviceSession: crossDeviceSession, user: user) { processPinHandler in
                 processPinHandler("1234")
             }
         }
@@ -699,12 +736,13 @@ struct MIRACLTrustAsyncTests {
     @Test func abortCrossDeviceSession() async throws {
         let crossDeviceSession = createCrossDeviceSession()
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.sessionAborterResultCall = .success
             mockAPI.sessionAborterError = nil
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        try await MIRACLTrust.getInstance().abortCrossDeviceSession(crossDeviceSession: crossDeviceSession)
+        try await miraclTrust.abortCrossDeviceSession(crossDeviceSession: crossDeviceSession)
     }
 
     @Test func abortCrossDeviceSessionError() async {
@@ -713,13 +751,14 @@ struct MIRACLTrustAsyncTests {
         let cause = apiClientError(with: "Something is wrong")
         let desiredError = CrossDeviceSessionError.abortCrossDeviceSessionFail(cause)
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             mockAPI.sessionAborterResultCall = .failed
             mockAPI.sessionAborterError = cause
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
         let error = await #expect(throws: CrossDeviceSessionError.self, performing: {
-            try await MIRACLTrust.getInstance().abortCrossDeviceSession(crossDeviceSession: crossDeviceSession)
+            try await miraclTrust.abortCrossDeviceSession(crossDeviceSession: crossDeviceSession)
         })
         #expect(error == desiredError)
     }
@@ -728,8 +767,9 @@ struct MIRACLTrustAsyncTests {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
 
+            let miraclTrust = createMIRACLTrust()
             let crossDeviceSession = createCrossDeviceSession()
-            return try await MIRACLTrust.getInstance().abortCrossDeviceSession(crossDeviceSession: crossDeviceSession)
+            return try await miraclTrust.abortCrossDeviceSession(crossDeviceSession: crossDeviceSession)
         }
 
         await #expect(throws: CancellationError.self) {
@@ -741,7 +781,7 @@ struct MIRACLTrustAsyncTests {
         let user = createUser()
         let signingHash = try #require(UUID().uuidString.data(using: .utf8))
 
-        configureMockAPI { mockAPI in
+        let mockAPI = configureMockAPI { mockAPI in
             var pass1Response = Pass1Response()
             pass1Response.challenge = UUID().uuidString
             mockAPI.pass1Response = pass1Response
@@ -755,8 +795,9 @@ struct MIRACLTrustAsyncTests {
 
             mockAPI.authenticationResponseManager.authenticateResponse = authenticateResponse
         }
+        let miraclTrust = createMIRACLTrust(mockAPI: mockAPI)
 
-        let signingResult = try await MIRACLTrust.getInstance().sign(message: signingHash, user: user) { processPinHAndler in
+        let signingResult = try await miraclTrust.sign(message: signingHash, user: user) { processPinHAndler in
             processPinHAndler("1234")
         }
         #expect(signingResult.signature.mpinId == mpinId)
@@ -767,8 +808,9 @@ struct MIRACLTrustAsyncTests {
         let signingHash = Data()
         let desiredError = SigningError.emptyMessageHash
 
+        let miraclTrust = createMIRACLTrust()
         let error = await #expect(throws: SigningError.self, performing: {
-            try await MIRACLTrust.getInstance().sign(message: signingHash, user: user) { processPinHandler in
+            try await miraclTrust.sign(message: signingHash, user: user) { processPinHandler in
                 processPinHandler("1234")
             }
         })
@@ -781,7 +823,8 @@ struct MIRACLTrustAsyncTests {
 
             let user = createUser()
             let signingHash = Data()
-            return try await MIRACLTrust.getInstance().sign(message: signingHash, user: user) { processPinHandler in
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.sign(message: signingHash, user: user) { processPinHandler in
                 processPinHandler("1234")
             }
         }
@@ -796,10 +839,10 @@ struct MIRACLTrustAsyncTests {
         let userDTO = createUserDTO(userId: userId)
 
         let userStorage = MockUserStorage()
-        MIRACLTrust.getInstance().userStorage = userStorage
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
         try userStorage.add(user: userDTO)
 
-        let user = try await MIRACLTrust.getInstance().getUser(userId: userId)
+        let user = try await miraclTrust.getUser(userId: userId)
         #expect(user?.userId == userId)
         #expect(user?.projectId == projectId)
     }
@@ -809,20 +852,21 @@ struct MIRACLTrustAsyncTests {
         let userDTO = createUserDTO(userId: userId)
 
         let userStorage = MockUserStorage()
-        MIRACLTrust.getInstance().userStorage = userStorage
+
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
         try userStorage.add(user: userDTO)
 
-        let user = try await MIRACLTrust.getInstance().getUser(userId: UUID().uuidString)
+        let user = try await miraclTrust.getUser(userId: UUID().uuidString)
         #expect(user == nil)
     }
 
     @Test func getUserError() async {
         let userStorage = MockUserStorage()
         userStorage.getUserThrowsError = true
-        MIRACLTrust.getInstance().userStorage = userStorage
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
 
         let error = await #expect(throws: MockUserStorageError.self, performing: {
-            try await MIRACLTrust.getInstance().getUser(userId: UUID().uuidString)
+            try await miraclTrust.getUser(userId: UUID().uuidString)
         })
         #expect(error == MockUserStorageError.testError)
     }
@@ -830,8 +874,8 @@ struct MIRACLTrustAsyncTests {
     @Test func getUserCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-
-            return try await MIRACLTrust.getInstance().getUser(userId: "")
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.getUser(userId: "")
         }
 
         await #expect(throws: CancellationError.self) {
@@ -844,28 +888,29 @@ struct MIRACLTrustAsyncTests {
         let userDTO = createUserDTO(userId: userId)
 
         let userStorage = MockUserStorage()
-        MIRACLTrust.getInstance().userStorage = userStorage
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
         try userStorage.add(user: userDTO)
 
-        let users = try await MIRACLTrust.getInstance().getUsers()
+        let users = try await miraclTrust.getUsers()
         #expect(users.count == 1)
     }
 
     @Test func getUsersEmpty() async throws {
         let userStorage = MockUserStorage()
-        MIRACLTrust.getInstance().userStorage = userStorage
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
 
-        let users = try await MIRACLTrust.getInstance().getUsers()
+        let users = try await miraclTrust.getUsers()
         #expect(users.count == 0)
     }
 
     @Test func getUsersError() async {
         let userStorage = MockUserStorage()
         userStorage.getUsersThrowsError = true
-        MIRACLTrust.getInstance().userStorage = userStorage
+
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
 
         let error = await #expect(throws: MockUserStorageError.self, performing: {
-            try await MIRACLTrust.getInstance().getUsers()
+            try await miraclTrust.getUsers()
         })
         #expect(error == MockUserStorageError.testError)
     }
@@ -873,8 +918,8 @@ struct MIRACLTrustAsyncTests {
     @Test func getUsersCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
-
-            return try await MIRACLTrust.getInstance().getUsers()
+            let miraclTrust = createMIRACLTrust()
+            return try await miraclTrust.getUsers()
         }
 
         await #expect(throws: CancellationError.self) {
@@ -888,11 +933,11 @@ struct MIRACLTrustAsyncTests {
 
         let userStorage = MockUserStorage()
         try userStorage.add(user: userDTO)
-        MIRACLTrust.getInstance().userStorage = userStorage
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
 
-        let user = try await #require(MIRACLTrust.getInstance().getUser(userId: userId))
-        try await MIRACLTrust.getInstance().delete(user: user)
-        #expect(MIRACLTrust.getInstance().users.count == 0)
+        let user = try await #require(miraclTrust.getUser(userId: userId))
+        try await miraclTrust.delete(user: user)
+        #expect(miraclTrust.users.count == 0)
     }
 
     @Test func deleteUserError() async throws {
@@ -902,11 +947,11 @@ struct MIRACLTrustAsyncTests {
         let userStorage = MockUserStorage()
         try userStorage.add(user: userDTO)
         userStorage.deleteUserThrowsError = true
-        MIRACLTrust.getInstance().userStorage = userStorage
 
-        let user = try await #require(MIRACLTrust.getInstance().getUser(userId: userId))
+        let miraclTrust = createMIRACLTrust(userStorage: userStorage)
+        let user = try await #require(miraclTrust.getUser(userId: userId))
         let error = await #expect(throws: MockUserStorageError.self, performing: {
-            try await MIRACLTrust.getInstance().delete(user: user)
+            try await miraclTrust.delete(user: user)
         })
         #expect(error == MockUserStorageError.testError)
     }
@@ -914,8 +959,9 @@ struct MIRACLTrustAsyncTests {
     @Test func deleteUserCancellationError() async {
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
+            let miraclTrust = createMIRACLTrust()
 
-            return try await MIRACLTrust.getInstance().delete(user: createUser())
+            return try await miraclTrust.delete(user: createUser())
         }
 
         await #expect(throws: CancellationError.self) {
@@ -938,10 +984,10 @@ struct MIRACLTrustAsyncTests {
         )
     }
 
-    private func configureMockAPI(_ update: (inout MockAPI) -> Void) {
+    private func configureMockAPI(_ update: (inout MockAPI) -> Void) -> MockAPI {
         var mockAPI = MockAPI()
         update(&mockAPI)
-        MIRACLTrust.getInstance().miraclAPI = mockAPI
+        return mockAPI
     }
 
     private func apiClientError(with code: String, context: [String: String]? = nil) -> APIError {
@@ -998,6 +1044,22 @@ struct MIRACLTrustAsyncTests {
             token: Data([1, 2, 3]),
             dtas: randomString,
             publicKey: nil
+        )
+    }
+
+    private func createMIRACLTrust(
+        mockAPI: APIBlueprint = MockAPI(),
+        userStorage: UserStorage = MockUserStorage()
+    ) -> MIRACLTrust {
+        MIRACLTrust(
+            projectId: projectId,
+            miraclAPI: mockAPI,
+            deviceName: UUID().uuidString,
+            userStorage: userStorage,
+            crypto: createMockCrypto(),
+            urlSessionConfiguration: URLSessionConfiguration.ephemeral,
+            logger: DefaultLogger(level: .none),
+            deviceTagManager: DeviceTagManager(logger: DefaultLogger(level: .none))
         )
     }
 }

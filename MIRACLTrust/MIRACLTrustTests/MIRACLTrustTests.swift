@@ -13,6 +13,7 @@ class MIRACLTrustTests: XCTestCase {
     private var currentDate = Int64(Date().timeIntervalSince1970)
     private var user: User?
     private var configuration: Configuration?
+    private var miraclTrust: MIRACLTrust!
 
     private let backoff: Int64 = 1_688_029_968
     private let mpinId = "7b22696174223a313631373237323435332c22757365724944223a22676c6f62616c406578616d706c652e636f6d222c22634944223a2236636134636133622d623663342d343262332d386536372d336432653038616532643765222c2273616c74223a226d30756558414b4162566234425756742b5461745a51222c2276223a352c2273636f7065223a5b2261757468225d2c22647461223a5b5d2c227674223a227076227d"
@@ -20,25 +21,22 @@ class MIRACLTrustTests: XCTestCase {
     private let clientToken = Data([1, 2, 3])
 
     override func setUpWithError() throws {
-        configuration = try Configuration
-            .Builder(
-                projectId: projectId,
-                projectURL: projectURL
-            )
-            .userStorage(userStorage: mockUserStorage)
-            .build()
-
-        try MIRACLTrust.configure(with: XCTUnwrap(configuration))
-
         createMockAPI()
         createMockCrypto()
         user = createUser()
 
         mockUserStorage = MockUserStorage()
 
-        MIRACLTrust.getInstance().userStorage = mockUserStorage
-        MIRACLTrust.getInstance().miraclAPI = mockAPI
-        MIRACLTrust.getInstance().crypto = crypto
+        miraclTrust = MIRACLTrust(
+            projectId: projectId,
+            miraclAPI: mockAPI,
+            deviceName: UUID().uuidString,
+            userStorage: mockUserStorage,
+            crypto: crypto,
+            urlSessionConfiguration: URLSessionConfiguration.ephemeral,
+            logger: DefaultLogger(level: .none),
+            deviceTagManager: DeviceTagManager(logger: DefaultLogger(level: .none))
+        )
     }
 
     func createMockAPI() {
@@ -122,7 +120,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let backoff = backoff
 
-        MIRACLTrust.getInstance().sendVerificationEmail(userId: userId) { verified, error in
+        miraclTrust.sendVerificationEmail(userId: userId) { verified, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNotNil(verified)
             XCTAssertNil(error)
@@ -143,7 +141,7 @@ class MIRACLTrustTests: XCTestCase {
     func testSendVerificationMailValidationError() {
         let userId = ""
         let expectation = XCTestExpectation(description: "sendVerificationEmail - fail")
-        MIRACLTrust.getInstance().sendVerificationEmail(userId: userId) { response, error in
+        miraclTrust.sendVerificationEmail(userId: userId) { response, error in
             XCTAssertEqual(Thread.current, Thread.main)
 
             XCTAssertNil(response)
@@ -158,7 +156,7 @@ class MIRACLTrustTests: XCTestCase {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail with cross device session")
         let crossDeviceSession = createCrossDeviceSession()
 
-        MIRACLTrust.getInstance().sendVerificationEmail(userId: randomString, crossDeviceSession: crossDeviceSession) { response, error in
+        miraclTrust.sendVerificationEmail(userId: randomString, crossDeviceSession: crossDeviceSession) { response, error in
             XCTAssertNil(error)
             XCTAssertNotNil(response)
 
@@ -172,7 +170,7 @@ class MIRACLTrustTests: XCTestCase {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail with authentication session")
         let authenticationSessionDetails = createSessionDetails()
 
-        MIRACLTrust.getInstance().sendVerificationEmail(userId: randomString, authenticationSessionDetails: authenticationSessionDetails) { response, error in
+        miraclTrust.sendVerificationEmail(userId: randomString, authenticationSessionDetails: authenticationSessionDetails) { response, error in
             XCTAssertNil(error)
             XCTAssertNotNil(response)
 
@@ -185,7 +183,7 @@ class MIRACLTrustTests: XCTestCase {
     func testSendVerificationEmailWithoutCrossDeviceSession() {
         let completionHandlerExpectation = XCTestExpectation(description: "sendVerificationEmail without cross device session")
 
-        MIRACLTrust.getInstance().sendVerificationEmail(userId: randomString) { response, error in
+        miraclTrust.sendVerificationEmail(userId: randomString) { response, error in
             XCTAssertNil(error)
             XCTAssertNotNil(response)
 
@@ -202,7 +200,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let randomString = randomString
 
-        MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { activationTokenResponse, error in
+        miraclTrust.getActivationToken(verificationURL: verificationURL) { activationTokenResponse, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(error)
 
@@ -232,7 +230,7 @@ class MIRACLTrustTests: XCTestCase {
         let verificationURL = try XCTUnwrap(URL(string: "https://api.mpin.io/verification/confirmation?code=af1cc549573718409de44d8bf2e67a06"))
         let expectation = XCTestExpectation(description: "getActivationToken - fail")
 
-        MIRACLTrust.getInstance().getActivationToken(verificationURL: verificationURL) { _, error in
+        miraclTrust.getActivationToken(verificationURL: verificationURL) { _, error in
             XCTAssertEqual(Thread.current, Thread.main)
             assertError(current: error, expected: ActivationTokenError.emptyUserId)
 
@@ -249,7 +247,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let randomString = randomString
 
-        MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code) { activationTokenResponse, error in
+        miraclTrust.getActivationToken(userId: userId, code: code) { activationTokenResponse, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(error)
 
@@ -280,7 +278,7 @@ class MIRACLTrustTests: XCTestCase {
         let code = "af1cc549573718409de44d8bf2e67a06"
         let expectation = XCTestExpectation(description: "getActivationToken - fail")
 
-        MIRACLTrust.getInstance().getActivationToken(userId: userId, code: code) { _, error in
+        miraclTrust.getActivationToken(userId: userId, code: code) { _, error in
             XCTAssertEqual(Thread.current, Thread.main)
             assertError(current: error, expected: ActivationTokenError.emptyUserId)
 
@@ -301,7 +299,7 @@ class MIRACLTrustTests: XCTestCase {
         let mpinId = mpinId
         let dtas = dtas
 
-        MIRACLTrust.getInstance().register(for: userId, activationToken: activationToken) { processPinHandler in
+        miraclTrust.register(for: userId, activationToken: activationToken) { processPinHandler in
             processPinHandler("1234")
             expectationForPinHandler.fulfill()
         } completionHandler: { user, error in
@@ -331,7 +329,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "register - fail")
 
-        MIRACLTrust.getInstance().register(for: emptyUserId, activationToken: activationToken) { processPinHandler in
+        miraclTrust.register(for: emptyUserId, activationToken: activationToken) { processPinHandler in
             processPinHandler("1234")
         } completionHandler: { user, error in
             XCTAssertEqual(Thread.current, Thread.main)
@@ -350,7 +348,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let randomString = randomString
 
-        MIRACLTrust.getInstance().authenticate(user: createUser()) { processPinHandler in
+        miraclTrust.authenticate(user: createUser()) { processPinHandler in
             processPinHandler("1234")
             pinHandlerExpectation.fulfill()
         } completionHandler: { jwt, error in
@@ -368,7 +366,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let completionHandlerExpectation = XCTestExpectation(description: "authenticate - fail")
 
-        MIRACLTrust.getInstance().authenticate(user: user) { processPinHandler in
+        miraclTrust.authenticate(user: user) { processPinHandler in
             processPinHandler("1234")
         } completionHandler: { jwt, error in
             XCTAssertEqual(Thread.current, Thread.main)
@@ -386,7 +384,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let qrCode = "https://mcl.mpin.io#b227d0850d4280b98c5124a14aec84bf"
 
-        try MIRACLTrust.getInstance().authenticateWithQRCode(
+        try miraclTrust.authenticateWithQRCode(
             user: XCTUnwrap(user),
             qrCode: qrCode
         ) { processPinHandler in
@@ -406,7 +404,7 @@ class MIRACLTrustTests: XCTestCase {
         let qrCode = "https://mcl.mpin.io#"
         let completionHandlerExpectation = XCTestExpectation(description: "qrauthenticate - fail")
 
-        try MIRACLTrust.getInstance().authenticateWithQRCode(
+        try miraclTrust.authenticateWithQRCode(
             user: XCTUnwrap(user),
             qrCode: qrCode
         ) { processPinHandler in
@@ -435,7 +433,7 @@ class MIRACLTrustTests: XCTestCase {
         let completionHandlerExpectation = XCTestExpectation(description: "pushauthenticate")
         let pinHandlerExpectation = XCTestExpectation(description: "pushauthenticate - pinhandler")
 
-        MIRACLTrust.getInstance().authenticateWithPushNotificationPayload(payload: payload) { processPinHandler in
+        miraclTrust.authenticateWithPushNotificationPayload(payload: payload) { processPinHandler in
             processPinHandler("1234")
             pinHandlerExpectation.fulfill()
         } completionHandler: { authenticated, error in
@@ -461,7 +459,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let completionHandlerExpectation = XCTestExpectation(description: "pushauthenticate - fail")
 
-        MIRACLTrust.getInstance().authenticateWithPushNotificationPayload(payload: payload) { processPinHandler in
+        miraclTrust.authenticateWithPushNotificationPayload(payload: payload) { processPinHandler in
             processPinHandler("1234")
         } completionHandler: { authenticated, error in
             XCTAssertEqual(Thread.current, Thread.main)
@@ -479,7 +477,7 @@ class MIRACLTrustTests: XCTestCase {
         let completionHandlerExpectation = XCTestExpectation(description: "universallinkauthenticate")
         let pinHandlerExpectation = XCTestExpectation(description: "universallinkauthenticate - pinhandler")
 
-        try MIRACLTrust.getInstance().authenticateWithUniversalLinkURL(
+        try miraclTrust.authenticateWithUniversalLinkURL(
             user: XCTUnwrap(user),
             universalLinkURL: qrCode
         ) { processPinHandler in
@@ -500,7 +498,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let completionHandlerExpectation = XCTestExpectation(description: "universallinkauthenticate - fail")
 
-        try MIRACLTrust.getInstance().authenticateWithUniversalLinkURL(
+        try miraclTrust.authenticateWithUniversalLinkURL(
             user: XCTUnwrap(user),
             universalLinkURL: qrCode
         ) { processPinHandler in
@@ -522,11 +520,11 @@ class MIRACLTrustTests: XCTestCase {
         mockAPI.authenticationResponseManager.authenticateResponse = authenticateResponse
         mockAPI.verificationQuickCodeResponse = VerificationQuickCodeResponse(code: UUID().uuidString, expireTime: Date(), ttlSeconds: Int.random(in: 1 ... 999))
 
-        MIRACLTrust.getInstance().miraclAPI = mockAPI
+        miraclTrust.miraclAPI = mockAPI
         let pinHandlerExpectation = XCTestExpectation(description: "quickcode - pinhandler")
         let completionHandlerExpectation = XCTestExpectation(description: "quickcode")
 
-        try MIRACLTrust.getInstance().generateQuickCode(user: XCTUnwrap(user)) { processPinHandler in
+        try miraclTrust.generateQuickCode(user: XCTUnwrap(user)) { processPinHandler in
             processPinHandler("1234")
             pinHandlerExpectation.fulfill()
         } completionHandler: { quickCode, error in
@@ -544,9 +542,8 @@ class MIRACLTrustTests: XCTestCase {
 
         let completionHandlerExpectation = XCTestExpectation(description: "quickcode - fail")
 
-        MIRACLTrust.getInstance().generateQuickCode(user: user) { processPinHandler in
+        miraclTrust.generateQuickCode(user: user) { processPinHandler in
             processPinHandler("1234")
-
         } completionHandler: { quickCode, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(quickCode)
@@ -565,7 +562,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let randomString = randomString
 
-        MIRACLTrust.getInstance().getAuthenticationSessionDetailsFromQRCode(qrCode: qrCode) { sessionDetails, _ in
+        miraclTrust.getAuthenticationSessionDetailsFromQRCode(qrCode: qrCode) { sessionDetails, _ in
             XCTAssertEqual(Thread.current, Thread.main)
             do {
                 let fetchedDetails = try XCTUnwrap(sessionDetails)
@@ -598,7 +595,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "qrsessiondetails - fail")
 
-        MIRACLTrust.getInstance().getAuthenticationSessionDetailsFromQRCode(qrCode: qrCode) { sessionDetails, error in
+        miraclTrust.getAuthenticationSessionDetailsFromQRCode(qrCode: qrCode) { sessionDetails, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(sessionDetails)
             assertError(current: error, expected: AuthenticationSessionError.invalidQRCode)
@@ -616,7 +613,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let randomString = randomString
 
-        MIRACLTrust.getInstance().getAuthenticationSessionDetailsFromUniversalLinkURL(universalLinkURL: qrCode) { sessionDetails, _ in
+        miraclTrust.getAuthenticationSessionDetailsFromUniversalLinkURL(universalLinkURL: qrCode) { sessionDetails, _ in
             XCTAssertEqual(Thread.current, Thread.main)
             do {
                 let fetchedDetails = try XCTUnwrap(sessionDetails)
@@ -649,7 +646,7 @@ class MIRACLTrustTests: XCTestCase {
         let qrCode = try XCTUnwrap(URL(string: "https://mcl.mpin.io#\(accessId)"))
         let completionHandlerExpectation = XCTestExpectation(description: "universallinkauthenticationsession - fail")
 
-        MIRACLTrust.getInstance().getAuthenticationSessionDetailsFromUniversalLinkURL(universalLinkURL: qrCode) { sessionDetails, error in
+        miraclTrust.getAuthenticationSessionDetailsFromUniversalLinkURL(universalLinkURL: qrCode) { sessionDetails, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(sessionDetails)
             assertError(current: error, expected: AuthenticationSessionError.invalidUniversalLinkURL)
@@ -667,7 +664,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let randomString = randomString
 
-        MIRACLTrust.getInstance().getAuthenticationSessionDetailsFromPushNotificationPayload(pushNotificationPayload: payload) { sessionDetails, _ in
+        miraclTrust.getAuthenticationSessionDetailsFromPushNotificationPayload(pushNotificationPayload: payload) { sessionDetails, _ in
             XCTAssertEqual(Thread.current, Thread.main)
             do {
                 let fetchedDetails = try XCTUnwrap(sessionDetails)
@@ -701,7 +698,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let completionHandlerExpectation = XCTestExpectation(description: "pushauthenticationsession - fail")
 
-        MIRACLTrust.getInstance().getAuthenticationSessionDetailsFromPushNotificationPayload(pushNotificationPayload: payload) { sessionDetails, error in
+        miraclTrust.getAuthenticationSessionDetailsFromPushNotificationPayload(pushNotificationPayload: payload) { sessionDetails, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertNil(sessionDetails)
             assertError(current: error, expected: AuthenticationSessionError.invalidPushNotificationPayload)
@@ -716,7 +713,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let completionHandlerExpectation = XCTestExpectation(description: "abortauthenticationsession")
 
-        MIRACLTrust.getInstance().abortAuthenticationSession(authenticationSessionDetails: sessionDetails) { aborted, error in
+        miraclTrust.abortAuthenticationSession(authenticationSessionDetails: sessionDetails) { aborted, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertTrue(aborted)
             XCTAssertNil(error)
@@ -731,7 +728,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let completionHandlerExpectation = XCTestExpectation(description: "abortauthenticationsession - fail")
 
-        MIRACLTrust.getInstance().abortAuthenticationSession(authenticationSessionDetails: sessionDetails) { aborted, error in
+        miraclTrust.abortAuthenticationSession(authenticationSessionDetails: sessionDetails) { aborted, error in
             XCTAssertEqual(Thread.current, Thread.main)
             XCTAssertFalse(aborted)
             assertError(current: error, expected: AuthenticationSessionError.invalidAuthenticationSessionDetails)
@@ -756,7 +753,7 @@ class MIRACLTrustTests: XCTestCase {
         let pinHandlerExpectation = XCTestExpectation(description: "sign - pinhandler")
         let completionHandlerExpectation = XCTestExpectation(description: "sign")
 
-        MIRACLTrust.getInstance().sign(message: message, user: user) { processPinHandler in
+        miraclTrust.sign(message: message, user: user) { processPinHandler in
             processPinHandler("1234")
             pinHandlerExpectation.fulfill()
         } completionHandler: { signatureResult, error in
@@ -774,7 +771,7 @@ class MIRACLTrustTests: XCTestCase {
         let message = Data()
         let completionHandlerExpectation = XCTestExpectation(description: "sign - fail")
 
-        try MIRACLTrust.getInstance().sign(message: message, user: XCTUnwrap(user)) { processPinHandler in
+        try miraclTrust.sign(message: message, user: XCTUnwrap(user)) { processPinHandler in
             processPinHandler("1234")
         } completionHandler: { signatureResult, error in
             XCTAssertEqual(Thread.current, Thread.main)
@@ -789,7 +786,7 @@ class MIRACLTrustTests: XCTestCase {
     func testGetUser() throws {
         let userDTO = createUserDTO()
         try mockUserStorage.add(user: userDTO)
-        let user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: randomString))
+        let user = try XCTUnwrap(miraclTrust.getUser(by: randomString))
 
         XCTAssertEqual(user.userId, userDTO.userId)
         XCTAssertEqual(user.projectId, userDTO.projectId)
@@ -806,23 +803,23 @@ class MIRACLTrustTests: XCTestCase {
         let userDTO = createUserDTO()
 
         try mockUserStorage.add(user: userDTO)
-        XCTAssertNil(MIRACLTrust.getInstance().getUser(by: randomString))
+        XCTAssertNil(miraclTrust.getUser(by: randomString))
     }
 
     func testDeleteUser() throws {
         let userDTO = createUserDTO()
         try mockUserStorage.add(user: userDTO)
 
-        let user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: randomString))
-        try MIRACLTrust.getInstance().delete(user: user)
+        let user = try XCTUnwrap(miraclTrust.getUser(by: randomString))
+        try miraclTrust.delete(user: user)
 
-        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
+        XCTAssertTrue(miraclTrust.users.count == 0)
     }
 
     func testGetUsers() throws {
         let userDTO = createUserDTO()
         try mockUserStorage.add(user: userDTO)
-        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 1)
+        XCTAssertTrue(miraclTrust.users.count == 1)
     }
 
     func testGetUsersAsync() throws {
@@ -830,7 +827,7 @@ class MIRACLTrustTests: XCTestCase {
         try mockUserStorage.add(user: userDTO)
         let expectation = XCTestExpectation(description: "Get all users asychrounisly")
 
-        MIRACLTrust.getInstance().getUsers { users, error in
+        miraclTrust.getUsers { users, error in
             XCTAssertEqual(users?.count, 1)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -845,7 +842,7 @@ class MIRACLTrustTests: XCTestCase {
         try mockUserStorage.add(user: userDTO)
         let expectation = XCTestExpectation(description: "Get all users for error")
 
-        MIRACLTrust.getInstance().getUsers { users, error in
+        miraclTrust.getUsers { users, error in
             XCTAssertNil(users)
             XCTAssertNotNil(error)
 
@@ -862,7 +859,7 @@ class MIRACLTrustTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "Wait for user")
         let userId = randomString
-        MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+        miraclTrust.getUser(userId: userId) { user, error in
             do {
                 XCTAssertNil(error)
                 let user = try XCTUnwrap(user)
@@ -894,7 +891,7 @@ class MIRACLTrustTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Wait for user")
         let userId = randomString
 
-        MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+        miraclTrust.getUser(userId: userId) { user, error in
             XCTAssertNil(user)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -912,7 +909,7 @@ class MIRACLTrustTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Wait for user")
         let userId = randomString
 
-        MIRACLTrust.getInstance().getUser(userId: userId) { user, error in
+        miraclTrust.getUser(userId: userId) { user, error in
             XCTAssertNil(user)
             XCTAssertNotNil(error)
             assertError(current: error, expected: MockUserStorageError.testError)
@@ -930,16 +927,16 @@ class MIRACLTrustTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Wait for user")
         let userId = randomString
 
-        let user = try XCTUnwrap(MIRACLTrust.getInstance().getUser(by: userId))
+        let user = try XCTUnwrap(miraclTrust.getUser(by: userId))
 
-        MIRACLTrust.getInstance().delete(user: user) { isDeleted, error in
+        miraclTrust.delete(user: user) { isDeleted, error in
             XCTAssertTrue(isDeleted)
             XCTAssertNil(error)
             expectation.fulfill()
         }
         wait(for: [expectation])
 
-        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
+        XCTAssertTrue(miraclTrust.users.count == 0)
     }
 
     func testDeleteUserThrowsErrorAsync() throws {
@@ -950,14 +947,14 @@ class MIRACLTrustTests: XCTestCase {
 
         let user = try XCTUnwrap(userDTO.toUser())
 
-        MIRACLTrust.getInstance().delete(user: user) { isDeleted, error in
+        miraclTrust.delete(user: user) { isDeleted, error in
             XCTAssertFalse(isDeleted)
             assertError(current: error, expected: MockUserStorageError.testError)
             expectation.fulfill()
         }
         wait(for: [expectation])
 
-        XCTAssertTrue(MIRACLTrust.getInstance().users.count == 0)
+        XCTAssertTrue(miraclTrust.users.count == 0)
     }
 
     func testGetUsersStaticMethodCustomStorage() throws {

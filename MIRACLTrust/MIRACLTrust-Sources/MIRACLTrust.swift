@@ -2,7 +2,7 @@ import Foundation
 
 /// Main class of the SDK used for all possible actions like registration and authentication.
 /// - Tag: miracltrust
-@objc open class MIRACLTrust: NSObject {
+@objc public final class MIRACLTrust: NSObject, Sendable {
     // MARK: Public properties
 
     /// Retrieves the collection of all users from the ``UserStorage`` implementation.
@@ -18,18 +18,17 @@ import Foundation
         }
     }
 
-    @objc public var projectId: String
+    @objc public nonisolated(unsafe) var projectId: String
 
     // MARK: Private properties
 
-    var deviceName: String
-    var miraclAPI: APIBlueprint
-    var userStorage: UserStorage
-    var crypto: CryptoBlueprint
-    var urlSessionConfiguration: URLSessionConfiguration
-    var sdkConfigured: Bool = false
-    var logger: Logger
-    var deviceTagManager: DeviceTagManager
+    nonisolated(unsafe) var miraclAPI: APIBlueprint
+    let deviceName: String
+    let userStorage: UserStorage
+    let crypto: CryptoBlueprint
+    let urlSessionConfiguration: URLSessionConfiguration
+    let logger: Logger
+    let deviceTagManager: DeviceTagManager
 
     private nonisolated(unsafe) static var shared: MIRACLTrust!
     nonisolated(unsafe) static var configuration: Configuration?
@@ -37,18 +36,14 @@ import Foundation
 
     private static let sharedQueue = DispatchQueue(label: "com.miracl.trust.init.queue")
 
-    private init(projectId: String, projectURL: URL, configuration: Configuration) throws {
-        if let logger = configuration.logger {
-            self.logger = logger
-        } else {
-            logger = DefaultLogger(level: configuration.loggingLevel)
-        }
+    private convenience init(
+        projectId: String,
+        projectURL: URL,
+        configuration: Configuration
+    ) throws {
+        let logger = configuration.logger ?? DefaultLogger(level: configuration.loggingLevel)
 
-        self.projectId = projectId
-        deviceName = configuration.deviceName
-        crypto = Crypto(logger: logger)
-        deviceTagManager = DeviceTagManager(logger: logger)
-        urlSessionConfiguration = configuration.urlSessionConfiguration
+        let deviceTagManager = DeviceTagManager(logger: logger)
 
         let sdkVersion = Bundle(for: MIRACLTrust.self).infoDictionary?["MIRACL_SDK_VERSION"] ?? MIRACLTrustVersion.current
         var miraclHeader = "MIRACL iOS SDK/\(sdkVersion)"
@@ -56,30 +51,61 @@ import Foundation
             miraclHeader.append(" \(applicationInfo)")
         }
 
-        var additionalHeaders = urlSessionConfiguration.httpAdditionalHeaders ?? [:]
+        var additionalHeaders = configuration.urlSessionConfiguration.httpAdditionalHeaders ?? [:]
         additionalHeaders["X-Miracl-Client"] = miraclHeader
-        additionalHeaders["X-Miracl-Device-Name"] = deviceName
+        additionalHeaders["X-Miracl-Device-Name"] = configuration.deviceName
         additionalHeaders["X-Miracl-Device-Tag"] = deviceTagManager.deviceTag
 
-        urlSessionConfiguration.httpAdditionalHeaders = additionalHeaders
-
-        miraclAPI = API(
+        configuration.urlSessionConfiguration.httpAdditionalHeaders = additionalHeaders
+        let miraclAPI = API(
             baseURL: projectURL,
-            urlSessionConfiguration: urlSessionConfiguration,
+            urlSessionConfiguration: configuration.urlSessionConfiguration,
             logger: logger
         )
 
-        userStorage = try MIRACLTrust.createUserStorage(
+        let userStorage = try MIRACLTrust.createUserStorage(
             storageType: configuration.storageType,
             projectId: projectId
         )
+        let crypto = Crypto(logger: logger)
+
+        self.init(
+            projectId: projectId,
+            miraclAPI: miraclAPI,
+            deviceName: configuration.deviceName,
+            userStorage: userStorage,
+            crypto: crypto,
+            urlSessionConfiguration: configuration.urlSessionConfiguration,
+            logger: logger,
+            deviceTagManager: deviceTagManager
+        )
+    }
+
+    init(
+        projectId: String,
+        miraclAPI: APIBlueprint,
+        deviceName: String,
+        userStorage: UserStorage,
+        crypto: CryptoBlueprint,
+        urlSessionConfiguration: URLSessionConfiguration,
+        logger: Logger,
+        deviceTagManager: DeviceTagManager
+    ) {
+        self.projectId = projectId
+        self.miraclAPI = miraclAPI
+        self.deviceName = deviceName
+        self.crypto = crypto
+        self.urlSessionConfiguration = urlSessionConfiguration
+        self.logger = logger
+        self.deviceTagManager = deviceTagManager
+        self.userStorage = userStorage
     }
 
     // MARK: SDK Configuration
 
     /// Gets a singleton instance of the MIRACLTrust class.
     /// - Returns: singleton instance of the MIRACLTrust class.
-    @objc public class func getInstance() -> MIRACLTrust {
+    @objc public static func getInstance() -> MIRACLTrust {
         sharedQueue.sync {
             precondition(shared != nil, "MIRACLTrust SDK not initialized.Call `configure(with:)` method first.")
             return MIRACLTrust.shared
@@ -89,7 +115,7 @@ import Foundation
     /// Configures the SDK with values issued by MIRACL Trust and stored in the ``Configuration`` object.
     /// Call this method immediately after the application is launched.
     /// - Parameter configuration: an object storing configurations of the SDK.
-    @objc public class func configure(with configuration: Configuration) throws {
+    @objc public static func configure(with configuration: Configuration) throws {
         try sharedQueue.sync {
             precondition(configuration.projectId != nil, "MIRACLTrust SDK: Project ID is missing. Pass a valid Project ID to Configuration.Builder.")
 
@@ -136,10 +162,12 @@ import Foundation
 
     @_spi(MIRACLTrustAuthenticatorApi)
     public static func setDefaultConfiguration(_ configuration: Configuration) throws {
-        self.configuration = configuration
+        try sharedQueue.sync {
+            self.configuration = configuration
 
-        if case let StorageType.custom(storage) = configuration.storageType {
-            try storage.loadStorage()
+            if case let StorageType.custom(storage) = configuration.storageType {
+                try storage.loadStorage()
+            }
         }
     }
 
@@ -149,11 +177,13 @@ import Foundation
     @objc public func setProjectId(
         projectId: String
     ) throws {
-        if projectId.isEmpty {
-            throw ConfigurationError.emptyProjectId
-        }
+        try MIRACLTrust.sharedQueue.sync {
+            if projectId.isEmpty {
+                throw ConfigurationError.emptyProjectId
+            }
 
-        self.projectId = projectId
+            self.projectId = projectId
+        }
     }
 
     /// Configures new project settings when the SDK has to work with a different project.
@@ -164,20 +194,22 @@ import Foundation
         projectId: String,
         projectURL: String
     ) throws {
-        if projectId.isEmpty {
-            throw ConfigurationError.emptyProjectId
-        }
+        try MIRACLTrust.sharedQueue.sync {
+            if projectId.isEmpty {
+                throw ConfigurationError.emptyProjectId
+            }
 
-        guard let validProjectURL = URL(string: projectURL) else {
-            throw ConfigurationError.invalidProjectURL
-        }
+            guard let validProjectURL = URL(string: projectURL) else {
+                throw ConfigurationError.invalidProjectURL
+            }
 
-        self.projectId = projectId
-        miraclAPI = API(
-            baseURL: validProjectURL,
-            urlSessionConfiguration: urlSessionConfiguration,
-            logger: logger
-        )
+            self.projectId = projectId
+            miraclAPI = API(
+                baseURL: validProjectURL,
+                urlSessionConfiguration: urlSessionConfiguration,
+                logger: logger
+            )
+        }
     }
 
     // MARK: Verification
@@ -956,7 +988,7 @@ import Foundation
         )
     }
 
-    private class func createUserStorage(
+    private static func createUserStorage(
         storageType: StorageType,
         projectId: String
     ) throws -> UserStorage {
